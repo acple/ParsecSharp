@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParsecSharp", "ParsecSharp\ParsecSharp.csproj", "{3E655CC9-BD8A-484A-A219-2E9ED2DE0CDD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParsecSharpTest", "ParsecSharpTest\ParsecSharpTest.csproj", "{F6BDF5B6-E528-4B77-8070-8E9B22CD16C1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParsecSharpExamples", "ParsecSharpExamples\ParsecSharpExamples.csproj", "{0E04AA91-82CC-476B-8EE3-490DEAD8654B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3E655CC9-BD8A-484A-A219-2E9ED2DE0CDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E655CC9-BD8A-484A-A219-2E9ED2DE0CDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E655CC9-BD8A-484A-A219-2E9ED2DE0CDD}.Debug|x64.ActiveCfg = Debug|x64
+		{3E655CC9-BD8A-484A-A219-2E9ED2DE0CDD}.Debug|x64.Build.0 = Debug|x64
+		{3E655CC9-BD8A-484A-A219-2E9ED2DE0CDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E655CC9-BD8A-484A-A219-2E9ED2DE0CDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E655CC9-BD8A-484A-A219-2E9ED2DE0CDD}.Release|x64.ActiveCfg = Release|x64
+		{3E655CC9-BD8A-484A-A219-2E9ED2DE0CDD}.Release|x64.Build.0 = Release|x64
+		{F6BDF5B6-E528-4B77-8070-8E9B22CD16C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6BDF5B6-E528-4B77-8070-8E9B22CD16C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6BDF5B6-E528-4B77-8070-8E9B22CD16C1}.Debug|x64.ActiveCfg = Debug|x64
+		{F6BDF5B6-E528-4B77-8070-8E9B22CD16C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6BDF5B6-E528-4B77-8070-8E9B22CD16C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6BDF5B6-E528-4B77-8070-8E9B22CD16C1}.Release|x64.ActiveCfg = Release|x64
+		{0E04AA91-82CC-476B-8EE3-490DEAD8654B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E04AA91-82CC-476B-8EE3-490DEAD8654B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E04AA91-82CC-476B-8EE3-490DEAD8654B}.Debug|x64.ActiveCfg = Debug|x64
+		{0E04AA91-82CC-476B-8EE3-490DEAD8654B}.Debug|x64.Build.0 = Debug|x64
+		{0E04AA91-82CC-476B-8EE3-490DEAD8654B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E04AA91-82CC-476B-8EE3-490DEAD8654B}.Release|x64.ActiveCfg = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
