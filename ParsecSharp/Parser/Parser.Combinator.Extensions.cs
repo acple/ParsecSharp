@@ -79,9 +79,6 @@ namespace Parsec
         public static Parser<TToken, T> Or<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, T> next)
             => parser.Alternative(next);
 
-        public static Parser<TToken, IEnumerable<T>> And<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, T> next)
-            => Sequence(parser, next);
-
         public static Parser<TToken, Unit> Ignore<TToken, T>(this Parser<TToken, T> parser)
             => parser.FMap(_ => Unit.Instance);
 
