@@ -159,7 +159,7 @@ namespace ParsecSharpTest
         [TestMethod]
         public void LookAheadTest()
         {
-            var parser = LookAhead(Letter()).And(Any());
+            var parser = LookAhead(Letter()).Append(Any());
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
@@ -575,7 +575,7 @@ namespace ParsecSharpTest
         [TestMethod]
         public void AndTest()
         {
-            var parser = Any().And(Lower()).ToStr();
+            var parser = Any().Append(Lower()).ToStr();
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
