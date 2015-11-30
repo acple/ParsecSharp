@@ -23,8 +23,8 @@ namespace Parsec
             => parser.Bind(value => Return<TToken, TResult>(function(value)));
 
         public static Parser<TToken, T> Alternative<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, T> next)
-            => parser.ModifyResult(
-                (state, fail) => next.Run(state),
-                (_, success) => success);
+            => Builder.Create<TToken, T>(state => parser.Run(state).CaseOf(
+                fail => next.Run(state),
+                success => success));
     }
 }
