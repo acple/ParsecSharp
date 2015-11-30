@@ -44,7 +44,7 @@ namespace Parsec
             => parser.Bind(x => Many_(parser, new List<T>() { x }));
 
         private static Parser<TToken, IEnumerable<T>> Many_<TToken, T>(Parser<TToken, T> parser, List<T> list)
-            => parser.Bind(x => Many_(parser, list.Append(x)), () => Return<TToken, IEnumerable<T>>(list.AsEnumerable()));
+            => parser.Bind(x => Many_(parser, list.Append(x)), () => Return<TToken, IEnumerable<T>>(list));
 
         public static Parser<TToken, IEnumerable<T>> ManyTill<TToken, T, TIgnore>(Parser<TToken, T> parser, Parser<TToken, TIgnore> terminator)
             => Return<TToken, List<T>>(() => new List<T>()).Bind(list => ManyTill_(parser, terminator, list));
