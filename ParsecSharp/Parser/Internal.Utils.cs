@@ -8,11 +8,5 @@ namespace Parsec
             => (1 <= count && state.HasValue)
                 ? state.Next.Advance(count - 1)
                 : state;
-
-        internal static List<T> Append<T>(this List<T> list, T value)
-        {
-            list.Add(value);
-            return list;
-        }
     }
 }

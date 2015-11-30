@@ -15,7 +15,7 @@ namespace Parsec
 
         public static Parser<TToken, IEnumerable<T>> Sequence<TToken, T>(IEnumerable<Parser<TToken, T>> parsers)
             => parsers.Aggregate(Return<TToken, List<T>>(() => new List<T>()),
-                    (parser, next) => parser.Bind(list => next.FMap(x => list.Append(x))))
+                    (parser, next) => parser.Bind(list => next.FMap(x => { list.Add(x); return list; })))
                 .FMap(list => list.AsEnumerable());
 
         public static Parser<TToken, IEnumerable<T>> Sequence<TToken, T>(params Parser<TToken, T>[] parsers)
@@ -44,7 +44,7 @@ namespace Parsec
             => parser.Bind(x => Many_(parser, new List<T>() { x }));
 
         private static Parser<TToken, IEnumerable<T>> Many_<TToken, T>(Parser<TToken, T> parser, List<T> list)
-            => parser.Bind(x => Many_(parser, list.Append(x)), () => Return<TToken, IEnumerable<T>>(list));
+            => parser.Bind(x => { list.Add(x); return Many_(parser, list); }, () => Return<TToken, IEnumerable<T>>(list));
 
         public static Parser<TToken, IEnumerable<T>> ManyTill<TToken, T, TIgnore>(Parser<TToken, T> parser, Parser<TToken, TIgnore> terminator)
             => Return<TToken, List<T>>(() => new List<T>()).Bind(list => ManyTill_(parser, terminator, list));
@@ -52,7 +52,7 @@ namespace Parsec
         private static Parser<TToken, IEnumerable<T>> ManyTill_<TToken, T, TIgnore>(Parser<TToken, T> parser, Parser<TToken, TIgnore> terminator, List<T> list)
             => Choice(
                 terminator.FMap(_ => list.AsEnumerable()),
-                parser.Bind(x => ManyTill_(parser, terminator, list.Append(x))));
+                parser.Bind(x => { list.Add(x); return ManyTill_(parser, terminator, list); }));
 
         public static Parser<TToken, Unit> SkipMany<TToken, T>(Parser<TToken, T> parser)
             => parser.Bind(_ => SkipMany(parser), () => Return<TToken, Unit>(Unit.Instance));
