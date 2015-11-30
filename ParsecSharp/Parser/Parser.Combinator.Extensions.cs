@@ -32,19 +32,19 @@ namespace Parsec
             => parser.Bind(x => parser.ChainL_(function, x));
 
         private static Parser<TToken, T> ChainL_<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function, T accum)
-            => Try(function.Bind(func => parser.FMap(x => func(accum, x)).Bind(y => parser.ChainL_(function, y))), () => accum);
+            => function.Bind(func => parser.FMap(x => func(accum, x)).Bind(y => parser.ChainL_(function, y)), () => Return<TToken, T>(accum));
 
         public static Parser<TToken, T> ChainR<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function, Func<T> resume)
             => Try(parser.ChainR(function), resume);
 
         public static Parser<TToken, T> ChainR<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function)
-            => parser.Bind(x => Try(function.Bind(func => parser.ChainR(function).FMap(y => func(x, y))), () => x));
+            => parser.Bind(x => function.Bind(func => parser.ChainR(function).FMap(y => func(x, y)), () => Return<TToken, T>(x)));
 
         public static Parser<TToken, TAccum> FoldL<TToken, T, TAccum>(this Parser<TToken, T> parser, TAccum seed, Func<TAccum, T, TAccum> accumulator)
-            => Try(parser.Bind(x => parser.FoldL(accumulator(seed, x), accumulator)), () => seed);
+            => parser.Bind(x => parser.FoldL(accumulator(seed, x), accumulator), () => Return<TToken, TAccum>(seed));
 
         public static Parser<TToken, TAccum> FoldR<TToken, T, TAccum>(this Parser<TToken, T> parser, TAccum seed, Func<T, TAccum, TAccum> accumulator)
-            => Try(parser.Bind(x => parser.FoldR(seed, accumulator).FMap(accum => accumulator(x, accum))), () => seed);
+            => parser.Bind(x => parser.FoldR(seed, accumulator).FMap(accum => accumulator(x, accum)), () => Return<TToken, TAccum>(seed));
 
         public static Parser<TToken, IEnumerable<T>> Repeat<TToken, T>(this Parser<TToken, T> parser, int count)
             => Sequence(Enumerable.Repeat(parser, count));
