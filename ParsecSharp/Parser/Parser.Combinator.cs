@@ -38,7 +38,7 @@ namespace Parsec
                 (state, success) => Result.Success(success.Value, state));
 
         public static Parser<TToken, IEnumerable<T>> Many<TToken, T>(Parser<TToken, T> parser)
-            => Return<TToken, List<T>>(() => new List<T>()).Bind(list => Many_(parser, list));
+            => Try(Many1(parser), () => Enumerable.Empty<T>());
 
         public static Parser<TToken, IEnumerable<T>> Many1<TToken, T>(Parser<TToken, T> parser)
             => parser.Bind(x => Many_(parser, new List<T>() { x }));
