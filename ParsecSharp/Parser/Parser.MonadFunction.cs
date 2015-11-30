@@ -14,6 +14,11 @@ namespace Parsec
         public static Parser<TToken, TResult> Bind<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, Parser<TToken, TResult>> function)
             => Builder.Create<TToken, TResult>(state => parser.Run(state).Next(function));
 
+        public static Parser<TToken, TResult> Bind<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, Parser<TToken, TResult>> onNext, Func<Parser<TToken, TResult>> onFail)
+            => Builder.Create<TToken, TResult>(state => parser.Run(state).CaseOf(
+                fail => onFail().Run(state),
+                success => success.Next(onNext)));
+
         public static Parser<TToken, TResult> FMap<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, TResult> function)
             => parser.Bind(value => Return<TToken, TResult>(function(value)));
 
