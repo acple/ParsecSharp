@@ -401,26 +401,6 @@ namespace ParsecSharpTest
         }
 
         [TestMethod]
-        public void ChainLTest1()
-        {
-            var op = Choice(
-                Char('+').FMap(_ => new Func<int, int, int>((x, y) => x + y)),
-                Char('-').FMap(_ => new Func<int, int, int>((x, y) => x - y)));
-            var num = Many1(Digit()).ToStr().FMap(x => int.Parse(x));
-            var parser = num.ChainL(op, () => -100);
-
-            var source = "10+5-3+1";
-            parser.Parse(source).CaseOf(
-                fail => Assert.Fail(),
-                success => success.Value.Is(((10 + 5) - 3) + 1));
-
-            var source2 = _abcdEFGH;
-            parser.Parse(source2).CaseOf(
-                fail => Assert.Fail(),
-                success => success.Value.Is(-100));
-        }
-
-        [TestMethod]
         public void ChainRTest()
         {
             var op = Choice(
@@ -448,26 +428,6 @@ namespace ParsecSharpTest
             parser.Parse(source4).CaseOf(
                 fail => { },
                 success => Assert.Fail());
-        }
-
-        [TestMethod]
-        public void ChainRTest1()
-        {
-            var op = Choice(
-                Char('+').FMap(_ => new Func<int, int, int>((x, y) => x + y)),
-                Char('-').FMap(_ => new Func<int, int, int>((x, y) => x - y)));
-            var num = Many1(Digit()).ToStr().FMap(x => int.Parse(x));
-            var parser = num.ChainR(op, () => -100);
-
-            var source = "10+5-3+1";
-            parser.Parse(source).CaseOf(
-                fail => Assert.Fail(),
-                success => success.Value.Is(10 + (5 - (3 + 1))));
-
-            var source2 = _abcdEFGH;
-            parser.Parse(source2).CaseOf(
-                fail => Assert.Fail(),
-                success => success.Value.Is(-100));
         }
 
         [TestMethod]

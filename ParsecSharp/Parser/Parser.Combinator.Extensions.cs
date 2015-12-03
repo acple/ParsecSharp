@@ -25,17 +25,11 @@ namespace Parsec
         public static Parser<TToken, IEnumerable<T>> SepEndBy1<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> separator)
             => parser.SepBy1(separator).Left(Optional(separator));
 
-        public static Parser<TToken, T> ChainL<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function, Func<T> resume)
-            => Try(parser.ChainL(function), resume);
-
         public static Parser<TToken, T> ChainL<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function)
             => parser.Bind(x => parser.ChainL_(function, x));
 
         private static Parser<TToken, T> ChainL_<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function, T accum)
             => function.Bind(func => parser.FMap(x => func(accum, x)).Bind(y => parser.ChainL_(function, y)), () => Return<TToken, T>(accum));
-
-        public static Parser<TToken, T> ChainR<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function, Func<T> resume)
-            => Try(parser.ChainR(function), resume);
 
         public static Parser<TToken, T> ChainR<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function)
             => parser.Bind(x => function.Bind(func => parser.ChainR(function).FMap(y => func(x, y)), () => Return<TToken, T>(x)));
