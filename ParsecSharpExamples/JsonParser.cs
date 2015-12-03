@@ -66,7 +66,7 @@ namespace ParsecSharpExamples
             => Char(':').WithSpaces();
 
         // JSON の値にマッチします。
-        // value = boolean / null / object / array / number / string
+        // value = false / true / null / object / array / number / string
         private static Parser<char, dynamic> ParseJson()
             => Choice(ParseObject(), ParseArray(), ParseString(), ParseNumber(), ParseBool(), ParseNull());
 
@@ -90,7 +90,7 @@ namespace ParsecSharpExamples
         private static Parser<char, dynamic> ParseArray()
             => Delay(ParseJson).SepBy(Comma()).Between(LeftBracket(), RightBracket())
                 .FMap(x => x.ToList())
-                .AsDynamic();
+                .AsDynamic(); // ParseJson()をDelay()で包むことでパーサ構築時の無限再帰を回避
 
         // JSON String にマッチします。
         // string = quotation-mark *char quotation-mark
@@ -139,18 +139,16 @@ namespace ParsecSharpExamples
         // JSON Number の小数部にマッチします。
         // frac = decimal-point 1*DIGIT
         private static Parser<char, double> ParseFrac()
-            => Try(
-                Char('.').Right(Many1(Digit())).ToStr().FMap(x => double.Parse("0." + x)),
-                () => 0);
+            => Try(Char('.').Right(Many1(Digit())).ToStr().FMap(x => double.Parse("0." + x)),
+                () => 0.0);
 
         // JSON Number の指数部にマッチします。
         // exp = e [ minus / plus ] 1*DIGIT
         private static Parser<char, int> ParseExp()
             => Try(from _ in OneOf("eE")
-                   from sign in Char('-').FMap(__ => new Func<int, int>(x => -x))
-                                    .Or(Optional(Char('+')).FMap(__ => new Func<int, int>(x => x)))
-                   from num in Many1(Digit()).ToStr().FMap(x => int.Parse(x))
-                   select sign(num),
+                   from sign in Char('-').ToStr().Or(Optional(Char('+')).FMap(__ => ""))
+                   from num in Many1(Digit()).ToStr()
+                   select int.Parse(sign + num),
                 () => 0);
 
         // JSON Boolean にマッチします。
