@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Parsec.Internal;
 using static Parsec.Parser;
@@ -76,8 +77,14 @@ namespace Parsec
         public static Parser<char, char> OneOf(string source)
             => Satisfy(x => source.IndexOf(x) != -1);
 
+        public static Parser<char, char> OneOf(IEnumerable<char> source)
+            => OneOf<char>(source);
+
         public static Parser<char, char> NoneOf(string source)
             => Satisfy(x => source.IndexOf(x) == -1);
+
+        public static Parser<char, char> NoneOf(IEnumerable<char> source)
+            => NoneOf<char>(source);
 
         public static Parser<char, string> String(string source)
             => Builder.Create<char, string>(state => (state.Take(source.Length).SequenceEqual(source))
