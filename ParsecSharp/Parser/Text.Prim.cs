@@ -69,7 +69,7 @@ namespace Parsec
             => Char('\r').Right(NewLine());
 
         public static Parser<char, char> EndOfLine()
-            => Choice(NewLine(), CrLf());
+            => NewLine().Alternative(CrLf());
 
         public static Parser<char, char> Tab()
             => Char('\t');
