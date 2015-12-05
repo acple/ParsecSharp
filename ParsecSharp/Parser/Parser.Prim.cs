@@ -18,8 +18,8 @@ namespace Parsec
         public static Parser<T, T> OneOf<T>(IEnumerable<T> source)
             => Satisfy<T>(x => source.Contains(x));
 
-        public static Parser<T, Unit> NoneOf<T>(IEnumerable<T> source)
-            => Not(OneOf(source));
+        public static Parser<T, T> NoneOf<T>(IEnumerable<T> source)
+            => Satisfy<T>(x => !source.Contains(x));
 
         public static Parser<T, T> Satisfy<T>(Func<T, bool> predicate)
             => Builder.Create<T, T>(state => (state.HasValue && predicate(state.Current))

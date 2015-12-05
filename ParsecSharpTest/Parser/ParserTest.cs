@@ -59,13 +59,13 @@ namespace ParsecSharpTest
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected token 'a' -- operator: Not"),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected token 'a' -- operator: Satisfy"),
                 success => Assert.Fail());
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(Unit.Instance));
+                success => success.Value.Is('1'));
         }
 
         [TestMethod]

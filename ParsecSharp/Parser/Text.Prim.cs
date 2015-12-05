@@ -76,8 +76,8 @@ namespace Parsec
         public static Parser<char, char> OneOf(string source)
             => Satisfy(x => source.IndexOf(x) != -1);
 
-        public static Parser<char, Unit> NoneOf(string source)
-            => Not(OneOf(source));
+        public static Parser<char, char> NoneOf(string source)
+            => Satisfy(x => source.IndexOf(x) == -1);
 
         public static Parser<char, string> String(string source)
             => Builder.Create<char, string>(state => (state.Take(source.Length).SequenceEqual(source))
