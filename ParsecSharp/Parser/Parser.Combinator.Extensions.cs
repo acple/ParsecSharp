@@ -32,13 +32,19 @@ namespace Parsec
             => function.Bind(func => parser.FMap(x => func(accum, x)).Bind(y => parser.ChainL_(function, y)), () => Return<TToken, T>(accum));
 
         public static Parser<TToken, T> ChainR<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function)
-            => parser.Bind(x => function.Bind(func => parser.ChainR(function).FMap(y => func(x, y)), () => Return<TToken, T>(x)));
+            => parser.ChainR_(function, x => x);
+
+        private static Parser<TToken, T> ChainR_<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function, Func<T, T> next)
+            => parser.Bind(x => function.Bind(func => parser.ChainR_(function, result => next(func(x, result))), () => Return<TToken, T>(next(x))));
 
         public static Parser<TToken, TAccum> FoldL<TToken, T, TAccum>(this Parser<TToken, T> parser, TAccum seed, Func<TAccum, T, TAccum> accumulator)
             => parser.Bind(x => parser.FoldL(accumulator(seed, x), accumulator), () => Return<TToken, TAccum>(seed));
 
         public static Parser<TToken, TAccum> FoldR<TToken, T, TAccum>(this Parser<TToken, T> parser, TAccum seed, Func<T, TAccum, TAccum> accumulator)
-            => parser.Bind(x => parser.FoldR(seed, accumulator).FMap(accum => accumulator(x, accum)), () => Return<TToken, TAccum>(seed));
+            => parser.FoldR_(seed, accumulator, x => x);
+
+        private static Parser<TToken, TAccum> FoldR_<TToken, T, TAccum>(this Parser<TToken, T> parser, TAccum seed, Func<T, TAccum, TAccum> accumulator, Func<TAccum, TAccum> next)
+            => parser.Bind(x => parser.FoldR_(seed, accumulator, accum => next(accumulator(x, accum))), () => Return<TToken, TAccum>(next(seed)));
 
         public static Parser<TToken, IEnumerable<T>> Repeat<TToken, T>(this Parser<TToken, T> parser, int count)
             => Sequence(Enumerable.Repeat(parser, count));
