@@ -20,7 +20,7 @@ namespace Parsec
                 success => success.Next(onNext)));
 
         public static Parser<TToken, TResult> FMap<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, TResult> function)
-            => parser.Bind(value => Return<TToken, TResult>(function(value)));
+            => parser.Bind(x => Return<TToken, TResult>(function(x)));
 
         public static Parser<TToken, T> Alternative<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, T> next)
             => Builder.Create<TToken, T>(state => parser.Run(state).CaseOf(
