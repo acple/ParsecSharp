@@ -61,13 +61,13 @@ namespace Parsec
             => left.Right(parser.Left(right));
 
         public static Parser<TToken, IEnumerable<T>> Append<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, T> next)
-            => parser.Bind(x => next.FMap<TToken, T, IEnumerable<T>>(y => new[] { x, y }));
+            => parser.Bind(x => next.FMap(y => new[] { x, y }.AsEnumerable()));
 
         public static Parser<TToken, IEnumerable<T>> Append<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, IEnumerable<T>> next)
-            => parser.FMap<TToken, T, IEnumerable<T>>(x => new[] { x }).Append(next);
+            => parser.Bind(x => next.FMap(y => new[] { x }.Concat(y)));
 
         public static Parser<TToken, IEnumerable<T>> Append<TToken, T>(this Parser<TToken, IEnumerable<T>> parser, Parser<TToken, T> next)
-            => parser.Append(next.FMap<TToken, T, IEnumerable<T>>(y => new[] { y }));
+            => parser.Bind(x => next.FMap(y => x.Concat(new[] { y })));
 
         public static Parser<TToken, IEnumerable<T>> Append<TToken, T>(this Parser<TToken, IEnumerable<T>> parser, Parser<TToken, IEnumerable<T>> next)
             => parser.Bind(x => next.FMap(y => x.Concat(y)));
