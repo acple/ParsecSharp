@@ -583,5 +583,27 @@ namespace ParsecSharpTest
                 fail => Assert.Fail(),
                 success => success.Value.Is(new[] { '1', '2', '3', '4', '5', '6' }));
         }
+
+        [TestMethod]
+        public void DoTest()
+        {
+            var source = _abcdEFGH;
+
+            var count = 0;
+            var parser = Many(Lower().Do(_ => count++));
+
+            parser.Parse(source);
+            count.Is(4);
+            parser.Parse(source);
+            count.Is(8);
+
+            var success = 0;
+            var fail = 0;
+            var parser2 = Many(Lower().Do(_ => success++, () => fail++).Or(Any()));
+
+            parser2.Parse(source);
+            success.Is(4);
+            fail.Is(5);
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Parsec.Internal;
 
 namespace Parsec
 {
@@ -8,5 +9,16 @@ namespace Parsec
             => result.CaseOf<object>(
                 x => { fail(x); return null; },
                 x => { success(x); return null; });
+
+        public static Parser<TToken, T> Do<TToken, T>(this Parser<TToken, T> parser, Action<T> success)
+            => parser.Do(success, () => { });
+
+        public static Parser<TToken, T> Do<TToken, T>(this Parser<TToken, T> parser, Action fail)
+            => parser.Do(_ => { }, fail);
+
+        public static Parser<TToken, T> Do<TToken, T>(this Parser<TToken, T> parser, Action<T> success, Action fail)
+            => parser.ModifyResult(
+                (_, result) => { fail(); return result; },
+                (_, result) => { success(result.Value); return result; });
     }
 }
