@@ -533,22 +533,6 @@ namespace ParsecSharpTest
         }
 
         [TestMethod]
-        public void AndTest()
-        {
-            var parser = Any().Append(Lower()).ToStr();
-
-            var source = _abcdEFGH;
-            parser.Parse(source).CaseOf(
-                fail => Assert.Fail(),
-                success => success.Value.Is("ab"));
-
-            var source2 = _123456;
-            parser.Parse(source2).CaseOf(
-                fail => { },
-                success => Assert.Fail());
-        }
-
-        [TestMethod]
         public void IgnoreTest()
         {
             var parser = Many1(Lower()).Ignore();
