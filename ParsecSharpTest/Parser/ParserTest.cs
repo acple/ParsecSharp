@@ -59,7 +59,7 @@ namespace ParsecSharpTest
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected token 'a' -- operator: Satisfy"),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected token 'a'"),
                 success => Assert.Fail());
 
             var source2 = _123456;
@@ -75,7 +75,7 @@ namespace ParsecSharpTest
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected token 'a' -- operator: Error"),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected token 'a'"),
                 success => Assert.Fail());
         }
 
@@ -120,7 +120,7 @@ namespace ParsecSharpTest
 
             var source2 = "abCDEF";
             parser.Parse(source2).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 3): Unexpected token 'C' -- operator: Satisfy"),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 3): Unexpected token 'C'"),
                 success => Assert.Fail());
         }
 
@@ -168,7 +168,7 @@ namespace ParsecSharpTest
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected token '1' -- operator: Satisfy"),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected token '1'"),
                 success => Assert.Fail());
         }
 

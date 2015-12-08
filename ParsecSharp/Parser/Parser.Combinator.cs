@@ -31,7 +31,7 @@ namespace Parsec
         public static Parser<TToken, Unit> Not<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
             => parser.ModifyResult(
                 (state, fail) => Result.Success(Unit.Instance, state),
-                (state, success) => Result.Fail<TToken, Unit>(nameof(Not), state));
+                (state, success) => Result.Fail<TToken, Unit>(state));
 
         public static Parser<TToken, T> LookAhead<TToken, T>(Parser<TToken, T> parser)
             => parser.ModifyResult(

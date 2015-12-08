@@ -4,8 +4,8 @@ namespace Parsec.Internal
 {
     public static class Result
     {
-        public static Result<TToken, T> Fail<TToken, T>(string name, IParsecStateStream<TToken> state)
-            => new ParseError<TToken, T>(name, state);
+        public static Result<TToken, T> Fail<TToken, T>(IParsecStateStream<TToken> state)
+            => new ParseError<TToken, T>(state);
 
         public static Result<TToken, T> Fail<TToken, T>(Exception exception, IParsecStateStream<TToken> state)
             => new FailWithException<TToken, T>(exception, state);
