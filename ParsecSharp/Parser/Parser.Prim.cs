@@ -28,6 +28,6 @@ namespace Parsec
             => Builder.Create<TToken, Unit>(state => Result.Fail<TToken, Unit>(state));
 
         public static Parser<TToken, Unit> Error<TToken>(string message)
-            => Builder.Create<TToken, Unit>(state => Result.FailWithMessage<TToken, Unit>(message, state));
+            => Builder.Create<TToken, Unit>(state => Result.Fail<TToken, Unit>(message, state));
     }
 }

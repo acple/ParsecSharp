@@ -81,7 +81,7 @@ namespace Parsec
 
         public static Parser<TToken, T> OnError<TToken, T>(this Parser<TToken, T> parser, Func<IParsecStateStream<TToken>, string> message)
             => parser.ModifyResult(
-                (state, fail) => Result.FailWithMessage<TToken, T>(message(state), state),
+                (state, fail) => Result.Fail<TToken, T>(message(state), state),
                 (_, success) => success);
     }
 }
