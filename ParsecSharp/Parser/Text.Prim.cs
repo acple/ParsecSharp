@@ -54,7 +54,7 @@ namespace Parsec
             => OneOf("01234567");
 
         public static Parser<char, char> HexDigit()
-            => OneOf("0123456789abcdef");
+            => OneOf("0123456789ABCDEFabcdef");
 
         public static Parser<char, char> WhiteSpace()
             => Satisfy(x => char.IsWhiteSpace(x));
