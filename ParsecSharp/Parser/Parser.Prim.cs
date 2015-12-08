@@ -8,9 +8,7 @@ namespace Parsec
     public static partial class Parser
     {
         public static Parser<T, T> Any<T>()
-            => Builder.Create<T, T>(state => (state.HasValue)
-                ? Result.Success(state.Current, state.Next)
-                : Result.Fail<T, T>(state));
+            => Satisfy<T>(_ => true);
 
         public static Parser<T, Unit> EndOfInput<T>()
             => Not(Any<T>());
