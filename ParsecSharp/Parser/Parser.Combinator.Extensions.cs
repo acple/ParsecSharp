@@ -29,7 +29,8 @@ namespace Parsec
             => parser.Bind(x => parser.ChainL_(function, x));
 
         private static Parser<TToken, T> ChainL_<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function, T accum)
-            => function.Bind(func => parser.FMap(x => func(accum, x)).Bind(y => parser.ChainL_(function, y)), () => Return<TToken, T>(accum));
+            => function.Bind(func => parser.FMap(x => func(accum, x)).Bind(y => parser.ChainL_(function, y)),
+                () => Return<TToken, T>(accum));
 
         public static Parser<TToken, T> ChainR<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function)
             => parser.ChainR_(function, result => result);

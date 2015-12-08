@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Parsec
+﻿namespace Parsec
 {
     internal static class Utils
     {
