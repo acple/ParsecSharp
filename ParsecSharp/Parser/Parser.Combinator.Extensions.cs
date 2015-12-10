@@ -36,8 +36,9 @@ namespace Parsec
             => parser.ChainR_(function, result => result);
 
         private static Parser<TToken, T> ChainR_<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function, Func<T, T> cont)
-            => parser.Bind(x => function.Bind(func => parser.ChainR_(function, result => cont(func(x, result))),
-                () => Return<TToken, T>(cont(x))));
+            => parser.Bind(x => function
+                .Bind(func => parser.ChainR_(function, result => cont(func(x, result))),
+                    () => Return<TToken, T>(cont(x))));
 
         public static Parser<TToken, TAccum> FoldL<TToken, T, TAccum>(this Parser<TToken, T> parser, TAccum seed, Func<TAccum, T, TAccum> accumulator)
             => parser.Bind(x => parser.FoldL(accumulator(seed, x), accumulator), () => Return<TToken, TAccum>(seed));
