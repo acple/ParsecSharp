@@ -94,10 +94,10 @@ namespace Parsec
         public static Parser<char, char> Satisfy(Func<char, bool> predicate)
             => Satisfy<char>(predicate);
 
-        public static Parser<char, Unit> Error()
-            => Error<char>();
+        public static Parser<char, T> Error<T>()
+            => Error<char, T>();
 
-        public static Parser<char, Unit> Error(string message)
-            => Error<char>(message);
+        public static Parser<char, T> Error<T>(string message)
+            => Error<char, T>(message);
     }
 }

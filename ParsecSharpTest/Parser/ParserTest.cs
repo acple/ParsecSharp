@@ -71,7 +71,7 @@ namespace ParsecSharpTest
         [TestMethod]
         public void ErrorTest()
         {
-            var parser = Error();
+            var parser = Error<Unit>();
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
@@ -82,7 +82,7 @@ namespace ParsecSharpTest
         [TestMethod]
         public void ErrorTest1()
         {
-            var parser = Error("errormessagetest");
+            var parser = Error<Unit>("errormessagetest");
 
             var source = _abcdEFGH;
             var result = parser.Parse(source);
