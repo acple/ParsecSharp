@@ -32,5 +32,8 @@ namespace Parsec
             => Builder.Create<TToken, T>(state => parser.Run(state).CaseOf(
                 fail => next.Run(state),
                 success => success));
+
+        public static Parser<TToken, T> Guard<TToken, T>(this Parser<TToken, T> parser, Func<T, bool> predicate)
+            => parser.Bind(x => (predicate(x)) ? Return<TToken, T>(x) : Fail<TToken, T>());
     }
 }
