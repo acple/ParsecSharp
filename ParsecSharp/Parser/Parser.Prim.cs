@@ -24,10 +24,10 @@ namespace Parsec
                 ? Result.Success(state.Current, state.Next)
                 : Result.Fail<T, T>(state));
 
-        public static Parser<TToken, T> Error<TToken, T>()
+        public static Parser<TToken, T> Fail<TToken, T>()
             => Builder.Create<TToken, T>(state => Result.Fail<TToken, T>(state));
 
-        public static Parser<TToken, T> Error<TToken, T>(string message)
+        public static Parser<TToken, T> Fail<TToken, T>(string message)
             => Builder.Create<TToken, T>(state => Result.Fail<TToken, T>(message, state));
     }
 }

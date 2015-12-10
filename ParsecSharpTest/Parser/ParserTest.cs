@@ -69,9 +69,9 @@ namespace ParsecSharpTest
         }
 
         [TestMethod]
-        public void ErrorTest()
+        public void FailTest()
         {
-            var parser = Error<Unit>();
+            var parser = Fail<Unit>();
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
@@ -80,9 +80,9 @@ namespace ParsecSharpTest
         }
 
         [TestMethod]
-        public void ErrorTest1()
+        public void FailTest1()
         {
-            var parser = Error<Unit>("errormessagetest");
+            var parser = Fail<Unit>("errormessagetest");
 
             var source = _abcdEFGH;
             var result = parser.Parse(source);
@@ -553,13 +553,13 @@ namespace ParsecSharpTest
         }
 
         [TestMethod]
-        public void OnErrorTest()
+        public void OnFailTest()
         {
-            var parser = Many1(Digit()).OnError(state => $"OnErrorTest Current: '{ state.Current }'");
+            var parser = Many1(Digit()).OnFail(state => $"OnFailTest Current: '{ state.Current }'");
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): OnErrorTest Current: 'a'"),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): OnFailTest Current: 'a'"),
                 success => Assert.Fail());
 
             var source2 = _123456;

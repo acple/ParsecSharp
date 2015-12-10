@@ -80,7 +80,7 @@ namespace Parsec
         public static Parser<TToken, Unit> Ignore<TToken, T>(this Parser<TToken, T> parser)
             => parser.FMap(_ => Unit.Instance);
 
-        public static Parser<TToken, T> OnError<TToken, T>(this Parser<TToken, T> parser, Func<IParsecStateStream<TToken>, string> message)
+        public static Parser<TToken, T> OnFail<TToken, T>(this Parser<TToken, T> parser, Func<IParsecStateStream<TToken>, string> message)
             => parser.ModifyResult(
                 (state, fail) => Result.Fail<TToken, T>(message(state), state),
                 (_, success) => success);
