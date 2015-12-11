@@ -4,7 +4,7 @@
     {
         public static LinearPosition Initial => new LinearPosition(0);
 
-        public int Line => 1;
+        public int Line => 0;
 
         public int Column { get; }
 
@@ -17,6 +17,6 @@
             => new LinearPosition(this.Column + 1);
 
         public override string ToString()
-            => $"Position: { this.Column }";
+            => $"Index: { this.Column }";
     }
 }

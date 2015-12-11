@@ -36,8 +36,7 @@ namespace Parsec
                 var token = reader.Read();
                 this.HasValue = token != -1;
                 this.Current = (this.HasValue) ? (char)token : default(char);
-                this._next = new Lazy<IParsecStateStream<char>>(
-                    () => new TextStream(reader, position.Next(this.Current)), false);
+                this._next = new Lazy<IParsecStateStream<char>>(() => new TextStream(reader, position.Next(this.Current)), false);
             }
             catch
             {

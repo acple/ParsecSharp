@@ -97,7 +97,10 @@ namespace Parsec
         public static Parser<char, T> Fail<T>()
             => Fail<char, T>();
 
-        public static Parser<char, T> Fail<T>(string message)
+        public static Parser<char, T> Fail<T>(Func<IParsecState<char>, string> message)
             => Fail<char, T>(message);
+
+        public static Parser<char, T> Abort<T>(Func<IParsecState<char>, string> message)
+            => Abort<char, T>(message);
     }
 }

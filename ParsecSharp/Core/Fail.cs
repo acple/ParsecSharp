@@ -4,15 +4,13 @@ namespace Parsec
 {
     public abstract class Fail<TToken, T> : Result<TToken, T>
     {
-        protected IParsecStateStream<TToken> State { get; }
+        public IParsecState<TToken> State { get; }
 
-        public abstract ParsecException Exception { get; }
+        public abstract ParsecException<TToken> Exception { get; }
 
         public sealed override T Value { get { throw this.Exception; } }
 
-        public IPosition Position => this.State.Position;
-
-        internal Fail(IParsecStateStream<TToken> state)
+        internal Fail(IParsecState<TToken> state)
         {
             this.State = state;
         }
@@ -23,6 +21,6 @@ namespace Parsec
         protected abstract string ToStringInternal();
 
         public sealed override string ToString()
-            => $"Parser Fail ({ this.Position }): { this.ToStringInternal() }";
+            => $"Parser Fail ({ this.State.Position }): { this.ToStringInternal() }";
     }
 }

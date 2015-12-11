@@ -6,14 +6,14 @@ namespace Parsec.Internal
     {
         private readonly Exception _exception;
 
-        public override ParsecException Exception => new ParsecException(this.ToString(), this._exception);
+        public override ParsecException<TToken> Exception => new ParsecException<TToken>(this.ToString(), this._exception, this.State);
 
-        internal FailWithException(Exception exception, IParsecStateStream<TToken> state) : base(state)
+        internal FailWithException(Exception exception, IParsecState<TToken> state) : base(state)
         {
             this._exception = exception;
         }
 
-        internal override Result<TToken, TResult> Next<TResult>(Func<T, Parser<TToken, TResult>> function)
+        internal override Result<TToken, TResult> Next<TResult>(Func<T, Parser<TToken, TResult>> _)
             => new FailWithException<TToken, TResult>(this._exception, this.State);
 
         protected override string ToStringInternal()

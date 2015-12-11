@@ -33,8 +33,7 @@ namespace Parsec.Internal
             {
                 this.HasValue = enumerator.MoveNext();
                 this.Current = (this.HasValue) ? enumerator.Current : default(T);
-                this._next = new Lazy<IParsecStateStream<T>>(
-                    () => new EnumerableStream<T>(enumerator, this._position.Next()), false);
+                this._next = new Lazy<IParsecStateStream<T>>(() => new EnumerableStream<T>(enumerator, this._position.Next()), false);
             }
             catch
             {

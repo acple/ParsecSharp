@@ -59,7 +59,7 @@ namespace ParsecSharpTest
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected token 'a'"),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected \"a\""),
                 success => Assert.Fail());
 
             var source2 = _123456;
@@ -75,14 +75,14 @@ namespace ParsecSharpTest
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected token 'a'"),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected \"a\""),
                 success => Assert.Fail());
         }
 
         [TestMethod]
         public void FailTest1()
         {
-            var parser = Fail<Unit>("errormessagetest");
+            var parser = Fail<Unit>(_ => "errormessagetest");
 
             var source = _abcdEFGH;
             var result = parser.Parse(source);
@@ -120,7 +120,7 @@ namespace ParsecSharpTest
 
             var source2 = "abCDEF";
             parser.Parse(source2).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 3): Unexpected token 'C'"),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 3): Unexpected \"C\""),
                 success => Assert.Fail());
         }
 
@@ -168,7 +168,7 @@ namespace ParsecSharpTest
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected token '1'"),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected \"1\""),
                 success => Assert.Fail());
         }
 
@@ -553,13 +553,13 @@ namespace ParsecSharpTest
         }
 
         [TestMethod]
-        public void OnFailTest()
+        public void MessageTest()
         {
-            var parser = Many1(Digit()).OnFail(state => $"OnFailTest Current: '{ state.Current }'");
+            var parser = Many1(Digit()).Message(state => $"MessageTest Current: '{ state.Current }'");
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): OnFailTest Current: 'a'"),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): MessageTest Current: 'a'"),
                 success => Assert.Fail());
 
             var source2 = _123456;
@@ -583,7 +583,7 @@ namespace ParsecSharpTest
 
             var success = 0;
             var fail = 0;
-            var parser2 = Many(Lower().Do(_ => success++, () => fail++).Or(Any()));
+            var parser2 = Many(Lower().Do(_ => success++, _ => fail++).Or(Any()));
 
             parser2.Parse(source);
             success.Is(4);

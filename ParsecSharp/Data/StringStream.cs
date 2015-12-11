@@ -17,8 +17,7 @@ namespace Parsec
 
         public IPosition Position => this._position;
 
-        public IParsecStateStream<char> Next =>
-            new StringStream(this._source, this._index + 1, this._position.Next(this.Current));
+        public IParsecStateStream<char> Next => new StringStream(this._source, this._index + 1, this._position.Next(this.Current));
 
         public StringStream(string source) : this(source, 0, TextPosition.Initial)
         { }

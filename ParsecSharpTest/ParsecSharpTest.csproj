@@ -76,7 +76,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Parser\ParserTest.cs" />
+    <Compile Include="ParserTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

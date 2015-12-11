@@ -22,8 +22,8 @@ namespace Parsec
         public static Parser<TToken, T> Fail<TToken, T>()
             => Builder.Create<TToken, T>(state => Result.Fail<TToken, T>(state));
 
-        public static Parser<TToken, T> Fail<TToken, T>(string message)
-            => Builder.Create<TToken, T>(state => Result.Fail<TToken, T>(message, state));
+        public static Parser<TToken, T> Fail<TToken, T>(Func<IParsecState<TToken>, string> message)
+            => Builder.Create<TToken, T>(state => Result.Fail<TToken, T>(message(state), state));
 
         public static Parser<TToken, TResult> FMap<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, TResult> function)
             => parser.Bind(x => Return<TToken, TResult>(function(x)));

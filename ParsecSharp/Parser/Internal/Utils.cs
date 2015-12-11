@@ -1,4 +1,4 @@
-﻿namespace Parsec
+﻿namespace Parsec.Internal
 {
     internal static class Utils
     {

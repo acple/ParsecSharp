@@ -23,5 +23,8 @@ namespace Parsec
             => Builder.Create<T, T>(state => (state.HasValue && predicate(state.Current))
                 ? Result.Success(state.Current, state.Next)
                 : Result.Fail<T, T>(state));
+
+        public static Parser<TToken, T> Abort<TToken, T>(Func<IParsecState<TToken>, string> message)
+            => Builder.Create<TToken, T>(state => { throw new ParsecException<TToken>(message(state), state); });
     }
 }

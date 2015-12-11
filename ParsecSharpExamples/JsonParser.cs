@@ -117,12 +117,11 @@ namespace ParsecSharpExamples
         // JSON Number にマッチします。double型を返します。
         // number = [ minus ] int [ frac ] [ exp ]
         private static Parser<char, dynamic> ParseNumber()
-            => (from neg in ParseSign()
-                from integer in ParseInt()
-                from frac in ParseFrac()
-                from exp in ParseExp()
-                select neg((integer + frac) * Math.Pow(10, exp)))
-                .AsDynamic();
+            => from neg in ParseSign()
+               from integer in ParseInt()
+               from frac in ParseFrac()
+               from exp in ParseExp()
+               select neg((integer + frac) * Math.Pow(10, exp)) as dynamic;
 
         // JSON Number の符号にマッチします。double型の符号を反転させるFuncを返します。
         // minus = %x2D               ; -

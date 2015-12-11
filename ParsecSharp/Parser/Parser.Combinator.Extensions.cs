@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Parsec.Internal;
 
 namespace Parsec
 {
@@ -80,9 +79,10 @@ namespace Parsec
         public static Parser<TToken, Unit> Ignore<TToken, T>(this Parser<TToken, T> parser)
             => parser.FMap(_ => Unit.Instance);
 
-        public static Parser<TToken, T> OnFail<TToken, T>(this Parser<TToken, T> parser, Func<IParsecStateStream<TToken>, string> message)
-            => parser.ModifyResult(
-                (state, fail) => Result.Fail<TToken, T>(message(state), state),
-                (_, success) => success);
+        public static Parser<TToken, T> Message<TToken, T>(this Parser<TToken, T> parser, Func<IParsecState<TToken>, string> message)
+            => parser.Alternative(Fail<TToken, T>(message));
+
+        public static Parser<TToken, T> Error<TToken, T>(this Parser<TToken, T> parser, Func<IParsecState<TToken>, string> message)
+            => parser.Alternative(Abort<TToken, T>(message));
     }
 }

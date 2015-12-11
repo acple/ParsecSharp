@@ -22,9 +22,13 @@ namespace Parsec
                 using (source)
                     return this.Run(source);
             }
+            catch (ParsecException<TToken> exception)
+            {
+                return new UserError<TToken, T>(exception);
+            }
             catch (Exception exception)
             {
-                return Result.Fail<TToken, T>(exception, source);
+                return new FailWithException<TToken, T>(exception, source);
             }
         }
     }
