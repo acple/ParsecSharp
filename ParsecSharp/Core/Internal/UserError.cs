@@ -15,6 +15,6 @@ namespace Parsec.Internal
             => new UserError<TToken, TResult>(this.Exception);
 
         protected override string ToStringInternal()
-            => this.Exception.ToString();
+            => this.Exception.Message;
     }
 }
