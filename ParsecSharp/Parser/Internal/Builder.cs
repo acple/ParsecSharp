@@ -11,7 +11,7 @@ namespace Parsec.Internal
             => parser.Run(state);
 
         public static Parser<TToken, TResult> ModifyResult<TToken, T, TResult>(this Parser<TToken, T> parser, Func<IParsecStateStream<TToken>, Fail<TToken, T>, Result<TToken, TResult>> failHandler, Func<IParsecStateStream<TToken>, Success<TToken, T>, Result<TToken, TResult>> successHandler)
-            => new Parser<TToken, TResult>(state => parser.Run(state).CaseOf(
+            => Create<TToken, TResult>(state => parser.Run(state).CaseOf(
                 fail => failHandler(state, fail),
                 success => successHandler(state, success)));
     }
