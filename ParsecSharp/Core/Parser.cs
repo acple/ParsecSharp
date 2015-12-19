@@ -17,18 +17,20 @@ namespace Parsec
 
         public Result<TToken, T> Parse(IParsecStateStream<TToken> source)
         {
-            try
+            using (source)
             {
-                using (source)
+                try
+                {
                     return this.Run(source);
-            }
-            catch (ParsecException<TToken> exception)
-            {
-                return new UserError<TToken, T>(exception);
-            }
-            catch (Exception exception)
-            {
-                return new FailWithException<TToken, T>(exception, source);
+                }
+                catch (ParsecException<TToken> exception)
+                {
+                    return new UserError<TToken, T>(exception);
+                }
+                catch (Exception exception)
+                {
+                    return new FailWithException<TToken, T>(exception, source);
+                }
             }
         }
     }
