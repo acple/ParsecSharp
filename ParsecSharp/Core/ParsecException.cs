@@ -3,16 +3,16 @@
 namespace Parsec
 {
     [Serializable]
-    public class ParsecException<TToken> : Exception
+    public class ParsecException<T> : Exception
     {
-        public IParsecState<TToken> State { get; }
+        public IParsecState<T> State { get; }
 
-        internal ParsecException(string message, IParsecState<TToken> state) : base(message)
+        internal ParsecException(string message, IParsecState<T> state) : base(message)
         {
             this.State = state;
         }
 
-        internal ParsecException(string message, Exception exception, IParsecState<TToken> state) : base(message, exception)
+        internal ParsecException(string message, Exception exception, IParsecState<T> state) : base(message, exception)
         {
             this.State = state;
         }
