@@ -44,11 +44,20 @@ namespace Parsec
         public static Parser<char, char> Separator()
             => Satisfy(x => char.IsSeparator(x));
 
+        public static Parser<char, char> Punctuation()
+            => Satisfy(x => char.IsPunctuation(x));
+
         public static Parser<char, char> Number()
             => Satisfy(x => char.IsNumber(x));
 
         public static Parser<char, char> Surrogate()
             => Satisfy(x => char.IsSurrogate(x));
+
+        public static Parser<char, char> HighSurrogate()
+            => Satisfy(x => char.IsHighSurrogate(x));
+
+        public static Parser<char, char> LowSurrogate()
+            => Satisfy(x => char.IsLowSurrogate(x));
 
         public static Parser<char, char> ControlChar()
             => Satisfy(x => char.IsControl(x));
