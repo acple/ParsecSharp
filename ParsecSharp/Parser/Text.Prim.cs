@@ -8,9 +8,6 @@ namespace Parsec
 {
     public static partial class Text
     {
-        public static Parser<char, T> Return<T>(T value)
-            => Return<char, T>(value);
-
         public static Parser<char, char> Any()
             => Any<char>();
 
@@ -20,14 +17,14 @@ namespace Parsec
         public static Parser<char, char> Char(char character)
             => Satisfy(x => x == character);
 
-        public static Parser<char, char> ControlChar()
-            => Satisfy(x => char.IsControl(x));
-
         public static Parser<char, char> Letter()
             => Satisfy(x => char.IsLetter(x));
 
         public static Parser<char, char> LetterOrDigit()
             => Satisfy(x => char.IsLetterOrDigit(x));
+
+        public static Parser<char, char> Upper()
+            => Satisfy(x => char.IsUpper(x));
 
         public static Parser<char, char> Lower()
             => Satisfy(x => char.IsLower(x));
@@ -35,26 +32,26 @@ namespace Parsec
         public static Parser<char, char> Digit()
             => Satisfy(x => char.IsDigit(x));
 
-        public static Parser<char, char> Number()
-            => Satisfy(x => char.IsNumber(x));
-
-        public static Parser<char, char> Separator()
-            => Satisfy(x => char.IsSeparator(x));
-
-        public static Parser<char, char> Surrogate()
-            => Satisfy(x => char.IsSurrogate(x));
-
-        public static Parser<char, char> Symbol()
-            => Satisfy(x => char.IsSymbol(x));
-
-        public static Parser<char, char> Upper()
-            => Satisfy(x => char.IsUpper(x));
-
         public static Parser<char, char> OctDigit()
             => OneOf("01234567");
 
         public static Parser<char, char> HexDigit()
             => OneOf("0123456789ABCDEFabcdef");
+
+        public static Parser<char, char> Symbol()
+            => Satisfy(x => char.IsSymbol(x));
+
+        public static Parser<char, char> Separator()
+            => Satisfy(x => char.IsSeparator(x));
+
+        public static Parser<char, char> Number()
+            => Satisfy(x => char.IsNumber(x));
+
+        public static Parser<char, char> Surrogate()
+            => Satisfy(x => char.IsSurrogate(x));
+
+        public static Parser<char, char> ControlChar()
+            => Satisfy(x => char.IsControl(x));
 
         public static Parser<char, char> WhiteSpace()
             => Satisfy(x => char.IsWhiteSpace(x));
@@ -93,6 +90,9 @@ namespace Parsec
 
         public static Parser<char, char> Satisfy(Func<char, bool> predicate)
             => Satisfy<char>(predicate);
+
+        public static Parser<char, T> Return<T>(T value)
+            => Return<char, T>(value);
 
         public static Parser<char, T> Fail<T>()
             => Fail<char, T>();
