@@ -11,13 +11,11 @@ namespace Parsec
 
         private readonly Lazy<IParsecStateStream<char>> _next;
 
-        private readonly TextPosition _position;
-
         public char Current { get; }
 
         public bool HasValue { get; }
 
-        public IPosition Position => this._position;
+        public IPosition Position { get; }
 
         public IParsecStateStream<char> Next => this._next.Value;
 
@@ -30,7 +28,7 @@ namespace Parsec
         private TextStream(TextReader reader, TextPosition position)
         {
             this._disposable = reader;
-            this._position = position;
+            this.Position = position;
             try
             {
                 var token = reader.Read();
