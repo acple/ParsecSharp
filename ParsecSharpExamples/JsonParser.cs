@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -74,16 +73,16 @@ namespace ParsecSharpExamples
         // object = begin-object [ member *( value-separator member ) ] end-object
         private static Parser<char, dynamic> ParseObject()
             => ParseKeyValuePair().SepBy(Comma()).Between(LeftBrace(), RightBrace())
-                .FMap(x => x.ToDictionary(item => item.Key, item => item.Value))
+                .FMap(x => x.ToDictionary(item => item.Item1, item => item.Item2))
                 .AsDynamic();
 
         // Key : Value ペアにマッチします。
         // member = string name-separator value
-        private static Parser<char, KeyValuePair<string, dynamic>> ParseKeyValuePair()
+        private static Parser<char, Tuple<string, dynamic>> ParseKeyValuePair()
             => from key in ParseString()
                from _ in Colon()
                from value in ParseJson()
-               select new KeyValuePair<string, dynamic>(key, value);
+               select new Tuple<string, dynamic>(key, value);
 
         // JSON Array にマッチします。
         // array = begin-array [ value *( value-separator value ) ] end-array
