@@ -57,8 +57,8 @@ namespace Parsec
         public static Parser<TToken, TRight> Right<TToken, TLeft, TRight>(this Parser<TToken, TLeft> parser, Parser<TToken, TRight> next)
             => parser.Bind(_ => next);
 
-        public static Parser<TToken, T> Between<TToken, T, TLeft, TRight>(this Parser<TToken, T> parser, Parser<TToken, TLeft> left, Parser<TToken, TRight> right)
-            => left.Right(parser.Left(right));
+        public static Parser<TToken, T> Between<TToken, T, TLeft, TRight>(this Parser<TToken, T> parser, Parser<TToken, TLeft> open, Parser<TToken, TRight> close)
+            => open.Right(parser.Left(close));
 
         public static Parser<TToken, IEnumerable<T>> Append<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, T> next)
             => parser.Bind(x => next.FMap(y => new[] { x, y }.AsEnumerable()));

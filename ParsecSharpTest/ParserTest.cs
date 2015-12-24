@@ -609,8 +609,8 @@ namespace ParsecSharpTest
         [TestMethod]
         public void BetweenTest()
         {
-            // parser を left と right で挟み込んだ形の規則にマッチするパーサを作成します。
-            // left と right の結果は破棄され、中央の結果のみを返します。
+            // parser を open と close で挟み込んだ形の規則にマッチするパーサを作成します。
+            // open と close の結果は破棄され、中央の結果のみを返します。
 
             // 1文字以上のLetterを"[]"で包んだものにマッチするパーサ。
             // ( "[" 1*Letter "]" )
@@ -621,10 +621,10 @@ namespace ParsecSharpTest
                 fail => Assert.Fail(),
                 success => success.Value.Is(_abcdEFGH));
 
-            // Many(Any()) などを parser に渡した場合、終端まで Any にマッチするため、 right は EndOfInput にマッチします。
+            // Many(Any()) などを parser に渡した場合、終端まで Any にマッチするため、 close は EndOfInput にマッチします。
             var parser2 = Many(Any()).Between(Char('\"'), Char('\"')); // ( dquote *Any dquote ) のつもり
             parser2.Parse("\"abCD1234\"").CaseOf(
-                fail => { /* Many(Any()) が abCD1234\" までマッチしてしまうため、right の \" がマッチせずFailになる */ },
+                fail => { /* Many(Any()) が abCD1234\" までマッチしてしまうため、close の \" がマッチせずFailになる */ },
                 success => Assert.Fail());
             // この形にマッチするパーサを作成するときは、ManyTill を使用してください。
         }
