@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package>
+    <metadata>
+        <id>$id$</id>
+        <version>$version$</version>
+        <authors>acple</authors>
+        <owners>acple</owners>
+        <licenseUrl>https://raw.githubusercontent.com/acple/ParsecSharp/master/LICENSE</licenseUrl>
+        <projectUrl>https://github.com/acple/ParsecSharp</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>$description$</description>
+        <tags>parser combinator linq</tags>
+    </metadata>
+</package>
