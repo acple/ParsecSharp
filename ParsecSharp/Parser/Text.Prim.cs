@@ -93,9 +93,10 @@ namespace Parsec
             => NoneOf<char>(source);
 
         public static Parser<char, string> String(string source)
-            => Builder.Create<char, string>(state => (state.Take(source.Length).SequenceEqual(source))
-                ? Result.Success(source, state.Advance(source.Length))
-                : Result.Fail<char, string>(state));
+            => Builder.Create<char, string>(state =>
+                (source.ToCharArray().SequenceEqual(state.Take(source.Length)))
+                    ? Result.Success(source, state.Advance(source.Length))
+                    : Result.Fail<char, string>(state));
 
         public static Parser<char, char> Satisfy(Func<char, bool> predicate)
             => Satisfy<char>(predicate);
