@@ -14,6 +14,9 @@ namespace Parsec
         public static Parser<char, Unit> EndOfInput()
             => EndOfInput<char>();
 
+        public static Parser<char, char> Satisfy(Func<char, bool> predicate)
+            => Satisfy<char>(predicate);
+
         public static Parser<char, char> Char(char character)
             => Satisfy(x => x == character);
 
@@ -97,23 +100,5 @@ namespace Parsec
                 (source.ToCharArray().SequenceEqual(state.Take(source.Length)))
                     ? Result.Success(source, state.Advance(source.Length))
                     : Result.Fail<char, string>(state));
-
-        public static Parser<char, char> Satisfy(Func<char, bool> predicate)
-            => Satisfy<char>(predicate);
-
-        public static Parser<char, T> Return<T>(T value)
-            => Return<char, T>(value);
-
-        public static Parser<char, T> Fail<T>()
-            => Fail<char, T>();
-
-        public static Parser<char, T> Fail<T>(Func<IParsecState<char>, string> message)
-            => Fail<char, T>(message);
-
-        public static Parser<char, IPosition> GetPosition()
-            => GetPosition<char>();
-
-        public static Parser<char, T> Abort<T>(Func<IParsecState<char>, string> message)
-            => Abort<char, T>(message);
     }
 }

@@ -62,10 +62,12 @@
     <Compile Include="Parser\Parser.Combinator.cs" />
     <Compile Include="Parser\Parser.Combinator.Extensions.cs" />
     <Compile Include="Parser\Parser.Linq.cs" />
-    <Compile Include="Parser\Parser.MonadFunction.cs" />
+    <Compile Include="Parser\Parser.Monad.cs" />
+    <Compile Include="Parser\Parser.Monad.Extensions.cs" />
     <Compile Include="Parser\Parser.OtherExtensions.cs" />
     <Compile Include="Parser\Parser.Prim.cs" />
     <Compile Include="Parser\Text.Extensions.cs" />
+    <Compile Include="Parser\Text.Monad.cs" />
     <Compile Include="Parser\Text.Prim.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
