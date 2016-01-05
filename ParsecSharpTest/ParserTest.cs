@@ -120,6 +120,21 @@ namespace ParsecSharpTest
         }
 
         [TestMethod]
+        public void GetPositionTest()
+        {
+            // IPositionを返すパーサを作成します。
+            // このパーサは入力を消費しません。
+
+            // Anyに3回マッチした後、その時点のPositionを返すパーサ。
+            var parser = Any().Repeat(3).Right(GetPosition());
+
+            var source = _abcdEFGH;
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(),
+                success => success.Value.Column.Is(4));
+        }
+
+        [TestMethod]
         public void ChoiceTest()
         {
             // parsers を前から1つずつ適用し、最初に成功したものを結果として返すパーサを作成します。
