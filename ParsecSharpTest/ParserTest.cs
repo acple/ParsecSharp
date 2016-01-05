@@ -102,19 +102,11 @@ namespace ParsecSharpTest
             parser.Parse(source).CaseOf(
                 fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected \"a\""),
                 success => Assert.Fail());
-        }
 
-        [TestMethod]
-        public void FailTest1()
-        {
-            // 失敗したという結果を返すパーサを作成します。
-            // エラーメッセージを記述することができます。
+            // エラーメッセージを記述することができるオーバーロード。
+            var parser2 = Fail<Unit>(_ => "errormessagetest");
 
-            var parser = Fail<Unit>(_ => "errormessagetest");
-
-            var source = _abcdEFGH;
-            var result = parser.Parse(source);
-            parser.Parse(source).CaseOf(
+            parser2.Parse(source).CaseOf(
                 fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): errormessagetest"),
                 success => Assert.Fail());
         }
