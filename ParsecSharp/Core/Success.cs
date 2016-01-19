@@ -21,6 +21,6 @@ namespace Parsec
             => success(this);
 
         public override string ToString()
-            => this.Value.ToString();
+            => this.Value?.ToString() ?? string.Empty;
     }
 }
