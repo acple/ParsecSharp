@@ -15,9 +15,8 @@ namespace Parsec
 
         public static Parser<TToken, IEnumerable<T>> Sequence<TToken, T>(IEnumerable<Parser<TToken, T>> parsers)
             => Return<TToken, List<T>>(() => new List<T>()).Bind(list => parsers.Reverse()
-                .Aggregate(Return<TToken, Unit>(Unit.Instance),
-                    (next, parser) => parser.Bind(x => { list.Add(x); return next; }))
-                .FMap(_ => list.AsEnumerable()));
+                .Aggregate(Return<TToken, IEnumerable<T>>(list),
+                    (next, parser) => parser.Bind(x => { list.Add(x); return next; })));
 
         public static Parser<TToken, IEnumerable<T>> Sequence<TToken, T>(params Parser<TToken, T>[] parsers)
             => Sequence(parsers.AsEnumerable());
