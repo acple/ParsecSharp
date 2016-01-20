@@ -7,13 +7,15 @@ namespace Parsec.Internal
     {
         private readonly IDisposable _disposable;
 
+        private readonly LinearPosition _position;
+
         private readonly Lazy<IParsecStateStream<T>> _next;
 
         public T Current { get; }
 
         public bool HasValue { get; }
 
-        public IPosition Position { get; }
+        public IPosition Position => this._position;
 
         public IParsecStateStream<T> Next => this._next.Value;
 
@@ -26,7 +28,7 @@ namespace Parsec.Internal
         private EnumerableStream(IEnumerator<T> enumerator, LinearPosition position)
         {
             this._disposable = enumerator;
-            this.Position = position;
+            this._position = position;
             try
             {
                 this.HasValue = enumerator.MoveNext();
