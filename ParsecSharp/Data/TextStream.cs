@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Parsec.Internal;
 
 namespace Parsec
@@ -21,7 +22,10 @@ namespace Parsec
 
         public IParsecStateStream<char> Next => this._next.Value;
 
-        public TextStream(Stream stream) : this(new StreamReader(stream))
+        public TextStream(Stream stream) : this(stream, Encoding.UTF8)
+        { }
+
+        public TextStream(Stream stream, Encoding encoding) : this(new StreamReader(stream, encoding))
         { }
 
         public TextStream(TextReader reader) : this(reader, TextPosition.Initial)
