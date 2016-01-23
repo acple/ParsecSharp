@@ -37,6 +37,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CsvParser.cs" />
     <Compile Include="JsonParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
