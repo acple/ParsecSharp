@@ -458,6 +458,26 @@ namespace ParsecSharpTest
         }
 
         [TestMethod]
+        public void ExceptTest()
+        {
+            // 指定したパーサに対して除外ルールを適用したパーサを作成します。
+
+            var source = _123456;
+
+            // '5' 以外の数字にマッチするパーサ。
+            var parser = Digit().Except(Char('5'));
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(),
+                success => success.Value.Is('1'));
+
+            // '5' 以外の数字に連続でマッチし、文字列に変換したものを返すパーサ。
+            var parser2 = Many(parser).ToStr();
+            parser2.Parse(source).CaseOf(
+                fail => Assert.Fail(),
+                success => success.Value.Is("1234"));
+        }
+
+        [TestMethod]
         public void ChainLTest()
         {
             // 1個以上の値と演算子に交互にマッチし、指定した演算を左から順に適用するパーサを作成します。
