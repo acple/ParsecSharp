@@ -24,6 +24,15 @@ namespace Parsec
         public static Parser<TToken, IEnumerable<T>> SepEndBy1<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> separator)
             => parser.SepBy1(separator).Left(Optional(separator));
 
+        public static Parser<TToken, T> Except<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> except)
+            => Not(except).Right(parser);
+
+        public static Parser<TToken, T> Except<TToken, T, TIgnore>(this Parser<TToken, T> parser, IEnumerable<Parser<TToken, TIgnore>> parsers)
+            => parser.Except(Choice(parsers));
+
+        public static Parser<TToken, T> Except<TToken, T, TIgnore>(this Parser<TToken, T> parser, params Parser<TToken, TIgnore>[] parsers)
+            => parser.Except(parsers.AsEnumerable());
+
         public static Parser<TToken, T> ChainL<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function)
             => parser.Bind(x => parser.ChainL_(function, x));
 
