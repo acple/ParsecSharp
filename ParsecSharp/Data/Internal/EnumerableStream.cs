@@ -49,7 +49,9 @@ namespace Parsec.Internal
             => this._disposable.Dispose();
 
         public override string ToString()
-            => this.Current?.ToString() ?? string.Empty;
+            => (this.HasValue)
+                ? this.Current?.ToString() ?? string.Empty
+                : string.Empty;
 
         IEnumerator<T> IEnumerable<T>.GetEnumerator()
             => new ParsecStateStreamEnumerator<T>(this);

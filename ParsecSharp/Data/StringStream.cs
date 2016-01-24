@@ -33,7 +33,7 @@ namespace Parsec
         { }
 
         public override string ToString()
-            => this.Current.ToString();
+            => (this.HasValue) ? this.Current.ToString() : string.Empty;
 
         IEnumerator<char> IEnumerable<char>.GetEnumerator()
             => new ParsecStateStreamEnumerator<char>(this);
