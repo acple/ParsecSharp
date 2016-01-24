@@ -21,6 +21,9 @@ namespace Parsec.Internal
         public void Dispose()
         { }
 
+        public override string ToString()
+            => string.Empty;
+
         IEnumerator<T> IEnumerable<T>.GetEnumerator()
             => Enumerable.Empty<T>().GetEnumerator();
 
