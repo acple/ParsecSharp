@@ -19,7 +19,7 @@ namespace Parsec
             => Many1(parser.Left(separator));
 
         public static Parser<TToken, IEnumerable<T>> SepEndBy<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> separator)
-            => parser.SepBy(separator).Left(Optional(separator));
+            => Try(parser.SepEndBy1(separator), () => Enumerable.Empty<T>());
 
         public static Parser<TToken, IEnumerable<T>> SepEndBy1<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> separator)
             => parser.SepBy1(separator).Left(Optional(separator));
