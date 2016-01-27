@@ -19,7 +19,7 @@ namespace ParsecSharpExamples
 
         // Streamをパースしてdynamicに詰めて返します。
         public static Result<char, dynamic> Parse(Stream json)
-            => Parse(json, Encoding.UTF8);
+            => Json().Parse(json);
 
         // Streamをパースしてdynamicに詰めて返します。
         // Encoding指定可能オーバーロード。
@@ -131,7 +131,7 @@ namespace ParsecSharpExamples
         // minus = %x2D ; == '-'
         private static Parser<char, Func<double, double>> Sign()
             => Try(Char('-').FMap(_ => new Func<double, double>(x => -x)),
-                () => new Func<double, double>(x => x));
+                () => x => x);
 
         // JSON Number の整数部にマッチします。
         // int = zero / ( digit1-9 *DIGIT )
