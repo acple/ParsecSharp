@@ -7,16 +7,16 @@ namespace Parsec.Internal
     {
         public static IParsecStateStream<T> Instance { get; } = new EmptyStream<T>();
 
-        private EmptyStream()
-        { }
-
         public T Current => default(T);
 
         public bool HasValue => false;
 
+        public IPosition Position => LinearPosition.Initial;
+
         public IParsecStateStream<T> Next => this;
 
-        public IPosition Position => LinearPosition.Initial;
+        private EmptyStream()
+        { }
 
         public void Dispose()
         { }
