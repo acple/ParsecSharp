@@ -10,12 +10,6 @@
         public override bool Equals(object obj)
             => obj is Unit;
 
-        public static bool operator ==(Unit _, Unit __)
-            => true;
-
-        public static bool operator !=(Unit _, Unit __)
-            => false;
-
         public override int GetHashCode()
             => 0;
 
