@@ -4,8 +4,6 @@
     {
         private readonly string _message;
 
-        public override ParsecException<TToken> Exception => new ParsecException<TToken>(this.ToString(), this.State);
-
         internal FailWithMessage(string message, IParsecState<TToken> state) : base(state)
         {
             this._message = message;

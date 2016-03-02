@@ -2,8 +2,6 @@
 {
     internal class ParseError<TToken, T> : Fail<TToken, T>
     {
-        public override ParsecException<TToken> Exception => new ParsecException<TToken>(this.ToString(), this.State);
-
         internal ParseError(IParsecState<TToken> state) : base(state)
         { }
 
