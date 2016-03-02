@@ -10,9 +10,9 @@ namespace ParsecSharpTest
     [TestClass]
     public class ParserTest
     {
-        private readonly string _abcdEFGH = "abcdEFGH";
+        private const string _abcdEFGH = "abcdEFGH";
 
-        private readonly string _123456 = "123456";
+        private const string _123456 = "123456";
 
         [TestMethod]
         public void AnyTest()
@@ -96,16 +96,15 @@ namespace ParsecSharpTest
         {
             // 失敗したという結果を返すパーサを作成します。
 
-            var parser = Fail<Unit>();
-
             var source = _abcdEFGH;
+
+            var parser = Fail<Unit>();
             parser.Parse(source).CaseOf(
                 fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected \"a\""),
                 success => Assert.Fail());
 
             // エラーメッセージを記述することができるオーバーロード。
             var parser2 = Fail<Unit>(_ => "errormessagetest");
-
             parser2.Parse(source).CaseOf(
                 fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): errormessagetest"),
                 success => Assert.Fail());
@@ -155,7 +154,6 @@ namespace ParsecSharpTest
             var parser = Sequence(Char('a'), Char('b'), Char('c'), Char('d')).ToStr();
 
             var source = _abcdEFGH;
-
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(),
                 success => success.Value.Is("abcd"));
@@ -350,7 +348,7 @@ namespace ParsecSharpTest
         [TestMethod]
         public void SepBy1Test()
         {
-            // separatorによって区切られた形の parser が1回以上繰り返す入力にマッチするパーサを作成します。
+            // separator によって区切られた形の parser が1回以上繰り返す入力にマッチするパーサを作成します。
 
             // 1*Number *( "," 1*Number )
             var parser = Many1(Number()).ToStr().SepBy1(Char(','));
@@ -556,7 +554,7 @@ namespace ParsecSharpTest
         [TestMethod]
         public void FoldLTest()
         {
-            // 初期値とアキュムレータを引数にとり、パースした結果を右から集計するパーサを作成します。
+            // 初期値とアキュムレータを引数にとり、パースした結果を左から集計するパーサを作成します。
 
             // 0個以上の Digit にマッチし、初期値10に対して左から (x => accum - x) を繰り返し適用するパーサ。
             var parser = Digit().ToStr().FMap(int.Parse).FoldL(10, (x, y) => x - y);
@@ -694,6 +692,7 @@ namespace ParsecSharpTest
             // パースした結果を破棄します。
             // 型合わせや、値を捨てることを明示したい場合に使用します。
 
+            // 1文字以上の小文字にマッチし、その結果を破棄するパーサ。
             var parser = Many1(Lower()).Ignore();
 
             var source = _abcdEFGH;
@@ -734,11 +733,11 @@ namespace ParsecSharpTest
         {
             // パース失敗時にパース処理をAbortします。
 
-            var parser = Many(Lower().Error(state => $"Fatal Error! '{ state }' is not lower char!"));
+            var parser = Many(Lower().Error(state => $"Fatal Error! '{ state }' is not a lower char!"));
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 5): Fatal Error! 'E' is not lower char!"),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 5): Fatal Error! 'E' is not a lower char!"),
                 success => Assert.Fail());
         }
 
