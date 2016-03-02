@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Parsec.Internal
+﻿namespace Parsec.Internal
 {
     internal class UserError<TToken, T> : Fail<TToken, T>
     {
@@ -11,7 +9,7 @@ namespace Parsec.Internal
             this.Exception = exception;
         }
 
-        internal override Result<TToken, TResult> Next<TResult>(Func<T, Parser<TToken, TResult>> _)
+        protected override Result<TToken, TResult> Next<TResult>()
             => new UserError<TToken, TResult>(this.Exception);
 
         protected override string ToStringInternal()

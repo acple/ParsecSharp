@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Parsec.Internal
+﻿namespace Parsec.Internal
 {
     internal class FailWithMessage<TToken, T> : Fail<TToken, T>
     {
@@ -13,7 +11,7 @@ namespace Parsec.Internal
             this._message = message;
         }
 
-        internal override Result<TToken, TResult> Next<TResult>(Func<T, Parser<TToken, TResult>> _)
+        protected override Result<TToken, TResult> Next<TResult>()
             => new FailWithMessage<TToken, TResult>(this._message, this.State);
 
         protected override string ToStringInternal()
