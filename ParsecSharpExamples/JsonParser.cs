@@ -79,8 +79,9 @@ namespace ParsecSharpExamples
         // JSON Object にマッチします。
         // object = begin-object [ member *( value-separator member ) ] end-object
         private static Parser<char, Dictionary<string, dynamic>> JsonObject()
-            => KeyValuePair().SepBy(Comma()).Between(LeftBrace(), RightBrace())
-                .FMap(x => x.ToDictionary(tuple => tuple.Item1, tuple => tuple.Item2));
+            => KeyValuePair().SepBy(Comma())
+                .Between(LeftBrace(), RightBrace())
+                .FMap(enumerable => enumerable.ToDictionary(tuple => tuple.Item1, tuple => tuple.Item2));
 
         // Key : Value ペアにマッチします。
         // member = string name-separator value
@@ -88,13 +89,14 @@ namespace ParsecSharpExamples
             => from key in JsonString()
                from _ in Colon()
                from value in Json()
-               select new Tuple<string, dynamic>(key, value);
+               select new Tuple<string, dynamic>(key, value); // 本当はKeyValuePair<TKey, TValue>使いたい
 
         // JSON Array にマッチします。
         // array = begin-array [ value *( value-separator value ) ] end-array
         private static Parser<char, List<dynamic>> JsonArray()
-            => Delay(Json).SepBy(Comma()).Between(LeftBracket(), RightBracket())
-                .FMap(x => x.ToList()); // ParseJson()をDelay()で包むことでパーサ構築時の無限再帰を回避
+            => Delay(Json).SepBy(Comma())
+                .Between(LeftBracket(), RightBracket())
+                .FMap(enumerable => enumerable.ToList()); // Json()をDelay()で包むことでパーサ構築時の無限再帰を回避
 
         // JSON String にマッチします。
         // string = quotation-mark *char quotation-mark
