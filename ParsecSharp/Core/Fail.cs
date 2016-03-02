@@ -10,7 +10,7 @@ namespace Parsec
 
         public sealed override T Value { get { throw this.Exception; } }
 
-        internal Fail(IParsecState<TToken> state)
+        protected Fail(IParsecState<TToken> state)
         {
             this.State = state;
         }
