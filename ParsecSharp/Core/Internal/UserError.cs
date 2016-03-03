@@ -9,7 +9,7 @@
             this.Exception = exception;
         }
 
-        protected override Result<TToken, TResult> Next<TResult>()
+        protected override Fail<TToken, TResult> Next<TResult>()
             => new UserError<TToken, TResult>(this.Exception);
 
         protected override string ToStringInternal()

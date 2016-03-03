@@ -13,7 +13,7 @@ namespace Parsec.Internal
             this._exception = exception;
         }
 
-        protected override Result<TToken, TResult> Next<TResult>()
+        protected override Fail<TToken, TResult> Next<TResult>()
             => new FailWithException<TToken, TResult>(this._exception, this.State);
 
         protected override string ToStringInternal()
