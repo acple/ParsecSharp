@@ -44,21 +44,24 @@ Install-Package ParsecSharp
 [LL構文解析](https://ja.wikipedia.org/wiki/LL法)のパーサジェネレータに分類されるので、再帰的な構造の定義時に強さを発揮します。
 
 ## 使い方
-using staticで使用する前提の設計になっています。  
-基本機能は`using static Parsec.Parser;`の一行で全てincludeされます。  
-テキスト処理を行いたいときは、上に加えて`Parsec.Text` static classをusing staticして下さい。  
-再帰的な構造解析パーサなど、複雑なものを定義したいときは、`Parsec`名前空間もusingして下さい。  
-後は、各パーサを好きに組み合わせてから`Parse()`メソッドを呼ぶだけです。  
-具体的なパーサの構築方法はExamplesを見るといいと思います。  
-ドキュメントはテストコードに使い方と一緒に記載しています。一つ一つの関数はシンプルな機能しか提供していないのでわりと簡単に覚えられます。
+- using staticで使用する前提の設計になっています。  
+- 基本機能は`using static Parsec.Parser;`の一行で全てincludeされます。
+- テキスト処理を行いたいときは、上に加えて`Parsec.Text` static classをusing staticして下さい。
+- 再帰的な構造解析パーサなど、複雑なものを定義したいときは、`Parsec`名前空間もusingして下さい。
+- 後は、各パーサを好きに組み合わせてから`Parse()`メソッドを呼ぶだけです。
+- 具体的なパーサの構築方法はExamplesを見るといいと思います。
+  * [JsonParser実装例](https://github.com/acple/ParsecSharp/blob/master/ParsecSharpExamples/JsonParser.cs)
+  * [CsvParser実装例](https://github.com/acple/ParsecSharp/blob/master/ParsecSharpExamples/CsvParser.cs)
+- ドキュメントは[テストコード](https://github.com/acple/ParsecSharp/blob/master/ParsecSharpTest/ParserTest.cs)のほうに使い方と一緒に記載しています。一つ一つの関数自体はシンプルな機能しか提供していないのでわりと簡単に覚えられます。
+- 実装や細かい挙動を理解するにはソースを読むのがはやいです。
 
 ## もっと使い方
 `Parsec.Internal`名前空間をusingすると、パーサそのものの作成、実装を行うための関数や拡張メソッド一式がincludeされます。  
 また、`Parsec.Internal`名前空間には`IEnumerable<T>`をソースストリームに見立てたインターフェイス実装を用意してあるので、こちらを利用することで様々なソースを利用できます。
 
 ## その他詳しいひと向けの話
-- `Parsec`と違って、全てのパース失敗はバックトラック処理されます。全てのパーサに`try`が付いているイメージです。
-- `Parsec`と比較して、一部の関数は同名でも内容が異なったりします。
+- `parsec`と違って、全てのパース失敗はバックトラック処理されます。全てのパーサに`try`が付いているイメージです。
+- `parsec`と比較して、一部の関数は同名でも内容が異なったりします。
   - `Try`メソッドはC#の`try`に寄せて、パース処理とエラーリカバリ処理を行うコンビネータになりました。
   - `notFollowedBy`関数は`Not`メソッドになりました。
 - ジェネリックオーバーロードをゴリゴリ使ってるので、テキスト向けのパーサを書く時は型引数は本当に書かないで済みます。
