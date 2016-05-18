@@ -6,7 +6,7 @@ namespace Parsec.Internal
 {
     public sealed class ParsecStateStreamEnumerator<T> : IEnumerator<T>
     {
-        private IParsecStateStream<T> _stream;
+        private IParsecStateStream<T> stream;
 
         public T Current { get; private set; }
 
@@ -14,15 +14,15 @@ namespace Parsec.Internal
 
         public ParsecStateStreamEnumerator(IParsecStateStream<T> stream)
         {
-            this._stream = stream;
+            this.stream = stream;
         }
 
         public bool MoveNext()
         {
-            if (!this._stream.HasValue)
+            if (!this.stream.HasValue)
                 return false;
-            this.Current = this._stream.Current;
-            this._stream = this._stream.Next;
+            this.Current = this.stream.Current;
+            this.stream = this.stream.Next;
             return true;
         }
 
@@ -34,7 +34,7 @@ namespace Parsec.Internal
         public void Dispose()
         {
             this.Current = default(T);
-            this._stream = EmptyStream<T>.Instance;
+            this.stream = EmptyStream<T>.Instance;
         }
     }
 }

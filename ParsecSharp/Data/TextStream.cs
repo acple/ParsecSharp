@@ -8,7 +8,7 @@ namespace Parsec
 {
     public sealed class TextStream : IParsecStateStream<char>
     {
-        private readonly IDisposable _disposable;
+        private readonly IDisposable disposable;
 
         private readonly TextPosition _position;
 
@@ -33,7 +33,7 @@ namespace Parsec
 
         private TextStream(TextReader reader, TextPosition position)
         {
-            this._disposable = reader;
+            this.disposable = reader;
             this._position = position;
             try
             {
@@ -53,7 +53,7 @@ namespace Parsec
         }
 
         public void Dispose()
-            => this._disposable.Dispose();
+            => this.disposable.Dispose();
 
         public override string ToString()
             => (this.HasValue) ? this.Current.ToString() : string.Empty;

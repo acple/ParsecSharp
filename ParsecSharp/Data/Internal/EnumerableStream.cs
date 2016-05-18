@@ -5,7 +5,7 @@ namespace Parsec.Internal
 {
     public sealed class EnumerableStream<T> : IParsecStateStream<T>
     {
-        private readonly IDisposable _disposable;
+        private readonly IDisposable disposable;
 
         private readonly LinearPosition _position;
 
@@ -27,7 +27,7 @@ namespace Parsec.Internal
 
         private EnumerableStream(IEnumerator<T> enumerator, LinearPosition position)
         {
-            this._disposable = enumerator;
+            this.disposable = enumerator;
             this._position = position;
             try
             {
@@ -46,7 +46,7 @@ namespace Parsec.Internal
         }
 
         public void Dispose()
-            => this._disposable.Dispose();
+            => this.disposable.Dispose();
 
         public override string ToString()
             => (this.HasValue)
