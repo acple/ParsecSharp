@@ -1,6 +1,6 @@
 ﻿namespace Parsec
 {
-    public interface IParsecState<T>
+    public interface IParsecState<out T>
     {
         T Current { get; }
 
