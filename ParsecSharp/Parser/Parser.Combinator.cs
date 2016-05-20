@@ -8,15 +8,16 @@ namespace Parsec
     public static partial class Parser
     {
         public static Parser<TToken, T> Choice<TToken, T>(IEnumerable<Parser<TToken, T>> parsers)
-            => parsers.Reverse().Aggregate((next, parser) => parser.Alternative(next));
+            => parsers.Aggregate((parser, next) => parser.Alternative(next));
 
         public static Parser<TToken, T> Choice<TToken, T>(params Parser<TToken, T>[] parsers)
             => Choice(parsers.AsEnumerable());
 
         public static Parser<TToken, IEnumerable<T>> Sequence<TToken, T>(IEnumerable<Parser<TToken, T>> parsers)
-            => Return<TToken, List<T>>(() => new List<T>()).Bind(list => parsers.Reverse()
-                .Aggregate(Return<TToken, IEnumerable<T>>(list),
-                    (next, parser) => parser.Bind(x => { list.Add(x); return next; })));
+            => parsers
+                .Aggregate(Return<TToken, List<T>>(() => new List<T>()),
+                    (parser, next) => parser.Bind(list => next.FMap(x => { list.Add(x); return list; })))
+                .FMap(list => list.AsEnumerable());
 
         public static Parser<TToken, IEnumerable<T>> Sequence<TToken, T>(params Parser<TToken, T>[] parsers)
             => Sequence(parsers.AsEnumerable());
@@ -44,7 +45,7 @@ namespace Parsec
             => parser.Bind(x => Many_(parser, new List<T>() { x }));
 
         private static Parser<TToken, IEnumerable<T>> Many_<TToken, T>(Parser<TToken, T> parser, List<T> list)
-            => parser.Bind(x => { list.Add(x); return Many_(parser, list); }, () => Return<TToken, IEnumerable<T>>(list));
+            => Try(parser.Bind(x => { list.Add(x); return Many_(parser, list); }), () => list);
 
         public static Parser<TToken, IEnumerable<T>> ManyTill<TToken, T, TIgnore>(Parser<TToken, T> parser, Parser<TToken, TIgnore> terminator)
             => Return<TToken, List<T>>(() => new List<T>()).Bind(list => ManyTill_(parser, terminator, list));
@@ -54,12 +55,12 @@ namespace Parsec
                 .Alternative(parser.Bind(x => { list.Add(x); return ManyTill_(parser, terminator, list); }));
 
         public static Parser<TToken, Unit> SkipMany<TToken, T>(Parser<TToken, T> parser)
-            => parser.Bind(_ => SkipMany(parser), () => Return<TToken, Unit>(Unit.Instance));
+            => Try(parser.Bind(_ => SkipMany(parser)), () => Unit.Instance);
 
         public static Parser<TToken, Unit> SkipMany1<TToken, T>(Parser<TToken, T> parser)
             => parser.Right(SkipMany(parser));
 
         public static Parser<TToken, T> Delay<TToken, T>(Func<Parser<TToken, T>> parser)
-            => Builder.Create<TToken, T>(state => parser().Run(state));
+            => new Delay<TToken, T>(parser);
     }
 }

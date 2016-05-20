@@ -17,10 +17,13 @@ namespace Parsec
 
         protected abstract Fail<TToken, TResult> Next<TResult>();
 
-        internal sealed override Result<TToken, TResult> Next<TResult>(Func<T, Parser<TToken, TResult>> _)
+        internal override Result<TToken, TResult> Next<TNext, TResult>(Func<T, Parser<TToken, TNext>> next, Func<Result<TToken, TNext>, Result<TToken, TResult>> cont)
             => this.Next<TResult>();
 
-        public sealed override TResult CaseOf<TResult>(Func<Fail<TToken, T>, TResult> fail, Func<Success<TToken, T>, TResult> _)
+        internal override Result<TToken, TResult> Next<TNext, TResult>(Func<T, Parser<TToken, TNext>> next, Func<Result<TToken, TNext>, Result<TToken, TResult>> cont, Func<Result<TToken, TResult>> resume)
+            => resume();
+
+        public sealed override TResult CaseOf<TResult>(Func<Fail<TToken, T>, TResult> fail, Func<Success<TToken, T>, TResult> success)
             => fail(this);
 
         protected abstract string ToStringInternal();
