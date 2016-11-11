@@ -55,15 +55,15 @@
     <Compile Include="Core\Unit.cs" />
     <Compile Include="Data\Internal\EmptyStream.cs" />
     <Compile Include="Data\Internal\EnumerableStream.cs" />
-    <Compile Include="Data\Internal\InternalExtensions.cs" />
     <Compile Include="Data\Internal\LinearPosition.cs" />
     <Compile Include="Data\Internal\ParsecStateStreamEnumerator.cs" />
     <Compile Include="Data\Internal\TextPosition.cs" />
     <Compile Include="Data\StringStream.cs" />
     <Compile Include="Data\TextStream.cs" />
     <Compile Include="Parser\Internal\Builder.cs" />
+    <Compile Include="Parser\Internal\InternalExtensions.cs" />
     <Compile Include="Parser\Internal\Result.cs" />
-    <Compile Include="Parser\Internal\Utils.cs" />
+    <Compile Include="Parser\Internal\Utility.cs" />
     <Compile Include="Parser\Parser.Combinator.cs" />
     <Compile Include="Parser\Parser.Combinator.Extensions.cs" />
     <Compile Include="Parser\Parser.Linq.cs" />
