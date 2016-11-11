@@ -15,12 +15,12 @@ namespace Parsec
             this.State = state;
         }
 
-        protected abstract Fail<TToken, TResult> Next<TResult>();
+        protected abstract Fail<TToken, TNext> Next<TNext>();
 
-        internal sealed override Result<TToken, TResult> Next<TResult>(Func<T, Parser<TToken, TResult>> _)
-            => this.Next<TResult>();
+        internal override Result<TToken, TResult> Next<TNext, TResult>(Func<T, Parser<TToken, TNext>> next, Func<Result<TToken, TNext>, Result<TToken, TResult>> cont)
+            => cont(this.Next<TNext>());
 
-        public sealed override TResult CaseOf<TResult>(Func<Fail<TToken, T>, TResult> fail, Func<Success<TToken, T>, TResult> _)
+        public sealed override TResult CaseOf<TResult>(Func<Fail<TToken, T>, TResult> fail, Func<Success<TToken, T>, TResult> success)
             => fail(this);
 
         protected abstract string ToStringInternal();

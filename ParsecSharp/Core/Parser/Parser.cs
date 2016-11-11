@@ -3,17 +3,9 @@ using Parsec.Internal;
 
 namespace Parsec
 {
-    public class Parser<TToken, T>
+    public abstract class Parser<TToken, T>
     {
-        private readonly Func<IParsecStateStream<TToken>, Result<TToken, T>> _function;
-
-        internal Parser(Func<IParsecStateStream<TToken>, Result<TToken, T>> function)
-        {
-            this._function = function;
-        }
-
-        internal Result<TToken, T> Run(IParsecStateStream<TToken> state)
-            => this._function(state);
+        internal abstract Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont);
 
         public Result<TToken, T> Parse(IParsecStateStream<TToken> source)
         {
@@ -21,7 +13,7 @@ namespace Parsec
             {
                 try
                 {
-                    return this.Run(source);
+                    return this.Run(source, result => result);
                 }
                 catch (ParsecException<TToken> exception)
                 {
