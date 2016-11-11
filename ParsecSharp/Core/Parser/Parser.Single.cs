@@ -13,8 +13,5 @@ namespace Parsec.Internal
 
         internal override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
             => cont(this._function(state));
-
-        internal override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont, Func<Result<TToken, TResult>> resume)
-            => this._function(state).CaseOf(fail => resume(), cont);
     }
 }

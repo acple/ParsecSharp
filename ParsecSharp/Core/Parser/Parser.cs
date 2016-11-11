@@ -7,8 +7,6 @@ namespace Parsec
     {
         internal abstract Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont);
 
-        internal abstract Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont, Func<Result<TToken, TResult>> resume);
-
         public Result<TToken, T> Parse(IParsecStateStream<TToken> source)
         {
             using (source)

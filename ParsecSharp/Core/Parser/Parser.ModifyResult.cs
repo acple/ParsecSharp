@@ -21,10 +21,5 @@ namespace Parsec.Internal
             => this._parser.Run(state, result => result.CaseOf(
                 fail => cont(this._fail(state, fail)),
                 success => cont(this._success(state, success))));
-
-        internal override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont, Func<Result<TToken, TResult>> resume)
-            => this._parser.Run(state, result => result
-                .CaseOf(fail => this._fail(state, fail), success => this._success(state, success))
-                .CaseOf(fail => resume(), cont));
     }
 }

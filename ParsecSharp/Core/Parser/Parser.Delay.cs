@@ -13,8 +13,5 @@ namespace Parsec.Internal
 
         internal override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
             => this._parser.Value.Run(state, cont);
-
-        internal override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont, Func<Result<TToken, TResult>> resume)
-            => this._parser.Value.Run(state, cont, resume);
     }
 }
