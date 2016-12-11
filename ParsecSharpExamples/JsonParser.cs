@@ -81,15 +81,15 @@ namespace ParsecSharpExamples
         private static Parser<char, Dictionary<string, dynamic>> JsonObject()
             => KeyValuePair().SepBy(Comma())
                 .Between(LeftBrace(), RightBrace())
-                .FMap(list => list.ToDictionary(tuple => tuple.Item1, tuple => tuple.Item2));
+                .FMap(list => list.ToDictionary(x => x.Key, x => x.Value));
 
         // Key : Value ペアにマッチします。
         // member = string name-separator value
-        private static Parser<char, Tuple<string, dynamic>> KeyValuePair()
+        private static Parser<char, (string Key, dynamic Value)> KeyValuePair()
             => from key in JsonString()
                from _ in Colon()
                from value in Json()
-               select new Tuple<string, dynamic>(key, value);
+               select (key, value);
 
         // JSON Array にマッチします。
         // array = begin-array [ value *( value-separator value ) ] end-array
@@ -132,7 +132,7 @@ namespace ParsecSharpExamples
         // JSON Number の符号にマッチします。double型の符号を反転させるFuncを返します。
         // minus = %x2D ; == '-'
         private static Parser<char, Func<double, double>> Sign()
-            => Try(Char('-').FMap(_ => new Func<double, double>(x => -x)),
+            => Try(Char('-').FMap(_ => (Func<double, double>)(x => -x)),
                 () => x => x);
 
         // JSON Number の整数部にマッチします。
