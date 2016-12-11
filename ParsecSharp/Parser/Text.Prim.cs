@@ -17,8 +17,8 @@ namespace Parsec
         public static Parser<char, char> Satisfy(Func<char, bool> predicate)
             => Satisfy<char>(predicate);
 
-        public static Parser<char, char> Char(char character)
-            => Satisfy(x => x == character);
+        public static Parser<char, char> Char(char token)
+            => Satisfy(x => x == token);
 
         public static Parser<char, char> Letter()
             => Satisfy(x => char.IsLetter(x));
@@ -83,22 +83,22 @@ namespace Parsec
         public static Parser<char, char> Tab()
             => Char('\t');
 
-        public static Parser<char, char> OneOf(string source)
-            => Satisfy(x => source.IndexOf(x) != -1);
+        public static Parser<char, char> OneOf(string candidates)
+            => Satisfy(x => candidates.IndexOf(x) != -1);
 
-        public static Parser<char, char> OneOf(IEnumerable<char> source)
-            => OneOf<char>(source);
+        public static Parser<char, char> OneOf(IEnumerable<char> candidates)
+            => OneOf<char>(candidates);
 
-        public static Parser<char, char> NoneOf(string source)
-            => Satisfy(x => source.IndexOf(x) == -1);
+        public static Parser<char, char> NoneOf(string candidates)
+            => Satisfy(x => candidates.IndexOf(x) == -1);
 
-        public static Parser<char, char> NoneOf(IEnumerable<char> source)
-            => NoneOf<char>(source);
+        public static Parser<char, char> NoneOf(IEnumerable<char> candidates)
+            => NoneOf<char>(candidates);
 
-        public static Parser<char, string> String(string source)
+        public static Parser<char, string> String(string text)
             => Builder.Create<char, string>(state =>
-                (source.ToCharArray().SequenceEqual(state.Take(source.Length)))
-                    ? Result.Success(source, state.Advance(source.Length))
+                (text.ToCharArray().SequenceEqual(state.Take(text.Length)))
+                    ? Result.Success(text, state.Advance(text.Length))
                     : Result.Fail<char, string>(state));
     }
 }

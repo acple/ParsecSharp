@@ -13,8 +13,8 @@ namespace Parsec.Internal
             this._exception = exception;
         }
 
-        protected override Fail<TToken, TResult> Next<TResult>()
-            => new FailWithException<TToken, TResult>(this._exception, this.State);
+        protected override Fail<TToken, TNext> Next<TNext>()
+            => new FailWithException<TToken, TNext>(this._exception, this.State);
 
         protected override string ToStringInternal()
             => $"External Error '{ this._exception.GetType().Name }' occurred: { this._exception }";

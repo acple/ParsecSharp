@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 namespace Parsec
 {
-    public interface IParsecStateStream<out T> : IParsecState<T>, IEnumerable<T>, IDisposable
+    public interface IParsecStateStream<out TToken> : IParsecState<TToken>, IEnumerable<TToken>, IDisposable
     {
-        IParsecStateStream<T> Next { get; }
+        IParsecStateStream<TToken> Next { get; }
     }
 }

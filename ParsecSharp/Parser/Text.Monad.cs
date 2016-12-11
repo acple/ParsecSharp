@@ -8,8 +8,8 @@ namespace Parsec
         public static Parser<char, T> Return<T>(T value)
             => Return<char, T>(value);
 
-        public static Parser<char, T> Return<T>(Func<T> valueFactory)
-            => Return<char, T>(valueFactory);
+        public static Parser<char, T> Return<T>(Func<T> value)
+            => Return<char, T>(value);
 
         public static Parser<char, T> Fail<T>()
             => Fail<char, T>();

@@ -31,7 +31,7 @@ namespace ParsecSharpExamples
         private static Parser<char, T> WithSpaces<T>(this Parser<char, T> parser)
             => parser.Between(Spaces(), Spaces());
 
-        // パース結果をdynamicに詰めるための拡張メソッド。
+        // パース結果をdynamicに詰める拡張メソッド。
         private static Parser<TToken, dynamic> AsDynamic<TToken, T>(this Parser<TToken, T> parser)
             => parser.FMap(x => x as dynamic);
 
@@ -81,7 +81,7 @@ namespace ParsecSharpExamples
         private static Parser<char, Dictionary<string, dynamic>> JsonObject()
             => KeyValuePair().SepBy(Comma())
                 .Between(LeftBrace(), RightBrace())
-                .FMap(enumerable => enumerable.ToDictionary(tuple => tuple.Item1, tuple => tuple.Item2));
+                .FMap(list => list.ToDictionary(tuple => tuple.Item1, tuple => tuple.Item2));
 
         // Key : Value ペアにマッチします。
         // member = string name-separator value
@@ -89,24 +89,24 @@ namespace ParsecSharpExamples
             => from key in JsonString()
                from _ in Colon()
                from value in Json()
-               select new Tuple<string, dynamic>(key, value); // 本当はKeyValuePair<TKey, TValue>使いたい
+               select new Tuple<string, dynamic>(key, value);
 
         // JSON Array にマッチします。
         // array = begin-array [ value *( value-separator value ) ] end-array
-        private static Parser<char, List<dynamic>> JsonArray()
+        private static Parser<char, dynamic[]> JsonArray()
             => Delay(Json).SepBy(Comma())
                 .Between(LeftBracket(), RightBracket())
-                .FMap(enumerable => enumerable.ToList()); // Json()をDelay()で包むことでパーサ構築時の無限再帰を回避
+                .FMap(list => list.ToArray()); // Json()をDelay()で包むことでパーサ構築時の無限再帰を回避
 
         // JSON String にマッチします。
         // string = quotation-mark *char quotation-mark
         private static Parser<char, string> JsonString()
-            => Char('\"').Right(ManyTill(ParseJsonChar(), Char('\"'))).ToStr();
+            => Char('\"').Right(ManyTill(JsonChar(), Char('\"'))).ToStr();
 
         // JSON String のCharにマッチします。
         // エスケープが必要な文字の置換を行います。
         // 詳細はRFCをみてください。
-        private static Parser<char, char> ParseJsonChar()
+        private static Parser<char, char> JsonChar()
             => Char('\\').Right(Choice(
                 Char('\"').FMap(_ => '\"'),
                 Char('\\').FMap(_ => '\\'),

@@ -1,6 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
 using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Parsec;
 using static Parsec.Parser;
 using static Parsec.Text;
@@ -81,7 +81,7 @@ namespace ParsecSharpTest
         public void ReturnTest()
         {
             // 成功したという結果を返すパーサを作成します。
-            // パーサを連結する際に任意の値を投入したい場合に使用します。
+            // パーサに任意の値を投入する場合に使用します。
 
             var parser = Return("success!");
 
@@ -113,10 +113,10 @@ namespace ParsecSharpTest
         [TestMethod]
         public void GetPositionTest()
         {
-            // IPositionを返すパーサを作成します。
+            // パース位置の Position を取り出すパーサを作成します。
             // このパーサは入力を消費しません。
 
-            // Anyに3回マッチした後、その時点のPositionを返すパーサ。
+            // Anyに3回マッチした後、その時点の Position を返すパーサ。
             var parser = Any().Repeat(3).Right(GetPosition());
 
             var source = _abcdEFGH;
@@ -131,7 +131,7 @@ namespace ParsecSharpTest
             // parsers を前から1つずつ適用し、最初に成功したものを結果として返すパーサを作成します。
             // 全て失敗した場合、最後の失敗を全体の失敗として返します。
 
-            // 'c'、または 'b'、または 'a' のどれかにマッチするパーサ。
+            // 'c'、'b'、または 'a' のどれかにマッチするパーサ。
             var parser = Choice(Char('c'), Char('b'), Char('a'));
 
             var source = _abcdEFGH;
@@ -150,7 +150,7 @@ namespace ParsecSharpTest
         {
             // parsers に順にマッチングし、その結果を連結したシーケンスを返すパーサを作成します。
 
-            // 'a', 'b', 'c', 'd' にマッチし、['a', 'b', 'c', 'd'] を "abcd" に変換して返すパーサ。
+            // 'a' + 'b' + 'c' + 'd' にマッチし、['a', 'b', 'c', 'd'] を "abcd" に変換して返すパーサ。
             var parser = Sequence(Char('a'), Char('b'), Char('c'), Char('d')).ToStr();
 
             var source = _abcdEFGH;
@@ -247,6 +247,8 @@ namespace ParsecSharpTest
         {
             // parser に1回以上繰り返しマッチし、その結果をシーケンスとして返すパーサを作成します。
             // 1回もマッチしなかった場合、パーサは失敗を返します。
+
+            // Lower に1回以上繰り返しマッチするパーサ。
             var parser = Many1(Lower());
 
             var source = _abcdEFGH;
@@ -318,7 +320,7 @@ namespace ParsecSharpTest
                 success => Assert.Fail());
         }
 
-        private readonly string _commanum = "123,456,789";
+        private const string _commanum = "123,456,789";
 
         [TestMethod]
         public void SepByTest()
@@ -458,7 +460,7 @@ namespace ParsecSharpTest
         [TestMethod]
         public void ExceptTest()
         {
-            // 指定したパーサに対して除外ルールを適用したパーサを作成します。
+            // 指定したパーサに対して除外条件を設定したパーサを作成します。
 
             var source = _123456;
 
@@ -647,11 +649,11 @@ namespace ParsecSharpTest
                 success => success.Value.Is(_abcdEFGH));
 
             // Many(Any()) などを parser に渡した場合、終端まで Any にマッチするため、 close は EndOfInput にマッチします。
-            var parser2 = Many(Any()).Between(Char('\"'), Char('\"')); // ( dquote *Any dquote ) のつもり
+            var parser2 = Many(Any()).Between(Char('\"'), Char('\"')); // ( dquote *Any dquote ) とはならない
             parser2.Parse("\"abCD1234\"").CaseOf(
                 fail => { /* Many(Any()) が abCD1234\" までマッチしてしまうため、close の \" がマッチせずFailになる */ },
                 success => Assert.Fail());
-            // この形にマッチするパーサを作成するときは、ManyTill を使用してください。
+            // この形にマッチするパーサを作成したいときは、ManyTill を使用してください。
         }
 
         [TestMethod]

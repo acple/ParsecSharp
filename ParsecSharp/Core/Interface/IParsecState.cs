@@ -1,8 +1,8 @@
 ﻿namespace Parsec
 {
-    public interface IParsecState<out T>
+    public interface IParsecState<out TToken>
     {
-        T Current { get; }
+        TToken Current { get; }
 
         bool HasValue { get; }
 

@@ -10,8 +10,8 @@ namespace Parsec
             => parser.FMap(selector);
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static Parser<TToken, TResult> SelectMany<TToken, T, TTemp, TResult>(this Parser<TToken, T> parser, Func<T, Parser<TToken, TTemp>> selector, Func<T, TTemp, TResult> resultSelector)
-            => parser.Bind(x => selector(x).FMap(y => resultSelector(x, y)));
+        public static Parser<TToken, TResult> SelectMany<TToken, T, TTemp, TResult>(this Parser<TToken, T> parser, Func<T, Parser<TToken, TTemp>> selector, Func<T, TTemp, TResult> projector)
+            => parser.Bind(x => selector(x).FMap(y => projector(x, y)));
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static Parser<TToken, T> Where<TToken, T>(this Parser<TToken, T> parser, Func<T, bool> predicate)

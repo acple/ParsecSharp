@@ -22,10 +22,10 @@ namespace Parsec
 
         public IParsecStateStream<char> Next => this._next.Value;
 
-        public TextStream(Stream stream) : this(stream, Encoding.UTF8)
+        public TextStream(Stream source) : this(source, Encoding.UTF8)
         { }
 
-        public TextStream(Stream stream, Encoding encoding) : this(new StreamReader(stream, encoding))
+        public TextStream(Stream source, Encoding encoding) : this(new StreamReader(source, encoding))
         { }
 
         public TextStream(TextReader reader) : this(reader, TextPosition.Initial)

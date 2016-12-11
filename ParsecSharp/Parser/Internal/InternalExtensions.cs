@@ -4,7 +4,7 @@ namespace Parsec.Internal
 {
     public static class InternalExtensions
     {
-        public static Result<T, TResult> Parse<T, TResult>(this Parser<T, TResult> parser, IEnumerable<T> source)
-            => parser.Parse(new EnumerableStream<T>(source));
+        public static Result<TToken, T> Parse<TToken, T>(this Parser<TToken, T> parser, IEnumerable<TToken> source)
+            => parser.Parse(new EnumerableStream<TToken>(source));
     }
 }

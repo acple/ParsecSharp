@@ -3,43 +3,43 @@ using System.Collections.Generic;
 
 namespace Parsec.Internal
 {
-    public sealed class EnumerableStream<T> : IParsecStateStream<T>
+    public sealed class EnumerableStream<TToken> : IParsecStateStream<TToken>
     {
         private readonly IDisposable disposable;
 
         private readonly LinearPosition _position;
 
-        private readonly Lazy<IParsecStateStream<T>> _next;
+        private readonly Lazy<IParsecStateStream<TToken>> _next;
 
-        public T Current { get; }
+        public TToken Current { get; }
 
         public bool HasValue { get; }
 
         public IPosition Position => this._position;
 
-        public IParsecStateStream<T> Next => this._next.Value;
+        public IParsecStateStream<TToken> Next => this._next.Value;
 
-        public EnumerableStream(IEnumerable<T> source) : this(source.GetEnumerator())
+        public EnumerableStream(IEnumerable<TToken> source) : this(source.GetEnumerator())
         { }
 
-        public EnumerableStream(IEnumerator<T> enumerator) : this(enumerator, LinearPosition.Initial)
+        public EnumerableStream(IEnumerator<TToken> enumerator) : this(enumerator, LinearPosition.Initial)
         { }
 
-        private EnumerableStream(IEnumerator<T> enumerator, LinearPosition position)
+        private EnumerableStream(IEnumerator<TToken> enumerator, LinearPosition position)
         {
             this.disposable = enumerator;
             this._position = position;
             try
             {
                 this.HasValue = enumerator.MoveNext();
-                this.Current = (this.HasValue) ? enumerator.Current : default(T);
-                this._next = new Lazy<IParsecStateStream<T>>(() => new EnumerableStream<T>(enumerator, position.Next()), false);
+                this.Current = (this.HasValue) ? enumerator.Current : default(TToken);
+                this._next = new Lazy<IParsecStateStream<TToken>>(() => new EnumerableStream<TToken>(enumerator, position.Next()), false);
             }
             catch
             {
                 this.HasValue = false;
-                this.Current = default(T);
-                this._next = new Lazy<IParsecStateStream<T>>(() => EmptyStream<T>.Instance, false);
+                this.Current = default(TToken);
+                this._next = new Lazy<IParsecStateStream<TToken>>(() => EmptyStream<TToken>.Instance, false);
                 this.Dispose();
                 throw;
             }
@@ -53,10 +53,10 @@ namespace Parsec.Internal
                 ? this.Current?.ToString() ?? string.Empty
                 : string.Empty;
 
-        IEnumerator<T> IEnumerable<T>.GetEnumerator()
-            => new ParsecStateStreamEnumerator<T>(this);
+        IEnumerator<TToken> IEnumerable<TToken>.GetEnumerator()
+            => new ParsecStateStreamEnumerator<TToken>(this);
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-            => new ParsecStateStreamEnumerator<T>(this);
+            => new ParsecStateStreamEnumerator<TToken>(this);
     }
 }
