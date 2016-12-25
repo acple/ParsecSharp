@@ -7,11 +7,11 @@
     <Compile Include="**\*.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ChainingAssertion.Core" Version="0.1.0-pre" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0-preview-20161123-03" />
+    <PackageReference Include="ChainingAssertion.Core.MSTest" Version="0.1.0-pre" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0-preview-20161216-01" />
     <PackageReference Include="Microsoft.NETCore.App" Version="1.1.0" />
-    <PackageReference Include="MSTest.TestAdapter" Version="1.1.6-preview" />
-    <PackageReference Include="MSTest.TestFramework" Version="1.0.7-preview" />
+    <PackageReference Include="MSTest.TestAdapter" Version="1.1.8-rc" />
+    <PackageReference Include="MSTest.TestFramework" Version="1.0.8-rc" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ParsecSharp\ParsecSharp.csproj" />
