@@ -10,17 +10,17 @@
     <PackageProjectUrl>https://github.com/acple/ParsecSharp</PackageProjectUrl>
     <Description>Monadic Parser Combinator Library</Description>
     <Copyright>acple@2016</Copyright>
-    <PackageTags>parser combinator linq</PackageTags>
+    <PackageTags>parser;combinator;linq</PackageTags>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="**\*.cs" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="System.Collections" Version="4.3.0" />
     <PackageReference Include="System.IO" Version="4.3.0" />
     <PackageReference Include="System.Linq" Version="4.3.0" />
-    <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0">
-      <IncludeAssets>Compile</IncludeAssets>
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
+    <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
+    <PackageReference Include="System.Runtime" Version="4.3.0" />
+    <PackageReference Include="System.Text.Encoding" Version="4.3.0" />
   </ItemGroup>
 </Project>
