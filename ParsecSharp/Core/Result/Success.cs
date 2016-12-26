@@ -14,11 +14,11 @@ namespace Parsec
             this._state = state;
         }
 
-        private Parser<TToken, TNext> CreateNext<TNext>(Func<T, Parser<TToken, TNext>> next)
+        private Parser<TToken, TNext> WorkaroundMethod<TNext>(Func<T, Parser<TToken, TNext>> next)
             => next(this.Value);
 
         internal override Result<TToken, TResult> Next<TNext, TResult>(Func<T, Parser<TToken, TNext>> next, Func<Result<TToken, TNext>, Result<TToken, TResult>> cont)
-            => this.CreateNext(next).Run(this._state, cont);
+            => this.WorkaroundMethod(next).Run(this._state, cont);
 
         public override TResult CaseOf<TResult>(Func<Fail<TToken, T>, TResult> fail, Func<Success<TToken, T>, TResult> success)
             => success(this);
