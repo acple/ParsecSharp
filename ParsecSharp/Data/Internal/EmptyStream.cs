@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Parsec.Internal
+﻿namespace Parsec.Internal
 {
     public sealed class EmptyStream<TToken> : IParsecStateStream<TToken>
     {
@@ -23,11 +20,5 @@ namespace Parsec.Internal
 
         public override string ToString()
             => string.Empty;
-
-        IEnumerator<TToken> IEnumerable<TToken>.GetEnumerator()
-            => Enumerable.Empty<TToken>().GetEnumerator();
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-            => Enumerable.Empty<TToken>().GetEnumerator();
     }
 }

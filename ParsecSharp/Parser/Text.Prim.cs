@@ -97,7 +97,7 @@ namespace Parsec
 
         public static Parser<char, string> String(string text)
             => Builder.Create<char, string>(state =>
-                (text.ToCharArray().SequenceEqual(state.Take(text.Length)))
+                (text.ToCharArray().SequenceEqual(state.AsEnumerable().Take(text.Length)))
                     ? Result.Success(text, state.Advance(text.Length))
                     : Result.Fail<char, string>(state));
     }

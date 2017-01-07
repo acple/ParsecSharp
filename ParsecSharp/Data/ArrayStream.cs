@@ -36,11 +36,5 @@ namespace Parsec
             => (this.HasValue)
                 ? this.Current?.ToString() ?? string.Empty
                 : string.Empty;
-
-        IEnumerator<TToken> IEnumerable<TToken>.GetEnumerator()
-            => new ParsecStateStreamEnumerator<TToken>(this);
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-            => new ParsecStateStreamEnumerator<TToken>(this);
     }
 }

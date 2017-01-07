@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Parsec
 {
-    public interface IParsecStateStream<out TToken> : IParsecState<TToken>, IEnumerable<TToken>, IDisposable
+    public interface IParsecStateStream<out TToken> : IParsecState<TToken>, IDisposable
     {
         IParsecStateStream<TToken> Next { get; }
     }
