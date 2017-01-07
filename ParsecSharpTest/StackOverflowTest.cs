@@ -4,7 +4,6 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Parsec.Internal;
 using static Parsec.Parser;
-using static Parsec.Text;
 
 namespace ParsecSharpTest
 {
@@ -14,8 +13,8 @@ namespace ParsecSharpTest
         [TestMethod]
         public void StackOverflowTest1()
         {
-            var parser = SkipMany(Any());
-            var source = new string('A', 1000000);
+            var parser = SkipMany(Any<int>());
+            var source = new int[1000000];
 
             parser.Parse(source);
         }
