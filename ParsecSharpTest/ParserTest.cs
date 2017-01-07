@@ -215,7 +215,7 @@ namespace ParsecSharpTest
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(new[] { 'a', 'a' }));
+                success => success.Value.Is('a', 'a'));
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
@@ -235,7 +235,7 @@ namespace ParsecSharpTest
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(new[] { 'a', 'b', 'c', 'd' }));
+                success => success.Value.Is('a', 'b', 'c', 'd'));
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
@@ -255,7 +255,7 @@ namespace ParsecSharpTest
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(new[] { 'a', 'b', 'c', 'd' }));
+                success => success.Value.Is('a', 'b', 'c', 'd'));
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
@@ -275,7 +275,7 @@ namespace ParsecSharpTest
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(new[] { 'a', 'b', 'c', 'd', 'E' }));
+                success => success.Value.Is('a', 'b', 'c', 'd', 'E'));
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
@@ -335,12 +335,12 @@ namespace ParsecSharpTest
             var source = _commanum;
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(new[] { "123", "456", "789" }));
+                success => success.Value.Is("123", "456", "789"));
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
                  fail => Assert.Fail(),
-                 success => success.Value.Is(new[] { "123456" }));
+                 success => success.Value.Is("123456"));
 
             var source3 = _abcdEFGH;
             parser.Parse(source3).CaseOf(
@@ -359,12 +359,12 @@ namespace ParsecSharpTest
             var source = _commanum;
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(new[] { "123", "456", "789" }));
+                success => success.Value.Is("123", "456", "789"));
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
                  fail => Assert.Fail(),
-                 success => success.Value.Is(new[] { "123456" }));
+                 success => success.Value.Is("123456"));
 
             var source3 = _abcdEFGH;
             parser.Parse(source3).CaseOf(
@@ -383,7 +383,7 @@ namespace ParsecSharpTest
             var source = _commanum;
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(new[] { "123", "456" }));
+                success => success.Value.Is("123", "456"));
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
@@ -402,7 +402,7 @@ namespace ParsecSharpTest
             var source = _commanum;
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(new[] { "123", "456" }));
+                success => success.Value.Is("123", "456"));
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
@@ -421,17 +421,17 @@ namespace ParsecSharpTest
             var source = _commanum;
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(new[] { "123", "456", "789" }));
+                success => success.Value.Is("123", "456", "789"));
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
                 fail => { },
-                success => success.Value.Is(new[] { "123456" }));
+                success => success.Value.Is("123456"));
 
             var source3 = _commanum + ",";
             parser.Parse(source3).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(new[] { "123", "456", "789" }));
+                success => success.Value.Is("123", "456", "789"));
         }
 
         [TestMethod]
@@ -445,17 +445,17 @@ namespace ParsecSharpTest
             var source = _commanum;
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(new[] { "123", "456", "789" }));
+                success => success.Value.Is("123", "456", "789"));
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
                 fail => { },
-                success => success.Value.Is(new[] { "123456" }));
+                success => success.Value.Is("123456"));
 
             var source3 = _commanum + ",";
             parser.Parse(source3).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(new[] { "123", "456", "789" }));
+                success => success.Value.Is("123", "456", "789"));
         }
 
         [TestMethod]
@@ -593,7 +593,7 @@ namespace ParsecSharpTest
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(new[] { "abc", "dEF" }));
+                success => success.Value.Is("abc", "dEF"));
         }
 
         [TestMethod]
@@ -728,7 +728,7 @@ namespace ParsecSharpTest
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(new[] { '1', '2', '3', '4', '5', '6' }));
+                success => success.Value.Is('1', '2', '3', '4', '5', '6'));
         }
 
         [TestMethod]
