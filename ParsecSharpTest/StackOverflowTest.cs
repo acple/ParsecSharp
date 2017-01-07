@@ -2,7 +2,6 @@
 using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Parsec.Internal;
 using static Parsec.Parser;
 
 namespace ParsecSharpTest

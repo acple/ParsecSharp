@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using Parsec.Internal;
 
-namespace Parsec.Internal
+namespace Parsec
 {
     public sealed class ArrayStream<TToken> : IParsecStateStream<TToken>
     {
