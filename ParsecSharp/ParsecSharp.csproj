@@ -3,13 +3,13 @@
     <TargetFramework>netstandard1.0</TargetFramework>
     <RootNamespace>Parsec</RootNamespace>
     <PackageId>ParsecSharp</PackageId>
-    <PackageVersion>0.9.0-pre</PackageVersion>
+    <Version>0.9.0-pre</Version>
     <Authors>acple</Authors>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageLicenseUrl>https://github.com/acple/ParsecSharp/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/acple/ParsecSharp</PackageProjectUrl>
-    <Description>Monadic Parser Combinator Library</Description>
-    <Copyright>acple@2016</Copyright>
+    <Description>Monadic parser combinator library</Description>
+    <Copyright>acple@2017</Copyright>
     <PackageTags>parser;combinator;linq</PackageTags>
   </PropertyGroup>
   <ItemGroup>
