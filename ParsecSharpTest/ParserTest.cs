@@ -736,7 +736,8 @@ namespace ParsecSharpTest
         {
             // パース失敗時にパース処理をAbortします。
 
-            var parser = Many(Lower().Error(state => $"Fatal Error! '{ state }' is not a lower char!"));
+            var parser = Many(Lower().Error(state => $"Fatal Error! '{ state }' is not a lower char!")).ToStr()
+                .Or(Return("recovery"));
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
