@@ -772,5 +772,18 @@ namespace ParsecSharpTest
             success.Is(4);
             fail.Is(5);
         }
+
+        [TestMethod]
+        public void ExceptionTest()
+        {
+            // 例外発生時は、例外のNameをメッセージに含むFailを返します。
+            var obj = default(object);
+            var parser = Any().FMap(_ => obj.ToString()).Or(Return("success"));
+
+            var source = _abcdEFGH;
+            parser.Parse(source).CaseOf(
+                fail => fail.ToString().Is(message => message.Contains("Exception 'NullReferenceException' occurred:")),
+                success => Assert.Fail());
+        }
     }
 }
