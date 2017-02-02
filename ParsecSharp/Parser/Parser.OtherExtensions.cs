@@ -10,12 +10,12 @@ namespace Parsec
                 x => { fail(x); return null; },
                 x => { success(x); return null; });
 
-        public static Parser<TToken, T> Do<TToken, T>(this Parser<TToken, T> parser, Action<T> success)
-            => parser.FMap(x => { success(x); return x; });
+        public static Parser<TToken, T> Do<TToken, T>(this Parser<TToken, T> parser, Action<T> action)
+            => parser.FMap(x => { action(x); return x; });
 
-        public static Parser<TToken, T> Do<TToken, T>(this Parser<TToken, T> parser, Action<T> success, Action<IParsecState<TToken>> fail)
+        public static Parser<TToken, T> Do<TToken, T>(this Parser<TToken, T> parser, Action<T> action, Action<IParsecState<TToken>> failed)
             => parser.ModifyResult(
-                (_, result) => { fail(result.State); return result; },
-                (_, result) => { success(result.Value); return result; });
+                (_, fail) => { failed(fail.State); return fail; },
+                (_, success) => { action(success.Value); return success; });
     }
 }
