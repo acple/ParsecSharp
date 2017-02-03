@@ -27,7 +27,7 @@ namespace Parsec.Internal
         }
 
         void IEnumerator.Reset()
-            => throw new NotImplementedException();
+            => throw new NotSupportedException();
 
         public void Dispose()
         {
