@@ -6,7 +6,7 @@ namespace Parsec
     {
         public IParsecState<TToken> State { get; }
 
-        public virtual ParsecException<TToken> Exception => new ParsecException<TToken>(this.ToString(), this.State);
+        public virtual ParsecException Exception => new ParsecException(this.ToString());
 
         public sealed override T Value => throw this.Exception;
 

@@ -2,18 +2,12 @@
 
 namespace Parsec
 {
-    public class ParsecException<TToken> : Exception
+    public class ParsecException : Exception
     {
-        public IParsecState<TToken> State { get; }
+        public ParsecException(string message) : base(message)
+        { }
 
-        public ParsecException(string message, IParsecState<TToken> state) : base(message)
-        {
-            this.State = state;
-        }
-
-        public ParsecException(string message, Exception exception, IParsecState<TToken> state) : base(message, exception)
-        {
-            this.State = state;
-        }
+        public ParsecException(string message, Exception exception) : base(message, exception)
+        { }
     }
 }
