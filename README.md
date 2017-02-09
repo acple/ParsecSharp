@@ -26,7 +26,7 @@ Install-Package ParsecSharp
 
 
 ## Supported platform
-**Caution** This project is verrry experimental, now targets only x64, with RyuJit (Next-Gen .NET JIT Compiler).
+**Caution** This project is verrry experimental, now targets only x64 runtime, with RyuJit (Next-Gen .NET JIT Compiler).
 
 * netstandard1.0 (compatible with net45 or later, netcoreapp, uap, xamarin, and more)
 
