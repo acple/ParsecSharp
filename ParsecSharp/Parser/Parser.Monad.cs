@@ -20,6 +20,9 @@ namespace Parsec
         public static Parser<TToken, T> Abort<TToken, T>(Func<IParsecState<TToken>, string> message)
             => new Terminate<TToken, T>(message);
 
+        public static Parser<TToken, T> Abort<TToken, T>(Exception exception)
+            => new Exit<TToken, T>(exception);
+
         public static Parser<TToken, IPosition> GetPosition<TToken>()
             => Builder.Create<TToken, IPosition>(state => Result.Success(state.Position, state));
     }

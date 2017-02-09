@@ -20,6 +20,9 @@ namespace Parsec
         public static Parser<char, T> Abort<T>(Func<IParsecState<char>, string> message)
             => Abort<char, T>(message);
 
+        public static Parser<char, T> Abort<T>(Exception exception)
+            => Abort<char, T>(exception);
+
         public static Parser<char, IPosition> GetPosition()
             => GetPosition<char>();
     }
