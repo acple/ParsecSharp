@@ -78,6 +78,12 @@ namespace Parsec
         public static Parser<TToken, Unit> Ignore<TToken, TIgnore>(this Parser<TToken, TIgnore> parser)
             => parser.FMap(_ => Unit.Instance);
 
+        public static Parser<TToken, string> ToStr<TToken, T>(this Parser<TToken, T> parser)
+            => parser.FMap(x => x.ToString());
+
+        public static Parser<TToken, T[]> ToArray<TToken, T>(this Parser<TToken, IEnumerable<T>> parser)
+            => parser.FMap(x => x.ToArray());
+
         public static Parser<TToken, T> Message<TToken, T>(this Parser<TToken, T> parser, Func<IParsecState<TToken>, string> message)
             => parser.Alternative(Fail<TToken, T>(message));
 

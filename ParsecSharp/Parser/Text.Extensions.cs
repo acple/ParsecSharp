@@ -18,8 +18,5 @@ namespace Parsec
 
         public static Parser<char, string> ToStr(this Parser<char, IEnumerable<char>> parser)
             => parser.FMap(x => new string(x.ToArray()));
-
-        public static Parser<char, string> ToStr(this Parser<char, char> parser)
-            => parser.FMap(x => new string(x, 1));
     }
 }

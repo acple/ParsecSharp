@@ -96,7 +96,7 @@ namespace ParsecSharpExamples
         private static Parser<char, dynamic[]> JsonArray()
             => Delay(Json).SepBy(Comma())
                 .Between(LeftBracket(), RightBracket())
-                .FMap(list => list.ToArray()); // Json()をDelay()で包むことでパーサ構築時の無限再帰を回避
+                .ToArray(); // Json()をDelay()で包むことでパーサ構築時の無限再帰を回避
 
         // JSON String にマッチします。
         // string = quotation-mark *char quotation-mark
