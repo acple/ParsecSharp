@@ -132,8 +132,7 @@ namespace ParsecSharpExamples
         // JSON Number の符号にマッチします。double型の符号を反転させるFuncを返します。
         // minus = %x2D ; == '-'
         private static Parser<char, Func<double, double>> Sign()
-            => Try(Char('-').FMap(_ => (Func<double, double>)(x => -x)),
-                () => x => x);
+            => Optional(Char('-').FMap(_ => (Func<double, double>)(x => -x)), x => x);
 
         // JSON Number の整数部にマッチします。
         // int = zero / ( digit1-9 *DIGIT )
@@ -144,14 +143,15 @@ namespace ParsecSharpExamples
         // JSON Number の小数部にマッチします。
         // frac = decimal-point 1*DIGIT
         private static Parser<char, double> Frac()
-            => Try(Char('.').Right(Many1(Digit())).ToStr().FMap(x => double.Parse("0." + x)),
-                () => 0.0);
+            => Optional(Char('.').Right(Many1(Digit())).ToStr(), "0")
+                .FMap(x => double.Parse("0." + x));
+
 
         // JSON Number の指数部にマッチします。
         // exp = e [ minus / plus ] 1*DIGIT
         private static Parser<char, int> Exp()
             => Try(from _ in OneOf("eE")
-                   from sign in Char('-').ToStr().Or(Optional(Char('+')).FMap(__ => ""))
+                   from sign in Char('-').Or(Optional(Char('+'), '+')).ToStr()
                    from num in Many1(Digit()).ToStr()
                    select int.Parse(sign + num),
                 () => 0);

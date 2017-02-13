@@ -25,6 +25,9 @@ namespace Parsec
         public static Parser<TToken, T> Try<TToken, T>(Parser<TToken, T> parser, Func<T> resume)
             => parser.Alternative(Return<TToken, T>(resume));
 
+        public static Parser<TToken, T> Optional<TToken, T>(Parser<TToken, T> parser, T value)
+            => Try(parser, () => value);
+
         public static Parser<TToken, Unit> Optional<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
             => Try(parser.Ignore(), () => Unit.Instance);
 
