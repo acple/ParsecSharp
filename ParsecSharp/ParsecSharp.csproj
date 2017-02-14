@@ -8,8 +8,8 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageLicenseUrl>https://github.com/acple/ParsecSharp/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/acple/ParsecSharp</PackageProjectUrl>
-    <Description>Monadic parser combinator library</Description>
-    <Copyright>acple@2017</Copyright>
+    <Description>Monadic parser combinator library for C#</Description>
+    <Copyright>(c) 2015 acple</Copyright>
     <PackageTags>parser;combinator;linq</PackageTags>
   </PropertyGroup>
 </Project>
