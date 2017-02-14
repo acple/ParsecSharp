@@ -785,5 +785,20 @@ namespace ParsecSharpTest
                 fail => fail.ToString().Is(message => message.Contains("Exception 'NullReferenceException' occurred:")),
                 success => Assert.Fail());
         }
+
+        [TestMethod]
+        public void FixTest()
+        {
+            // ローカル変数上やパーサ定義式内に自己再帰的パーサを構築する際のヘルパコンビネータです。
+            // 仕様上、単体で使用する場合は型情報が不足するため、型引数を与える必要があります。
+
+            // 任意の回数の"{}"に挟まれた一文字にマッチするパーサ。
+            var parser = Fix<char, char>(self => self.Or(Any()).Between(Char('{'), Char('}')));
+
+            var source = "{{{{{*}}}}}";
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(),
+                success => success.Value.Is('*'));
+        }
     }
 }
