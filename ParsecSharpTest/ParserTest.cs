@@ -240,7 +240,7 @@ namespace ParsecSharpTest
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(Enumerable.Empty<char>()));
+                success => success.Value.IsEmpty());
         }
 
         [TestMethod]
@@ -345,7 +345,7 @@ namespace ParsecSharpTest
             var source3 = _abcdEFGH;
             parser.Parse(source3).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(Enumerable.Empty<string>()));
+                success => success.Value.IsEmpty());
         }
 
         [TestMethod]
@@ -388,7 +388,7 @@ namespace ParsecSharpTest
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(Enumerable.Empty<string>()));
+                success => success.Value.IsEmpty());
         }
 
         [TestMethod]
