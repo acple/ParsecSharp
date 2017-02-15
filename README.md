@@ -40,13 +40,13 @@ Install-Package ParsecSharp
 ## How to use
 Here is examples:
 
-* [JsonParser implementation](https://github.com/acple/ParsecSharp/blob/master/ParsecSharpExamples/JsonParser.cs)
-* [CsvParser implementation](https://github.com/acple/ParsecSharp/blob/master/ParsecSharpExamples/CsvParser.cs)
+* [JsonParser implementation](ParsecSharpExamples/JsonParser.cs)
+* [CsvParser implementation](ParsecSharpExamples/CsvParser.cs)
 
-Documents are included in [UnitTest code](https://github.com/acple/ParsecSharp/blob/master/ParsecSharpTest/ParserTest.cs) (jp)
+Documents are included in [UnitTest code](ParsecSharpTest/ParserTest.cs) (jp)
 
-If you want more information, read [APIs source code](https://github.com/acple/ParsecSharp/tree/master/ParsecSharp/Parser), all is there.
+If you want more information, read [APIs source code](ParsecSharp/Parser), all is there.
 
 
 ## License
-This software is released under the MIT License, see [LICENSE](https://github.com/acple/ParsecSharp/blob/master/LICENSE).
+This software is released under the MIT License, see [LICENSE](LICENSE).
