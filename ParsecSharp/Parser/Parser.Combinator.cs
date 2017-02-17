@@ -66,7 +66,7 @@ namespace Parsec
         public static Parser<TToken, T> Delay<TToken, T>(Func<Parser<TToken, T>> parser)
             => new Delay<TToken, T>(parser);
 
-        public static Parser<TToken, T> Fix<TToken, T>(Func<Parser<TToken, T>, Parser<TToken, T>> parser)
-            => new Fix<TToken, T>(parser);
+        public static Parser<TToken, T> Fix<TToken, T>(Func<Parser<TToken, T>, Parser<TToken, T>> function)
+            => new Fix<TToken, T>(function);
     }
 }

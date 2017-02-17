@@ -6,9 +6,9 @@ namespace Parsec.Internal
     {
         private readonly Parser<TToken, T> _parser;
 
-        internal Fix(Func<Parser<TToken, T>, Parser<TToken, T>> parser)
+        internal Fix(Func<Parser<TToken, T>, Parser<TToken, T>> function)
         {
-            this._parser = parser(this);
+            this._parser = function(this);
         }
 
         internal override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
