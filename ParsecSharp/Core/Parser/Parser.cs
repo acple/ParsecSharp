@@ -15,10 +15,6 @@ namespace Parsec
                 {
                     return this.Run(source, result => result);
                 }
-                catch (ParsecException<TToken> exception)
-                {
-                    return new UserError<TToken, T>(exception);
-                }
                 catch (Exception exception)
                 {
                     return new FailWithException<TToken, T>(exception, source);

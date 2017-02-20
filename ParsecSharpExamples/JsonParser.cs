@@ -31,7 +31,7 @@ namespace ParsecSharpExamples
         private static Parser<char, T> WithSpaces<T>(this Parser<char, T> parser)
             => parser.Between(Spaces(), Spaces());
 
-        // パース結果をdynamicに詰めるための拡張メソッド。
+        // パース結果をdynamicに詰める拡張メソッド。
         private static Parser<TToken, dynamic> AsDynamic<TToken, T>(this Parser<TToken, T> parser)
             => parser.FMap(x => x as dynamic);
 
@@ -81,46 +81,47 @@ namespace ParsecSharpExamples
         private static Parser<char, Dictionary<string, dynamic>> JsonObject()
             => KeyValuePair().SepBy(Comma())
                 .Between(LeftBrace(), RightBrace())
-                .FMap(enumerable => enumerable.ToDictionary(tuple => tuple.Item1, tuple => tuple.Item2));
+                .FMap(list => list.ToDictionary(x => x.Key, x => x.Value));
 
         // Key : Value ペアにマッチします。
         // member = string name-separator value
-        private static Parser<char, Tuple<string, dynamic>> KeyValuePair()
+        private static Parser<char, (string Key, dynamic Value)> KeyValuePair()
             => from key in JsonString()
                from _ in Colon()
                from value in Json()
-               select new Tuple<string, dynamic>(key, value); // 本当はKeyValuePair<TKey, TValue>使いたい
+               select (key, value);
 
         // JSON Array にマッチします。
         // array = begin-array [ value *( value-separator value ) ] end-array
-        private static Parser<char, List<dynamic>> JsonArray()
+        private static Parser<char, dynamic[]> JsonArray()
             => Delay(Json).SepBy(Comma())
                 .Between(LeftBracket(), RightBracket())
-                .FMap(enumerable => enumerable.ToList()); // Json()をDelay()で包むことでパーサ構築時の無限再帰を回避
+                .ToArray(); // Json()をDelay()で包むことでパーサ構築時の無限再帰を回避
 
         // JSON String にマッチします。
         // string = quotation-mark *char quotation-mark
         private static Parser<char, string> JsonString()
-            => Char('\"').Right(ManyTill(ParseJsonChar(), Char('\"'))).ToStr();
+            => Char('\"').Right(ManyTill(JsonChar(), Char('\"'))).ToStr();
 
-        // JSON String のCharにマッチします。
-        // エスケープが必要な文字の置換を行います。
+        // JSON String の一文字にマッチします。
+        // エスケープされた文字は置換します。
         // 詳細はRFCをみてください。
-        private static Parser<char, char> ParseJsonChar()
-            => Char('\\').Right(Choice(
-                Char('\"').FMap(_ => '\"'),
-                Char('\\').FMap(_ => '\\'),
-                Char('/').FMap(_ => '/'),
-                Char('b').FMap(_ => '\b'),
-                Char('f').FMap(_ => '\f'),
-                Char('n').FMap(_ => '\n'),
-                Char('r').FMap(_ => '\r'),
-                Char('t').FMap(_ => '\t'),
-                Char('u').Right(HexDigit().Repeat(4).ToStr()
-                    .FMap(x => (char)int.Parse(x, NumberStyles.HexNumber)))))
-                .Or(Any()); // 本当は NonCtrlChar なんだけど、Anyでサボり
+        private static Parser<char, char> JsonChar()
+            => Char('\\')
+                .Right(Choice(
+                    Char('\"').FMap(_ => '\"'),
+                    Char('\\').FMap(_ => '\\'),
+                    Char('/').FMap(_ => '/'),
+                    Char('b').FMap(_ => '\b'),
+                    Char('f').FMap(_ => '\f'),
+                    Char('n').FMap(_ => '\n'),
+                    Char('r').FMap(_ => '\r'),
+                    Char('t').FMap(_ => '\t'),
+                    Char('u').Right(HexDigit().Repeat(4).ToStr())
+                        .FMap(hex => (char)int.Parse(hex, NumberStyles.HexNumber))))
+                .Or(Any().Except(ControlChar()));
 
-        // JSON Number にマッチします。double型を返します。
+        // JSON Number にマッチします。doubleを返します。
         // number = [ minus ] int [ frac ] [ exp ]
         private static Parser<char, double> JsonNumber()
             => from sign in Sign()
@@ -129,11 +130,10 @@ namespace ParsecSharpExamples
                from exp in Exp()
                select sign((integer + frac) * Math.Pow(10, exp));
 
-        // JSON Number の符号にマッチします。double型の符号を反転させるFuncを返します。
+        // JSON Number の符号にマッチします。doubleの符号を反転させるFuncを返します。
         // minus = %x2D ; == '-'
         private static Parser<char, Func<double, double>> Sign()
-            => Try(Char('-').FMap(_ => new Func<double, double>(x => -x)),
-                () => x => x);
+            => Optional(Char('-').FMap(_ => (Func<double, double>)(x => -x)), x => x);
 
         // JSON Number の整数部にマッチします。
         // int = zero / ( digit1-9 *DIGIT )
@@ -144,14 +144,14 @@ namespace ParsecSharpExamples
         // JSON Number の小数部にマッチします。
         // frac = decimal-point 1*DIGIT
         private static Parser<char, double> Frac()
-            => Try(Char('.').Right(Many1(Digit())).ToStr().FMap(x => double.Parse("0." + x)),
-                () => 0.0);
+            => Optional(Char('.').Right(Many1(Digit())).ToStr(), "0")
+                .FMap(x => double.Parse("0." + x));
 
         // JSON Number の指数部にマッチします。
         // exp = e [ minus / plus ] 1*DIGIT
         private static Parser<char, int> Exp()
             => Try(from _ in OneOf("eE")
-                   from sign in Char('-').ToStr().Or(Optional(Char('+')).FMap(__ => ""))
+                   from sign in Char('-').Or(Optional(Char('+'), '+')).ToStr()
                    from num in Many1(Digit()).ToStr()
                    select int.Parse(sign + num),
                 () => 0);

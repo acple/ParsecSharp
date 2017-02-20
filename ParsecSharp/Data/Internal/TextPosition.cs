@@ -20,6 +20,6 @@
                 : new TextPosition(this.Line, this.Column + 1);
 
         public override string ToString()
-            => $"Line: { this.Line }, Column: { this.Column }";
+            => $"Line: {this.Line}, Column: {this.Column}";
     }
 }

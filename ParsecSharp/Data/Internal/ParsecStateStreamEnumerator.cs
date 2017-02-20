@@ -4,15 +4,15 @@ using System.Collections.Generic;
 
 namespace Parsec.Internal
 {
-    public sealed class ParsecStateStreamEnumerator<T> : IEnumerator<T>
+    public sealed class ParsecStateStreamEnumerator<TToken> : IEnumerator<TToken>
     {
-        private IParsecStateStream<T> stream;
+        private IParsecStateStream<TToken> stream;
 
-        public T Current { get; private set; }
+        public TToken Current { get; private set; }
 
         object IEnumerator.Current => this.Current;
 
-        public ParsecStateStreamEnumerator(IParsecStateStream<T> stream)
+        public ParsecStateStreamEnumerator(IParsecStateStream<TToken> stream)
         {
             this.stream = stream;
         }
@@ -27,14 +27,12 @@ namespace Parsec.Internal
         }
 
         void IEnumerator.Reset()
-        {
-            throw new NotImplementedException();
-        }
+            => throw new NotSupportedException();
 
         public void Dispose()
         {
-            this.Current = default(T);
-            this.stream = EmptyStream<T>.Instance;
+            this.Current = default(TToken);
+            this.stream = EmptyStream<TToken>.Instance;
         }
     }
 }

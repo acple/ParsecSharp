@@ -6,9 +6,9 @@ namespace Parsec
     {
         public IParsecState<TToken> State { get; }
 
-        public virtual ParsecException<TToken> Exception => new ParsecException<TToken>(this.ToString(), this.State);
+        public virtual ParsecException Exception => new ParsecException(this.ToString());
 
-        public sealed override T Value { get { throw this.Exception; } }
+        public sealed override T Value => throw this.Exception;
 
         protected Fail(IParsecState<TToken> state)
         {
@@ -26,6 +26,6 @@ namespace Parsec
         protected abstract string ToStringInternal();
 
         public sealed override string ToString()
-            => $"Parser Fail ({ this.State.Position }): { this.ToStringInternal() }";
+            => $"Parser Fail ({this.State.Position}): {this.ToStringInternal()}";
     }
 }

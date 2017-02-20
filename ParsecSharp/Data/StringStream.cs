@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Parsec.Internal;
+﻿using Parsec.Internal;
 
 namespace Parsec
 {
@@ -34,11 +33,5 @@ namespace Parsec
 
         public override string ToString()
             => (this.HasValue) ? this.Current.ToString() : string.Empty;
-
-        IEnumerator<char> IEnumerable<char>.GetEnumerator()
-            => new ParsecStateStreamEnumerator<char>(this);
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-            => new ParsecStateStreamEnumerator<char>(this);
     }
 }

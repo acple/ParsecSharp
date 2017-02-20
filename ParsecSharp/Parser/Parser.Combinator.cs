@@ -25,6 +25,9 @@ namespace Parsec
         public static Parser<TToken, T> Try<TToken, T>(Parser<TToken, T> parser, Func<T> resume)
             => parser.Alternative(Return<TToken, T>(resume));
 
+        public static Parser<TToken, T> Optional<TToken, T>(Parser<TToken, T> parser, T value)
+            => Try(parser, () => value);
+
         public static Parser<TToken, Unit> Optional<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
             => Try(parser.Ignore(), () => Unit.Instance);
 
@@ -42,7 +45,7 @@ namespace Parsec
             => Try(Many1(parser), () => Enumerable.Empty<T>());
 
         public static Parser<TToken, IEnumerable<T>> Many1<TToken, T>(Parser<TToken, T> parser)
-            => parser.Bind(x => Many_(parser, new List<T>() { x }));
+            => parser.Bind(x => Many_(parser, new List<T> { x }));
 
         private static Parser<TToken, IEnumerable<T>> Many_<TToken, T>(Parser<TToken, T> parser, List<T> list)
             => Try(parser.Bind(x => { list.Add(x); return Many_(parser, list); }), () => list);
@@ -54,13 +57,16 @@ namespace Parsec
             => terminator.FMap(_ => list.AsEnumerable())
                 .Alternative(parser.Bind(x => { list.Add(x); return ManyTill_(parser, terminator, list); }));
 
-        public static Parser<TToken, Unit> SkipMany<TToken, T>(Parser<TToken, T> parser)
+        public static Parser<TToken, Unit> SkipMany<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
             => Try(parser.Bind(_ => SkipMany(parser)), () => Unit.Instance);
 
-        public static Parser<TToken, Unit> SkipMany1<TToken, T>(Parser<TToken, T> parser)
+        public static Parser<TToken, Unit> SkipMany1<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
             => parser.Right(SkipMany(parser));
 
         public static Parser<TToken, T> Delay<TToken, T>(Func<Parser<TToken, T>> parser)
             => new Delay<TToken, T>(parser);
+
+        public static Parser<TToken, T> Fix<TToken, T>(Func<Parser<TToken, T>, Parser<TToken, T>> function)
+            => new Fix<TToken, T>(function);
     }
 }

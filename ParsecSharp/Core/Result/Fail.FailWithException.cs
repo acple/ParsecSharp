@@ -6,17 +6,17 @@ namespace Parsec.Internal
     {
         private readonly Exception _exception;
 
-        public override ParsecException<TToken> Exception => new ParsecException<TToken>(this.ToString(), this._exception, this.State);
+        public override ParsecException Exception => new ParsecException(this.ToString(), this._exception);
 
         internal FailWithException(Exception exception, IParsecState<TToken> state) : base(state)
         {
             this._exception = exception;
         }
 
-        protected override Fail<TToken, TResult> Next<TResult>()
-            => new FailWithException<TToken, TResult>(this._exception, this.State);
+        protected override Fail<TToken, TNext> Next<TNext>()
+            => new FailWithException<TToken, TNext>(this._exception, this.State);
 
         protected override string ToStringInternal()
-            => $"External Error '{ this._exception.GetType().Name }' occurred: { this._exception }";
+            => $"Exception '{this._exception.GetType().Name}' occurred: {this._exception}";
     }
 }

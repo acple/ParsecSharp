@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Parsec.Internal;
@@ -22,10 +21,10 @@ namespace Parsec
 
         public IParsecStateStream<char> Next => this._next.Value;
 
-        public TextStream(Stream stream) : this(stream, Encoding.UTF8)
+        public TextStream(Stream source) : this(source, Encoding.UTF8)
         { }
 
-        public TextStream(Stream stream, Encoding encoding) : this(new StreamReader(stream, encoding))
+        public TextStream(Stream source, Encoding encoding) : this(new StreamReader(source, encoding))
         { }
 
         public TextStream(TextReader reader) : this(reader, TextPosition.Initial)
@@ -40,16 +39,14 @@ namespace Parsec
                 var token = reader.Read();
                 this.HasValue = token != -1;
                 this.Current = (this.HasValue) ? (char)token : default(char);
-                this._next = new Lazy<IParsecStateStream<char>>(() => new TextStream(reader, position.Next(this.Current)), false);
             }
             catch
             {
-                this.HasValue = false;
-                this.Current = default(char);
-                this._next = new Lazy<IParsecStateStream<char>>(() => EmptyStream<char>.Instance, false);
                 this.Dispose();
-                throw;
             }
+            this._next = (this.HasValue)
+                ? new Lazy<IParsecStateStream<char>>(() => new TextStream(reader, position.Next(this.Current)), false)
+                : new Lazy<IParsecStateStream<char>>(() => EmptyStream<char>.Instance, false);
         }
 
         public void Dispose()
@@ -57,11 +54,5 @@ namespace Parsec
 
         public override string ToString()
             => (this.HasValue) ? this.Current.ToString() : string.Empty;
-
-        IEnumerator<char> IEnumerable<char>.GetEnumerator()
-            => new ParsecStateStreamEnumerator<char>(this);
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-            => new ParsecStateStreamEnumerator<char>(this);
     }
 }

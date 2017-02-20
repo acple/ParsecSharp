@@ -8,8 +8,8 @@ namespace Parsec
         public static Parser<char, T> Return<T>(T value)
             => Return<char, T>(value);
 
-        public static Parser<char, T> Return<T>(Func<T> valueFactory)
-            => Return<char, T>(valueFactory);
+        public static Parser<char, T> Return<T>(Func<T> value)
+            => Return<char, T>(value);
 
         public static Parser<char, T> Fail<T>()
             => Fail<char, T>();
@@ -19,6 +19,9 @@ namespace Parsec
 
         public static Parser<char, T> Abort<T>(Func<IParsecState<char>, string> message)
             => Abort<char, T>(message);
+
+        public static Parser<char, T> Abort<T>(Exception exception)
+            => Abort<char, T>(exception);
 
         public static Parser<char, IPosition> GetPosition()
             => GetPosition<char>();

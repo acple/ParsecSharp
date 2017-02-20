@@ -1,19 +1,16 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Parsec.Internal
+﻿namespace Parsec.Internal
 {
-    public sealed class EmptyStream<T> : IParsecStateStream<T>
+    public sealed class EmptyStream<TToken> : IParsecStateStream<TToken>
     {
-        public static IParsecStateStream<T> Instance { get; } = new EmptyStream<T>();
+        public static IParsecStateStream<TToken> Instance { get; } = new EmptyStream<TToken>();
 
-        public T Current => default(T);
+        public TToken Current => default(TToken);
 
         public bool HasValue => false;
 
         public IPosition Position => LinearPosition.Initial;
 
-        public IParsecStateStream<T> Next => this;
+        public IParsecStateStream<TToken> Next => this;
 
         private EmptyStream()
         { }
@@ -23,11 +20,5 @@ namespace Parsec.Internal
 
         public override string ToString()
             => string.Empty;
-
-        IEnumerator<T> IEnumerable<T>.GetEnumerator()
-            => Enumerable.Empty<T>().GetEnumerator();
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-            => Enumerable.Empty<T>().GetEnumerator();
     }
 }

@@ -7,21 +7,21 @@ namespace Parsec
 {
     public static partial class Parser
     {
-        public static Parser<T, T> Any<T>()
-            => Satisfy<T>(_ => true);
+        public static Parser<TToken, TToken> Any<TToken>()
+            => Satisfy<TToken>(_ => true);
 
-        public static Parser<T, Unit> EndOfInput<T>()
-            => Not(Any<T>());
+        public static Parser<TToken, Unit> EndOfInput<TToken>()
+            => Not(Any<TToken>());
 
-        public static Parser<T, T> OneOf<T>(IEnumerable<T> source)
-            => Satisfy<T>(x => source.Contains(x));
+        public static Parser<TToken, TToken> OneOf<TToken>(IEnumerable<TToken> candidates)
+            => Satisfy<TToken>(x => candidates.Contains(x));
 
-        public static Parser<T, T> NoneOf<T>(IEnumerable<T> source)
-            => Satisfy<T>(x => !source.Contains(x));
+        public static Parser<TToken, TToken> NoneOf<TToken>(IEnumerable<TToken> candidates)
+            => Satisfy<TToken>(x => !candidates.Contains(x));
 
-        public static Parser<T, T> Satisfy<T>(Func<T, bool> predicate)
-            => Builder.Create<T, T>(state => (state.HasValue && predicate(state.Current))
+        public static Parser<TToken, TToken> Satisfy<TToken>(Func<TToken, bool> predicate)
+            => Builder.Create<TToken, TToken>(state => (state.HasValue && predicate(state.Current))
                 ? Result.Success(state.Current, state.Next)
-                : Result.Fail<T, T>(state));
+                : Result.Fail<TToken, TToken>(state));
     }
 }

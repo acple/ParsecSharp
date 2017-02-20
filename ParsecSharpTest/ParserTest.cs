@@ -1,6 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
 using System.Linq;
+using ChainingAssertion;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Parsec;
 using static Parsec.Parser;
 using static Parsec.Text;
@@ -81,7 +82,7 @@ namespace ParsecSharpTest
         public void ReturnTest()
         {
             // 成功したという結果を返すパーサを作成します。
-            // パーサを連結する際に任意の値を投入したい場合に使用します。
+            // パーサに任意の値を投入する場合に使用します。
 
             var parser = Return("success!");
 
@@ -113,10 +114,10 @@ namespace ParsecSharpTest
         [TestMethod]
         public void GetPositionTest()
         {
-            // IPositionを返すパーサを作成します。
+            // パース位置の Position を取り出すパーサを作成します。
             // このパーサは入力を消費しません。
 
-            // Anyに3回マッチした後、その時点のPositionを返すパーサ。
+            // Anyに3回マッチした後、その時点の Position を返すパーサ。
             var parser = Any().Repeat(3).Right(GetPosition());
 
             var source = _abcdEFGH;
@@ -131,7 +132,7 @@ namespace ParsecSharpTest
             // parsers を前から1つずつ適用し、最初に成功したものを結果として返すパーサを作成します。
             // 全て失敗した場合、最後の失敗を全体の失敗として返します。
 
-            // 'c'、または 'b'、または 'a' のどれかにマッチするパーサ。
+            // 'c'、'b'、または 'a' のどれかにマッチするパーサ。
             var parser = Choice(Char('c'), Char('b'), Char('a'));
 
             var source = _abcdEFGH;
@@ -150,7 +151,7 @@ namespace ParsecSharpTest
         {
             // parsers に順にマッチングし、その結果を連結したシーケンスを返すパーサを作成します。
 
-            // 'a', 'b', 'c', 'd' にマッチし、['a', 'b', 'c', 'd'] を "abcd" に変換して返すパーサ。
+            // 'a' + 'b' + 'c' + 'd' にマッチし、['a', 'b', 'c', 'd'] を "abcd" に変換して返すパーサ。
             var parser = Sequence(Char('a'), Char('b'), Char('c'), Char('d')).ToStr();
 
             var source = _abcdEFGH;
@@ -214,7 +215,7 @@ namespace ParsecSharpTest
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(new[] { 'a', 'a' }));
+                success => success.Value.Is('a', 'a'));
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
@@ -234,12 +235,12 @@ namespace ParsecSharpTest
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(new[] { 'a', 'b', 'c', 'd' }));
+                success => success.Value.Is('a', 'b', 'c', 'd'));
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(Enumerable.Empty<char>()));
+                success => success.Value.IsEmpty());
         }
 
         [TestMethod]
@@ -247,12 +248,14 @@ namespace ParsecSharpTest
         {
             // parser に1回以上繰り返しマッチし、その結果をシーケンスとして返すパーサを作成します。
             // 1回もマッチしなかった場合、パーサは失敗を返します。
+
+            // Lower に1回以上繰り返しマッチするパーサ。
             var parser = Many1(Lower());
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(new[] { 'a', 'b', 'c', 'd' }));
+                success => success.Value.Is('a', 'b', 'c', 'd'));
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
@@ -272,7 +275,7 @@ namespace ParsecSharpTest
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(new[] { 'a', 'b', 'c', 'd', 'E' }));
+                success => success.Value.Is('a', 'b', 'c', 'd', 'E'));
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
@@ -318,7 +321,7 @@ namespace ParsecSharpTest
                 success => Assert.Fail());
         }
 
-        private readonly string _commanum = "123,456,789";
+        private const string _commanum = "123,456,789";
 
         [TestMethod]
         public void SepByTest()
@@ -332,17 +335,17 @@ namespace ParsecSharpTest
             var source = _commanum;
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(new[] { "123", "456", "789" }));
+                success => success.Value.Is("123", "456", "789"));
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
                  fail => Assert.Fail(),
-                 success => success.Value.Is(new[] { "123456" }));
+                 success => success.Value.Is("123456"));
 
             var source3 = _abcdEFGH;
             parser.Parse(source3).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(Enumerable.Empty<string>()));
+                success => success.Value.IsEmpty());
         }
 
         [TestMethod]
@@ -356,12 +359,12 @@ namespace ParsecSharpTest
             var source = _commanum;
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(new[] { "123", "456", "789" }));
+                success => success.Value.Is("123", "456", "789"));
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
                  fail => Assert.Fail(),
-                 success => success.Value.Is(new[] { "123456" }));
+                 success => success.Value.Is("123456"));
 
             var source3 = _abcdEFGH;
             parser.Parse(source3).CaseOf(
@@ -380,12 +383,12 @@ namespace ParsecSharpTest
             var source = _commanum;
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(new[] { "123", "456" }));
+                success => success.Value.Is("123", "456"));
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(Enumerable.Empty<string>()));
+                success => success.Value.IsEmpty());
         }
 
         [TestMethod]
@@ -399,7 +402,7 @@ namespace ParsecSharpTest
             var source = _commanum;
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(new[] { "123", "456" }));
+                success => success.Value.Is("123", "456"));
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
@@ -418,17 +421,17 @@ namespace ParsecSharpTest
             var source = _commanum;
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(new[] { "123", "456", "789" }));
+                success => success.Value.Is("123", "456", "789"));
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
                 fail => { },
-                success => success.Value.Is(new[] { "123456" }));
+                success => success.Value.Is("123456"));
 
             var source3 = _commanum + ",";
             parser.Parse(source3).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(new[] { "123", "456", "789" }));
+                success => success.Value.Is("123", "456", "789"));
         }
 
         [TestMethod]
@@ -442,23 +445,23 @@ namespace ParsecSharpTest
             var source = _commanum;
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(new[] { "123", "456", "789" }));
+                success => success.Value.Is("123", "456", "789"));
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
                 fail => { },
-                success => success.Value.Is(new[] { "123456" }));
+                success => success.Value.Is("123456"));
 
             var source3 = _commanum + ",";
             parser.Parse(source3).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(new[] { "123", "456", "789" }));
+                success => success.Value.Is("123", "456", "789"));
         }
 
         [TestMethod]
         public void ExceptTest()
         {
-            // 指定したパーサに対して除外ルールを適用したパーサを作成します。
+            // 指定したパーサに対して除外条件を設定したパーサを作成します。
 
             var source = _123456;
 
@@ -590,7 +593,7 @@ namespace ParsecSharpTest
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(new[] { "abc", "dEF" }));
+                success => success.Value.Is("abc", "dEF"));
         }
 
         [TestMethod]
@@ -647,11 +650,11 @@ namespace ParsecSharpTest
                 success => success.Value.Is(_abcdEFGH));
 
             // Many(Any()) などを parser に渡した場合、終端まで Any にマッチするため、 close は EndOfInput にマッチします。
-            var parser2 = Many(Any()).Between(Char('\"'), Char('\"')); // ( dquote *Any dquote ) のつもり
+            var parser2 = Many(Any()).Between(Char('\"'), Char('\"')); // ( dquote *Any dquote ) とはならない
             parser2.Parse("\"abCD1234\"").CaseOf(
                 fail => { /* Many(Any()) が abCD1234\" までマッチしてしまうため、close の \" がマッチせずFailになる */ },
                 success => Assert.Fail());
-            // この形にマッチするパーサを作成するときは、ManyTill を使用してください。
+            // この形にマッチするパーサを作成したいときは、ManyTill を使用してください。
         }
 
         [TestMethod]
@@ -715,7 +718,7 @@ namespace ParsecSharpTest
         {
             // パース失敗時のエラーメッセージを書き換えます。
 
-            var parser = Many1(Digit()).Message(state => $"MessageTest Current: '{ state.Current }'");
+            var parser = Many1(Digit()).Message(state => $"MessageTest Current: '{state.Current}'");
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
@@ -725,7 +728,7 @@ namespace ParsecSharpTest
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is(new[] { '1', '2', '3', '4', '5', '6' }));
+                success => success.Value.Is('1', '2', '3', '4', '5', '6'));
         }
 
         [TestMethod]
@@ -733,7 +736,8 @@ namespace ParsecSharpTest
         {
             // パース失敗時にパース処理をAbortします。
 
-            var parser = Many(Lower().Error(state => $"Fatal Error! '{ state }' is not a lower char!"));
+            var parser = Many(Lower().Error(state => $"Fatal Error! '{state}' is not a lower char!")).ToStr()
+                .Or(Return("recovery"));
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
@@ -767,6 +771,34 @@ namespace ParsecSharpTest
             parser2.Parse(source);
             success.Is(4);
             fail.Is(5);
+        }
+
+        [TestMethod]
+        public void ExceptionTest()
+        {
+            // 例外発生時は、例外のNameをメッセージに含むFailを返します。
+            var obj = default(object);
+            var parser = Any().FMap(_ => obj.ToString()).Or(Return("success"));
+
+            var source = _abcdEFGH;
+            parser.Parse(source).CaseOf(
+                fail => fail.ToString().Is(message => message.Contains("Exception 'NullReferenceException' occurred:")),
+                success => Assert.Fail());
+        }
+
+        [TestMethod]
+        public void FixTest()
+        {
+            // ローカル変数上やパーサ定義式内に自己再帰的パーサを構築する際のヘルパコンビネータです。
+            // 仕様上、単体で使用する場合は型情報が不足するため、型引数を与える必要があります。
+
+            // 任意の回数の"{}"に挟まれた一文字にマッチするパーサ。
+            var parser = Fix<char, char>(self => self.Or(Any()).Between(Char('{'), Char('}')));
+
+            var source = "{{{{{*}}}}}";
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(),
+                success => success.Value.Is('*'));
         }
     }
 }
