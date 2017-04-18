@@ -5,7 +5,7 @@
         internal ParseError(IParsecState<TToken> state) : base(state)
         { }
 
-        protected override Fail<TToken, TNext> Next<TNext>()
+        protected override Fail<TToken, TNext> Convert<TNext>()
             => new ParseError<TToken, TNext>(this.State);
 
         protected override string ToStringInternal()
