@@ -46,13 +46,13 @@ namespace Parsec
             => Try(parser.Bind(x => parser.FoldL(function(seed, x), function)), () => seed);
 
         public static Parser<TToken, TAccum> FoldL<TToken, T, TAccum>(this Parser<TToken, T> parser, Func<TAccum> seed, Func<TAccum, T, TAccum> function)
-            => Return<TToken, TAccum>(seed).Bind(x => parser.FoldL(x, function));
+            => Pure<TToken, TAccum>(seed).Bind(x => parser.FoldL(x, function));
 
         public static Parser<TToken, TAccum> FoldR<TToken, T, TAccum>(this Parser<TToken, T> parser, TAccum seed, Func<T, TAccum, TAccum> function)
             => Try(parser.Bind(x => parser.FoldR(seed, function).FMap(accum => function(x, accum))), () => seed);
 
         public static Parser<TToken, TAccum> FoldR<TToken, T, TAccum>(this Parser<TToken, T> parser, Func<TAccum> seed, Func<T, TAccum, TAccum> function)
-            => Return<TToken, TAccum>(seed).Bind(x => parser.FoldR(x, function));
+            => Pure<TToken, TAccum>(seed).Bind(x => parser.FoldR(x, function));
 
         public static Parser<TToken, IEnumerable<T>> Repeat<TToken, T>(this Parser<TToken, T> parser, int count)
             => Sequence(Enumerable.Repeat(parser, count));

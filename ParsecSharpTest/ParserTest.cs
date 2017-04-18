@@ -79,12 +79,12 @@ namespace ParsecSharpTest
         }
 
         [TestMethod]
-        public void ReturnTest()
+        public void PureTest()
         {
             // 成功したという結果を返すパーサを作成します。
             // パーサに任意の値を投入する場合に使用します。
 
-            var parser = Return("success!");
+            var parser = Pure("success!");
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
@@ -737,7 +737,7 @@ namespace ParsecSharpTest
             // パース失敗時にパース処理をAbortします。
 
             var parser = Many(Lower().Error(state => $"Fatal Error! '{state}' is not a lower char!")).ToStr()
-                .Or(Return("recovery"));
+                .Or(Pure("recovery"));
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
@@ -778,7 +778,7 @@ namespace ParsecSharpTest
         {
             // 例外発生時は、例外のNameをメッセージに含むFailを返します。
             var obj = default(object);
-            var parser = Any().FMap(_ => obj.ToString()).Or(Return("success"));
+            var parser = Any().FMap(_ => obj.ToString()).Or(Pure("success"));
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
