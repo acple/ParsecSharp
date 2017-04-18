@@ -486,11 +486,11 @@ namespace ParsecSharpTest
             // '+'、または'-'にマッチし、それぞれ(x + y)、(x - y)の二項演算関数を返すパーサ。
             // ( "+" / "-" )
             var op = Choice(
-                Char('+').FMap(_ => new Func<int, int, int>((x, y) => x + y)),
-                Char('-').FMap(_ => new Func<int, int, int>((x, y) => x - y)));
+                Char('+').Map(_ => new Func<int, int, int>((x, y) => x + y)),
+                Char('-').Map(_ => new Func<int, int, int>((x, y) => x - y)));
 
             // 1文字以上の数字にマッチし、intに変換するパーサ。
-            var num = Many1(Digit()).ToStr().FMap(x => int.Parse(x));
+            var num = Many1(Digit()).ToStr().Map(x => int.Parse(x));
 
             // num *(op num)
             var parser = num.ChainL(op);
@@ -524,11 +524,11 @@ namespace ParsecSharpTest
             // '+'、または'-'にマッチし、それぞれ(x + y)、(x - y)の二項演算関数を返すパーサ。
             // ( "+" / "-" )
             var op = Choice(
-                Char('+').FMap(_ => new Func<int, int, int>((x, y) => x + y)),
-                Char('-').FMap(_ => new Func<int, int, int>((x, y) => x - y)));
+                Char('+').Map(_ => new Func<int, int, int>((x, y) => x + y)),
+                Char('-').Map(_ => new Func<int, int, int>((x, y) => x - y)));
 
             // 1文字以上の数字にマッチし、intに変換するパーサ。
-            var num = Many1(Digit()).ToStr().FMap(x => int.Parse(x));
+            var num = Many1(Digit()).ToStr().Map(x => int.Parse(x));
 
             // num *( op num )
             var parser = num.ChainR(op);
@@ -560,7 +560,7 @@ namespace ParsecSharpTest
             // 初期値とアキュムレータを引数にとり、パースした結果を左から集計するパーサを作成します。
 
             // 0個以上の Digit にマッチし、初期値10に対して左から (x => accum - x) を繰り返し適用するパーサ。
-            var parser = Digit().ToStr().FMap(int.Parse).FoldL(10, (x, y) => x - y);
+            var parser = Digit().ToStr().Map(int.Parse).FoldL(10, (x, y) => x - y);
 
             var source = "12345";
             parser.Parse(source).CaseOf(
@@ -574,7 +574,7 @@ namespace ParsecSharpTest
             // 初期値とアキュムレータを引数にとり、パース結果を右から集計するパーサを作成します。
 
             // 0個以上の Digit にマッチし、初期値10に対して右から (x => x - accum) を繰り返し適用するパーサ。
-            var parser = Digit().ToStr().FMap(int.Parse).FoldR(10, (x, y) => x - y);
+            var parser = Digit().ToStr().Map(int.Parse).FoldR(10, (x, y) => x - y);
 
             var source = "12345";
             parser.Parse(source).CaseOf(
@@ -778,7 +778,7 @@ namespace ParsecSharpTest
         {
             // 例外発生時は、例外のNameをメッセージに含むFailを返します。
             var obj = default(object);
-            var parser = Any().FMap(_ => obj.ToString()).Or(Pure("success"));
+            var parser = Any().Map(_ => obj.ToString()).Or(Pure("success"));
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(

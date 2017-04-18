@@ -17,6 +17,6 @@ namespace Parsec
             => parser.Parse(new TextStream(source, encoding));
 
         public static Parser<char, string> ToStr(this Parser<char, IEnumerable<char>> parser)
-            => parser.FMap(x => new string(x.ToArray()));
+            => parser.Map(x => new string(x.ToArray()));
     }
 }
