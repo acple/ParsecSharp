@@ -160,9 +160,7 @@ namespace ParsecSharpExamples
         // true  = %x74.72.75.65
         // false = %x66.61.6c.73.65
         private static Parser<char, bool> JsonBool()
-            => Choice(
-                String("false").Map(_ => false),
-                String("true").Map(_ => true));
+            => String("false").Map(_ => false) | String("true").Map(_ => true);
 
         // JSON Null にマッチします。
         // null = %x6e.75.6c.6c

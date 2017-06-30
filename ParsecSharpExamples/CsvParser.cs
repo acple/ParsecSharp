@@ -50,7 +50,7 @@ namespace ParsecSharpExamples
 
         // field = ( escaped / non-escaped )
         private static Parser<char, string> Field()
-            => EscapedField().Or(NonEscapedField());
+            => EscapedField() | NonEscapedField();
 
         // record = field *( COMMA field )
         private static Parser<char, string[]> Record()
