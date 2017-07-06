@@ -284,6 +284,25 @@ namespace ParsecSharpTest
         }
 
         [TestMethod]
+        public void SkipTillTest()
+        {
+            // terminator にマッチするまで parser に繰り返しマッチし、terminator にマッチした結果を返すパーサを作成します。
+
+            // "FG" にマッチするまでの間 Any に繰り返しマッチするパーサ。
+            var parser = SkipTill(Any(), String("FG"));
+
+            var source = _abcdEFGH;
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(),
+                success => success.Value.Is("FG"));
+
+            var source2 = _123456;
+            parser.Parse(source2).CaseOf(
+                fail => { },
+                success => Assert.Fail());
+        }
+
+        [TestMethod]
         public void SkipManyTest()
         {
             // parser に0回以上繰り返しマッチし、その結果を破棄するパーサを作成します。
