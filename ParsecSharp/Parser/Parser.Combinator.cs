@@ -57,6 +57,9 @@ namespace Parsec
             => terminator.Map(_ => list.AsEnumerable())
                 .Alternative(parser.Bind(x => { list.Add(x); return ManyTill_(parser, terminator, list); }));
 
+        public static Parser<TToken, T> SkipTill<TToken, TIgnore, T>(Parser<TToken, TIgnore> parser, Parser<TToken, T> terminator)
+            => terminator.Alternative(parser.Bind(_ => SkipTill(parser, terminator)));
+
         public static Parser<TToken, Unit> SkipMany<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
             => Try(parser.Bind(_ => SkipMany(parser)), () => Unit.Instance);
 
