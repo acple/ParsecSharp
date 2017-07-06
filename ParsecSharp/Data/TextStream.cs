@@ -38,7 +38,7 @@ namespace Parsec
             {
                 var token = reader.Read();
                 this.HasValue = token != -1;
-                this.Current = (this.HasValue) ? (char)token : default(char);
+                this.Current = (this.HasValue) ? (char)token : default;
             }
             catch
             {
