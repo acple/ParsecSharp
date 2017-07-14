@@ -505,13 +505,13 @@ namespace ParsecSharpTest
             // '+'、または'-'にマッチし、それぞれ(x + y)、(x - y)の二項演算関数を返すパーサ。
             // ( "+" / "-" )
             var op = Choice(
-                Char('+').Map(_ => new Func<int, int, int>((x, y) => x + y)),
-                Char('-').Map(_ => new Func<int, int, int>((x, y) => x - y)));
+                Char('+').Map(_ => (Func<int, int, int>)((x, y) => x + y)),
+                Char('-').Map(_ => (Func<int, int, int>)((x, y) => x - y)));
 
             // 1文字以上の数字にマッチし、intに変換するパーサ。
             var num = Many1(Digit()).ToStr().Map(x => int.Parse(x));
 
-            // num *(op num)
+            // num *( op num )
             var parser = num.ChainL(op);
 
             var source = "10+5-3+1";
@@ -543,8 +543,8 @@ namespace ParsecSharpTest
             // '+'、または'-'にマッチし、それぞれ(x + y)、(x - y)の二項演算関数を返すパーサ。
             // ( "+" / "-" )
             var op = Choice(
-                Char('+').Map(_ => new Func<int, int, int>((x, y) => x + y)),
-                Char('-').Map(_ => new Func<int, int, int>((x, y) => x - y)));
+                Char('+').Map(_ => (Func<int, int, int>)((x, y) => x + y)),
+                Char('-').Map(_ => (Func<int, int, int>)((x, y) => x - y)));
 
             // 1文字以上の数字にマッチし、intに変換するパーサ。
             var num = Many1(Digit()).ToStr().Map(x => int.Parse(x));
@@ -576,7 +576,7 @@ namespace ParsecSharpTest
         [TestMethod]
         public void FoldLTest()
         {
-            // 初期値とアキュムレータを引数にとり、パースした結果を左から集計するパーサを作成します。
+            // 初期値と集計関数を引数にとり、パースした結果を左から集計するパーサを作成します。
 
             // 0個以上の Digit にマッチし、初期値10に対して左から (x => accum - x) を繰り返し適用するパーサ。
             var parser = Digit().ToStr().Map(int.Parse).FoldL(10, (x, y) => x - y);
@@ -590,7 +590,7 @@ namespace ParsecSharpTest
         [TestMethod]
         public void FoldRTest()
         {
-            // 初期値とアキュムレータを引数にとり、パース結果を右から集計するパーサを作成します。
+            // 初期値と集計関数を引数にとり、パース結果を右から集計するパーサを作成します。
 
             // 0個以上の Digit にマッチし、初期値10に対して右から (x => x - accum) を繰り返し適用するパーサ。
             var parser = Digit().ToStr().Map(int.Parse).FoldR(10, (x, y) => x - y);
@@ -795,9 +795,11 @@ namespace ParsecSharpTest
         [TestMethod]
         public void ExceptionTest()
         {
-            // 例外発生時は、例外のNameをメッセージに含むFailを返します。
-            var obj = default(object);
-            var parser = Any().Map(_ => obj.ToString()).Or(Pure("success"));
+            // 例外発生時は即座にパース処理を中止し、例外のNameをメッセージに含むFailを返します。
+            // 例外による失敗に対して復旧は行われません。
+
+            // nullに対してToStringした結果を返し、失敗した場合に"success"を返すことを試みるパーサ。
+            var parser = Pure(null as object).Map(x => x.ToString()).Or(Pure("success"));
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
@@ -808,8 +810,8 @@ namespace ParsecSharpTest
         [TestMethod]
         public void FixTest()
         {
-            // ローカル変数上やパーサ定義式内に自己再帰的パーサを構築する際のヘルパコンビネータです。
-            // 仕様上、単体で使用する場合は型情報が不足するため、型引数を与える必要があります。
+            // ローカル変数上やパーサ定義式内に自己再帰パーサを構築する際のヘルパコンビネータです。
+            // C#の仕様上、単体で使用する場合は型情報が不足するため、型引数を与える必要があります。
 
             // 任意の回数の"{}"に挟まれた一文字にマッチするパーサ。
             var parser = Fix<char, char>(self => self.Or(Any()).Between(Char('{'), Char('}')));
