@@ -2,7 +2,7 @@
 {
     internal struct LinearPosition : IPosition
     {
-        public static LinearPosition Initial => new LinearPosition(0);
+        public static LinearPosition Initial => default;
 
         public int Line => 0;
 
