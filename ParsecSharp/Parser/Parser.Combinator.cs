@@ -66,6 +66,9 @@ namespace Parsec
         public static Parser<TToken, Unit> SkipMany1<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
             => parser.Right(SkipMany(parser));
 
+        public static Parser<TToken, T> Match<TToken, T>(Parser<TToken, T> parser)
+            => SkipTill(Any<TToken>(), parser);
+
         public static Parser<TToken, T> Delay<TToken, T>(Func<Parser<TToken, T>> parser)
             => new Delay<TToken, T>(parser);
 
