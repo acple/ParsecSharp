@@ -21,8 +21,18 @@ This project is affected by [parsec](https://hackage.haskell.org/package/parsec)
 NuGet Package Manager Console:
 
 ```powershell
-Install-Package ParsecSharp
+> Install-Package ParsecSharp
 ```
+
+dotnet-cli:
+
+```sh
+> dotnet add package ParsecSharp
+```
+
+Download manually:
+
+> [NuGet Gallery](https://www.nuget.org/packages/ParsecSharp/)
 
 
 ## Supported platform
