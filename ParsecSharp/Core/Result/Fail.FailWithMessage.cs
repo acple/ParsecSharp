@@ -9,7 +9,7 @@
             this._message = message;
         }
 
-        protected override Fail<TToken, TNext> Next<TNext>()
+        protected override Fail<TToken, TNext> Convert<TNext>()
             => new FailWithMessage<TToken, TNext>(this._message, this.State);
 
         protected override string ToStringInternal()

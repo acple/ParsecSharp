@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard1.0</TargetFramework>
+    <LangVersion>7.1</LangVersion>
     <RootNamespace>Parsec</RootNamespace>
     <PackageId>ParsecSharp</PackageId>
-    <Version>0.9.0</Version>
+    <Version>1.0.0-pre</Version>
     <Authors>acple</Authors>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageLicenseUrl>https://github.com/acple/ParsecSharp/blob/master/LICENSE</PackageLicenseUrl>

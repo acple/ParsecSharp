@@ -5,10 +5,10 @@ namespace Parsec
 {
     public static partial class Parser
     {
-        public static Parser<TToken, T> Return<TToken, T>(T value)
+        public static Parser<TToken, T> Pure<TToken, T>(T value)
             => Builder.Create<TToken, T>(state => Result.Success(value, state));
 
-        public static Parser<TToken, T> Return<TToken, T>(Func<T> value)
+        public static Parser<TToken, T> Pure<TToken, T>(Func<T> value)
             => Builder.Create<TToken, T>(state => Result.Success(value(), state));
 
         public static Parser<TToken, T> Fail<TToken, T>()

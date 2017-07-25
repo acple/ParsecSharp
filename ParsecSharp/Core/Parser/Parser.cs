@@ -21,5 +21,8 @@ namespace Parsec
                 }
             }
         }
+
+        public static Parser<TToken, T> operator |(Parser<TToken, T> first, Parser<TToken, T> second)
+            => new Alternative<TToken, T>(first, second);
     }
 }

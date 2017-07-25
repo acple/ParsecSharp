@@ -33,7 +33,7 @@ namespace ParsecSharpExamples
 
         // パース結果をdynamicに詰める拡張メソッド。
         private static Parser<TToken, dynamic> AsDynamic<TToken, T>(this Parser<TToken, T> parser)
-            => parser.FMap(x => x as dynamic);
+            => parser.Map(x => x as dynamic);
 
         // JSON Object の開始を表す波括弧にマッチします。
         // begin-object = ws %x7B ws ; == '{'
@@ -81,7 +81,7 @@ namespace ParsecSharpExamples
         private static Parser<char, Dictionary<string, dynamic>> JsonObject()
             => KeyValuePair().SepBy(Comma())
                 .Between(LeftBrace(), RightBrace())
-                .FMap(list => list.ToDictionary(x => x.Key, x => x.Value));
+                .Map(list => list.ToDictionary(x => x.Key, x => x.Value));
 
         // Key : Value ペアにマッチします。
         // member = string name-separator value
@@ -109,16 +109,16 @@ namespace ParsecSharpExamples
         private static Parser<char, char> JsonChar()
             => Char('\\')
                 .Right(Choice(
-                    Char('\"').FMap(_ => '\"'),
-                    Char('\\').FMap(_ => '\\'),
-                    Char('/').FMap(_ => '/'),
-                    Char('b').FMap(_ => '\b'),
-                    Char('f').FMap(_ => '\f'),
-                    Char('n').FMap(_ => '\n'),
-                    Char('r').FMap(_ => '\r'),
-                    Char('t').FMap(_ => '\t'),
+                    Char('\"').Map(_ => '\"'),
+                    Char('\\').Map(_ => '\\'),
+                    Char('/').Map(_ => '/'),
+                    Char('b').Map(_ => '\b'),
+                    Char('f').Map(_ => '\f'),
+                    Char('n').Map(_ => '\n'),
+                    Char('r').Map(_ => '\r'),
+                    Char('t').Map(_ => '\t'),
                     Char('u').Right(HexDigit().Repeat(4).ToStr())
-                        .FMap(hex => (char)int.Parse(hex, NumberStyles.HexNumber))))
+                        .Map(hex => (char)int.Parse(hex, NumberStyles.HexNumber))))
                 .Or(Any().Except(ControlChar()));
 
         // JSON Number にマッチします。doubleを返します。
@@ -133,19 +133,19 @@ namespace ParsecSharpExamples
         // JSON Number の符号にマッチします。doubleの符号を反転させるFuncを返します。
         // minus = %x2D ; == '-'
         private static Parser<char, Func<double, double>> Sign()
-            => Optional(Char('-').FMap(_ => (Func<double, double>)(x => -x)), x => x);
+            => Optional(Char('-').Map(_ => (Func<double, double>)(x => -x)), x => x);
 
         // JSON Number の整数部にマッチします。
         // int = zero / ( digit1-9 *DIGIT )
         private static Parser<char, int> Int()
             => Char('0').ToStr().Or(OneOf("123456789").Append(Many(Digit())).ToStr())
-                .FMap(x => int.Parse(x));
+                .Map(x => int.Parse(x));
 
         // JSON Number の小数部にマッチします。
         // frac = decimal-point 1*DIGIT
         private static Parser<char, double> Frac()
             => Optional(Char('.').Right(Many1(Digit())).ToStr(), "0")
-                .FMap(x => double.Parse("0." + x));
+                .Map(x => double.Parse("0." + x));
 
         // JSON Number の指数部にマッチします。
         // exp = e [ minus / plus ] 1*DIGIT
@@ -160,13 +160,11 @@ namespace ParsecSharpExamples
         // true  = %x74.72.75.65
         // false = %x66.61.6c.73.65
         private static Parser<char, bool> JsonBool()
-            => Choice(
-                String("false").FMap(_ => false),
-                String("true").FMap(_ => true));
+            => String("false").Map(_ => false) | String("true").Map(_ => true);
 
         // JSON Null にマッチします。
         // null = %x6e.75.6c.6c
         private static Parser<char, object> JsonNull()
-            => String("null").FMap(_ => null as object);
+            => String("null").Map(_ => null as object);
     }
 }

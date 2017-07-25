@@ -40,25 +40,25 @@ namespace Parsec
             => Try(function.Bind(func => parser.Bind(x => parser.ChainL_(function, func(accum, x)))), () => accum);
 
         public static Parser<TToken, T> ChainR<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function)
-            => parser.Bind(x => Try(function.Bind(func => parser.ChainR(function).FMap(accum => func(x, accum))), () => x));
+            => parser.Bind(x => Try(function.Bind(func => parser.ChainR(function).Map(accum => func(x, accum))), () => x));
 
         public static Parser<TToken, TAccum> FoldL<TToken, T, TAccum>(this Parser<TToken, T> parser, TAccum seed, Func<TAccum, T, TAccum> function)
             => Try(parser.Bind(x => parser.FoldL(function(seed, x), function)), () => seed);
 
         public static Parser<TToken, TAccum> FoldL<TToken, T, TAccum>(this Parser<TToken, T> parser, Func<TAccum> seed, Func<TAccum, T, TAccum> function)
-            => Return<TToken, TAccum>(seed).Bind(x => parser.FoldL(x, function));
+            => Pure<TToken, TAccum>(seed).Bind(x => parser.FoldL(x, function));
 
         public static Parser<TToken, TAccum> FoldR<TToken, T, TAccum>(this Parser<TToken, T> parser, TAccum seed, Func<T, TAccum, TAccum> function)
-            => Try(parser.Bind(x => parser.FoldR(seed, function).FMap(accum => function(x, accum))), () => seed);
+            => Try(parser.Bind(x => parser.FoldR(seed, function).Map(accum => function(x, accum))), () => seed);
 
         public static Parser<TToken, TAccum> FoldR<TToken, T, TAccum>(this Parser<TToken, T> parser, Func<TAccum> seed, Func<T, TAccum, TAccum> function)
-            => Return<TToken, TAccum>(seed).Bind(x => parser.FoldR(x, function));
+            => Pure<TToken, TAccum>(seed).Bind(x => parser.FoldR(x, function));
 
         public static Parser<TToken, IEnumerable<T>> Repeat<TToken, T>(this Parser<TToken, T> parser, int count)
             => Sequence(Enumerable.Repeat(parser, count));
 
         public static Parser<TToken, TLeft> Left<TToken, TLeft, TRight>(this Parser<TToken, TLeft> parser, Parser<TToken, TRight> next)
-            => parser.Bind(x => next.FMap(_ => x));
+            => parser.Bind(x => next.Map(_ => x));
 
         public static Parser<TToken, TRight> Right<TToken, TLeft, TRight>(this Parser<TToken, TLeft> parser, Parser<TToken, TRight> next)
             => parser.Bind(_ => next);
@@ -67,28 +67,28 @@ namespace Parsec
             => open.Right(parser.Left(close));
 
         public static Parser<TToken, IEnumerable<T>> Append<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, T> next)
-            => parser.Bind(x => next.FMap(y => new[] { x, y }.AsEnumerable()));
+            => parser.Bind(x => next.Map(y => new[] { x, y }.AsEnumerable()));
 
         public static Parser<TToken, IEnumerable<T>> Append<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, IEnumerable<T>> next)
-            => parser.Bind(x => next.FMap(y => new[] { x }.Concat(y)));
+            => parser.Bind(x => next.Map(y => new[] { x }.Concat(y)));
 
         public static Parser<TToken, IEnumerable<T>> Append<TToken, T>(this Parser<TToken, IEnumerable<T>> parser, Parser<TToken, T> next)
-            => parser.Bind(x => next.FMap(y => x.Concat(new[] { y })));
+            => parser.Bind(x => next.Map(y => x.Concat(new[] { y })));
 
         public static Parser<TToken, IEnumerable<T>> Append<TToken, T>(this Parser<TToken, IEnumerable<T>> parser, Parser<TToken, IEnumerable<T>> next)
-            => parser.Bind(x => next.FMap(y => x.Concat(y)));
+            => parser.Bind(x => next.Map(y => x.Concat(y)));
 
         public static Parser<TToken, T> Or<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, T> next)
             => parser.Alternative(next);
 
         public static Parser<TToken, Unit> Ignore<TToken, TIgnore>(this Parser<TToken, TIgnore> parser)
-            => parser.FMap(_ => Unit.Instance);
+            => parser.Map(_ => Unit.Instance);
 
         public static Parser<TToken, string> ToStr<TToken, T>(this Parser<TToken, T> parser)
-            => parser.FMap(x => x.ToString());
+            => parser.Map(x => x.ToString());
 
         public static Parser<TToken, T[]> ToArray<TToken, T>(this Parser<TToken, IEnumerable<T>> parser)
-            => parser.FMap(x => x.ToArray());
+            => parser.Map(x => x.ToArray());
 
         public static Parser<TToken, T> Message<TToken, T>(this Parser<TToken, T> parser, Func<IParsecState<TToken>, string> message)
             => parser.Alternative(Fail<TToken, T>(message));

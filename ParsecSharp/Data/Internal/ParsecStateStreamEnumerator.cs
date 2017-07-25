@@ -31,7 +31,7 @@ namespace Parsec.Internal
 
         public void Dispose()
         {
-            this.Current = default(TToken);
+            this.Current = default;
             this.stream = EmptyStream<TToken>.Instance;
         }
     }

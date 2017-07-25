@@ -5,11 +5,11 @@ namespace Parsec
 {
     public static partial class Text
     {
-        public static Parser<char, T> Return<T>(T value)
-            => Return<char, T>(value);
+        public static Parser<char, T> Pure<T>(T value)
+            => Pure<char, T>(value);
 
-        public static Parser<char, T> Return<T>(Func<T> value)
-            => Return<char, T>(value);
+        public static Parser<char, T> Pure<T>(Func<T> value)
+            => Pure<char, T>(value);
 
         public static Parser<char, T> Fail<T>()
             => Fail<char, T>();

@@ -4,7 +4,7 @@ namespace Parsec
 {
     public struct Unit : IComparable<Unit>, IEquatable<Unit>
     {
-        public static Unit Instance => default(Unit);
+        public static Unit Instance => default;
 
         public int CompareTo(Unit other)
             => 0;

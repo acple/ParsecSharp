@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 
 namespace Parsec.Internal
 {
@@ -20,7 +21,7 @@ namespace Parsec.Internal
         public IEnumerator<TToken> GetEnumerator()
             => new ParsecStateStreamEnumerator<TToken>(this._stream);
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        IEnumerator IEnumerable.GetEnumerator()
             => this.GetEnumerator();
     }
 }

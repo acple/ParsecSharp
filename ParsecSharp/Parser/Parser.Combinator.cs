@@ -15,15 +15,15 @@ namespace Parsec
 
         public static Parser<TToken, IEnumerable<T>> Sequence<TToken, T>(IEnumerable<Parser<TToken, T>> parsers)
             => parsers
-                .Aggregate(Return<TToken, List<T>>(() => new List<T>()),
-                    (parser, next) => parser.Bind(list => next.FMap(x => { list.Add(x); return list; })))
-                .FMap(list => list.AsEnumerable());
+                .Aggregate(Pure<TToken, List<T>>(() => new List<T>()),
+                    (parser, next) => parser.Bind(list => next.Map(x => { list.Add(x); return list; })))
+                .Map(list => list.AsEnumerable());
 
         public static Parser<TToken, IEnumerable<T>> Sequence<TToken, T>(params Parser<TToken, T>[] parsers)
             => Sequence(parsers.AsEnumerable());
 
         public static Parser<TToken, T> Try<TToken, T>(Parser<TToken, T> parser, Func<T> resume)
-            => parser.Alternative(Return<TToken, T>(resume));
+            => parser.Alternative(Pure<TToken, T>(resume));
 
         public static Parser<TToken, T> Optional<TToken, T>(Parser<TToken, T> parser, T value)
             => Try(parser, () => value);
@@ -51,17 +51,23 @@ namespace Parsec
             => Try(parser.Bind(x => { list.Add(x); return Many_(parser, list); }), () => list);
 
         public static Parser<TToken, IEnumerable<T>> ManyTill<TToken, T, TIgnore>(Parser<TToken, T> parser, Parser<TToken, TIgnore> terminator)
-            => Return<TToken, List<T>>(() => new List<T>()).Bind(list => ManyTill_(parser, terminator, list));
+            => Pure<TToken, List<T>>(() => new List<T>()).Bind(list => ManyTill_(parser, terminator, list));
 
         private static Parser<TToken, IEnumerable<T>> ManyTill_<TToken, T, TIgnore>(Parser<TToken, T> parser, Parser<TToken, TIgnore> terminator, List<T> list)
-            => terminator.FMap(_ => list.AsEnumerable())
+            => terminator.Map(_ => list.AsEnumerable())
                 .Alternative(parser.Bind(x => { list.Add(x); return ManyTill_(parser, terminator, list); }));
+
+        public static Parser<TToken, T> SkipTill<TToken, TIgnore, T>(Parser<TToken, TIgnore> parser, Parser<TToken, T> terminator)
+            => terminator.Alternative(parser.Bind(_ => SkipTill(parser, terminator)));
 
         public static Parser<TToken, Unit> SkipMany<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
             => Try(parser.Bind(_ => SkipMany(parser)), () => Unit.Instance);
 
         public static Parser<TToken, Unit> SkipMany1<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
             => parser.Right(SkipMany(parser));
+
+        public static Parser<TToken, T> Match<TToken, T>(Parser<TToken, T> parser)
+            => SkipTill(Any<TToken>(), parser);
 
         public static Parser<TToken, T> Delay<TToken, T>(Func<Parser<TToken, T>> parser)
             => new Delay<TToken, T>(parser);
