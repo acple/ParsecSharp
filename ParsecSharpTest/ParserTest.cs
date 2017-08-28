@@ -190,7 +190,7 @@ namespace ParsecSharpTest
         {
             // parser によるパースを実行し、その結果を破棄し、常に成功するパーサを作成します。
 
-            // Digitへのマッチングを行い、その値を破棄し、Anyにマッチするパーサ。
+            // Digit へのマッチングを行い、その値を破棄し、Any にマッチするパーサ。
             var parser = Optional(Digit()).Right(Any());
 
             var source = _abcdEFGH;
@@ -264,6 +264,44 @@ namespace ParsecSharpTest
         }
 
         [TestMethod]
+        public void SkipManyTest()
+        {
+            // parser に0回以上繰り返しマッチし、その結果を破棄するパーサを作成します。
+
+            // Lower に0回以上繰り返しマッチし、その結果を破棄し、Any にマッチした結果を返すパーサ。
+            var parser = SkipMany(Lower()).Right(Any());
+
+            var source = _abcdEFGH;
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(),
+                success => success.Value.Is('E'));
+
+            var source2 = _123456;
+            parser.Parse(source2).CaseOf(
+                fail => Assert.Fail(),
+                success => success.Value.Is('1'));
+        }
+
+        [TestMethod]
+        public void SkipMany1Test()
+        {
+            // parser に1回以上繰り返しマッチし、その結果を破棄するパーサを作成します。
+
+            // Lower に1回以上繰り返しマッチし、その結果を破棄し、Any にマッチした結果を返すパーサ。
+            var parser = SkipMany1(Lower()).Right(Any());
+
+            var source = _abcdEFGH;
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(),
+                success => success.Value.Is('E'));
+
+            var source2 = _123456;
+            parser.Parse(source2).CaseOf(
+                fail => { },
+                success => Assert.Fail());
+        }
+
+        [TestMethod]
         public void ManyTillTest()
         {
             // terminator にマッチするまでの間 parser に繰り返しマッチし、その結果をシーケンスとして返すパーサを作成します。
@@ -295,44 +333,6 @@ namespace ParsecSharpTest
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(),
                 success => success.Value.Is("FG"));
-
-            var source2 = _123456;
-            parser.Parse(source2).CaseOf(
-                fail => { },
-                success => Assert.Fail());
-        }
-
-        [TestMethod]
-        public void SkipManyTest()
-        {
-            // parser に0回以上繰り返しマッチし、その結果を破棄するパーサを作成します。
-
-            // Lower に0回以上繰り返しマッチし、その結果を破棄し、Anyにマッチした結果を返すパーサ。
-            var parser = SkipMany(Lower()).Right(Any());
-
-            var source = _abcdEFGH;
-            parser.Parse(source).CaseOf(
-                fail => Assert.Fail(),
-                success => success.Value.Is('E'));
-
-            var source2 = _123456;
-            parser.Parse(source2).CaseOf(
-                fail => Assert.Fail(),
-                success => success.Value.Is('1'));
-        }
-
-        [TestMethod]
-        public void SkipMany1Test()
-        {
-            // parser に1回以上繰り返しマッチし、その結果を破棄するパーサを作成します。
-
-            // Lower に1回以上繰り返しマッチし、その結果を破棄し、Anyにマッチした結果を返すパーサ。
-            var parser = SkipMany1(Lower()).Right(Any());
-
-            var source = _abcdEFGH;
-            parser.Parse(source).CaseOf(
-                fail => Assert.Fail(),
-                success => success.Value.Is('E'));
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
@@ -502,7 +502,7 @@ namespace ParsecSharpTest
         {
             // 1個以上の値と演算子に交互にマッチし、指定した演算を左から順に適用するパーサを作成します。
 
-            // '+'、または'-'にマッチし、それぞれ(x + y)、(x - y)の二項演算関数を返すパーサ。
+            // '+'、または '-' にマッチし、それぞれ (x + y)、(x - y) の二項演算関数を返すパーサ。
             // ( "+" / "-" )
             var op = Choice(
                 Char('+').Map(_ => (Func<int, int, int>)((x, y) => x + y)),
@@ -540,7 +540,7 @@ namespace ParsecSharpTest
         {
             // 1個以上の値と演算子に交互にマッチし、指定した演算を右から順に適用するパーサを作成します
 
-            // '+'、または'-'にマッチし、それぞれ(x + y)、(x - y)の二項演算関数を返すパーサ。
+            // '+'、または '-' にマッチし、それぞれ (x + y)、(x - y) の二項演算関数を返すパーサ。
             // ( "+" / "-" )
             var op = Choice(
                 Char('+').Map(_ => (Func<int, int, int>)((x, y) => x + y)),
@@ -659,7 +659,7 @@ namespace ParsecSharpTest
             // parser を open と close で挟み込んだ形の規則にマッチするパーサを作成します。
             // open と close の結果は破棄され、中央の結果のみを返します。
 
-            // 1文字以上のLetterを"[]"で包んだものにマッチするパーサ。
+            // 1文字以上の Letter を "[]" で包んだものにマッチするパーサ。
             // ( "[" 1*Letter "]" )
             var parser = Many1(Letter()).Between(Char('['), Char(']'));
 
@@ -753,7 +753,7 @@ namespace ParsecSharpTest
         [TestMethod]
         public void ErrorTest()
         {
-            // パース失敗時にパース処理をAbortします。
+            // パース失敗時にパース処理を中止します。
 
             var parser = Many(Lower().Error(state => $"Fatal Error! '{state}' is not a lower char!")).ToStr()
                 .Or(Pure("recovery"));
@@ -768,11 +768,11 @@ namespace ParsecSharpTest
         public void DoTest()
         {
             // パース実行時に定義したアクションを実行します。
-            // Success時、またはSuccess時とFail時にそれぞれ指定したアクションを動作させることができます。
+            // 成功時、または 成功時と失敗時にそれぞれ指定したアクションを動作させることができます。
 
             var source = _abcdEFGH;
 
-            // Lowerのパース成功時にcountの値を1増やします。
+            // Lower のパース成功時に count の値を1増やします。
             var count = 0;
             var parser = Many(Lower().Do(_ => count++));
 
@@ -781,8 +781,8 @@ namespace ParsecSharpTest
             parser.Parse(source);
             count.Is(8);
 
-            // Lowerのパース成功時にsuccessの値を1増やし、パース失敗時にfailの値を1増やします。
-            // Anyを接続しているので、sourceを最後までパースします。
+            // Lower のパース成功時に success の値を1増やし、パース失敗時に fail の値を1増やします。
+            // Any を接続しているので、source を最後までパースします。
             var success = 0;
             var fail = 0;
             var parser2 = Many(Lower().Do(_ => success++, _ => fail++).Or(Any()));
@@ -795,10 +795,10 @@ namespace ParsecSharpTest
         [TestMethod]
         public void ExceptionTest()
         {
-            // 例外発生時は即座にパース処理を中止し、例外のNameをメッセージに含むFailを返します。
+            // 例外発生時は即座にパース処理を中止し、例外の Name をメッセージに含む Fail を返します。
             // 例外による失敗に対して復旧は行われません。
 
-            // nullに対してToStringした結果を返し、失敗した場合に"success"を返すことを試みるパーサ。
+            // null に対して ToString した結果を返し、失敗した場合に "success" を返すことを試みるパーサ。
             var parser = Pure(null as object).Map(x => x.ToString()).Or(Pure("success"));
 
             var source = _abcdEFGH;
@@ -813,7 +813,7 @@ namespace ParsecSharpTest
             // ローカル変数上やパーサ定義式内に自己再帰パーサを構築する際のヘルパコンビネータです。
             // C#の仕様上、単体で使用する場合は型情報が不足するため、型引数を与える必要があります。
 
-            // 任意の回数の"{}"に挟まれた一文字にマッチするパーサ。
+            // 任意の回数の "{}" に挟まれた一文字にマッチするパーサ。
             var parser = Fix<char, char>(self => self.Or(Any()).Between(Char('{'), Char('}')));
 
             var source = "{{{{{*}}}}}";
