@@ -326,18 +326,46 @@ namespace ParsecSharpTest
         {
             // terminator にマッチするまで parser に繰り返しマッチし、terminator にマッチした結果を返すパーサを作成します。
 
-            // "FG" にマッチするまでの間 Any に繰り返しマッチするパーサ。
-            var parser = SkipTill(Any(), String("FG"));
+            // "cd" にマッチするまでの間 Lower をスキップするパーサ。
+            var parser = SkipTill(Lower(), String("cd"));
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(),
-                success => success.Value.Is("FG"));
+                success => success.Value.Is("cd"));
 
-            var source2 = _123456;
+            // "cd" の前に Upper が存在する場合は失敗する。
+            var source2 = "xyzABcdef";
             parser.Parse(source2).CaseOf(
                 fail => { },
                 success => Assert.Fail());
+        }
+
+        [TestMethod]
+        public void MatchTest()
+        {
+            // parser にマッチするまでスキップし、parser にマッチした結果を返すパーサを作成します。
+
+            var source = _abcdEFGH;
+            var source2 = _123456;
+
+            // "FG" にマッチするまでスキップするパーサ。
+            var parser = Match(String("FG"));
+
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(),
+                success => success.Value.Is("FG"));
+
+            parser.Parse(source2).CaseOf(
+                fail => { },
+                success => Assert.Fail());
+
+            // ( Lower Upper ) にマッチするまでスキップするパーサ。
+            var parser2 = Match(Sequence(Lower(), Upper())).ToStr();
+
+            parser2.Parse(source).CaseOf(
+                fail => Assert.Fail(),
+                success => success.Value.Is("dE"));
         }
 
         private const string _commanum = "123,456,789";
