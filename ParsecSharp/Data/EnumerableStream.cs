@@ -39,9 +39,7 @@ namespace Parsec
                 this.Dispose();
             }
             this.Current = (this.HasValue) ? enumerator.Current : default;
-            this._next = (this.HasValue)
-                ? new Lazy<IParsecStateStream<TToken>>(() => new EnumerableStream<TToken>(enumerator, position.Next()), false)
-                : new Lazy<IParsecStateStream<TToken>>(() => EmptyStream<TToken>.Instance, false);
+            this._next = new Lazy<IParsecStateStream<TToken>>(() => new EnumerableStream<TToken>(enumerator, position.Next()), false);
         }
 
         public void Dispose()

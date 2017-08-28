@@ -44,9 +44,7 @@ namespace Parsec
             {
                 this.Dispose();
             }
-            this._next = (this.HasValue)
-                ? new Lazy<IParsecStateStream<char>>(() => new TextStream(reader, position.Next(this.Current)), false)
-                : new Lazy<IParsecStateStream<char>>(() => EmptyStream<char>.Instance, false);
+            this._next = new Lazy<IParsecStateStream<char>>(() => new TextStream(reader, position.Next(this.Current)), false);
         }
 
         public void Dispose()
