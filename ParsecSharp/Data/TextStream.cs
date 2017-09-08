@@ -43,8 +43,12 @@ namespace Parsec
             catch
             {
                 this.Dispose();
+                throw;
             }
-            this._next = new Lazy<IParsecStateStream<char>>(() => new TextStream(reader, position.Next(this.Current)), false);
+            finally
+            {
+                this._next = new Lazy<IParsecStateStream<char>>(() => new TextStream(reader, position.Next(this.Current)), false);
+            }
         }
 
         public void Dispose()
