@@ -50,6 +50,12 @@ namespace Parsec
         private static Parser<TToken, IEnumerable<T>> Many_<TToken, T>(Parser<TToken, T> parser, List<T> list)
             => Try(parser.Bind(x => { list.Add(x); return Many_(parser, list); }), () => list);
 
+        public static Parser<TToken, Unit> SkipMany<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
+            => Try(parser.Bind(_ => SkipMany(parser)), () => Unit.Instance);
+
+        public static Parser<TToken, Unit> SkipMany1<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
+            => parser.Right(SkipMany(parser));
+
         public static Parser<TToken, IEnumerable<T>> ManyTill<TToken, T, TIgnore>(Parser<TToken, T> parser, Parser<TToken, TIgnore> terminator)
             => Pure<TToken, List<T>>(() => new List<T>()).Bind(list => ManyTill_(parser, terminator, list));
 
@@ -59,12 +65,6 @@ namespace Parsec
 
         public static Parser<TToken, T> SkipTill<TToken, TIgnore, T>(Parser<TToken, TIgnore> parser, Parser<TToken, T> terminator)
             => terminator.Alternative(parser.Bind(_ => SkipTill(parser, terminator)));
-
-        public static Parser<TToken, Unit> SkipMany<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
-            => Try(parser.Bind(_ => SkipMany(parser)), () => Unit.Instance);
-
-        public static Parser<TToken, Unit> SkipMany1<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
-            => parser.Right(SkipMany(parser));
 
         public static Parser<TToken, T> Match<TToken, T>(Parser<TToken, T> parser)
             => SkipTill(Any<TToken>(), parser);

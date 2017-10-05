@@ -41,8 +41,9 @@ namespace ParsecSharpExamples
         // 二重引用符で囲まれたフィールド値
         // 改行文字は ( LF / CRLF ) のどちらかのみに対応
         private static Parser<char, string> EscapedField()
-            => Many(Choice(TextChar(), Comma(), EndOfLine(), DoubleQuote().Right(DoubleQuote()))).ToStr()
-                .Between(DoubleQuote(), DoubleQuote());
+            => Many(Choice(TextChar(), Comma(), EndOfLine(), DoubleQuote().Right(DoubleQuote())))
+                .Between(DoubleQuote(), DoubleQuote())
+                .ToStr();
 
         // non-escaped = *TEXTDATA
         private static Parser<char, string> NonEscapedField()
@@ -61,6 +62,6 @@ namespace ParsecSharpExamples
         // 定義に従うと、最終行に空の改行が存在する場合に要素0のレコードを読み込んでしまうため、行末の改行文字をRequiredに変更
         // 定義では改行文字は CRLF だけど、 ( LF / CRLF ) に拡張
         private static Parser<char, IEnumerable<string[]>> Csv()
-            => Record().EndBy1(EndOfLine());
+            => Record().EndBy(EndOfLine());
     }
 }

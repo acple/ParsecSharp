@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Text;
 
 namespace Parsec
@@ -15,8 +13,5 @@ namespace Parsec
 
         public static Result<char, T> Parse<T>(this Parser<char, T> parser, Stream source, Encoding encoding)
             => parser.Parse(new TextStream(source, encoding));
-
-        public static Parser<char, string> ToStr(this Parser<char, IEnumerable<char>> parser)
-            => parser.Map(x => new string(x.ToArray()));
     }
 }
