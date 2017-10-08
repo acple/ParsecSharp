@@ -85,7 +85,7 @@ namespace Parsec
             => parser.Map(_ => Unit.Instance);
 
         public static Parser<TToken, string> ToStr<TToken, T>(this Parser<TToken, T> parser)
-            => parser.Map(x => x.ToString());
+            => parser.Map(x => x?.ToString() ?? string.Empty);
 
         public static Parser<TToken, T[]> ToArray<TToken, T>(this Parser<TToken, IEnumerable<T>> parser)
             => parser.Map(x => x.ToArray());
