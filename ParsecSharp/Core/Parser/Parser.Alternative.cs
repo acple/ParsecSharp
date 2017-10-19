@@ -15,6 +15,9 @@ namespace Parsec.Internal
         }
 
         internal override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
-            => this._first.Run(state, result => result.CaseOf(_ => this._second.Run(state, cont), cont));
+        {
+            var _second = this._second;
+            return this._first.Run(state, result => result.CaseOf(_ => _second.Run(state, cont), cont));
+        }
     }
 }
