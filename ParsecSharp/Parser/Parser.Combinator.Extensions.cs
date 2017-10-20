@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Parsec.Internal;
 
 namespace Parsec
 {
@@ -70,10 +71,10 @@ namespace Parsec
             => parser.Bind(x => next.Map(y => new[] { x, y }.AsEnumerable()));
 
         public static Parser<TToken, IEnumerable<T>> Append<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, IEnumerable<T>> next)
-            => parser.Bind(x => next.Map(y => new[] { x }.Concat(y)));
+            => parser.Bind(x => next.Map(y => y.Prepend(x)));
 
         public static Parser<TToken, IEnumerable<T>> Append<TToken, T>(this Parser<TToken, IEnumerable<T>> parser, Parser<TToken, T> next)
-            => parser.Bind(x => next.Map(y => x.Concat(new[] { y })));
+            => parser.Bind(x => next.Map(y => x.Append(y)));
 
         public static Parser<TToken, IEnumerable<T>> Append<TToken, T>(this Parser<TToken, IEnumerable<T>> parser, Parser<TToken, IEnumerable<T>> next)
             => parser.Bind(x => next.Map(y => x.Concat(y)));
