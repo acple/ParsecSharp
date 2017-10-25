@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard1.0</TargetFramework>
+    <TargetFrameworks>netstandard1.6;netstandard1.0</TargetFrameworks>
     <LangVersion>7.1</LangVersion>
     <RootNamespace>Parsec</RootNamespace>
     <PackageId>ParsecSharp</PackageId>

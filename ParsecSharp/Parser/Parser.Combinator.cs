@@ -8,16 +8,16 @@ namespace Parsec
     public static partial class Parser
     {
         public static Parser<TToken, T> Choice<TToken, T>(IEnumerable<Parser<TToken, T>> parsers)
-            => parsers.Aggregate((parser, next) => parser.Alternative(next));
+            => parsers.Reverse().Aggregate((next, parser) => parser.Alternative(next));
 
         public static Parser<TToken, T> Choice<TToken, T>(params Parser<TToken, T>[] parsers)
             => Choice(parsers.AsEnumerable());
 
         public static Parser<TToken, IEnumerable<T>> Sequence<TToken, T>(IEnumerable<Parser<TToken, T>> parsers)
-            => parsers
-                .Aggregate(Pure<TToken, List<T>>(() => new List<T>()),
-                    (parser, next) => parser.Bind(list => next.Map(x => { list.Add(x); return list; })))
-                .Map(list => list.AsEnumerable());
+            => parsers.Reverse()
+                .Aggregate(Pure<TToken, Stack<T>>(() => new Stack<T>()),
+                    (next, parser) => parser.Bind(x => next.Map(stack => { stack.Push(x); return stack; })))
+                .Map(stack => stack.AsEnumerable());
 
         public static Parser<TToken, IEnumerable<T>> Sequence<TToken, T>(params Parser<TToken, T>[] parsers)
             => Sequence(parsers.AsEnumerable());
