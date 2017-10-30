@@ -368,6 +368,62 @@ namespace ParsecSharpTest
                 success => success.Value.Is("dE"));
         }
 
+        [TestMethod]
+        public void LeftRecTest()
+        {
+            // 左再帰を除去した定義を直接記述し、再帰パーサを作成します。
+
+            // 本来、自己を最初に参照するパーサを直接記述することはできない(無限再帰となるため)。
+
+            // 有名な二項演算の左再帰定義。
+            // expr = expr op digit / digit
+
+            // この定義を変換して左再帰を除去することが可能。
+
+            // 二項演算の左再帰除去後の定義。
+            // expr = digit *( op digit )
+
+            // '+'、または '-' にマッチし、それぞれ (x + y)、(x - y) の二項演算関数を返すパーサ。
+            // ( "+" / "-" )
+            var op = Choice(
+                Char('+').Map(_ => (Func<int, int, int>)((x, y) => x + y)),
+                Char('-').Map(_ => (Func<int, int, int>)((x, y) => x - y)));
+
+            // 1文字以上の数字にマッチし、intに変換するパーサ。
+            var num = Many1(Digit()).ToStr().Map(x => int.Parse(x));
+
+            // num *( op num )
+            var parser = LeftRec(num, x => op.Bind(func => num.Map(y => func(x, y))));
+
+            var source = "10+5-3+1";
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(),
+                success => success.Value.Is(((10 + 5) - 3) + 1));
+
+            var source2 = "100-20-5+50";
+            parser.Parse(source2).CaseOf(
+                fail => Assert.Fail(),
+                success => success.Value.Is(((100 - 20) - 5) + 50));
+
+            var source3 = "123";
+            parser.Parse(source3).CaseOf(
+                fail => Assert.Fail(),
+                success => success.Value.Is(123));
+
+            var source4 = _abcdEFGH;
+            parser.Parse(source4).CaseOf(
+                fail => { },
+                success => Assert.Fail());
+
+            // 左再帰定義の例。実行すると死にます。
+            Parser<char, int> Expr()
+                => (from x in Expr() // ここで無限再帰
+                    from func in op
+                    from y in num
+                    select func(x, y))
+                    .Or(num);
+        }
+
         private const string _commanum = "123,456,789";
 
         [TestMethod]
