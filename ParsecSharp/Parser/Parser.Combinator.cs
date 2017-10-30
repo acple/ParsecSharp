@@ -72,11 +72,11 @@ namespace Parsec
         public static Parser<TToken, T> Match<TToken, T>(Parser<TToken, T> parser)
             => SkipTill(Any<TToken>(), parser);
 
-        public static Parser<TToken, T> LeftRec<TToken, T>(Parser<TToken, T> parser, Func<T, Parser<TToken, T>> rest)
-            => parser.Bind(x => LeftRec_(parser, rest, x));
+        public static Parser<TToken, T> Rec<TToken, T>(Parser<TToken, T> parser, Func<T, Parser<TToken, T>> rest)
+            => parser.Bind(x => Rec_(parser, rest, x));
 
-        private static Parser<TToken, T> LeftRec_<TToken, T>(Parser<TToken, T> parser, Func<T, Parser<TToken, T>> rest, T value)
-            => Try(rest(value).Bind(x => LeftRec_(parser, rest, x)), value);
+        private static Parser<TToken, T> Rec_<TToken, T>(Parser<TToken, T> parser, Func<T, Parser<TToken, T>> rest, T value)
+            => Try(rest(value).Bind(x => Rec_(parser, rest, x)), value);
 
         public static Parser<TToken, T> Delay<TToken, T>(Func<Parser<TToken, T>> parser)
             => new Delay<TToken, T>(parser);

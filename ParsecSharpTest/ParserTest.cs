@@ -375,9 +375,9 @@ namespace ParsecSharpTest
         }
 
         [TestMethod]
-        public void LeftRecTest()
+        public void RecTest()
         {
-            // 左再帰を除去した定義を直接記述し、再帰パーサを作成します。
+            // 再帰パーサを作成します。
 
             // 本来、自己を最初に参照するパーサを直接記述することはできない(無限再帰となるため)。
 
@@ -389,6 +389,8 @@ namespace ParsecSharpTest
             // 二項演算の左再帰除去後の定義。
             // expr = digit *( op digit )
 
+            // このコンビネータは左再帰を除去した形の定義を直接記述し再帰パーサを作成することができます。
+
             // '+'、または '-' にマッチし、それぞれ (x + y)、(x - y) の二項演算関数を返すパーサ。
             // ( "+" / "-" )
             var op = Choice(
@@ -399,7 +401,7 @@ namespace ParsecSharpTest
             var num = Many1(Digit()).ToStr().Map(x => int.Parse(x));
 
             // num *( op num )
-            var parser = LeftRec(num, x => op.Bind(func => num.Map(y => func(x, y))));
+            var parser = Rec(num, x => op.Bind(func => num.Map(y => func(x, y))));
 
             var source = "10+5-3+1";
             parser.Parse(source).CaseOf(
