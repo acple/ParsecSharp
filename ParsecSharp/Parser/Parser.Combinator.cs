@@ -22,14 +22,17 @@ namespace Parsec
         public static Parser<TToken, IEnumerable<T>> Sequence<TToken, T>(params Parser<TToken, T>[] parsers)
             => Sequence(parsers.AsEnumerable());
 
+        public static Parser<TToken, T> Try<TToken, T>(Parser<TToken, T> parser, T resume)
+            => parser.Alternative(Pure<TToken, T>(resume));
+
         public static Parser<TToken, T> Try<TToken, T>(Parser<TToken, T> parser, Func<T> resume)
             => parser.Alternative(Pure<TToken, T>(resume));
 
         public static Parser<TToken, T> Optional<TToken, T>(Parser<TToken, T> parser, T value)
-            => Try(parser, () => value);
+            => Try(parser, value);
 
         public static Parser<TToken, Unit> Optional<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
-            => Try(parser.Ignore(), () => Unit.Instance);
+            => Try(parser.Ignore(), Unit.Instance);
 
         public static Parser<TToken, Unit> Not<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
             => parser.ModifyResult(
@@ -42,16 +45,16 @@ namespace Parsec
                 (state, success) => Result.Success(success.Value, state));
 
         public static Parser<TToken, IEnumerable<T>> Many<TToken, T>(Parser<TToken, T> parser)
-            => Try(Many1(parser), () => Enumerable.Empty<T>());
+            => Try(Many1(parser), Enumerable.Empty<T>());
 
         public static Parser<TToken, IEnumerable<T>> Many1<TToken, T>(Parser<TToken, T> parser)
             => parser.Bind(x => Many_(parser, new List<T> { x }));
 
         private static Parser<TToken, IEnumerable<T>> Many_<TToken, T>(Parser<TToken, T> parser, List<T> list)
-            => Try(parser.Bind(x => { list.Add(x); return Many_(parser, list); }), () => list);
+            => Try(parser.Bind(x => { list.Add(x); return Many_(parser, list); }), list);
 
         public static Parser<TToken, Unit> SkipMany<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
-            => Try(parser.Bind(_ => SkipMany(parser)), () => Unit.Instance);
+            => Try(parser.Bind(_ => SkipMany(parser)), Unit.Instance);
 
         public static Parser<TToken, Unit> SkipMany1<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
             => parser.Right(SkipMany(parser));
@@ -73,7 +76,7 @@ namespace Parsec
             => parser.Bind(x => LeftRec_(parser, rest, x));
 
         private static Parser<TToken, T> LeftRec_<TToken, T>(Parser<TToken, T> parser, Func<T, Parser<TToken, T>> rest, T value)
-            => Try(rest(value).Bind(x => LeftRec_(parser, rest, x)), () => value);
+            => Try(rest(value).Bind(x => LeftRec_(parser, rest, x)), value);
 
         public static Parser<TToken, T> Delay<TToken, T>(Func<Parser<TToken, T>> parser)
             => new Delay<TToken, T>(parser);

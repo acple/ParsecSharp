@@ -153,8 +153,7 @@ namespace ParsecSharpExamples
             => Try(from _ in OneOf("eE")
                    from sign in Char('-').Or(Optional(Char('+'), '+')).ToStr()
                    from num in Many1(Digit()).ToStr()
-                   select int.Parse(sign + num),
-                () => 0);
+                   select int.Parse(sign + num), 0);
 
         // JSON Boolean にマッチします。
         // true  = %x74.72.75.65

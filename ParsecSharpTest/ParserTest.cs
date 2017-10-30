@@ -168,11 +168,11 @@ namespace ParsecSharpTest
         [TestMethod]
         public void TryTest()
         {
-            // parser によるパースを実行し、それが失敗した場合は resume の評価を行い結果として返すパーサを作成します。
+            // parser によるパースを実行し、それが失敗した場合は resume の値を結果として返すパーサを作成します。
             // パース失敗時は入力は消費されません。
 
             // 'a' にマッチし、成功した場合は 'a'、失敗した場合は 'x' を返すパーサ。
-            var parser = Try(Char('a'), () => 'x');
+            var parser = Try(Char('a'), 'x');
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
@@ -183,6 +183,12 @@ namespace ParsecSharpTest
             parser.Parse(source2).CaseOf(
                 fail => Assert.Fail(),
                 success => success.Value.Is('x'));
+
+            // resume の評価を遅延させるオーバーロード。
+            var parser2 = Try(Char('a'), () => 'x');
+            parser2.Parse(source).CaseOf(
+                fail => Assert.Fail(),
+                success => success.Value.Is('a'));
         }
 
         [TestMethod]
