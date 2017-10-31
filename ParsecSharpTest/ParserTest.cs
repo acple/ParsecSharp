@@ -374,44 +374,6 @@ namespace ParsecSharpTest
                 success => success.Value.Is("dE"));
         }
 
-        [TestMethod]
-        public void RecTest()
-        {
-            // 単一パーサから開始し、その結果を元に次のパーサを作成し、失敗するまで繰り返す再帰パーサを作成します。
-
-            // 任意の一文字に連続でマッチし、マッチした文字を結果として返すパーサ。
-            var parser = Rec(Any(), x => Char(x));
-            var source = "aaaaaaaaa";
-            parser.Parse(source).CaseOf(
-                fail => Assert.Fail(),
-                success => success.Value.Is('a'));
-
-            var source2 = "aaabbbbcccccdddddd";
-            Many(parser).Parse(source2).CaseOf(
-                fail => Assert.Fail(),
-                success => success.Value.Is('a', 'b', 'c', 'd'));
-
-            // 本来、自己を最初に参照するパーサを直接記述することはできない(無限再帰となるため)。
-            // 有名な二項演算の左再帰定義。
-            // expr = expr op digit / digit
-
-            // この定義を変形して左再帰を除去することが可能。
-            // 二項演算の左再帰除去後の定義。
-            // expr = digit *( op digit )
-
-            // Rec を使うことで左再帰除去後の定義をそのまま記述することができます。
-            var expr = Rec(Digit(), x => Char('+').Right(Digit()));
-
-            // 直接左再帰定義の例。こちらは実行すると死にます。
-            var num = Many1(Digit()).ToStr().Map(int.Parse);
-            Parser<char, int> Expr()
-                => (from x in Expr() // ここで無限再帰
-                    from func in Char('+')
-                    from y in num
-                    select x + y)
-                    .Or(num);
-        }
-
         private const string _commanum = "123,456,789";
 
         [TestMethod]
@@ -570,13 +532,51 @@ namespace ParsecSharpTest
         }
 
         [TestMethod]
+        public void ChainTest()
+        {
+            // 単一パーサから開始し、その結果を元に次のパーサを作成し、失敗するまで繰り返す再帰パーサを作成します。
+
+            // 任意の一文字に連続でマッチし、マッチした文字を結果として返すパーサ。
+            var parser = Any().Chain(x => Char(x));
+            var source = "aaaaaaaaa";
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(),
+                success => success.Value.Is('a'));
+
+            var source2 = "aaabbbbcccccdddddd";
+            Many(parser).Parse(source2).CaseOf(
+                fail => Assert.Fail(),
+                success => success.Value.Is('a', 'b', 'c', 'd'));
+
+            // 本来、自己を最初に参照するパーサを直接記述することはできない(無限再帰となるため)。
+            // 有名な二項演算の左再帰定義。
+            // expr = expr op digit / digit
+
+            // この定義を変形して左再帰を除去することが可能。
+            // 二項演算の左再帰除去後の定義。
+            // expr = digit *( op digit )
+
+            // Chain を使うことで左再帰除去後の定義をそのまま記述することができます。
+            var expr = Digit().Chain(x => Char('+').Right(Digit()));
+
+            // 直接左再帰定義の例。こちらは実行すると死にます。
+            var num = Many1(Digit()).ToStr().Map(int.Parse);
+            Parser<char, int> Expr()
+                => (from x in Expr() // ここで無限再帰
+                    from func in Char('+')
+                    from y in num
+                    select x + y)
+                    .Or(num);
+        }
+
+        [TestMethod]
         public void ChainLTest()
         {
-            // ChainLはRecを利用して簡単に作成できます。
+            // ChainLはChainを利用して簡単に作成できます。
             Parser<TToken, T> ChainL<TToken, T>(Parser<TToken, T> token, Parser<TToken, Func<T, T, T>> function)
-                => Rec(token, x => from func in function
-                                   from y in token
-                                   select func(x, y));
+                => token.Chain(x => from func in function
+                                    from y in token
+                                    select func(x, y));
 
             // 1個以上の値と演算子に交互にマッチし、指定した演算を左から順に適用するパーサを作成します。
 
@@ -616,11 +616,11 @@ namespace ParsecSharpTest
         [TestMethod]
         public void ChainRTest()
         {
-            // ChainRはRecを利用して簡単に作成できます。
+            // ChainRはChainを利用して簡単に作成できます。
             Parser<TToken, T> ChainR<TToken, T>(Parser<TToken, T> token, Parser<TToken, Func<T, T, T>> function)
-                => Rec(token, x => from func in function
-                                   from y in ChainR(token, function)
-                                   select func(x, y));
+                => token.Chain(x => from func in function
+                                    from y in ChainR(token, function)
+                                    select func(x, y));
 
             // 1個以上の値と演算子に交互にマッチし、指定した演算を右から順に適用するパーサを作成します
 
