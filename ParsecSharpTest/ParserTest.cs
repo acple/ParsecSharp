@@ -592,6 +592,12 @@ namespace ParsecSharpTest
         [TestMethod]
         public void ChainLTest()
         {
+            // ChainLはRecを利用して簡単に作成できます。
+            Parser<TToken, T> ChainL<TToken, T>(Parser<TToken, T> token, Parser<TToken, Func<T, T, T>> function)
+                => Rec(token, x => from func in function
+                                   from y in token
+                                   select func(x, y));
+
             // 1個以上の値と演算子に交互にマッチし、指定した演算を左から順に適用するパーサを作成します。
 
             // '+'、または '-' にマッチし、それぞれ (x + y)、(x - y) の二項演算関数を返すパーサ。
@@ -604,7 +610,7 @@ namespace ParsecSharpTest
             var num = Many1(Digit()).ToStr().Map(x => int.Parse(x));
 
             // num *( op num )
-            var parser = num.ChainL(op);
+            var parser = ChainL(num, op);
 
             var source = "10+5-3+1";
             parser.Parse(source).CaseOf(
@@ -630,6 +636,12 @@ namespace ParsecSharpTest
         [TestMethod]
         public void ChainRTest()
         {
+            // ChainRはRecを利用して簡単に作成できます。
+            Parser<TToken, T> ChainR<TToken, T>(Parser<TToken, T> token, Parser<TToken, Func<T, T, T>> function)
+                => Rec(token, x => from func in function
+                                   from y in ChainR(token, function)
+                                   select func(x, y));
+
             // 1個以上の値と演算子に交互にマッチし、指定した演算を右から順に適用するパーサを作成します
 
             // '+'、または '-' にマッチし、それぞれ (x + y)、(x - y) の二項演算関数を返すパーサ。
@@ -642,7 +654,7 @@ namespace ParsecSharpTest
             var num = Many1(Digit()).ToStr().Map(x => int.Parse(x));
 
             // num *( op num )
-            var parser = num.ChainR(op);
+            var parser = ChainR(num, op);
 
             var source = "10+5-3+1";
             parser.Parse(source).CaseOf(

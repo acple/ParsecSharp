@@ -34,15 +34,6 @@ namespace Parsec
         public static Parser<TToken, T> Except<TToken, T, TIgnore>(this Parser<TToken, T> parser, params Parser<TToken, TIgnore>[] exceptions)
             => parser.Except(exceptions.AsEnumerable());
 
-        public static Parser<TToken, T> ChainL<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function)
-            => parser.Bind(x => parser.ChainL_(function, x));
-
-        private static Parser<TToken, T> ChainL_<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function, T accum)
-            => Try(function.Bind(func => parser.Bind(x => parser.ChainL_(function, func(accum, x)))), accum);
-
-        public static Parser<TToken, T> ChainR<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function)
-            => parser.Bind(x => Try(function.Bind(func => parser.ChainR(function).Map(accum => func(x, accum))), x));
-
         public static Parser<TToken, TAccum> FoldL<TToken, T, TAccum>(this Parser<TToken, T> parser, TAccum seed, Func<TAccum, T, TAccum> function)
             => Try(parser.Bind(x => parser.FoldL(function(seed, x), function)), seed);
 
