@@ -377,58 +377,38 @@ namespace ParsecSharpTest
         [TestMethod]
         public void RecTest()
         {
-            // 再帰パーサを作成します。
+            // 単一パーサから開始し、その結果を元に次のパーサを作成し、失敗するまで繰り返す再帰パーサを作成します。
+
+            // 任意の一文字に連続でマッチし、マッチした文字を結果として返すパーサ。
+            var parser = Rec(Any(), x => Char(x));
+            var source = "aaaaaaaaa";
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(),
+                success => success.Value.Is('a'));
+
+            var source2 = "aaabbbbcccccdddddd";
+            Many(parser).Parse(source2).CaseOf(
+                fail => Assert.Fail(),
+                success => success.Value.Is('a', 'b', 'c', 'd'));
 
             // 本来、自己を最初に参照するパーサを直接記述することはできない(無限再帰となるため)。
-
             // 有名な二項演算の左再帰定義。
             // expr = expr op digit / digit
 
-            // この定義を変換して左再帰を除去することが可能。
-
+            // この定義を変形して左再帰を除去することが可能。
             // 二項演算の左再帰除去後の定義。
             // expr = digit *( op digit )
 
-            // このコンビネータは左再帰を除去した形の定義を直接記述し再帰パーサを作成することができます。
+            // Rec を使うことで左再帰除去後の定義をそのまま記述することができます。
+            var expr = Rec(Digit(), x => Char('+').Right(Digit()));
 
-            // '+'、または '-' にマッチし、それぞれ (x + y)、(x - y) の二項演算関数を返すパーサ。
-            // ( "+" / "-" )
-            var op = Choice(
-                Char('+').Map(_ => (Func<int, int, int>)((x, y) => x + y)),
-                Char('-').Map(_ => (Func<int, int, int>)((x, y) => x - y)));
-
-            // 1文字以上の数字にマッチし、intに変換するパーサ。
-            var num = Many1(Digit()).ToStr().Map(x => int.Parse(x));
-
-            // num *( op num )
-            var parser = Rec(num, x => op.Bind(func => num.Map(y => func(x, y))));
-
-            var source = "10+5-3+1";
-            parser.Parse(source).CaseOf(
-                fail => Assert.Fail(),
-                success => success.Value.Is(((10 + 5) - 3) + 1));
-
-            var source2 = "100-20-5+50";
-            parser.Parse(source2).CaseOf(
-                fail => Assert.Fail(),
-                success => success.Value.Is(((100 - 20) - 5) + 50));
-
-            var source3 = "123";
-            parser.Parse(source3).CaseOf(
-                fail => Assert.Fail(),
-                success => success.Value.Is(123));
-
-            var source4 = _abcdEFGH;
-            parser.Parse(source4).CaseOf(
-                fail => { },
-                success => Assert.Fail());
-
-            // 左再帰定義の例。実行すると死にます。
+            // 直接左再帰定義の例。こちらは実行すると死にます。
+            var num = Many1(Digit()).ToStr().Map(int.Parse);
             Parser<char, int> Expr()
                 => (from x in Expr() // ここで無限再帰
-                    from func in op
+                    from func in Char('+')
                     from y in num
-                    select func(x, y))
+                    select x + y)
                     .Or(num);
         }
 
