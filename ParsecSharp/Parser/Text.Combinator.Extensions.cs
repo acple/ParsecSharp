@@ -8,7 +8,10 @@ namespace Parsec
         public static Parser<char, string> ToStr(this Parser<char, IEnumerable<char>> parser)
             => parser.Map(x => new string(x.ToArray()));
 
-        public static Parser<char, string> ToStr(this Parser<char, IEnumerable<string>> parser)
-            => parser.Map(x => string.Join(string.Empty, x));
+        public static Parser<char, string> Join(this Parser<char, IEnumerable<string>> parser)
+            => parser.Join(string.Empty);
+
+        public static Parser<char, string> Join(this Parser<char, IEnumerable<string>> parser, string separator)
+            => parser.Map(x => string.Join(separator, x));
     }
 }
