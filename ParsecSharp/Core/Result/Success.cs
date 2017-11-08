@@ -9,7 +9,7 @@ namespace Parsec
 
         public override T Value { get; }
 
-        internal Success(T result, IParsecStateStream<TToken> state)
+        internal Success(in T result, IParsecStateStream<TToken> state)
         {
             this.Value = result;
             this._state = state;

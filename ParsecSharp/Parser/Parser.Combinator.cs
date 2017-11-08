@@ -22,13 +22,13 @@ namespace Parsec
         public static Parser<TToken, IEnumerable<T>> Sequence<TToken, T>(params Parser<TToken, T>[] parsers)
             => Sequence(parsers.AsEnumerable());
 
-        public static Parser<TToken, T> Try<TToken, T>(Parser<TToken, T> parser, T resume)
+        public static Parser<TToken, T> Try<TToken, T>(Parser<TToken, T> parser, in T resume)
             => parser.Alternative(Pure<TToken, T>(resume));
 
         public static Parser<TToken, T> Try<TToken, T>(Parser<TToken, T> parser, Func<T> resume)
             => parser.Alternative(Pure<TToken, T>(resume));
 
-        public static Parser<TToken, T> Optional<TToken, T>(Parser<TToken, T> parser, T value)
+        public static Parser<TToken, T> Optional<TToken, T>(Parser<TToken, T> parser, in T value)
             => Try(parser, value);
 
         public static Parser<TToken, Unit> Optional<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
