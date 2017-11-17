@@ -1,6 +1,6 @@
 ﻿namespace Parsec.Internal
 {
-    internal struct TextPosition : IPosition
+    internal readonly struct TextPosition : IPosition
     {
         public static TextPosition Initial => new TextPosition(1, 1);
 

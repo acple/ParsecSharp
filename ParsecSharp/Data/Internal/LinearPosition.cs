@@ -1,6 +1,6 @@
 ﻿namespace Parsec.Internal
 {
-    internal struct LinearPosition : IPosition
+    internal readonly struct LinearPosition : IPosition
     {
         public static LinearPosition Initial => default;
 
