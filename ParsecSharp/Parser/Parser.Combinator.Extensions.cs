@@ -37,7 +37,7 @@ namespace Parsec
         public static Parser<TToken, T> Chain<TToken, T>(this Parser<TToken, T> parser, Func<T, Parser<TToken, T>> rest)
             => parser.Bind(x => Chain_(rest, x));
 
-        private static Parser<TToken, T> Chain_<TToken, T>(Func<T, Parser<TToken, T>> rest, in T value)
+        private static Parser<TToken, T> Chain_<TToken, T>(Func<T, Parser<TToken, T>> rest, T value)
             => Try(rest(value).Bind(x => Chain_(rest, x)), value);
 
         public static Parser<TToken, TAccum> FoldL<TToken, T, TAccum>(this Parser<TToken, T> parser, TAccum seed, Func<TAccum, T, TAccum> function)

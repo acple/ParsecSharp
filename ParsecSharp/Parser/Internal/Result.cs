@@ -13,7 +13,7 @@ namespace Parsec.Internal
         public static Result<TToken, T> Fail<TToken, T>(string message, IParsecState<TToken> state)
             => new FailWithMessage<TToken, T>(message, state);
 
-        public static Result<TToken, T> Success<TToken, T>(in T value, IParsecStateStream<TToken> state)
+        public static Result<TToken, T> Success<TToken, T>(T value, IParsecStateStream<TToken> state)
             => new Success<TToken, T>(value, state);
     }
 }
