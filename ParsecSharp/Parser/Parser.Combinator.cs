@@ -78,7 +78,7 @@ namespace Parsec
         public static Parser<TToken, T> Fix<TToken, T>(Func<Parser<TToken, T>, Parser<TToken, T>> function)
             => new Fix<TToken, T>(function);
 
-        public static Func<TParam, Parser<TToken, T>> Fix<TToken, TParam, T>(Func<TParam, Func<TParam, Parser<TToken, T>>, Parser<TToken, T>> function)
-            => parameter => Delay(() => function(parameter, Fix(function)));
+        public static Func<TParam, Parser<TToken, T>> Fix<TToken, TParam, T>(Func<Func<TParam, Parser<TToken, T>>, TParam, Parser<TToken, T>> function)
+            => parameter => Delay(() => function(Fix(function), parameter));
     }
 }
