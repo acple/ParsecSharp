@@ -12,6 +12,6 @@
     <PackageProjectUrl>https://github.com/acple/ParsecSharp</PackageProjectUrl>
     <Description>Monadic parser combinator library for C#</Description>
     <Copyright>(c) 2015 acple</Copyright>
-    <PackageTags>parser;combinator;linq</PackageTags>
+    <PackageTags>parser;combinator;linq;peg</PackageTags>
   </PropertyGroup>
 </Project>
