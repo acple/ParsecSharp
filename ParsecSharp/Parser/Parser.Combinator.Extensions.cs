@@ -8,7 +8,7 @@ namespace Parsec
     public static partial class Parser
     {
         public static Parser<TToken, IEnumerable<T>> SepBy<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> separator)
-            => Try(parser.SepBy1(separator), () => Enumerable.Empty<T>());
+            => Try(parser.SepBy1(separator), Enumerable.Empty<T>());
 
         public static Parser<TToken, IEnumerable<T>> SepBy1<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> separator)
             => parser.Bind(x => Many_(separator.Right(parser), new List<T> { x }));
@@ -20,7 +20,7 @@ namespace Parsec
             => Many1(parser.Left(separator));
 
         public static Parser<TToken, IEnumerable<T>> SepEndBy<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> separator)
-            => Try(parser.SepEndBy1(separator), () => Enumerable.Empty<T>());
+            => Try(parser.SepEndBy1(separator), Enumerable.Empty<T>());
 
         public static Parser<TToken, IEnumerable<T>> SepEndBy1<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> separator)
             => parser.SepBy1(separator).Left(Optional(separator));
@@ -34,23 +34,20 @@ namespace Parsec
         public static Parser<TToken, T> Except<TToken, T, TIgnore>(this Parser<TToken, T> parser, params Parser<TToken, TIgnore>[] exceptions)
             => parser.Except(exceptions.AsEnumerable());
 
-        public static Parser<TToken, T> ChainL<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function)
-            => parser.Bind(x => parser.ChainL_(function, x));
+        public static Parser<TToken, T> Chain<TToken, T>(this Parser<TToken, T> parser, Func<T, Parser<TToken, T>> rest)
+            => parser.Bind(x => Chain_(rest, x));
 
-        private static Parser<TToken, T> ChainL_<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function, T accum)
-            => Try(function.Bind(func => parser.Bind(x => parser.ChainL_(function, func(accum, x)))), () => accum);
-
-        public static Parser<TToken, T> ChainR<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function)
-            => parser.Bind(x => Try(function.Bind(func => parser.ChainR(function).Map(accum => func(x, accum))), () => x));
+        private static Parser<TToken, T> Chain_<TToken, T>(Func<T, Parser<TToken, T>> rest, T value)
+            => Try(rest(value).Bind(x => Chain_(rest, x)), value);
 
         public static Parser<TToken, TAccum> FoldL<TToken, T, TAccum>(this Parser<TToken, T> parser, TAccum seed, Func<TAccum, T, TAccum> function)
-            => Try(parser.Bind(x => parser.FoldL(function(seed, x), function)), () => seed);
+            => Try(parser.Bind(x => parser.FoldL(function(seed, x), function)), seed);
 
         public static Parser<TToken, TAccum> FoldL<TToken, T, TAccum>(this Parser<TToken, T> parser, Func<TAccum> seed, Func<TAccum, T, TAccum> function)
             => Pure<TToken, TAccum>(seed).Bind(x => parser.FoldL(x, function));
 
         public static Parser<TToken, TAccum> FoldR<TToken, T, TAccum>(this Parser<TToken, T> parser, TAccum seed, Func<T, TAccum, TAccum> function)
-            => Try(parser.Bind(x => parser.FoldR(seed, function).Map(accum => function(x, accum))), () => seed);
+            => Try(parser.Bind(x => parser.FoldR(seed, function).Map(accum => function(x, accum))), seed);
 
         public static Parser<TToken, TAccum> FoldR<TToken, T, TAccum>(this Parser<TToken, T> parser, Func<TAccum> seed, Func<T, TAccum, TAccum> function)
             => Pure<TToken, TAccum>(seed).Bind(x => parser.FoldR(x, function));
