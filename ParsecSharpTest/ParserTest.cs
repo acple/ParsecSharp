@@ -904,6 +904,16 @@ namespace ParsecSharpTest
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(),
                 success => success.Value.Is('*'));
+
+            // パラメータを取るオーバーロード。柔軟に再帰パーサを記述できます。
+            // 有名な回文パーサ。 S ::= "a" S "a" | "b" S "b" | ""
+            var parser2 = Fix<char, Parser<char, Unit>, Unit>((self, rest) =>
+                Char('a').Right(self(Char('a').Right(rest))) | Char('b').Right(self(Char('b').Right(rest))) | rest);
+
+            var source2 = "abbaabba";
+            parser2(EndOfInput()).Parse(source2).CaseOf(
+                fail => Assert.Fail(),
+                success => success.Value.Is(Unit.Instance));
         }
     }
 }
