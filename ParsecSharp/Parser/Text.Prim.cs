@@ -20,6 +20,9 @@ namespace Parsec
         public static Parser<char, char> Char(char token)
             => Satisfy(x => x == token);
 
+        public static Parser<char, char> CharIgnoreCase(char token)
+            => Satisfy(x => char.ToUpperInvariant(x) == char.ToUpperInvariant(token));
+
         public static Parser<char, char> Letter()
             => Satisfy(x => char.IsLetter(x));
 
