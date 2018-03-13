@@ -96,8 +96,14 @@ namespace Parsec
             => NoneOf<char>(candidates);
 
         public static Parser<char, string> String(string text)
+            => String(text, StringComparison.Ordinal);
+
+        public static Parser<char, string> StringIgnoreCase(string text)
+            => String(text, StringComparison.OrdinalIgnoreCase);
+
+        public static Parser<char, string> String(string text, StringComparison comparison)
             => Builder.Create<char, string>(state =>
-                (text.ToCharArray().SequenceEqual(state.AsEnumerable().Take(text.Length)))
+                (new string(state.AsEnumerable().Take(text.Length).ToArray()).Equals(text, comparison))
                     ? Result.Success(text, state.Advance(text.Length))
                     : Result.Fail<char, string>(state));
     }
