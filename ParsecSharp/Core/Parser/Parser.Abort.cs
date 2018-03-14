@@ -2,11 +2,11 @@
 
 namespace Parsec.Internal
 {
-    internal class Exit<TToken, T> : Parser<TToken, T>
+    internal class Abort<TToken, T> : Parser<TToken, T>
     {
         private readonly Exception _exception;
 
-        internal Exit(Exception exception)
+        internal Abort(Exception exception)
         {
             this._exception = exception;
         }
