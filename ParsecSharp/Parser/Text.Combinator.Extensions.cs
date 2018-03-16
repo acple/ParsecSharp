@@ -8,6 +8,9 @@ namespace Parsec
         public static Parser<char, string> ToStr(this Parser<char, IEnumerable<char>> parser)
             => parser.Map(x => new string(x.ToArray()));
 
+        public static Parser<char, int> ToInt(this Parser<char, IEnumerable<char>> parser)
+            => parser.ToStr().ToInt();
+
         public static Parser<char, int> ToInt(this Parser<char, string> parser)
             => parser.Bind(number => (int.TryParse(number, out var integer)) ? Pure(integer) : Fail<int>());
 
