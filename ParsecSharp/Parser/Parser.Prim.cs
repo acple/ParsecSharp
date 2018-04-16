@@ -14,7 +14,7 @@ namespace Parsec
             => Not(Any<TToken>());
 
         public static Parser<TToken, TToken> OneOf<TToken>(IEnumerable<TToken> candidates)
-            => Satisfy<TToken>(x => candidates.Contains(x));
+            => Satisfy<TToken>(candidates.Contains);
 
         public static Parser<TToken, TToken> OneOf<TToken>(params TToken[] candidates)
             => OneOf(candidates.AsEnumerable());
