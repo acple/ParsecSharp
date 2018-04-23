@@ -1,6 +1,6 @@
 ﻿namespace Parsec.Internal
 {
-    internal readonly struct LinearPosition : IPosition
+    public readonly struct LinearPosition : IPosition
     {
         public static LinearPosition Initial => default;
 
@@ -8,7 +8,7 @@
 
         public int Column { get; }
 
-        private LinearPosition(int index)
+        public LinearPosition(int index)
         {
             this.Column = index;
         }
