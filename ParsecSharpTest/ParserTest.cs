@@ -536,17 +536,20 @@ namespace ParsecSharpTest
         {
             // 単一パーサから開始し、その結果を元に次のパーサを作成し、失敗するまで繰り返す再帰パーサを作成します。
 
-            // 任意の一文字に連続でマッチし、マッチした文字を結果として返すパーサ。
-            var parser = Any().Chain(x => Char(x));
+            // 任意の一文字に連続でマッチし、マッチした文字とその回数を結果として返すパーサ。
+            var parser = Any().Map(x => (x, count: 1))
+                .Chain(match => Char(match.x).Map(_ => (match.x, match.count + 1)))
+                .Map(match => match.x.ToString() + match.count.ToString());
+
             var source = "aaaaaaaaa";
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Is('a'));
+                success => success.Value.Is("a9"));
 
             var source2 = "aaabbbbcccccdddddd";
-            Many(parser).Parse(source2).CaseOf(
+            Many(parser).Join().Parse(source2).CaseOf(
                 fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Is('a', 'b', 'c', 'd'));
+                success => success.Value.Is("a3b4c5d6"));
 
             // 本来、自己を最初に参照するパーサを直接記述することはできない(無限再帰となるため)。
             // 有名な二項演算の左再帰定義。
