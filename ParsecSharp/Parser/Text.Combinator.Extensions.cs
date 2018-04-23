@@ -12,7 +12,7 @@ namespace Parsec
             => parser.ToStr().ToInt();
 
         public static Parser<char, int> ToInt(this Parser<char, string> parser)
-            => parser.Bind(number => (int.TryParse(number, out var integer)) ? Pure(integer) : Fail<int>());
+            => parser.Bind(digits => (int.TryParse(digits, out var integer)) ? Pure(integer) : Fail<int>());
 
         public static Parser<char, string> Join(this Parser<char, IEnumerable<string>> parser)
             => parser.Join(string.Empty);
