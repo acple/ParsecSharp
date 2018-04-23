@@ -817,11 +817,11 @@ namespace ParsecSharpTest
         }
 
         [TestMethod]
-        public void MessageTest()
+        public void WithMessageTest()
         {
             // パース失敗時のエラーメッセージを書き換えます。
 
-            var parser = Many1(Digit()).Message(state => $"MessageTest Current: '{state.Current}'");
+            var parser = Many1(Digit()).WithMessage(state => $"MessageTest Current: '{state.Current}'");
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(

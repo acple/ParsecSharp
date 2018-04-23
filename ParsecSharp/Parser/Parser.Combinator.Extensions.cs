@@ -91,10 +91,10 @@ namespace Parsec
         public static Parser<TToken, T[]> ToArray<TToken, T>(this Parser<TToken, IEnumerable<T>> parser)
             => parser.Map(x => x.ToArray());
 
-        public static Parser<TToken, T> Message<TToken, T>(this Parser<TToken, T> parser, string message)
+        public static Parser<TToken, T> WithMessage<TToken, T>(this Parser<TToken, T> parser, string message)
             => parser.Alternative(Fail<TToken, T>(message));
 
-        public static Parser<TToken, T> Message<TToken, T>(this Parser<TToken, T> parser, Func<IParsecState<TToken>, string> message)
+        public static Parser<TToken, T> WithMessage<TToken, T>(this Parser<TToken, T> parser, Func<IParsecState<TToken>, string> message)
             => parser.Alternative(Fail<TToken, T>(message));
 
         public static Parser<TToken, T> Error<TToken, T>(this Parser<TToken, T> parser, Func<IParsecState<TToken>, string> message)
