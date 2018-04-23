@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Parsec.Internal;
 using static Parsec.Parser;
@@ -19,6 +18,9 @@ namespace Parsec
 
         public static Parser<char, char> Char(char token)
             => Satisfy(x => x == token);
+
+        public static Parser<char, char> CharIgnoreCase(char token)
+            => Satisfy(x => char.ToUpperInvariant(x) == char.ToUpperInvariant(token));
 
         public static Parser<char, char> Letter()
             => Satisfy(x => char.IsLetter(x));
@@ -86,18 +88,18 @@ namespace Parsec
         public static Parser<char, char> OneOf(string candidates)
             => Satisfy(x => candidates.IndexOf(x) != -1);
 
-        public static Parser<char, char> OneOf(IEnumerable<char> candidates)
-            => OneOf<char>(candidates);
-
         public static Parser<char, char> NoneOf(string candidates)
             => Satisfy(x => candidates.IndexOf(x) == -1);
 
-        public static Parser<char, char> NoneOf(IEnumerable<char> candidates)
-            => NoneOf<char>(candidates);
-
         public static Parser<char, string> String(string text)
+            => String(text, StringComparison.Ordinal);
+
+        public static Parser<char, string> StringIgnoreCase(string text)
+            => String(text, StringComparison.OrdinalIgnoreCase);
+
+        public static Parser<char, string> String(string text, StringComparison comparison)
             => Builder.Create<char, string>(state =>
-                (text.ToCharArray().SequenceEqual(state.AsEnumerable().Take(text.Length)))
+                (new string(state.AsEnumerable().Take(text.Length).ToArray()).Equals(text, comparison))
                     ? Result.Success(text, state.Advance(text.Length))
                     : Result.Fail<char, string>(state));
     }

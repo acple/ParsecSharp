@@ -23,7 +23,7 @@ namespace Parsec
             }
             catch (Exception exception)
             {
-                return new Exit<TToken, TNext>(exception);
+                return new Abort<TToken, TNext>(exception);
             }
         }
 

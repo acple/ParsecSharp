@@ -61,6 +61,9 @@ namespace Parsec
         public static Parser<TToken, TRight> Right<TToken, TLeft, TRight>(this Parser<TToken, TLeft> parser, Parser<TToken, TRight> next)
             => parser.Bind(_ => next);
 
+        public static Parser<TToken, T> Between<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> bracket)
+            => parser.Between(bracket, bracket);
+
         public static Parser<TToken, T> Between<TToken, T, TOpen, TClose>(this Parser<TToken, T> parser, Parser<TToken, TOpen> open, Parser<TToken, TClose> close)
             => open.Right(parser.Left(close));
 
@@ -88,7 +91,10 @@ namespace Parsec
         public static Parser<TToken, T[]> ToArray<TToken, T>(this Parser<TToken, IEnumerable<T>> parser)
             => parser.Map(x => x.ToArray());
 
-        public static Parser<TToken, T> Message<TToken, T>(this Parser<TToken, T> parser, Func<IParsecState<TToken>, string> message)
+        public static Parser<TToken, T> WithMessage<TToken, T>(this Parser<TToken, T> parser, string message)
+            => parser.Alternative(Fail<TToken, T>(message));
+
+        public static Parser<TToken, T> WithMessage<TToken, T>(this Parser<TToken, T> parser, Func<IParsecState<TToken>, string> message)
             => parser.Alternative(Fail<TToken, T>(message));
 
         public static Parser<TToken, T> Error<TToken, T>(this Parser<TToken, T> parser, Func<IParsecState<TToken>, string> message)

@@ -536,17 +536,20 @@ namespace ParsecSharpTest
         {
             // 単一パーサから開始し、その結果を元に次のパーサを作成し、失敗するまで繰り返す再帰パーサを作成します。
 
-            // 任意の一文字に連続でマッチし、マッチした文字を結果として返すパーサ。
-            var parser = Any().Chain(x => Char(x));
+            // 任意の一文字に連続でマッチし、マッチした文字とその回数を結果として返すパーサ。
+            var parser = Any().Map(x => (x, count: 1))
+                .Chain(match => Char(match.x).Map(_ => (match.x, match.count + 1)))
+                .Map(match => match.x.ToString() + match.count.ToString());
+
             var source = "aaaaaaaaa";
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Is('a'));
+                success => success.Value.Is("a9"));
 
             var source2 = "aaabbbbcccccdddddd";
-            Many(parser).Parse(source2).CaseOf(
+            Many(parser).Join().Parse(source2).CaseOf(
                 fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Is('a', 'b', 'c', 'd'));
+                success => success.Value.Is("a3b4c5d6"));
 
             // 本来、自己を最初に参照するパーサを直接記述することはできない(無限再帰となるため)。
             // 有名な二項演算の左再帰定義。
@@ -560,7 +563,7 @@ namespace ParsecSharpTest
             var expr = Digit().Chain(x => Char('+').Right(Digit()));
 
             // 直接左再帰定義の例。こちらは実行すると死にます。
-            var num = Many1(Digit()).ToStr().Map(int.Parse);
+            var num = Many1(Digit()).ToInt();
             Parser<char, int> Expr()
                 => (from x in Expr() // ここで無限再帰
                     from func in Char('+')
@@ -587,7 +590,7 @@ namespace ParsecSharpTest
                 Char('-').Map(_ => (Func<int, int, int>)((x, y) => x - y)));
 
             // 1文字以上の数字にマッチし、intに変換するパーサ。
-            var num = Many1(Digit()).ToStr().Map(x => int.Parse(x));
+            var num = Many1(Digit()).ToInt();
 
             // num *( op num )
             var parser = ChainL(num, op);
@@ -631,7 +634,7 @@ namespace ParsecSharpTest
                 Char('-').Map(_ => (Func<int, int, int>)((x, y) => x - y)));
 
             // 1文字以上の数字にマッチし、intに変換するパーサ。
-            var num = Many1(Digit()).ToStr().Map(x => int.Parse(x));
+            var num = Many1(Digit()).ToInt();
 
             // num *( op num )
             var parser = ChainR(num, op);
@@ -663,7 +666,7 @@ namespace ParsecSharpTest
             // 初期値と集計関数を引数にとり、パースした結果を左から集計するパーサを作成します。
 
             // 0個以上の Digit にマッチし、初期値10に対して左から (x => accum - x) を繰り返し適用するパーサ。
-            var parser = Digit().ToStr().Map(int.Parse).FoldL(10, (x, y) => x - y);
+            var parser = Digit().ToStr().ToInt().FoldL(10, (x, y) => x - y);
 
             var source = "12345";
             parser.Parse(source).CaseOf(
@@ -677,7 +680,7 @@ namespace ParsecSharpTest
             // 初期値と集計関数を引数にとり、パース結果を右から集計するパーサを作成します。
 
             // 0個以上の Digit にマッチし、初期値10に対して右から (x => x - accum) を繰り返し適用するパーサ。
-            var parser = Digit().ToStr().Map(int.Parse).FoldR(10, (x, y) => x - y);
+            var parser = Digit().ToStr().ToInt().FoldR(10, (x, y) => x - y);
 
             var source = "12345";
             parser.Parse(source).CaseOf(
@@ -817,11 +820,11 @@ namespace ParsecSharpTest
         }
 
         [TestMethod]
-        public void MessageTest()
+        public void WithMessageTest()
         {
             // パース失敗時のエラーメッセージを書き換えます。
 
-            var parser = Many1(Digit()).Message(state => $"MessageTest Current: '{state.Current}'");
+            var parser = Many1(Digit()).WithMessage(state => $"MessageTest Current: '{state.Current}'");
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(

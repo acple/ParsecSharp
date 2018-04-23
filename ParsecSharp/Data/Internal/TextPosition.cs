@@ -1,6 +1,6 @@
 ﻿namespace Parsec.Internal
 {
-    internal readonly struct TextPosition : IPosition
+    public readonly struct TextPosition : IPosition
     {
         public static TextPosition Initial => new TextPosition(1, 1);
 
@@ -8,7 +8,7 @@
 
         public int Column { get; }
 
-        private TextPosition(int line, int column)
+        public TextPosition(int line, int column)
         {
             this.Line = line;
             this.Column = column;

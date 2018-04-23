@@ -14,6 +14,9 @@ namespace Parsec
         public static Parser<TToken, T> Fail<TToken, T>()
             => Builder.Create<TToken, T>(state => Result.Fail<TToken, T>(state));
 
+        public static Parser<TToken, T> Fail<TToken, T>(string message)
+            => Builder.Create<TToken, T>(state => Result.Fail<TToken, T>(message, state));
+
         public static Parser<TToken, T> Fail<TToken, T>(Func<IParsecState<TToken>, string> message)
             => Builder.Create<TToken, T>(state => Result.Fail<TToken, T>(message(state), state));
 
@@ -21,7 +24,7 @@ namespace Parsec
             => new Terminate<TToken, T>(message);
 
         public static Parser<TToken, T> Abort<TToken, T>(Exception exception)
-            => new Exit<TToken, T>(exception);
+            => new Abort<TToken, T>(exception);
 
         public static Parser<TToken, IPosition> GetPosition<TToken>()
             => Builder.Create<TToken, IPosition>(state => Result.Success(state.Position, state));

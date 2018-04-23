@@ -139,7 +139,7 @@ namespace ParsecSharpExamples
         // int = zero / ( digit1-9 *DIGIT )
         private static Parser<char, int> Int()
             => Char('0').ToStr().Or(OneOf("123456789").Append(Many(Digit())).ToStr())
-                .Map(x => int.Parse(x));
+                .ToInt();
 
         // JSON Number の小数部にマッチします。
         // frac = decimal-point 1*DIGIT
