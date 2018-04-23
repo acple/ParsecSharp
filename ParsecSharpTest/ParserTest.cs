@@ -563,7 +563,7 @@ namespace ParsecSharpTest
             var expr = Digit().Chain(x => Char('+').Right(Digit()));
 
             // 直接左再帰定義の例。こちらは実行すると死にます。
-            var num = Many1(Digit()).ToStr().Map(int.Parse);
+            var num = Many1(Digit()).ToInt();
             Parser<char, int> Expr()
                 => (from x in Expr() // ここで無限再帰
                     from func in Char('+')
@@ -590,7 +590,7 @@ namespace ParsecSharpTest
                 Char('-').Map(_ => (Func<int, int, int>)((x, y) => x - y)));
 
             // 1文字以上の数字にマッチし、intに変換するパーサ。
-            var num = Many1(Digit()).ToStr().Map(x => int.Parse(x));
+            var num = Many1(Digit()).ToInt();
 
             // num *( op num )
             var parser = ChainL(num, op);
@@ -634,7 +634,7 @@ namespace ParsecSharpTest
                 Char('-').Map(_ => (Func<int, int, int>)((x, y) => x - y)));
 
             // 1文字以上の数字にマッチし、intに変換するパーサ。
-            var num = Many1(Digit()).ToStr().Map(x => int.Parse(x));
+            var num = Many1(Digit()).ToInt();
 
             // num *( op num )
             var parser = ChainR(num, op);
@@ -666,7 +666,7 @@ namespace ParsecSharpTest
             // 初期値と集計関数を引数にとり、パースした結果を左から集計するパーサを作成します。
 
             // 0個以上の Digit にマッチし、初期値10に対して左から (x => accum - x) を繰り返し適用するパーサ。
-            var parser = Digit().ToStr().Map(int.Parse).FoldL(10, (x, y) => x - y);
+            var parser = Digit().ToStr().ToInt().FoldL(10, (x, y) => x - y);
 
             var source = "12345";
             parser.Parse(source).CaseOf(
@@ -680,7 +680,7 @@ namespace ParsecSharpTest
             // 初期値と集計関数を引数にとり、パース結果を右から集計するパーサを作成します。
 
             // 0個以上の Digit にマッチし、初期値10に対して右から (x => x - accum) を繰り返し適用するパーサ。
-            var parser = Digit().ToStr().Map(int.Parse).FoldR(10, (x, y) => x - y);
+            var parser = Digit().ToStr().ToInt().FoldR(10, (x, y) => x - y);
 
             var source = "12345";
             parser.Parse(source).CaseOf(
