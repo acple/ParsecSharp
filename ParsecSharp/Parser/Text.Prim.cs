@@ -99,8 +99,11 @@ namespace Parsec
 
         public static Parser<char, string> String(string text, StringComparison comparison)
             => Builder.Create<char, string>(state =>
-                (new string(state.AsEnumerable().Take(text.Length).ToArray()).Equals(text, comparison))
-                    ? Result.Success(text, state.Advance(text.Length))
-                    : Result.Fail<char, string>(state));
+            {
+                var str = new string(state.AsEnumerable().Take(text.Length).ToArray());
+                return (str.Equals(text, comparison))
+                    ? Result.Success(str, state.Advance(text.Length))
+                    : Result.Fail<char, string>(state);
+            });
     }
 }
