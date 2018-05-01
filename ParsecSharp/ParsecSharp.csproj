@@ -5,7 +5,7 @@
     <RootNamespace>Parsec</RootNamespace>
     <DebugType Condition="'$(Configuration)'=='Release'">none</DebugType>
     <PackageId>ParsecSharp</PackageId>
-    <Version>1.4.0</Version>
+    <Version>1.4.1</Version>
     <Authors>acple</Authors>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageLicenseUrl>https://github.com/acple/ParsecSharp/blob/master/LICENSE</PackageLicenseUrl>
