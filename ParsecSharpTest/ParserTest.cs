@@ -11,9 +11,9 @@ namespace ParsecSharpTest
     [TestClass]
     public class ParserTest
     {
-        private const string _abcdEFGH = "abcdEFGH";
+        const string _abcdEFGH = "abcdEFGH";
 
-        private const string _123456 = "123456";
+        const string _123456 = "123456";
 
         [TestMethod]
         public void AnyTest()
@@ -56,6 +56,16 @@ namespace ParsecSharpTest
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
+                fail => { },
+                success => Assert.Fail(success.ToString()));
+
+            // IEnumerable<char>を取るオーバーロード。
+            var parser2 = OneOf("6789abcde".AsEnumerable());
+            parser2.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is('a'));
+
+            parser2.Parse(source2).CaseOf(
                 fail => { },
                 success => Assert.Fail(success.ToString()));
         }
@@ -374,7 +384,7 @@ namespace ParsecSharpTest
                 success => success.Value.Is("dE"));
         }
 
-        private const string _commanum = "123,456,789";
+        const string _commanum = "123,456,789";
 
         [TestMethod]
         public void SepByTest()
