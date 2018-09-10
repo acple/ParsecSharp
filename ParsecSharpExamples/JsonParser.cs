@@ -29,7 +29,7 @@ namespace ParsecSharpExamples
         // パーサをWhiteSpaceで挟み込む拡張メソッド。
         // RFCにはWhiteSpace Charの指定もあったけどUnicodeのSpaces判定でサボり。
         private static Parser<char, T> WithSpaces<T>(this Parser<char, T> parser)
-            => parser.Between(Spaces(), Spaces());
+            => parser.Between(Spaces());
 
         // パース結果をdynamicに詰める拡張メソッド。
         private static Parser<TToken, dynamic> AsDynamic<TToken, T>(this Parser<TToken, T> parser)
@@ -126,8 +126,8 @@ namespace ParsecSharpExamples
         private static Parser<char, double> JsonNumber()
             => from sign in Sign()
                from integer in Int()
-               from frac in Frac()
-               from exp in Exp()
+               from frac in Optional(Frac(), 0.0)
+               from exp in Optional(Exp(), 0)
                select sign((integer + frac) * Math.Pow(10, exp));
 
         // JSON Number の符号にマッチします。doubleの符号を反転させるFuncを返します。
@@ -138,22 +138,20 @@ namespace ParsecSharpExamples
         // JSON Number の整数部にマッチします。
         // int = zero / ( digit1-9 *DIGIT )
         private static Parser<char, int> Int()
-            => Char('0').ToStr().Or(OneOf("123456789").Append(Many(Digit())).ToStr())
-                .ToInt();
+            => Char('0').ToStr().Or(OneOf("123456789").Append(Many(Digit())).ToStr()).ToInt();
 
         // JSON Number の小数部にマッチします。
         // frac = decimal-point 1*DIGIT
         private static Parser<char, double> Frac()
-            => Optional(Char('.').Right(Many1(Digit())).ToStr(), "0")
-                .Map(x => double.Parse("0." + x));
+            => Char('.').Right(Many1(Digit())).ToStr().Map(x => double.Parse("0." + x));
 
         // JSON Number の指数部にマッチします。
         // exp = e [ minus / plus ] 1*DIGIT
         private static Parser<char, int> Exp()
-            => Try(from _ in OneOf("eE")
-                   from sign in Char('-').Or(Optional(Char('+'), '+')).ToStr()
-                   from num in Many1(Digit()).ToStr()
-                   select int.Parse(sign + num), 0);
+            => from _ in OneOf("eE")
+               from sign in Char('-').Or(Optional(Char('+'), '+')).ToStr()
+               from num in Many1(Digit()).ToStr()
+               select int.Parse(sign + num);
 
         // JSON Boolean にマッチします。
         // true  = %x74.72.75.65
