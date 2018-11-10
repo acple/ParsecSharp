@@ -89,6 +89,29 @@ namespace ParsecSharpTest
         }
 
         [TestMethod]
+        public void SkipTest()
+        {
+            // 数を指定してスキップするパーサを作成します。
+
+            var parser = Skip(3).Right(Any());
+
+            var source = _abcdEFGH;
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is('d'));
+
+            var parser2 = Skip(8).Right(EndOfInput());
+            parser2.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => { });
+
+            var parser3 = Skip(9);
+            parser3.Parse(source).CaseOf(
+                fail => { },
+                success => Assert.Fail(success.Value.ToString()));
+        }
+
+        [TestMethod]
         public void PureTest()
         {
             // 成功したという結果を返すパーサを作成します。

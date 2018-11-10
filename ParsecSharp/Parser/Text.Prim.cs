@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Parsec.Internal;
 using static Parsec.Parser;
@@ -12,6 +13,24 @@ namespace Parsec
 
         public static Parser<char, Unit> EndOfInput()
             => EndOfInput<char>();
+
+        public static Parser<char, IEnumerable<char>> Take(int count)
+            => Take<char>(count);
+
+        public static Parser<char, IEnumerable<char>> TakeWhile(Func<char, bool> predicate)
+            => TakeWhile<char>(predicate);
+
+        public static Parser<char, IEnumerable<char>> TakeWhile1(Func<char, bool> predicate)
+            => TakeWhile1<char>(predicate);
+
+        public static Parser<char, Unit> Skip(int count)
+            => Skip<char>(count);
+
+        public static Parser<char, Unit> SkipWhile(Func<char, bool> predicate)
+            => SkipWhile<char>(predicate);
+
+        public static Parser<char, Unit> SkipWhile1(Func<char, bool> predicate)
+            => SkipWhile1<char>(predicate);
 
         public static Parser<char, char> Satisfy(Func<char, bool> predicate)
             => Satisfy<char>(predicate);
@@ -63,6 +82,9 @@ namespace Parsec
 
         public static Parser<char, char> LowSurrogate()
             => Satisfy(x => char.IsLowSurrogate(x));
+
+        public static Parser<char, string> SurrogatePair()
+            => HighSurrogate().Append(LowSurrogate()).ToStr();
 
         public static Parser<char, char> ControlChar()
             => Satisfy(x => char.IsControl(x));
