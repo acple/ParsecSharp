@@ -105,10 +105,11 @@ namespace ParsecSharpTest
                 fail => Assert.Fail(fail.ToString()),
                 success => { });
 
+            // 指定数スキップできない場合は失敗します。
             var parser3 = Skip(9);
             parser3.Parse(source).CaseOf(
                 fail => { },
-                success => Assert.Fail(success.Value.ToString()));
+                success => Assert.Fail(success.ToString()));
         }
 
         [TestMethod]
