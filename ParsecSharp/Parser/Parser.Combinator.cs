@@ -69,8 +69,8 @@ namespace Parsec
         public static Parser<TToken, T> SkipTill<TToken, TIgnore, T>(Parser<TToken, TIgnore> parser, Parser<TToken, T> terminator)
             => Fix<TToken, T>(self => terminator.Alternative(parser.Right(self)));
 
-        public static Parser<TToken, IEnumerable<TToken>> TakeTill<TToken, TNext>(Parser<TToken, TNext> end)
-            => ManyTill(Any<TToken>(), LookAhead(end));
+        public static Parser<TToken, IEnumerable<TToken>> TakeTill<TToken, TIgnore>(Parser<TToken, TIgnore> terminator)
+            => ManyTill(Any<TToken>(), terminator);
 
         public static Parser<TToken, T> Match<TToken, T>(Parser<TToken, T> parser)
             => SkipTill(Any<TToken>(), parser);
