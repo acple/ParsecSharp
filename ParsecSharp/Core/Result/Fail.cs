@@ -26,6 +26,6 @@ namespace Parsec
         protected abstract string ToStringInternal();
 
         public sealed override string ToString()
-            => $"Parser Fail ({this.State.Position}): {this.ToStringInternal()}";
+            => $"Parser Fail ({this.State.Position.ToString()}): {this.ToStringInternal()}";
     }
 }

@@ -17,6 +17,6 @@
             => new LinearPosition(this.Column + 1);
 
         public override string ToString()
-            => $"Index: {this.Column}";
+            => $"Index: {this.Column.ToString()}";
     }
 }

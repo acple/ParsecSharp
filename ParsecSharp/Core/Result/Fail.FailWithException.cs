@@ -17,6 +17,6 @@ namespace Parsec.Internal
             => new FailWithException<TToken, TNext>(this._exception, this.State);
 
         protected override string ToStringInternal()
-            => $"Exception '{this._exception.GetType().Name}' occurred: {this._exception}";
+            => $"Exception '{this._exception.GetType().Name}' occurred: {this._exception.ToString()}";
     }
 }

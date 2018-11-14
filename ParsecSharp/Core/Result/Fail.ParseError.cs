@@ -9,6 +9,6 @@
             => new ParseError<TToken, TNext>(this.State);
 
         protected override string ToStringInternal()
-            => $"Unexpected \"{this.State}\"";
+            => $"Unexpected \"{this.State.ToString()}\"";
     }
 }

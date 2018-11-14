@@ -858,7 +858,7 @@ namespace ParsecSharpTest
         {
             // パース失敗時のエラーメッセージを書き換えます。
 
-            var parser = Many1(Digit()).WithMessage(state => $"MessageTest Current: '{state.Current}'");
+            var parser = Many1(Digit()).WithMessage(state => $"MessageTest Current: '{state.Current.ToString()}'");
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
@@ -876,7 +876,7 @@ namespace ParsecSharpTest
         {
             // パース失敗時にパース処理を中止します。
 
-            var parser = Many(Lower().Error(state => $"Fatal Error! '{state}' is not a lower char!")).ToStr()
+            var parser = Many(Lower().Error(state => $"Fatal Error! '{state.ToString()}' is not a lower char!")).ToStr()
                 .Or(Pure("recovery"));
 
             var source = _abcdEFGH;
