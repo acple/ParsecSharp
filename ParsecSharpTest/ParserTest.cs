@@ -952,5 +952,29 @@ namespace ParsecSharpTest
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is(Unit.Instance));
         }
+
+        [TestMethod]
+        public void ParsePartiallyTest()
+        {
+            // パース完了後にストリームを破棄せず、続きの処理を行うことができる実行プランを提供します。
+
+            // 3文字消費するパーサ。
+            var parser = Any().Repeat(3).ToStr();
+
+            using (var source = new StringStream(_abcdEFGH))
+            {
+                var (result, rest) = parser.ParsePartially(source);
+                result.Value.Is("abc");
+
+                var (result2, rest2) = parser.ParsePartially(rest);
+                result2.Value.Is("dEF");
+
+                var (result3, rest3) = parser.ParsePartially(rest2);
+                result3.CaseOf(fail => { }, success => Assert.Fail(success.ToString()));
+
+                // 失敗時点のstateが返されることに注意する。
+                rest3.HasValue.Is(false); // 終端に到達したため失敗
+            }
+        }
     }
 }
