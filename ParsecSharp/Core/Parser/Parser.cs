@@ -13,8 +13,8 @@ namespace Parsec
                 return this.Run(source);
         }
 
-        public ISuspendedResult<TToken, T> ParsePartially(IParsecStateStream<TToken> source)
-            => this.Run(source);
+        public Result<TToken, T>.Suspended ParsePartially(IParsecStateStream<TToken> source)
+            => this.Run(source).Suspend();
 
         private Result<TToken, T> Run(IParsecStateStream<TToken> source)
         {

@@ -2,7 +2,7 @@
 
 namespace Parsec
 {
-    public abstract class Result<TToken, T> : ISuspendedResult<TToken, T>
+    public abstract class Result<TToken, T>
     {
         public abstract T Value { get; }
 
@@ -22,10 +22,23 @@ namespace Parsec
         public static implicit operator T(Result<TToken, T> result)
             => result.Value;
 
-        void ISuspendedResult<TToken, T>.Deconstruct(out Result<TToken, T> result, out IParsecStateStream<TToken> rest)
+        internal Suspended Suspend()
+            => new Suspended(this);
+
+        public readonly struct Suspended
         {
-            result = this;
-            rest = this.Rest;
+            private readonly Result<TToken, T> _result;
+
+            internal Suspended(Result<TToken, T> result)
+            {
+                this._result = result;
+            }
+
+            public void Deconstruct(out Result<TToken, T> result, out IParsecStateStream<TToken> rest)
+            {
+                result = this._result;
+                rest = this._result.Rest;
+            }
         }
     }
 }
