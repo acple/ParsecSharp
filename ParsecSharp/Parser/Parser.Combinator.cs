@@ -1,92 +1,118 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Parsec.Internal;
 
 namespace Parsec
 {
     public static partial class Parser
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Choice<TToken, T>(IEnumerable<Parser<TToken, T>> parsers)
             => parsers.Reverse().Aggregate((next, parser) => parser.Alternative(next));
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Choice<TToken, T>(params Parser<TToken, T>[] parsers)
             => Choice(parsers.AsEnumerable());
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Sequence<TToken, T>(IEnumerable<Parser<TToken, T>> parsers)
             => parsers.Reverse()
                 .Aggregate(Pure<TToken, Stack<T>>(() => new Stack<T>()),
                     (next, parser) => parser.Bind(x => next.Map(stack => { stack.Push(x); return stack; })))
                 .Map(stack => stack.AsEnumerable());
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Sequence<TToken, T>(params Parser<TToken, T>[] parsers)
             => Sequence(parsers.AsEnumerable());
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Try<TToken, T>(Parser<TToken, T> parser, T resume)
             => parser.Alternative(Pure<TToken, T>(resume));
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Try<TToken, T>(Parser<TToken, T> parser, Func<T> resume)
             => parser.Alternative(Pure<TToken, T>(resume));
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Optional<TToken, T>(Parser<TToken, T> parser, T value)
             => Try(parser, value);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> Optional<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
             => Try(parser.Ignore(), Unit.Instance);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> Not<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
             => parser.ModifyResult(
                 (state, _) => Result.Success(Unit.Instance, state),
                 (state, _) => Result.Fail<TToken, Unit>(state));
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> LookAhead<TToken, T>(Parser<TToken, T> parser)
             => parser.ModifyResult(
                 (_, fail) => fail,
                 (state, success) => Result.Success(success.Value, state));
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Many<TToken, T>(Parser<TToken, T> parser)
             => Try(Many1(parser), Enumerable.Empty<T>());
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Many1<TToken, T>(Parser<TToken, T> parser)
             => parser.Bind(x => Many_(parser, new List<T> { x }));
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Parser<TToken, IEnumerable<T>> Many_<TToken, T>(Parser<TToken, T> parser, List<T> list)
             => Try(parser.Bind(x => { list.Add(x); return Many_(parser, list); }), list);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> SkipMany<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
             => Fix<TToken, Unit>(self => Try(parser.Right(self), Unit.Instance));
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> SkipMany1<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
             => parser.Right(SkipMany(parser));
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> ManyTill<TToken, T, TIgnore>(Parser<TToken, T> parser, Parser<TToken, TIgnore> terminator)
             => Pure<TToken, List<T>>(() => new List<T>()).Bind(list => ManyTill_(parser, terminator, list));
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Many1Till<TToken, T, TIgnore>(Parser<TToken, T> parser, Parser<TToken, TIgnore> terminator)
             => parser.Bind(x => ManyTill_(parser, terminator, new List<T> { x }));
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Parser<TToken, IEnumerable<T>> ManyTill_<TToken, T, TIgnore>(Parser<TToken, T> parser, Parser<TToken, TIgnore> terminator, List<T> list)
             => terminator.Map(_ => list.AsEnumerable())
                 .Alternative(parser.Bind(x => { list.Add(x); return ManyTill_(parser, terminator, list); }));
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> SkipTill<TToken, TIgnore, T>(Parser<TToken, TIgnore> parser, Parser<TToken, T> terminator)
             => Fix<TToken, T>(self => terminator.Alternative(parser.Right(self)));
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Skip1Till<TToken, TIgnore, T>(Parser<TToken, TIgnore> parser, Parser<TToken, T> terminator)
             => parser.Right(SkipTill(parser, terminator));
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<TToken>> TakeTill<TToken, TIgnore>(Parser<TToken, TIgnore> terminator)
             => ManyTill(Any<TToken>(), terminator);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Match<TToken, T>(Parser<TToken, T> parser)
             => SkipTill(Any<TToken>(), parser);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Delay<TToken, T>(Func<Parser<TToken, T>> parser)
             => new Delay<TToken, T>(parser);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Fix<TToken, T>(Func<Parser<TToken, T>, Parser<TToken, T>> function)
             => new Fix<TToken, T>(function);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Func<TParam, Parser<TToken, T>> Fix<TToken, TParam, T>(Func<Func<TParam, Parser<TToken, T>>, TParam, Parser<TToken, T>> function)
             => parameter => Delay(() => function(Fix(function), parameter));
     }
