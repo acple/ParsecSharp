@@ -1,6 +1,6 @@
 using System;
 
-namespace Parsec
+namespace ParsecSharp
 {
     public abstract class Fail<TToken, T> : Result<TToken, T>
     {

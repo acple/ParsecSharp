@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Parsec.Internal
+namespace ParsecSharp.Internal
 {
     public sealed class ParsecStateStreamEnumerator<TToken> : IEnumerator<TToken>
     {

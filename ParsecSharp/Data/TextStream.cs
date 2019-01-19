@@ -1,9 +1,9 @@
 using System;
 using System.IO;
 using System.Text;
-using Parsec.Internal;
+using ParsecSharp.Internal;
 
-namespace Parsec
+namespace ParsecSharp
 {
     public sealed class TextStream : IParsecStateStream<char>
     {

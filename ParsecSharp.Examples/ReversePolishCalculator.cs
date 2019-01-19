@@ -1,9 +1,8 @@
 using System;
-using Parsec;
-using static Parsec.Parser;
-using static Parsec.Text;
+using static ParsecSharp.Parser;
+using static ParsecSharp.Text;
 
-namespace ParsecSharpExamples
+namespace ParsecSharp.Examples
 {
     // 逆ポーランド記法の式をパーサで計算してみるネタ
     // Chainが欲しくなったのはコレを定義してみたかったから(ChainL/Rだとうまいこと定義できなかった)

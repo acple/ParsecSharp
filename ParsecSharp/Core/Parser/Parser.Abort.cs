@@ -1,6 +1,6 @@
 using System;
 
-namespace Parsec.Internal
+namespace ParsecSharp.Internal
 {
     internal class Abort<TToken, T> : Parser<TToken, T>
     {

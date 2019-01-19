@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.CompilerServices;
 
-namespace Parsec.Internal
+namespace ParsecSharp.Internal
 {
     public static class Result
     {

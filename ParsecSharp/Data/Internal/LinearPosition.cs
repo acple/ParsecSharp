@@ -1,4 +1,4 @@
-namespace Parsec.Internal
+namespace ParsecSharp.Internal
 {
     public readonly struct LinearPosition : IPosition
     {

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Parsec.Internal;
+using ParsecSharp.Internal;
 
-namespace Parsec
+namespace ParsecSharp
 {
     public sealed class EnumerableStream<TToken> : IParsecStateStream<TToken>
     {

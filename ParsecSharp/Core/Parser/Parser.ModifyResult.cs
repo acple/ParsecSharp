@@ -1,6 +1,6 @@
 using System;
 
-namespace Parsec.Internal
+namespace ParsecSharp.Internal
 {
     internal class ModifyResult<TToken, TIntermediate, T> : Parser<TToken, T>
     {

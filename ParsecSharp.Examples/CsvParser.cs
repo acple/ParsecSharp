@@ -1,12 +1,10 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using Parsec;
-using static Parsec.Parser;
-using static Parsec.Text;
+using static ParsecSharp.Parser;
+using static ParsecSharp.Text;
 
-namespace ParsecSharpExamples
+namespace ParsecSharp.Examples
 {
     // CSVパーサ RFC4180にそこそこ忠実
     public static class CsvParser

@@ -1,8 +1,8 @@
 using System;
 using System.Runtime.CompilerServices;
-using Parsec.Internal;
+using ParsecSharp.Internal;
 
-namespace Parsec
+namespace ParsecSharp
 {
     public static partial class Parser
     {

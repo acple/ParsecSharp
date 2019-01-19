@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace Parsec
+namespace ParsecSharp
 {
     public static partial class Parser
     {

@@ -43,7 +43,7 @@ Download manually:
 
 ## Get started
 1. Add package reference to your project.
-2. Add using directive: `using static Parsec.Parser;` and `using static Parsec.Text;` to your code.
+2. Add using directive: `using static ParsecSharp.Parser;` and `using static ParsecSharp.Text;` to your code.
 3. Parse your all.
 
 

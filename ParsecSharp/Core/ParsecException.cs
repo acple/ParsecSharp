@@ -1,6 +1,6 @@
 using System;
 
-namespace Parsec
+namespace ParsecSharp
 {
     public class ParsecException : Exception
     {

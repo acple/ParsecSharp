@@ -1,6 +1,6 @@
 using System;
 
-namespace Parsec
+namespace ParsecSharp
 {
     public interface IParsecStateStream<out TToken> : IParsecState<TToken>, IDisposable
     {

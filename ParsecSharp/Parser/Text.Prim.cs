@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Parsec.Internal;
-using static Parsec.Parser;
+using ParsecSharp.Internal;
+using static ParsecSharp.Parser;
 
-namespace Parsec
+namespace ParsecSharp
 {
     public static partial class Text
     {

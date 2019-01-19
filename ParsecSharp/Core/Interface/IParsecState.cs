@@ -1,4 +1,4 @@
-namespace Parsec
+namespace ParsecSharp
 {
     public interface IParsecState<out TToken>
     {

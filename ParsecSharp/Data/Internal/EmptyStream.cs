@@ -1,4 +1,4 @@
-namespace Parsec.Internal
+namespace ParsecSharp.Internal
 {
     public sealed class EmptyStream<TToken> : IParsecStateStream<TToken>
     {

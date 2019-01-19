@@ -1,7 +1,7 @@
 using System;
-using Parsec.Internal;
+using ParsecSharp.Internal;
 
-namespace Parsec
+namespace ParsecSharp
 {
     public class Success<TToken, T> : Result<TToken, T>
     {

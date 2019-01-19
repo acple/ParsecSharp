@@ -2,9 +2,9 @@
 using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using static Parsec.Parser;
+using static ParsecSharp.Parser;
 
-namespace ParsecSharpTest
+namespace UnitTest.ParsecSharp
 {
     [TestClass]
     public class StackOverflowTest

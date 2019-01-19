@@ -1,6 +1,6 @@
 using System;
 
-namespace Parsec
+namespace ParsecSharp
 {
     public readonly struct Unit : IComparable<Unit>, IEquatable<Unit>
     {

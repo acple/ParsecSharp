@@ -1,6 +1,6 @@
 using System;
 
-namespace Parsec.Internal
+namespace ParsecSharp.Internal
 {
     internal class FailWithException<TToken, T> : Fail<TToken, T>
     {

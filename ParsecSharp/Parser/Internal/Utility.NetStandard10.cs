@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-namespace Parsec.Internal
+namespace ParsecSharp.Internal
 {
     internal static partial class Utility
     {

@@ -1,6 +1,6 @@
-using Parsec.Internal;
+using ParsecSharp.Internal;
 
-namespace Parsec
+namespace ParsecSharp
 {
     public sealed class StringStream : IParsecStateStream<char>
     {

@@ -1,7 +1,7 @@
 using System;
-using Parsec.Internal;
+using ParsecSharp.Internal;
 
-namespace Parsec
+namespace ParsecSharp
 {
     public abstract class Parser<TToken, T>
     {

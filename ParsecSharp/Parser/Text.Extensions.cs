@@ -2,7 +2,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace Parsec
+namespace ParsecSharp
 {
     public static partial class Text
     {

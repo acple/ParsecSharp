@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Parsec.Internal
+namespace ParsecSharp.Internal
 {
     public static class ParsecStateStreamEnumerable
     {

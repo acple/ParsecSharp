@@ -2,11 +2,11 @@ using System;
 using System.Linq;
 using ChainingAssertion;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Parsec;
-using static Parsec.Parser;
-using static Parsec.Text;
+using ParsecSharp;
+using static ParsecSharp.Parser;
+using static ParsecSharp.Text;
 
-namespace ParsecSharpTest
+namespace UnitTest.ParsecSharp
 {
     [TestClass]
     public class ParserTest
