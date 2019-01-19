@@ -1,4 +1,4 @@
-﻿using Parsec.Internal;
+using Parsec.Internal;
 
 namespace Parsec
 {

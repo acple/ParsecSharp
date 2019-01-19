@@ -1,4 +1,4 @@
-﻿using ChainingAssertion;
+using ChainingAssertion;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static Parsec.Parser;
 using static Parsec.Text;

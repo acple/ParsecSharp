@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Parsec;
 using static Parsec.Parser;
 using static Parsec.Text;

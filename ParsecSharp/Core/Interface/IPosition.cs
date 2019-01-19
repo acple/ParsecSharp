@@ -1,4 +1,4 @@
-﻿namespace Parsec
+namespace Parsec
 {
     public interface IPosition
     {

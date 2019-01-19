@@ -1,4 +1,4 @@
-﻿namespace Parsec.Internal
+namespace Parsec.Internal
 {
     internal class ParseError<TToken, T> : Fail<TToken, T>
     {
