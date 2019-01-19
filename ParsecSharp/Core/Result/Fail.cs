@@ -4,16 +4,14 @@ namespace Parsec
 {
     public abstract class Fail<TToken, T> : Result<TToken, T>
     {
-        public IParsecState<TToken> State { get; }
+        public sealed override T Value => throw this.Exception;
+
+        public IParsecState<TToken> State => this.Rest;
 
         public virtual ParsecException Exception => new ParsecException(this.ToString());
 
-        public sealed override T Value => throw this.Exception;
-
-        protected Fail(IParsecState<TToken> state)
-        {
-            this.State = state;
-        }
+        protected Fail(IParsecStateStream<TToken> state) : base(state)
+        { }
 
         protected abstract Fail<TToken, TNext> Convert<TNext>();
 
