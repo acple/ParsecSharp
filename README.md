@@ -50,10 +50,10 @@ Download manually:
 ## How to use
 Here is examples:
 
-* [JsonParser implementation](ParsecSharpExamples/JsonParser.cs)
-* [CsvParser implementation](ParsecSharpExamples/CsvParser.cs)
+* [JsonParser implementation](ParsecSharp.Examples/JsonParser.cs)
+* [CsvParser implementation](ParsecSharp.Examples/CsvParser.cs)
 
-Documents are included in [UnitTest code](ParsecSharpTest/ParserTest.cs) (jp)
+Documents are included in [UnitTest code](UnitTest.ParsecSharp/ParserTest.cs) (jp)
 
 If you want more information, read [APIs source code](ParsecSharp/Parser), all is there.
 
