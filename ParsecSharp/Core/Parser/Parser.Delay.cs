@@ -2,7 +2,7 @@ using System;
 
 namespace ParsecSharp.Internal
 {
-    internal class Delay<TToken, T> : Parser<TToken, T>
+    internal sealed class Delay<TToken, T> : Parser<TToken, T>
     {
         private readonly Lazy<Parser<TToken, T>> _parser;
 
@@ -11,7 +11,7 @@ namespace ParsecSharp.Internal
             this._parser = new Lazy<Parser<TToken, T>>(parser, false);
         }
 
-        internal override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
+        internal sealed override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
             => this._parser.Value.Run(state, cont);
     }
 }

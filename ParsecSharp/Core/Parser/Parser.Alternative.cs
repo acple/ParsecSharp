@@ -2,7 +2,7 @@ using System;
 
 namespace ParsecSharp.Internal
 {
-    internal class Alternative<TToken, T> : Parser<TToken, T>
+    internal sealed class Alternative<TToken, T> : Parser<TToken, T>
     {
         private readonly Parser<TToken, T> _first;
 
@@ -14,7 +14,7 @@ namespace ParsecSharp.Internal
             this._second = second;
         }
 
-        internal override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
+        internal sealed override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
         {
             var _second = this._second;
             return this._first.Run(state, result => result.CaseOf(_ => _second.Run(state, cont), cont));

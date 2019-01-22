@@ -8,7 +8,7 @@ namespace ParsecSharp
 
         protected IParsecStateStream<TToken> Rest { get; }
 
-        public Result(IParsecStateStream<TToken> state)
+        protected Result(IParsecStateStream<TToken> state)
         {
             this.Rest = state;
         }

@@ -2,7 +2,7 @@ using System;
 
 namespace ParsecSharp.Internal
 {
-    internal class Single<TToken, T> : Parser<TToken, T>
+    internal sealed class Single<TToken, T> : Parser<TToken, T>
     {
         private readonly Func<IParsecStateStream<TToken>, Result<TToken, T>> _function;
 
@@ -11,7 +11,7 @@ namespace ParsecSharp.Internal
             this._function = function;
         }
 
-        internal override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
+        internal sealed override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
             => cont(this._function(state));
     }
 }

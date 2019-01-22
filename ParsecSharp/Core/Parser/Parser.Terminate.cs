@@ -2,7 +2,7 @@ using System;
 
 namespace ParsecSharp.Internal
 {
-    internal class Terminate<TToken, T> : Parser<TToken, T>
+    internal sealed class Terminate<TToken, T> : Parser<TToken, T>
     {
         private readonly Func<IParsecState<TToken>, string> _message;
 
@@ -11,7 +11,7 @@ namespace ParsecSharp.Internal
             this._message = message;
         }
 
-        internal override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
+        internal sealed override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
             => new FailWithMessage<TToken, TResult>(this._message(state), state);
     }
 }

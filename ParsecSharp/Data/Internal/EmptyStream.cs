@@ -18,7 +18,7 @@ namespace ParsecSharp.Internal
         public void Dispose()
         { }
 
-        public override string ToString()
+        public sealed override string ToString()
             => string.Empty;
     }
 }

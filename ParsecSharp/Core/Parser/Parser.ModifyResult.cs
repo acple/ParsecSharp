@@ -2,7 +2,7 @@ using System;
 
 namespace ParsecSharp.Internal
 {
-    internal class ModifyResult<TToken, TIntermediate, T> : Parser<TToken, T>
+    internal sealed class ModifyResult<TToken, TIntermediate, T> : Parser<TToken, T>
     {
         private readonly Parser<TToken, TIntermediate> _parser;
 
@@ -17,7 +17,7 @@ namespace ParsecSharp.Internal
             this._success = success;
         }
 
-        internal override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
+        internal sealed override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
         {
             var _fail = this._fail;
             var _success = this._success;

@@ -50,7 +50,7 @@ namespace ParsecSharp
         public void Dispose()
             => this.disposable.Dispose();
 
-        public override string ToString()
+        public sealed override string ToString()
             => (this.HasValue)
                 ? this.Current?.ToString() ?? string.Empty
                 : string.Empty;

@@ -2,7 +2,7 @@ using System;
 
 namespace ParsecSharp.Internal
 {
-    internal class Abort<TToken, T> : Parser<TToken, T>
+    internal sealed class Abort<TToken, T> : Parser<TToken, T>
     {
         private readonly Exception _exception;
 
@@ -11,7 +11,7 @@ namespace ParsecSharp.Internal
             this._exception = exception;
         }
 
-        internal override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
+        internal sealed override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
             => new FailWithException<TToken, TResult>(this._exception, state);
     }
 }
