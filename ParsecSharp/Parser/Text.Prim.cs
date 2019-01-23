@@ -126,6 +126,10 @@ namespace ParsecSharp
             => SkipMany(WhiteSpace());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<char, Unit> Spaces1()
+            => SkipMany1(WhiteSpace());
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> NewLine()
             => Char('\n');
 
