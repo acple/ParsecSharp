@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using ParsecSharp.Internal;
 
 namespace ParsecSharp
@@ -26,9 +24,9 @@ namespace ParsecSharp
 
         private ParsingStream(Parser<TToken, T> parser, LinearPosition position, IParsecStateStream<TToken> source)
         {
-            var (result, rest) = parser.ParsePartially(source);
-            this.disposable = rest;
+            this.disposable = source;
             this._position = position;
+            var (result, rest) = parser.ParsePartially(source);
             this.HasValue = result.CaseOf(_ => false, _ => true);
             this.Current = (this.HasValue) ? result.Value : default;
             this._next = new Lazy<IParsecStateStream<T>>(() => new ParsingStream<TToken, T>(parser, position.Next(), rest), false);

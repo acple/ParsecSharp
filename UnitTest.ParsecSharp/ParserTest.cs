@@ -11,9 +11,8 @@ namespace UnitTest.ParsecSharp
     [TestClass]
     public class ParserTest
     {
-        const string _abcdEFGH = "abcdEFGH";
-
-        const string _123456 = "123456";
+        private const string _abcdEFGH = "abcdEFGH";
+        private const string _123456 = "123456";
 
         [TestMethod]
         public void AnyTest()
@@ -408,7 +407,7 @@ namespace UnitTest.ParsecSharp
                 success => success.Value.Is("dE"));
         }
 
-        const string _commanum = "123,456,789";
+        private const string _commanum = "123,456,789";
 
         [TestMethod]
         public void SepByTest()
@@ -973,8 +972,29 @@ namespace UnitTest.ParsecSharp
                 result3.CaseOf(fail => { }, success => Assert.Fail(success.ToString()));
 
                 // 失敗時点のstateが返されることに注意する。
-                rest3.HasValue.Is(false); // 終端に到達したため失敗
+                rest3.HasValue.IsFalse(); // 終端に到達したため失敗
             }
+        }
+
+        [TestMethod]
+        public void ParsingStreamTest()
+        {
+            // 任意のパーサを繰り返し適用した結果をソースストリームとして利用可能にします。
+            // 字句解析等の前段処理を可能にします。
+
+            // 空白に挟まれた文字列を1要素として返すパーサ。
+            var token = Many1(LetterOrDigit()).Between(Spaces()).ToStr();
+
+            var sourceText = "The quick brown fox jumps over the lazy dog";
+            var source = new StringStream(sourceText);
+            var tokenized = new ParsingStream<char, string>(token, source);
+
+            // 任意の文字列にマッチし、その長さを返すパーサ。
+            var parser = Many(Any<string>().Map(x => x.Length));
+
+            parser.Parse(tokenized).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is(sourceText.Split(' ').Select(x => x.Length)));
         }
     }
 }
