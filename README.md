@@ -1,5 +1,6 @@
 # ParsecSharp
-Monadic parser combinator library for C#
+The faster monadic parser combinator library for C#
+
 
 ## What's this
 This library provides most useful Text Parsers, Stream Parsers, and Parser Combinators.
@@ -16,6 +17,7 @@ This project is affected by [parsec](https://hackage.haskell.org/package/parsec)
 
 
 ## How to install
+
 
 ### from NuGet
 NuGet Package Manager Console:
@@ -36,7 +38,7 @@ Download manually:
 
 
 ## Supported platform
-**Caution** This project is verrry experimental, now targets only x64 runtime, with RyuJit (Next-Gen .NET JIT Compiler).
+**Caution** This project targets only x64 runtime with RyuJit (Next-Gen .NET JIT Compiler). Not guaranteed to run on any other platforms.
 
 * netstandard1.0 (compatible with net45 or later, netcoreapp, uap, xamarin, and more)
 
