@@ -12,19 +12,6 @@ namespace ParsecSharp.Examples
     // JSONパーサ RFC7159にわりと忠実
     public static class JsonParser
     {
-        // stringをパースしてdynamicに詰めて返します。
-        public static Result<char, dynamic> Parse(string json)
-            => Json().Parse(json);
-
-        // Streamをパースしてdynamicに詰めて返します。
-        public static Result<char, dynamic> Parse(Stream json)
-            => Json().Parse(json);
-
-        // Streamをパースしてdynamicに詰めて返します。
-        // Encoding指定可能オーバーロード。
-        public static Result<char, dynamic> Parse(Stream json, Encoding encoding)
-            => Json().Parse(json, encoding);
-
         // パーサをWhiteSpaceで挟み込む拡張メソッド。
         // RFCにはWhiteSpace Charの指定もあったけどUnicodeのSpaces判定でサボり。
         private static Parser<char, T> WithSpaces<T>(this Parser<char, T> parser)
@@ -127,17 +114,17 @@ namespace ParsecSharp.Examples
                from integer in Int()
                from frac in Optional(Frac(), 0.0)
                from exp in Optional(Exp(), 0)
-               select sign((integer + frac) * Math.Pow(10, exp));
+               select sign * (integer + frac) * Math.Pow(10, exp);
 
         // JSON Number の符号にマッチします。doubleの符号を反転させるFuncを返します。
         // minus = %x2D ; == '-'
-        private static Parser<char, Func<double, double>> Sign()
-            => Optional(Char('-').Map(_ => (Func<double, double>)(x => -x)), x => x);
+        private static Parser<char, double> Sign()
+            => Optional(Char('-').Map(_ => -1.0), 1.0);
 
         // JSON Number の整数部にマッチします。
         // int = zero / ( digit1-9 *DIGIT )
         private static Parser<char, int> Int()
-            => Char('0').ToStr().Or(OneOf("123456789").Append(Many(Digit())).ToStr()).ToInt();
+            => (Char('0').ToStr() | OneOf("123456789").Append(Many(Digit())).ToStr()).ToInt();
 
         // JSON Number の小数部にマッチします。
         // frac = decimal-point 1*DIGIT
@@ -162,5 +149,18 @@ namespace ParsecSharp.Examples
         // null = %x6e.75.6c.6c
         private static Parser<char, object> JsonNull()
             => String("null").Map(_ => null as object);
+
+        // stringをパースしてdynamicに詰めて返します。
+        public static Result<char, dynamic> Parse(string json)
+            => Json().Parse(json);
+
+        // Streamをパースしてdynamicに詰めて返します。
+        public static Result<char, dynamic> Parse(Stream json)
+            => Json().Parse(json);
+
+        // Streamをパースしてdynamicに詰めて返します。
+        // Encoding指定可能オーバーロード。
+        public static Result<char, dynamic> Parse(Stream json, Encoding encoding)
+            => Json().Parse(json, encoding);
     }
 }

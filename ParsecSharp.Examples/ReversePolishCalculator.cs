@@ -34,6 +34,7 @@ namespace ParsecSharp.Examples
                            from func in op
                            select func(x, y));
 
+        // パーサの実行
         public static Result<char, double> Parse(string source)
             => expr.Parse(source);
     }

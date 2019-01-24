@@ -9,18 +9,6 @@ namespace ParsecSharp.Examples
     // CSVパーサ RFC4180にそこそこ忠実
     public static class CsvParser
     {
-        // stringをパースします。レコードをstring[]に詰めて返します。
-        public static Result<char, IEnumerable<string[]>> Parse(string csv)
-            => Csv().Parse(csv);
-
-        // Streamをパースします。
-        public static Result<char, IEnumerable<string[]>> Parse(Stream csv)
-            => Csv().Parse(csv);
-
-        // Streamをパースします。ソースのEncodingを指定できます。
-        public static Result<char, IEnumerable<string[]>> Parse(Stream csv, Encoding encoding)
-            => Csv().Parse(csv, encoding);
-
         // COMMA = %x2C ; == ','
         private static Parser<char, char> Comma()
             => Char(',');
@@ -61,5 +49,17 @@ namespace ParsecSharp.Examples
         // 定義では改行文字は CRLF だけど、 ( LF / CRLF ) に拡張
         private static Parser<char, IEnumerable<string[]>> Csv()
             => Record().EndBy(EndOfLine());
+
+        // stringをパースします。レコードをstring[]に詰めて返します。
+        public static Result<char, IEnumerable<string[]>> Parse(string csv)
+            => Csv().Parse(csv);
+
+        // Streamをパースします。
+        public static Result<char, IEnumerable<string[]>> Parse(Stream csv)
+            => Csv().Parse(csv);
+
+        // Streamをパースします。ソースのEncodingを指定できます。
+        public static Result<char, IEnumerable<string[]>> Parse(Stream csv, Encoding encoding)
+            => Csv().Parse(csv, encoding);
     }
 }
