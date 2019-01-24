@@ -987,7 +987,7 @@ namespace UnitTest.ParsecSharp
 
             var sourceText = "The quick brown fox jumps over the lazy dog";
             var source = new StringStream(sourceText);
-            var tokenized = new ParsingStream<char, string>(token, source);
+            var tokenized = source.ToParsingStream(token);
 
             // 任意の文字列にマッチし、その長さを返すパーサ。
             var parser = Many(Any<string>().Map(x => x.Length));

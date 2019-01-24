@@ -21,5 +21,9 @@ namespace ParsecSharp
             => parser.ModifyResult(
                 (_, fail) => { onFail(fail.State); return fail; },
                 (_, success) => { action(success.Value); return success; });
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IParsecStateStream<T> ToParsingStream<TToken, T>(this IParsecStateStream<TToken> source, Parser<TToken, T> parser)
+            => new ParsingStream<TToken, T>(parser, source);
     }
 }
