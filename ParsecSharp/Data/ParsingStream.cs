@@ -3,33 +3,33 @@ using ParsecSharp.Internal;
 
 namespace ParsecSharp
 {
-    public sealed class ParsingStream<TToken, T> : IParsecStateStream<T>
+    public sealed class ParsingStream<TInput, TToken> : IParsecStateStream<TToken>
     {
         private readonly IDisposable disposable;
 
         private readonly LinearPosition _position;
 
-        private readonly Lazy<IParsecStateStream<T>> _next;
+        private readonly Lazy<IParsecStateStream<TToken>> _next;
 
-        public T Current { get; }
+        public TToken Current { get; }
 
         public bool HasValue { get; }
 
         public IPosition Position => this._position;
 
-        public IParsecStateStream<T> Next => this._next.Value;
+        public IParsecStateStream<TToken> Next => this._next.Value;
 
-        public ParsingStream(Parser<TToken, T> parser, IParsecStateStream<TToken> source) : this(parser, LinearPosition.Initial, source)
+        public ParsingStream(Parser<TInput, TToken> parser, IParsecStateStream<TInput> source) : this(parser, source, LinearPosition.Initial)
         { }
 
-        private ParsingStream(Parser<TToken, T> parser, LinearPosition position, IParsecStateStream<TToken> source)
+        private ParsingStream(Parser<TInput, TToken> parser, IParsecStateStream<TInput> source, LinearPosition position)
         {
             this.disposable = source;
             this._position = position;
             var (result, rest) = parser.ParsePartially(source);
             this.HasValue = result.CaseOf(_ => false, _ => true);
             this.Current = (this.HasValue) ? result.Value : default;
-            this._next = new Lazy<IParsecStateStream<T>>(() => new ParsingStream<TToken, T>(parser, position.Next(), rest), false);
+            this._next = new Lazy<IParsecStateStream<TToken>>(() => new ParsingStream<TInput, TToken>(parser, rest, position.Next()), false);
         }
 
         public void Dispose()

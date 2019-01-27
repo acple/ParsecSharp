@@ -23,7 +23,7 @@ namespace ParsecSharp
                 (_, success) => { action(success.Value); return success; });
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IParsecStateStream<T> ToParsingStream<TToken, T>(this IParsecStateStream<TToken> source, Parser<TToken, T> parser)
-            => new ParsingStream<TToken, T>(parser, source);
+        public static IParsecStateStream<TToken> ToParsingStream<TInput, TToken>(this IParsecStateStream<TInput> source, Parser<TInput, TToken> parser)
+            => new ParsingStream<TInput, TToken>(parser, source);
     }
 }
