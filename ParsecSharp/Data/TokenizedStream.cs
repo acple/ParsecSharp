@@ -3,7 +3,7 @@ using ParsecSharp.Internal;
 
 namespace ParsecSharp
 {
-    public sealed class ParsingStream<TInput, TToken> : IParsecStateStream<TToken>
+    public sealed class TokenizedStream<TInput, TToken> : IParsecStateStream<TToken>
     {
         private readonly IDisposable disposable;
 
@@ -19,17 +19,17 @@ namespace ParsecSharp
 
         public IParsecStateStream<TToken> Next => this._next.Value;
 
-        public ParsingStream(Parser<TInput, TToken> parser, IParsecStateStream<TInput> source) : this(parser, source, LinearPosition.Initial)
+        public TokenizedStream(Parser<TInput, TToken> parser, IParsecStateStream<TInput> source) : this(parser, source, LinearPosition.Initial)
         { }
 
-        private ParsingStream(Parser<TInput, TToken> parser, IParsecStateStream<TInput> source, LinearPosition position)
+        private TokenizedStream(Parser<TInput, TToken> parser, IParsecStateStream<TInput> source, LinearPosition position)
         {
             this.disposable = source;
             this._position = position;
             var (result, rest) = parser.ParsePartially(source);
             this.HasValue = result.CaseOf(_ => false, _ => true);
             this.Current = (this.HasValue) ? result.Value : default;
-            this._next = new Lazy<IParsecStateStream<TToken>>(() => new ParsingStream<TInput, TToken>(parser, rest, position.Next()), false);
+            this._next = new Lazy<IParsecStateStream<TToken>>(() => new TokenizedStream<TInput, TToken>(parser, rest, position.Next()), false);
         }
 
         public void Dispose()

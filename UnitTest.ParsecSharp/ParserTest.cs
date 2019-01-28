@@ -977,7 +977,7 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
-        public void ParsingStreamTest()
+        public void TokenizedStreamTest()
         {
             // 任意のパーサを繰り返し適用した結果をソースストリームとして利用可能にします。
             // 字句解析等の前段処理を可能にします。
@@ -987,7 +987,7 @@ namespace UnitTest.ParsecSharp
 
             var sourceText = "The quick brown fox jumps over the lazy dog";
             var source = new StringStream(sourceText);
-            var tokenized = source.ToParsingStream(token);
+            var tokenized = source.Tokenize(token);
 
             // 任意の文字列にマッチし、その長さを返すパーサ。
             var parser = Many(Any<string>().Map(x => x.Length));
