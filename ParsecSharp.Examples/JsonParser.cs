@@ -116,20 +116,21 @@ namespace ParsecSharp.Examples
                from exp in Optional(Exp(), 0)
                select sign * (integer + frac) * Math.Pow(10, exp);
 
-        // JSON Number の符号にマッチします。doubleの符号を反転させるFuncを返します。
+        // JSON Number の符号にマッチします。
         // minus = %x2D ; == '-'
-        private static Parser<char, double> Sign()
-            => Optional(Char('-').Map(_ => -1.0), 1.0);
+        private static Parser<char, int> Sign()
+            => Optional(Char('-').Map(_ => -1), 1);
 
         // JSON Number の整数部にマッチします。
         // int = zero / ( digit1-9 *DIGIT )
         private static Parser<char, int> Int()
-            => (Char('0').ToStr() | OneOf("123456789").Append(Many(Digit())).ToStr()).ToInt();
+            => Char('0').Map(_ => 0) | OneOf("123456789").Append(Many(Digit())).ToInt();
 
         // JSON Number の小数部にマッチします。
         // frac = decimal-point 1*DIGIT
         private static Parser<char, double> Frac()
-            => Char('.').Right(Many1(Digit())).ToStr().Map(x => double.Parse("0." + x));
+            => Char('.').Right(Many1(Digit())).ToStr()
+                .Map(x => double.Parse("0." + x));
 
         // JSON Number の指数部にマッチします。
         // exp = e [ minus / plus ] 1*DIGIT

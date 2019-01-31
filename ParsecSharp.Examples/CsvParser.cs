@@ -28,7 +28,7 @@ namespace ParsecSharp.Examples
         // 改行文字は ( LF / CRLF ) のどちらかのみに対応
         private static Parser<char, string> EscapedField()
             => Many(Choice(TextChar(), Comma(), EndOfLine(), DoubleQuote().Right(DoubleQuote())))
-                .Between(DoubleQuote(), DoubleQuote())
+                .Between(DoubleQuote())
                 .ToStr();
 
         // non-escaped = *TEXTDATA
