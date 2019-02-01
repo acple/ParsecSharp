@@ -19,6 +19,10 @@ namespace ParsecSharp
             => Fail<char, T>();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<char, T> Fail<T>(string message)
+            => Fail<char, T>(message);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, T> Fail<T>(Func<IParsecState<char>, string> message)
             => Fail<char, T>(message);
 
