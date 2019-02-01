@@ -113,6 +113,10 @@ namespace ParsecSharp
             => parser.Map(_ => Unit.Instance);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, T> End<TToken, T>(this Parser<TToken, T> parser)
+            => parser.Left(EndOfInput<TToken>());
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, string> ToStr<TToken, T>(this Parser<TToken, T> parser)
             => parser.Map(x => x?.ToString() ?? string.Empty);
 
