@@ -168,7 +168,7 @@ namespace ParsecSharp
                 var str = new string(state.AsEnumerable().Take(text.Length).ToArray());
                 return (str.Equals(text, comparison))
                     ? Result.Success(str, state.Advance(text.Length))
-                    : Result.Fail<char, string>(state);
+                    : Result.Fail<char, string>($"Expected '{text}' but was '{str}'", state);
             });
     }
 }
