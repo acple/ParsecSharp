@@ -19,6 +19,9 @@ namespace ParsecSharp.Internal
                 ? new TextPosition(this.Line + 1, 1)
                 : new TextPosition(this.Line, this.Column + 1);
 
+        public int CompareTo(IPosition other)
+            => (this.Line != other.Line) ? this.Line.CompareTo(other.Line) : this.Column.CompareTo(other.Column);
+
         public bool Equals(IPosition other)
             => other is TextPosition position && this == position;
 

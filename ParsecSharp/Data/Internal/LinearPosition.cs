@@ -16,6 +16,9 @@ namespace ParsecSharp.Internal
         public LinearPosition Next()
             => new LinearPosition(this.Column + 1);
 
+        public int CompareTo(IPosition other)
+            => (this.Line != other.Line) ? this.Line.CompareTo(other.Line) : this.Column.CompareTo(other.Column);
+
         public bool Equals(IPosition other)
             => other is LinearPosition position && this == position;
 
