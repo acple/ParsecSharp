@@ -35,6 +35,9 @@ namespace ParsecSharp
         public void Dispose()
             => this.disposable.Dispose();
 
+        public bool Equals(IParsecState<TToken> other)
+            => ReferenceEquals(this, other);
+
         public sealed override string ToString()
             => (this.HasValue)
                 ? this.Current?.ToString() ?? string.Empty

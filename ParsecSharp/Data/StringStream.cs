@@ -31,6 +31,15 @@ namespace ParsecSharp
         public void Dispose()
         { }
 
+        public bool Equals(IParsecState<char> other)
+            => other is StringStream state && this._source == state._source && this._index == state._index;
+
+        public sealed override bool Equals(object obj)
+            => obj is StringStream state && this.Equals(state);
+
+        public sealed override int GetHashCode()
+            => this._source.GetHashCode() ^ this._index.GetHashCode();
+
         public sealed override string ToString()
             => (this.HasValue) ? this.Current.ToString() : string.Empty;
     }

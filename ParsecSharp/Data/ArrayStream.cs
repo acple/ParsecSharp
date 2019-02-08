@@ -29,6 +29,15 @@ namespace ParsecSharp
         public void Dispose()
         { }
 
+        public bool Equals(IParsecState<TToken> other)
+            => other is ArrayStream<TToken> state && this._source == state._source && this._position == state._position;
+
+        public sealed override bool Equals(object obj)
+            => obj is ArrayStream<TToken> state && this.Equals(state);
+
+        public sealed override int GetHashCode()
+            => this._source.GetHashCode() ^ this._position.GetHashCode();
+
         public sealed override string ToString()
             => (this.HasValue)
                 ? this.Current?.ToString() ?? string.Empty

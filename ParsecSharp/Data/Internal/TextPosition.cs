@@ -19,7 +19,22 @@ namespace ParsecSharp.Internal
                 ? new TextPosition(this.Line + 1, 1)
                 : new TextPosition(this.Line, this.Column + 1);
 
+        public bool Equals(IPosition other)
+            => other is TextPosition position && this == position;
+
+        public override bool Equals(object obj)
+            => obj is TextPosition position && this == position;
+
+        public override int GetHashCode()
+            => this.Line.GetHashCode() ^ this.Column.GetHashCode();
+
         public override string ToString()
             => $"Line: {this.Line.ToString()}, Column: {this.Column.ToString()}";
+
+        public static bool operator ==(TextPosition left, TextPosition right)
+            => left.Line == right.Line && left.Column == right.Column;
+
+        public static bool operator !=(TextPosition left, TextPosition right)
+            => !(left == right);
     }
 }
