@@ -12,6 +12,7 @@ namespace UnitTest.ParsecSharp
     public class ParserTest
     {
         private const string _abcdEFGH = "abcdEFGH";
+
         private const string _123456 = "123456";
 
         [TestMethod]
@@ -789,9 +790,9 @@ namespace UnitTest.ParsecSharp
                 success => success.Value.Is(_abcdEFGH));
 
             // Many(Any()) などを parser に渡した場合、終端まで Any にマッチするため、 close は EndOfInput にマッチします。
-            var parser2 = Many(Any()).Between(Char('\"'), Char('\"')); // ( dquote *Any dquote ) とはならない
-            parser2.Parse("\"abCD1234\"").CaseOf(
-                fail => { /* Many(Any()) が abCD1234\" までマッチしてしまうため、close の \" がマッチせずFailになる */ },
+            var parser2 = Many(Any()).Between(Char('"'), Char('"')); // ( dquote *Any dquote ) とはならない
+            parser2.Parse(@"""abCD1234""").CaseOf(
+                fail => { /* Many(Any()) が abCD1234" までマッチしてしまうため、close の " がマッチせずFailになる */ },
                 success => Assert.Fail(success.ToString()));
             // この形にマッチするパーサを作成したいときは、ManyTill を使用してください。
         }

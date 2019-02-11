@@ -26,7 +26,7 @@ namespace ParsecSharp.Examples
             => Char('{').Between(WhiteSpace());
 
         // JSON Object の終了を表す閉じ波括弧にマッチします。
-        // end-object = ws %x7D ws ; == }
+        // end-object = ws %x7D ws ; == '}'
         private static Parser<char, char> CloseBrace()
             => Char('}').Between(WhiteSpace());
 

@@ -8,9 +8,9 @@ namespace UnitTest.ParsecSharp
     [TestClass]
     public class TextTest
     {
-        const string _abcdEFGH = "abcdEFGH";
+        private const string _abcdEFGH = "abcdEFGH";
 
-        const string _123456 = "123456";
+        private const string _123456 = "123456";
 
         [TestMethod]
         public void CharTest()
