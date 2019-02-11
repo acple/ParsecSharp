@@ -33,7 +33,7 @@ namespace ParsecSharp
             => other is ArrayStream<TToken> state && this._source == state._source && this._position == state._position;
 
         public sealed override bool Equals(object obj)
-            => obj is ArrayStream<TToken> state && this.Equals(state);
+            => obj is ArrayStream<TToken> state && this._source == state._source && this._position == state._position;
 
         public sealed override int GetHashCode()
             => this._source.GetHashCode() ^ this._position.GetHashCode();
