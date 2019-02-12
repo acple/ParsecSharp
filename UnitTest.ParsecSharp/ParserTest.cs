@@ -79,7 +79,7 @@ namespace UnitTest.ParsecSharp
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected \"a\""),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected 'a'"),
                 success => Assert.Fail(success.ToString()));
 
             var source2 = _123456;
@@ -135,7 +135,7 @@ namespace UnitTest.ParsecSharp
 
             var parser = Fail<Unit>();
             parser.Parse(source).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected \"a\""),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected 'a'"),
                 success => Assert.Fail(success.ToString()));
 
             // エラーメッセージを記述することができるオーバーロード。
@@ -195,7 +195,7 @@ namespace UnitTest.ParsecSharp
 
             var source2 = "abCDEF";
             parser.Parse(source2).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 3): Unexpected \"C\""),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 3): Unexpected 'C'"),
                 success => Assert.Fail(success.ToString()));
         }
 
@@ -259,7 +259,7 @@ namespace UnitTest.ParsecSharp
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected \"1\""),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected '1'"),
                 success => Assert.Fail(success.ToString()));
         }
 

@@ -9,6 +9,6 @@ namespace ParsecSharp.Internal
             => new ParseError<TToken, TNext>(this.Rest);
 
         protected sealed override string ToStringInternal()
-            => $"Unexpected \"{this.State.ToString()}\"";
+            => $"Unexpected '{this.State.ToString()}'";
     }
 }
