@@ -164,11 +164,8 @@ namespace ParsecSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, string> String(string text, StringComparison comparison)
             => Builder.Create<char, string>(state =>
-            {
-                var str = new string(state.AsEnumerable().Take(text.Length).ToArray());
-                return (str.Equals(text, comparison))
+                (new string(state.AsEnumerable().Take(text.Length).ToArray()) is var str && string.Equals(str, text, comparison))
                     ? Result.Success(str, state.Advance(text.Length))
-                    : Result.Fail<char, string>($"Expected '{text}' but was '{str}'", state);
-            });
+                    : Result.Fail<char, string>($"Expected '{text}' but was '{str}'", state));
     }
 }
