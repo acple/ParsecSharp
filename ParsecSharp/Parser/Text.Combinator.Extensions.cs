@@ -16,7 +16,9 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, int> ToInt(this Parser<char, string> parser)
-            => parser.Bind(digits => (int.TryParse(digits, out var integer)) ? Pure(integer) : Fail<int>());
+            => parser.Bind(digits => (int.TryParse(digits, out var integer))
+                ? Pure(integer)
+                : Fail<int>($"Expected digits but was '{digits}'"));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, string> Join(this Parser<char, IEnumerable<string>> parser)
