@@ -20,7 +20,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, string> Join(this Parser<char, IEnumerable<string>> parser)
-            => parser.Join(string.Empty);
+            => parser.Map(x => string.Concat(x));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, string> Join(this Parser<char, IEnumerable<string>> parser, string separator)
