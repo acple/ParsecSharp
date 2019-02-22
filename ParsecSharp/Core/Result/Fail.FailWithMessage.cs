@@ -2,17 +2,14 @@ namespace ParsecSharp.Internal
 {
     internal sealed class FailWithMessage<TToken, T> : Fail<TToken, T>
     {
-        private readonly string _message;
+        public sealed override string Message { get; }
 
         internal FailWithMessage(string message, IParsecStateStream<TToken> state) : base(state)
         {
-            this._message = message;
+            this.Message = message;
         }
 
         protected sealed override Fail<TToken, TNext> Convert<TNext>()
-            => new FailWithMessage<TToken, TNext>(this._message, this.Rest);
-
-        protected sealed override string ToStringInternal()
-            => this._message;
+            => new FailWithMessage<TToken, TNext>(this.Message, this.Rest);
     }
 }

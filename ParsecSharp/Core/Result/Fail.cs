@@ -10,6 +10,8 @@ namespace ParsecSharp
 
         public virtual ParsecException Exception => new ParsecException(this.ToString());
 
+        public abstract string Message { get; }
+
         protected Fail(IParsecStateStream<TToken> state) : base(state)
         { }
 
@@ -21,9 +23,7 @@ namespace ParsecSharp
         public sealed override TResult CaseOf<TResult>(Func<Fail<TToken, T>, TResult> fail, Func<Success<TToken, T>, TResult> success)
             => fail(this);
 
-        protected abstract string ToStringInternal();
-
         public sealed override string ToString()
-            => $"Parser Fail ({this.State.Position.ToString()}): {this.ToStringInternal()}";
+            => $"Parser Fail ({this.State.Position.ToString()}): {this.Message}";
     }
 }
