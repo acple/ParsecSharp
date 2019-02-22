@@ -6,7 +6,6 @@ using static ParsecSharp.Text;
 namespace ParsecSharp.Examples
 {
     // 逆ポーランド記法の式をパーサで計算してみるネタ
-    // Chainが欲しくなったのはコレを定義してみたかったから(ChainL/Rだとうまいこと定義できなかった)
     public static class ReversePolishCalculator
     {
         // 整数または小数にマッチし、doubleにして返す
@@ -32,7 +31,8 @@ namespace ParsecSharp.Examples
         // 左再帰の定義: expr = expr expr op / num
         // 左再帰の除去: expr = num *( expr op )
         private static readonly Parser<char, double> expr =
-            num.Chain(x => from _ in delimiter
+            num.Chain(x =>
+             from _ in delimiter
                            from y in expr
                            from __ in delimiter
                            from func in op

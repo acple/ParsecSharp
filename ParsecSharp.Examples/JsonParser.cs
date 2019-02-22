@@ -62,12 +62,12 @@ namespace ParsecSharp.Examples
                 Delay(JsonNull).AsDynamic());
 
         // エスケープ不要な文字にマッチします。
-        // unescaped = %x20-21 / %x23-5B / %x5D-10FFFF
+        // unescaped = %x20-21 / %x23-5B / %x5D-10FFFF ; %x22 == '"', %x5C == '\'
         private static Parser<char, char> JsonUnescapedChar()
             => Any().Except(Char('"'), Char('\\'), Satisfy(x => x <= 0x1F));
 
         // エスケープされた文字にマッチします。
-        // 詳細はRFCをみてください。
+        // 詳細はRFC8259をみてください。
         private static Parser<char, char> JsonEscapedChar()
             => Char('\\').Right(
                 Choice(
