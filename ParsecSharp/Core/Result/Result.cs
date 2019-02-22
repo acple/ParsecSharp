@@ -19,9 +19,6 @@ namespace ParsecSharp
 
         public abstract override string ToString();
 
-        public static implicit operator T(Result<TToken, T> result)
-            => result.Value;
-
         internal Suspended Suspend()
             => new Suspended(this);
 
