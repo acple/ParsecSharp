@@ -15,6 +15,8 @@ namespace UnitTest.ParsecSharp
 
         private const string _123456 = "123456";
 
+        private const string _commanum = "123,456,789";
+
         [TestMethod]
         public void AnyTest()
         {
@@ -407,8 +409,6 @@ namespace UnitTest.ParsecSharp
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is("dE"));
         }
-
-        private const string _commanum = "123,456,789";
 
         [TestMethod]
         public void SepByTest()
@@ -884,6 +884,32 @@ namespace UnitTest.ParsecSharp
                 fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 5): Fatal Error! 'E' is not a lower char!"),
                 success => Assert.Fail(success.ToString()));
         }
+
+        [TestMethod]
+        public void AbortIfEnteredTest()
+        {
+            // パーサが入力を消費した状態で失敗した場合にパース処理を中止します。
+            // LLパーサのような分岐と失敗処理を実現するための拡張です。
+
+            var parser = Sequence(Char('1'), Char('2'), Char('3'), Char('4')).ToStr().AbortIfEntered(_ => "1234")
+                .Or(Pure("recovery"));
+
+            var source = _123456;
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is("1234"));
+
+            var source2 = _abcdEFGH;
+            parser.Parse(source2).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is("recovery"));
+
+            var source3 = _commanum;
+            parser.Parse(source3).CaseOf(
+                fail => fail.Message.Is("1234"), // 123まで入力を消費して失敗したため復旧が行われない
+                success => Assert.Fail(success.ToString()));
+        }
+
 
         [TestMethod]
         public void DoTest()
