@@ -158,10 +158,10 @@ namespace ParsecSharp.Examples
 
         // stringをパースしてdynamicに詰めて返します。
         public static Result<char, dynamic> Parse(string json)
-            => Json().Between(WhiteSpace()).Parse(json);
+            => Json().Between(WhiteSpace()).End().Parse(json);
 
         // Streamをパースしてdynamicに詰めて返します。テキストはUTF-8でエンコードされている必要があります。
         public static Result<char, dynamic> Parse(Stream json)
-            => Json().Between(WhiteSpace()).Parse(json);
+            => Json().Between(WhiteSpace()).End().Parse(json);
     }
 }
