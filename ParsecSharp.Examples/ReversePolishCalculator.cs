@@ -31,8 +31,7 @@ namespace ParsecSharp.Examples
         // 左再帰の定義: expr = expr expr op / num
         // 左再帰の除去: expr = num *( expr op )
         private static readonly Parser<char, double> expr =
-            num.Chain(x =>
-             from _ in delimiter
+            num.Chain(x => from _ in delimiter
                            from y in expr
                            from __ in delimiter
                            from func in op
