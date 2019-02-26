@@ -1,19 +1,21 @@
-﻿using System;
+using System;
 using System.Linq;
 using ChainingAssertion;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Parsec;
-using static Parsec.Parser;
-using static Parsec.Text;
+using ParsecSharp;
+using static ParsecSharp.Parser;
+using static ParsecSharp.Text;
 
-namespace ParsecSharpTest
+namespace UnitTest.ParsecSharp
 {
     [TestClass]
     public class ParserTest
     {
-        const string _abcdEFGH = "abcdEFGH";
+        private const string _abcdEFGH = "abcdEFGH";
 
-        const string _123456 = "123456";
+        private const string _123456 = "123456";
+
+        private const string _commanum = "123,456,789";
 
         [TestMethod]
         public void AnyTest()
@@ -79,13 +81,37 @@ namespace ParsecSharpTest
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected \"a\""),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected 'a'"),
                 success => Assert.Fail(success.ToString()));
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is('1'));
+        }
+
+        [TestMethod]
+        public void SkipTest()
+        {
+            // 数を指定してスキップするパーサを作成します。
+
+            var parser = Skip(3).Right(Any());
+
+            var source = _abcdEFGH;
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is('d'));
+
+            var parser2 = Skip(8).Right(EndOfInput());
+            parser2.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => { });
+
+            // 指定数スキップできない場合は失敗します。
+            var parser3 = Skip(9);
+            parser3.Parse(source).CaseOf(
+                fail => { },
+                success => Assert.Fail(success.ToString()));
         }
 
         [TestMethod]
@@ -111,7 +137,7 @@ namespace ParsecSharpTest
 
             var parser = Fail<Unit>();
             parser.Parse(source).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected \"a\""),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected 'a'"),
                 success => Assert.Fail(success.ToString()));
 
             // エラーメッセージを記述することができるオーバーロード。
@@ -171,7 +197,7 @@ namespace ParsecSharpTest
 
             var source2 = "abCDEF";
             parser.Parse(source2).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 3): Unexpected \"C\""),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 3): Unexpected 'C'"),
                 success => Assert.Fail(success.ToString()));
         }
 
@@ -235,7 +261,7 @@ namespace ParsecSharpTest
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected \"1\""),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected '1'"),
                 success => Assert.Fail(success.ToString()));
         }
 
@@ -383,8 +409,6 @@ namespace ParsecSharpTest
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is("dE"));
         }
-
-        const string _commanum = "123,456,789";
 
         [TestMethod]
         public void SepByTest()
@@ -766,9 +790,9 @@ namespace ParsecSharpTest
                 success => success.Value.Is(_abcdEFGH));
 
             // Many(Any()) などを parser に渡した場合、終端まで Any にマッチするため、 close は EndOfInput にマッチします。
-            var parser2 = Many(Any()).Between(Char('\"'), Char('\"')); // ( dquote *Any dquote ) とはならない
-            parser2.Parse("\"abCD1234\"").CaseOf(
-                fail => { /* Many(Any()) が abCD1234\" までマッチしてしまうため、close の \" がマッチせずFailになる */ },
+            var parser2 = Many(Any()).Between(Char('"'), Char('"')); // ( dquote *Any dquote ) とはならない
+            parser2.Parse(@"""abCD1234""").CaseOf(
+                fail => { /* Many(Any()) が abCD1234" までマッチしてしまうため、close の " がマッチせずFailになる */ },
                 success => Assert.Fail(success.ToString()));
             // この形にマッチするパーサを作成したいときは、ManyTill を使用してください。
         }
@@ -834,7 +858,7 @@ namespace ParsecSharpTest
         {
             // パース失敗時のエラーメッセージを書き換えます。
 
-            var parser = Many1(Digit()).WithMessage(state => $"MessageTest Current: '{state.Current}'");
+            var parser = Many1(Digit()).WithMessage(state => $"MessageTest Current: '{state.Current.ToString()}'");
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
@@ -852,7 +876,7 @@ namespace ParsecSharpTest
         {
             // パース失敗時にパース処理を中止します。
 
-            var parser = Many(Lower().Error(state => $"Fatal Error! '{state}' is not a lower char!")).ToStr()
+            var parser = Many(Lower().Error(state => $"Fatal Error! '{state.ToString()}' is not a lower char!")).ToStr()
                 .Or(Pure("recovery"));
 
             var source = _abcdEFGH;
@@ -860,6 +884,32 @@ namespace ParsecSharpTest
                 fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 5): Fatal Error! 'E' is not a lower char!"),
                 success => Assert.Fail(success.ToString()));
         }
+
+        [TestMethod]
+        public void AbortIfEnteredTest()
+        {
+            // パーサが入力を消費した状態で失敗した場合にパース処理を中止します。
+            // LLパーサのような分岐と失敗処理を実現するための拡張です。
+
+            var parser = Sequence(Char('1'), Char('2'), Char('3'), Char('4')).ToStr().AbortIfEntered(_ => "1234")
+                .Or(Pure("recovery"));
+
+            var source = _123456;
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is("1234"));
+
+            var source2 = _abcdEFGH;
+            parser.Parse(source2).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is("recovery"));
+
+            var source3 = _commanum;
+            parser.Parse(source3).CaseOf(
+                fail => fail.Message.Is("1234"), // 123まで入力を消費して失敗したため復旧が行われない
+                success => Assert.Fail(success.ToString()));
+        }
+
 
         [TestMethod]
         public void DoTest()
@@ -927,6 +977,30 @@ namespace ParsecSharpTest
             parser2(EndOfInput()).Parse(source2).CaseOf(
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is(Unit.Instance));
+        }
+
+        [TestMethod]
+        public void ParsePartiallyTest()
+        {
+            // パース完了後にストリームを破棄せず、続きの処理を行うことができる実行プランを提供します。
+
+            // 3文字消費するパーサ。
+            var parser = Any().Repeat(3).ToStr();
+
+            using (var source = new StringStream(_abcdEFGH))
+            {
+                var (result, rest) = parser.ParsePartially(source);
+                result.Value.Is("abc");
+
+                var (result2, rest2) = parser.ParsePartially(rest);
+                result2.Value.Is("dEF");
+
+                var (result3, rest3) = parser.ParsePartially(rest2);
+                result3.CaseOf(fail => { }, success => Assert.Fail(success.ToString()));
+
+                // 失敗時点のstateが返されることに注意する。
+                rest3.HasValue.IsFalse(); // 終端に到達したため失敗
+            }
         }
     }
 }

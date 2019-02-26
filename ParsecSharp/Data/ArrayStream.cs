@@ -1,38 +1,44 @@
-﻿using System.Collections.Generic;
-using Parsec.Internal;
+using System.Collections.Generic;
+using ParsecSharp.Internal;
 
-namespace Parsec
+namespace ParsecSharp
 {
     public sealed class ArrayStream<TToken> : IParsecStateStream<TToken>
     {
         private readonly IReadOnlyList<TToken> _source;
 
-        private readonly int _index;
-
         private readonly LinearPosition _position;
 
-        public TToken Current => this._source[this._index];
+        public TToken Current => this._source[this._position.Column];
 
-        public bool HasValue => this._index < this._source.Count;
+        public bool HasValue => this._position.Column < this._source.Count;
 
         public IPosition Position => this._position;
 
-        public IParsecStateStream<TToken> Next => new ArrayStream<TToken>(this._source, this._index + 1, this._position.Next());
+        public IParsecStateStream<TToken> Next => new ArrayStream<TToken>(this._source, this._position.Next());
 
-        public ArrayStream(IReadOnlyList<TToken> source) : this(source, 0, LinearPosition.Initial)
+        public ArrayStream(IReadOnlyList<TToken> source) : this(source, LinearPosition.Initial)
         { }
 
-        private ArrayStream(IReadOnlyList<TToken> source, int index, LinearPosition position)
+        private ArrayStream(IReadOnlyList<TToken> source, LinearPosition position)
         {
             this._source = source;
-            this._index = index;
             this._position = position;
         }
 
         public void Dispose()
         { }
 
-        public override string ToString()
+        public bool Equals(IParsecState<TToken> other)
+            => other is ArrayStream<TToken> state && this._source == state._source && this._position == state._position;
+
+        public sealed override bool Equals(object obj)
+            => obj is ArrayStream<TToken> state && this._source == state._source && this._position == state._position;
+
+        public sealed override int GetHashCode()
+            => this._source.GetHashCode() ^ this._position.GetHashCode();
+
+        public sealed override string ToString()
             => (this.HasValue)
                 ? this.Current?.ToString() ?? string.Empty
                 : string.Empty;

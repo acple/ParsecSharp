@@ -1,6 +1,8 @@
-﻿namespace Parsec
+using System;
+
+namespace ParsecSharp
 {
-    public interface IPosition
+    public interface IPosition : IComparable<IPosition>, IEquatable<IPosition>
     {
         int Line { get; }
 

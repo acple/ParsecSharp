@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 
-namespace Parsec.Internal
+namespace ParsecSharp.Internal
 {
-    internal class Fix<TToken, T> : Parser<TToken, T>
+    internal sealed class Fix<TToken, T> : Parser<TToken, T>
     {
         private readonly Parser<TToken, T> _parser;
 
@@ -11,7 +11,7 @@ namespace Parsec.Internal
             this._parser = function(this);
         }
 
-        internal override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
+        internal sealed override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
             => this._parser.Run(state, cont);
     }
 }

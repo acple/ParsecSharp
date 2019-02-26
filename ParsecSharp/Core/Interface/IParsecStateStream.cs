@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 
-namespace Parsec
+namespace ParsecSharp
 {
-    public interface IParsecStateStream<out TToken> : IParsecState<TToken>, IDisposable
+    public interface IParsecStateStream<TToken> : IParsecState<TToken>, IDisposable
     {
         IParsecStateStream<TToken> Next { get; }
     }

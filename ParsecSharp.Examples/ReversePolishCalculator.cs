@@ -1,17 +1,19 @@
-﻿using System;
-using Parsec;
-using static Parsec.Parser;
-using static Parsec.Text;
+using System;
+using System.Linq;
+using static ParsecSharp.Parser;
+using static ParsecSharp.Text;
 
-namespace ParsecSharpExamples
+namespace ParsecSharp.Examples
 {
     // 逆ポーランド記法の式をパーサで計算してみるネタ
-    // Chainが欲しくなったのはコレを定義してみたかったから(ChainL/Rだとうまいこと定義できなかった)
     public static class ReversePolishCalculator
     {
-        // 整数にマッチし、doubleにして返す
+        // 整数または小数にマッチし、doubleにして返す
         private static readonly Parser<char, double> num =
-            Many1(Digit()).ToStr().Map(double.Parse);
+            Optional(Char('-'), '+')
+                .Append(Many1(Digit()))
+                .Append(Optional(Char('.').Append(Many1(Digit())), Enumerable.Empty<char>()))
+                .ToStr().Map(double.Parse);
 
         // 四則演算子にマッチし、二項演算関数にマップ
         private static readonly Parser<char, Func<double, double, double>> op =
@@ -35,7 +37,8 @@ namespace ParsecSharpExamples
                            from func in op
                            select func(x, y));
 
+        // パーサの実行
         public static Result<char, double> Parse(string source)
-            => expr.Parse(source);
+            => expr.End().Parse(source);
     }
 }

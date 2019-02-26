@@ -1,35 +1,21 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using Parsec;
-using static Parsec.Parser;
-using static Parsec.Text;
+using static ParsecSharp.Parser;
+using static ParsecSharp.Text;
 
-namespace ParsecSharpExamples
+namespace ParsecSharp.Examples
 {
     // CSVパーサ RFC4180にそこそこ忠実
     public static class CsvParser
     {
-        // stringをパースします。レコードをstring[]に詰めて返します。
-        public static Result<char, IEnumerable<string[]>> Parse(string csv)
-            => Csv().Parse(csv);
-
-        // Streamをパースします。
-        public static Result<char, IEnumerable<string[]>> Parse(Stream csv)
-            => Csv().Parse(csv);
-
-        // Streamをパースします。ソースのEncodingを指定できます。
-        public static Result<char, IEnumerable<string[]>> Parse(Stream csv, Encoding encoding)
-            => Csv().Parse(csv, encoding);
-
         // COMMA = %x2C ; == ','
         private static Parser<char, char> Comma()
             => Char(',');
 
         // DQUOTE = %x22 ; == '"'
         private static Parser<char, char> DoubleQuote()
-            => Char('\"');
+            => Char('"');
 
         // TEXTDATA =  %x20-21 / %x23-2B / %x2D-7E ; == CHAR except ( COMMA / DQUOTE / CTL )
         // RFCの定義に従うとASCII文字しか受け付けないので独自拡張
@@ -42,7 +28,7 @@ namespace ParsecSharpExamples
         // 改行文字は ( LF / CRLF ) のどちらかのみに対応
         private static Parser<char, string> EscapedField()
             => Many(Choice(TextChar(), Comma(), EndOfLine(), DoubleQuote().Right(DoubleQuote())))
-                .Between(DoubleQuote(), DoubleQuote())
+                .Between(DoubleQuote())
                 .ToStr();
 
         // non-escaped = *TEXTDATA
@@ -58,10 +44,22 @@ namespace ParsecSharpExamples
             => Field().SepBy1(Comma()).ToArray();
 
         // file = [header CRLF] record *(CRLF record) [CRLF]
-        // headerは無視してrecordと同一に扱うことにした
-        // 定義に従うと、最終行に空の改行が存在する場合に要素0のレコードを読み込んでしまうため、行末の改行文字をRequiredに変更
-        // 定義では改行文字は CRLF だけど、 ( LF / CRLF ) に拡張
+        // headerは無視してrecordと同一に扱う
+        // 定義に従うと最終行に空の改行が存在する場合に要素0のレコードを読み込んでしまうため、行末の改行文字をRequiredに変更
+        // 定義では改行文字として CRLF のみを受け付けるものを ( LF / CRLF ) に拡張
         private static Parser<char, IEnumerable<string[]>> Csv()
             => Record().EndBy(EndOfLine());
+
+        // stringをパースします。レコードをstring[]に詰めて返します。
+        public static Result<char, IEnumerable<string[]>> Parse(string csv)
+            => Csv().Parse(csv);
+
+        // Streamをパースします。
+        public static Result<char, IEnumerable<string[]>> Parse(Stream csv)
+            => Csv().Parse(csv);
+
+        // Streamをパースします。ソースのEncodingを指定できます。
+        public static Result<char, IEnumerable<string[]>> Parse(Stream csv, Encoding encoding)
+            => Csv().Parse(csv, encoding);
     }
 }

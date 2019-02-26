@@ -1,6 +1,8 @@
-﻿namespace Parsec
+using System;
+
+namespace ParsecSharp
 {
-    public interface IParsecState<out TToken>
+    public interface IParsecState<TToken> : IEquatable<IParsecState<TToken>>
     {
         TToken Current { get; }
 

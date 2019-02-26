@@ -1,14 +1,13 @@
-﻿namespace Parsec.Internal
+namespace ParsecSharp.Internal
 {
-    internal class ParseError<TToken, T> : Fail<TToken, T>
+    internal sealed class ParseError<TToken, T> : Fail<TToken, T>
     {
-        internal ParseError(IParsecState<TToken> state) : base(state)
+        public sealed override string Message => $"Unexpected '{this.State.ToString()}'";
+
+        internal ParseError(IParsecStateStream<TToken> state) : base(state)
         { }
 
-        protected override Fail<TToken, TNext> Convert<TNext>()
-            => new ParseError<TToken, TNext>(this.State);
-
-        protected override string ToStringInternal()
-            => $"Unexpected \"{this.State}\"";
+        protected sealed override Fail<TToken, TNext> Convert<TNext>()
+            => new ParseError<TToken, TNext>(this.Rest);
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Parsec.Internal
+namespace ParsecSharp.Internal
 {
     public sealed class EmptyStream<TToken> : IParsecStateStream<TToken>
     {
@@ -18,7 +18,16 @@
         public void Dispose()
         { }
 
-        public override string ToString()
+        public bool Equals(IParsecState<TToken> other)
+            => other is EmptyStream<TToken>;
+
+        public sealed override bool Equals(object obj)
+            => obj is EmptyStream<TToken>;
+
+        public sealed override int GetHashCode()
+            => 0;
+
+        public sealed override string ToString()
             => string.Empty;
     }
 }

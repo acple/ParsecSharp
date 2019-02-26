@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using Parsec.Internal;
+using ParsecSharp.Internal;
 
-namespace Parsec
+namespace ParsecSharp
 {
     public sealed class EnumerableStream<TToken> : IParsecStateStream<TToken>
     {
@@ -50,7 +50,10 @@ namespace Parsec
         public void Dispose()
             => this.disposable.Dispose();
 
-        public override string ToString()
+        public bool Equals(IParsecState<TToken> other)
+            => ReferenceEquals(this, other);
+
+        public sealed override string ToString()
             => (this.HasValue)
                 ? this.Current?.ToString() ?? string.Empty
                 : string.Empty;

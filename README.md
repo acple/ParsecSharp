@@ -1,5 +1,6 @@
 # ParsecSharp
-Monadic parser combinator library for C#
+The faster monadic parser combinator library for C#
+
 
 ## What's this
 This library provides most useful Text Parsers, Stream Parsers, and Parser Combinators.
@@ -16,6 +17,7 @@ This project is affected by [parsec](https://hackage.haskell.org/package/parsec)
 
 
 ## How to install
+
 
 ### from NuGet
 NuGet Package Manager Console:
@@ -36,24 +38,24 @@ Download manually:
 
 
 ## Supported platform
-**Caution** This project is verrry experimental, now targets only x64 runtime, with RyuJit (Next-Gen .NET JIT Compiler).
+**Caution** This project targets only x64 runtime with RyuJit (Next-Gen .NET JIT Compiler). Not guaranteed to run on any other platforms.
 
 * netstandard1.0 (compatible with net45 or later, netcoreapp, uap, xamarin, and more)
 
 
 ## Get started
 1. Add package reference to your project.
-2. Add using directive: `using static Parsec.Parser;` and `using static Parsec.Text;` to your code.
+2. Add using directive: `using static ParsecSharp.Parser;` and `using static ParsecSharp.Text;` to your code.
 3. Parse your all.
 
 
 ## How to use
 Here is examples:
 
-* [JsonParser implementation](ParsecSharpExamples/JsonParser.cs)
-* [CsvParser implementation](ParsecSharpExamples/CsvParser.cs)
+* [JsonParser implementation](ParsecSharp.Examples/JsonParser.cs)
+* [CsvParser implementation](ParsecSharp.Examples/CsvParser.cs)
 
-Documents are included in [UnitTest code](ParsecSharpTest/ParserTest.cs) (jp)
+Documents are included in [UnitTest code](UnitTest.ParsecSharp/ParserTest.cs) (jp)
 
 If you want more information, read [APIs source code](ParsecSharp/Parser), all is there.
 

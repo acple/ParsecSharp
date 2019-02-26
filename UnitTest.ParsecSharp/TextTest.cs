@@ -1,16 +1,16 @@
-﻿using ChainingAssertion;
+using ChainingAssertion;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using static Parsec.Parser;
-using static Parsec.Text;
+using static ParsecSharp.Parser;
+using static ParsecSharp.Text;
 
-namespace ParsecSharpTest
+namespace UnitTest.ParsecSharp
 {
     [TestClass]
     public class TextTest
     {
-        const string _abcdEFGH = "abcdEFGH";
+        private const string _abcdEFGH = "abcdEFGH";
 
-        const string _123456 = "123456";
+        private const string _123456 = "123456";
 
         [TestMethod]
         public void CharTest()

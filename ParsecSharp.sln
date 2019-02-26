@@ -1,13 +1,13 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26009.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParsecSharp", "ParsecSharp\ParsecSharp.csproj", "{3E655CC9-BD8A-484A-A219-2E9ED2DE0CDD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParsecSharpTest", "ParsecSharpTest\ParsecSharpTest.csproj", "{F6BDF5B6-E528-4B77-8070-8E9B22CD16C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParsecSharp.Examples", "ParsecSharp.Examples\ParsecSharp.Examples.csproj", "{0E04AA91-82CC-476B-8EE3-490DEAD8654B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParsecSharpExamples", "ParsecSharpExamples\ParsecSharpExamples.csproj", "{0E04AA91-82CC-476B-8EE3-490DEAD8654B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTest.ParsecSharp", "UnitTest.ParsecSharp\UnitTest.ParsecSharp.csproj", "{F6BDF5B6-E528-4B77-8070-8E9B22CD16C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +19,14 @@ Global
 		{3E655CC9-BD8A-484A-A219-2E9ED2DE0CDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E655CC9-BD8A-484A-A219-2E9ED2DE0CDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E655CC9-BD8A-484A-A219-2E9ED2DE0CDD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F6BDF5B6-E528-4B77-8070-8E9B22CD16C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F6BDF5B6-E528-4B77-8070-8E9B22CD16C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F6BDF5B6-E528-4B77-8070-8E9B22CD16C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F6BDF5B6-E528-4B77-8070-8E9B22CD16C1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0E04AA91-82CC-476B-8EE3-490DEAD8654B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0E04AA91-82CC-476B-8EE3-490DEAD8654B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E04AA91-82CC-476B-8EE3-490DEAD8654B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E04AA91-82CC-476B-8EE3-490DEAD8654B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6BDF5B6-E528-4B77-8070-8E9B22CD16C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6BDF5B6-E528-4B77-8070-8E9B22CD16C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6BDF5B6-E528-4B77-8070-8E9B22CD16C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6BDF5B6-E528-4B77-8070-8E9B22CD16C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

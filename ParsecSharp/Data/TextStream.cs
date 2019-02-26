@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text;
-using Parsec.Internal;
+using ParsecSharp.Internal;
 
-namespace Parsec
+namespace ParsecSharp
 {
     public sealed class TextStream : IParsecStateStream<char>
     {
@@ -54,7 +54,10 @@ namespace Parsec
         public void Dispose()
             => this.disposable.Dispose();
 
-        public override string ToString()
+        public bool Equals(IParsecState<char> other)
+            => ReferenceEquals(this, other);
+
+        public sealed override string ToString()
             => (this.HasValue) ? this.Current.ToString() : string.Empty;
     }
 }

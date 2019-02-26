@@ -1,7 +1,7 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 
-namespace Parsec.Internal
+namespace ParsecSharp.Internal
 {
     public static class ParsecStateStreamEnumerable
     {
@@ -9,7 +9,7 @@ namespace Parsec.Internal
             => new ParsecStateStreamEnumerable<TToken>(stream);
     }
 
-    internal class ParsecStateStreamEnumerable<TToken> : IEnumerable<TToken>
+    internal sealed class ParsecStateStreamEnumerable<TToken> : IEnumerable<TToken>
     {
         private readonly IParsecStateStream<TToken> _stream;
 
