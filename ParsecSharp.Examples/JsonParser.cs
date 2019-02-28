@@ -18,7 +18,7 @@ namespace ParsecSharp.Examples
         // JSON WhiteSpace にマッチし、その値は無視します。
         // ws = *( %x20 / %x09 / %x0A / %x0D ) ; Space / Horizontal tab / Line feed or New line / Carriage return
         private static Parser<char, Unit> WhiteSpace()
-            => SkipMany(Choice(Char(' '), Char('\t'), Char('\n'), Char('\r')));
+            => SkipMany(OneOf(" \t\n\r"));
 
         // JSON Object の開始を表す開き波括弧にマッチします。
         // begin-object = ws %x7B ws ; == '{'
@@ -111,7 +111,7 @@ namespace ParsecSharp.Examples
         // JSON Number の指数部にマッチします。
         // exp = e [ minus / plus ] 1*DIGIT
         private static Parser<char, int> Exp()
-            => from _ in OneOf("eE")
+            => from _ in CharIgnoreCase('e')
                from sign in Char('-').Or(Optional(Char('+'), '+'))
                from num in Many1(Digit()).ToStr()
                select int.Parse(sign + num);
@@ -138,7 +138,7 @@ namespace ParsecSharp.Examples
 
         // Key : Value ペアにマッチします。
         // member = string name-separator value
-        private static Parser<char, (string Key, dynamic Value)> KeyValuePair()
+        private static Parser<char, (string Key, dynamic Value)> KeyValue()
             => from key in JsonString()
                from _ in Colon()
                from value in Json()
@@ -147,7 +147,7 @@ namespace ParsecSharp.Examples
         // JSON Object にマッチします。
         // object = begin-object [ member *( value-separator member ) ] end-object
         private static Parser<char, Dictionary<string, dynamic>> JsonObject()
-            => KeyValuePair().SepBy(Comma())
+            => KeyValue().SepBy(Comma())
                 .Between(OpenBrace(), CloseBrace())
                 .Map(list => list.ToDictionary(x => x.Key, x => x.Value));
 
