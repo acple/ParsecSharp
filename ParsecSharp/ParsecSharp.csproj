@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.6;netstandard1.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard1.6;netstandard1.0</TargetFrameworks>
     <LangVersion>7.2</LangVersion>
     <RootNamespace>ParsecSharp</RootNamespace>
     <DebugType Condition="'$(Configuration)'=='Release'">none</DebugType>
