@@ -48,7 +48,7 @@ namespace ParsecSharp.Examples
         // 定義に従うと最終行に空の改行が存在する場合に要素0のレコードを読み込んでしまうため、行末の改行文字をRequiredに変更
         // 定義では改行文字として CRLF のみを受け付けるものを ( LF / CRLF ) に拡張
         private static Parser<char, IEnumerable<string[]>> Csv()
-            => Record().EndBy(EndOfLine());
+            => Record().EndBy(EndOfLine()).End();
 
         // stringをパースします。レコードをstring[]に詰めて返します。
         public static Result<char, IEnumerable<string[]>> Parse(string csv)

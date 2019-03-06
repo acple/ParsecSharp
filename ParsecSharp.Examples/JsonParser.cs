@@ -52,7 +52,7 @@ namespace ParsecSharp.Examples
 
         // JSON の値にマッチします。
         // value = false / true / null / object / array / number / string
-        private static Parser<char, dynamic> Json()
+        private static Parser<char, dynamic> JsonValue()
             => Choice(
                 Delay(JsonString).AsDynamic(),
                 Delay(JsonObject).AsDynamic(),
@@ -141,7 +141,7 @@ namespace ParsecSharp.Examples
         private static Parser<char, (string Key, dynamic Value)> KeyValue()
             => from key in JsonString()
                from _ in Colon()
-               from value in Json()
+               from value in JsonValue()
                select (key, value);
 
         // JSON Object にマッチします。
@@ -149,19 +149,24 @@ namespace ParsecSharp.Examples
         private static Parser<char, Dictionary<string, dynamic>> JsonObject()
             => KeyValue().SepBy(Comma())
                 .Between(OpenBrace(), CloseBrace())
-                .Map(list => list.ToDictionary(x => x.Key, x => x.Value));
+                .Map(members => members.ToDictionary(x => x.Key, x => x.Value));
 
         // JSON Array にマッチします。
         // array = begin-array [ value *( value-separator value ) ] end-array
         private static Parser<char, dynamic[]> JsonArray()
-            => Json().SepBy(Comma()).Between(OpenBracket(), CloseBracket()).ToArray();
+            => JsonValue().SepBy(Comma()).Between(OpenBracket(), CloseBracket()).ToArray();
+
+        // JSON ドキュメントにマッチします。
+        // JSON-text = ws value ws
+        private static Parser<char, dynamic> Json()
+            => JsonValue().Between(WhiteSpace()).End();
 
         // stringをパースしてdynamicに詰めて返します。
         public static Result<char, dynamic> Parse(string json)
-            => Json().Between(WhiteSpace()).End().Parse(json);
+            => Json().Parse(json);
 
         // Streamをパースしてdynamicに詰めて返します。テキストはUTF-8でエンコードされている必要があります。
         public static Result<char, dynamic> Parse(Stream json)
-            => Json().Between(WhiteSpace()).End().Parse(json);
+            => Json().Parse(json);
     }
 }
