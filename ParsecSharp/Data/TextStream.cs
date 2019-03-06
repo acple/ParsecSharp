@@ -58,6 +58,6 @@ namespace ParsecSharp
             => ReferenceEquals(this, other);
 
         public sealed override string ToString()
-            => (this.HasValue) ? this.Current.ToString() : string.Empty;
+            => (this.HasValue) ? this.Current.ToString() : "<EndOfStream>";
     }
 }

@@ -28,6 +28,6 @@ namespace ParsecSharp.Internal
             => 0;
 
         public sealed override string ToString()
-            => string.Empty;
+            => "<EmptyStream>";
     }
 }
