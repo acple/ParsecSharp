@@ -81,7 +81,7 @@ namespace UnitTest.ParsecSharp
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected 'a'"),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected 'a<0x61>'"),
                 success => Assert.Fail(success.ToString()));
 
             var source2 = _123456;
@@ -137,7 +137,7 @@ namespace UnitTest.ParsecSharp
 
             var parser = Fail<Unit>();
             parser.Parse(source).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected 'a'"),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected 'a<0x61>'"),
                 success => Assert.Fail(success.ToString()));
 
             // エラーメッセージを記述することができるオーバーロード。
@@ -197,7 +197,7 @@ namespace UnitTest.ParsecSharp
 
             var source2 = "abCDEF";
             parser.Parse(source2).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 3): Unexpected 'C'"),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 3): Unexpected 'C<0x43>'"),
                 success => Assert.Fail(success.ToString()));
         }
 
@@ -261,7 +261,7 @@ namespace UnitTest.ParsecSharp
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected '1'"),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected '1<0x31>'"),
                 success => Assert.Fail(success.ToString()));
         }
 
@@ -876,7 +876,7 @@ namespace UnitTest.ParsecSharp
         {
             // パース失敗時にパース処理を中止します。
 
-            var parser = Many(Lower().Error(state => $"Fatal Error! '{state.ToString()}' is not a lower char!")).ToStr()
+            var parser = Many(Lower().Error(state => $"Fatal Error! '{state.Current.ToString()}' is not a lower char!")).ToStr()
                 .Or(Pure("recovery"));
 
             var source = _abcdEFGH;
