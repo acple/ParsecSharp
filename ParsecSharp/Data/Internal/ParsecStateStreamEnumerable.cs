@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace ParsecSharp.Internal
 {
     public static class ParsecStateStreamEnumerable
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IEnumerable<TToken> AsEnumerable<TToken>(this IParsecStateStream<TToken> stream)
             => new ParsecStateStreamEnumerable<TToken>(stream);
     }

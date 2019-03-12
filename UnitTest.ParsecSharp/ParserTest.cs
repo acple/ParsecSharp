@@ -910,7 +910,6 @@ namespace UnitTest.ParsecSharp
                 success => Assert.Fail(success.ToString()));
         }
 
-
         [TestMethod]
         public void DoTest()
         {
