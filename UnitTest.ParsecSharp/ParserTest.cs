@@ -858,11 +858,12 @@ namespace UnitTest.ParsecSharp
         {
             // パース失敗時のエラーメッセージを書き換えます。
 
-            var parser = Many1(Digit()).WithMessage(state => $"MessageTest Current: '{state.Current.ToString()}'");
+            var parser = Many1(Digit())
+                .WithMessage(fail => $"MessageTest Current: '{fail.State.Current.ToString()}', original message: {fail.Message}");
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): MessageTest Current: 'a'"),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): MessageTest Current: 'a', original message: Unexpected 'a<0x61>'"),
                 success => Assert.Fail(success.ToString()));
 
             var source2 = _123456;
@@ -876,7 +877,7 @@ namespace UnitTest.ParsecSharp
         {
             // パース失敗時にパース処理を中止します。
 
-            var parser = Many(Lower().Error(state => $"Fatal Error! '{state.Current.ToString()}' is not a lower char!")).ToStr()
+            var parser = Many(Lower().Error(fail => $"Fatal Error! '{fail.State.Current.ToString()}' is not a lower char!")).ToStr()
                 .Or(Pure("recovery"));
 
             var source = _abcdEFGH;

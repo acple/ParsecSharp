@@ -129,16 +129,16 @@ namespace ParsecSharp
             => parser.Alternative(Fail<TToken, T>(message));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, T> WithMessage<TToken, T>(this Parser<TToken, T> parser, Func<IParsecState<TToken>, string> message)
-            => parser.Alternative(fail => Fail<TToken, T>(message(fail.State)));
+        public static Parser<TToken, T> WithMessage<TToken, T>(this Parser<TToken, T> parser, Func<Fail<TToken, T>, string> message)
+            => parser.Alternative(fail => Fail<TToken, T>(message(fail)));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, T> Error<TToken, T>(this Parser<TToken, T> parser, Func<IParsecState<TToken>, string> message)
-            => parser.Alternative(fail => Abort<TToken, T>(_ => message(fail.State)));
+        public static Parser<TToken, T> Error<TToken, T>(this Parser<TToken, T> parser, Func<Fail<TToken, T>, string> message)
+            => parser.Alternative(fail => Abort<TToken, T>(_ => message(fail)));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, T> AbortIfEntered<TToken, T>(this Parser<TToken, T> parser, Func<IParsecState<TToken>, string> message)
+        public static Parser<TToken, T> AbortIfEntered<TToken, T>(this Parser<TToken, T> parser, Func<Fail<TToken, T>, string> message)
             => parser.Alternative(fail => GetPosition<TToken>()
-                .Bind(position => (position.Equals(fail.State.Position)) ? Fail<TToken, T>(fail.Message) : Abort<TToken, T>(_ => message(fail.State))));
+                .Bind(position => (position.Equals(fail.State.Position)) ? Fail<TToken, T>(fail.Message) : Abort<TToken, T>(_ => message(fail))));
     }
 }
