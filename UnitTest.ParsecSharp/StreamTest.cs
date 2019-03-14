@@ -41,7 +41,7 @@ namespace UnitTest.ParsecSharp
         {
             // 文字列をソースにする場合
             var source = "The quick brown fox jumps over the lazy dog";
-            var parser = Many(Many1(Letter()).Between(Spaces()).ToStr()).ToArray();
+            var parser = Many(Many1(Letter()).Between(Spaces()).AsString()).ToArray();
 
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(fail.ToString()),
@@ -55,7 +55,7 @@ namespace UnitTest.ParsecSharp
             var source = "The quick brown fox jumps over the lazy dog";
             using (var stream = new MemoryStream(new UTF8Encoding(false).GetBytes(source)))
             {
-                var parser = Many(Many1(Letter()).Between(Spaces()).ToStr()).ToArray();
+                var parser = Many(Many1(Letter()).Between(Spaces()).AsString()).ToArray();
 
                 parser.Parse(stream).CaseOf(
                     fail => Assert.Fail(fail.ToString()),
@@ -70,7 +70,7 @@ namespace UnitTest.ParsecSharp
             // 字句解析等の前段処理を可能にします。
 
             // 空白に挟まれた文字列を1要素として返すパーサ。
-            var token = Many1(LetterOrDigit()).Between(Spaces()).ToStr();
+            var token = Many1(LetterOrDigit()).Between(Spaces()).AsString();
 
             var source = "The quick brown fox jumps over the lazy dog";
             var stream = new StringStream(source);

@@ -79,7 +79,7 @@ namespace ParsecSharp.Examples
                     Char('n').Map(_ => '\n'),
                     Char('r').Map(_ => '\r'),
                     Char('t').Map(_ => '\t'),
-                    Char('u').Right(HexDigit().Repeat(4).ToStr())
+                    Char('u').Right(HexDigit().Repeat(4).AsString())
                         .Map(hex => (char)int.Parse(hex, NumberStyles.HexNumber))));
 
         // JSON String の一文字にマッチします。
@@ -90,7 +90,7 @@ namespace ParsecSharp.Examples
         // JSON String にマッチします。
         // string = quotation-mark *char quotation-mark
         private static Parser<char, string> JsonString()
-            => Many(JsonChar()).Between(Char('"')).ToStr();
+            => Many(JsonChar()).Between(Char('"')).AsString();
 
         // JSON Number の符号にマッチします。
         // minus = %x2D ; == '-'
@@ -105,7 +105,7 @@ namespace ParsecSharp.Examples
         // JSON Number の小数部にマッチします。
         // frac = decimal-point 1*DIGIT
         private static Parser<char, double> Frac()
-            => Char('.').Right(Many1(Digit())).ToStr()
+            => Char('.').Right(Many1(Digit())).AsString()
                 .Map(x => double.Parse("0." + x));
 
         // JSON Number の指数部にマッチします。
@@ -113,7 +113,7 @@ namespace ParsecSharp.Examples
         private static Parser<char, int> Exp()
             => from _ in CharIgnoreCase('e')
                from sign in Char('-').Or(Optional(Char('+'), '+'))
-               from num in Many1(Digit()).ToStr()
+               from num in Many1(Digit()).AsString()
                select int.Parse(sign + num);
 
         // JSON Number にマッチします。doubleを返します。

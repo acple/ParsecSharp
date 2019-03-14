@@ -13,7 +13,7 @@ namespace ParsecSharp.Examples
             Optional(Char('-'), '+')
                 .Append(Many1(Digit()))
                 .Append(Optional(Char('.').Append(Many1(Digit())), Enumerable.Empty<char>()))
-                .ToStr().Map(double.Parse);
+                .AsString().Map(double.Parse);
 
         // 四則演算子にマッチし、二項演算関数にマップ
         private static readonly Parser<char, Func<double, double, double>> op =

@@ -7,12 +7,12 @@ namespace ParsecSharp
     public static partial class Text
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<char, string> ToStr(this Parser<char, IEnumerable<char>> parser)
+        public static Parser<char, string> AsString(this Parser<char, IEnumerable<char>> parser)
             => parser.Map(x => new string(x.ToArray()));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, int> ToInt(this Parser<char, IEnumerable<char>> parser)
-            => parser.ToStr().ToInt();
+            => parser.AsString().ToInt();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, int> ToInt(this Parser<char, string> parser)
