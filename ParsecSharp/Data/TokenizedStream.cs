@@ -19,17 +19,17 @@ namespace ParsecSharp
 
         public IParsecStateStream<TToken> Next => this._next.Value;
 
-        public TokenizedStream(Parser<TInput, TToken> parser, IParsecStateStream<TInput> source) : this(parser, source, LinearPosition.Initial)
+        public TokenizedStream(IParsecStateStream<TInput> source, Parser<TInput, TToken> parser) : this(source, parser, LinearPosition.Initial)
         { }
 
-        private TokenizedStream(Parser<TInput, TToken> parser, IParsecStateStream<TInput> source, LinearPosition position)
+        private TokenizedStream(IParsecStateStream<TInput> source, Parser<TInput, TToken> parser, LinearPosition position)
         {
             this.disposable = source;
             this._position = position;
             var (result, rest) = parser.ParsePartially(source);
             this.HasValue = result.CaseOf(_ => false, _ => true);
             this.Current = (this.HasValue) ? result.Value : default;
-            this._next = new Lazy<IParsecStateStream<TToken>>(() => new TokenizedStream<TInput, TToken>(parser, rest, position.Next()), false);
+            this._next = new Lazy<IParsecStateStream<TToken>>(() => new TokenizedStream<TInput, TToken>(rest, parser, position.Next()), false);
         }
 
         public void Dispose()

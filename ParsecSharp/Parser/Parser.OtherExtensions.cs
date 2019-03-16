@@ -24,6 +24,6 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IParsecStateStream<TToken> Tokenize<TInput, TToken>(this IParsecStateStream<TInput> source, Parser<TInput, TToken> parser)
-            => new TokenizedStream<TInput, TToken>(parser, source);
+            => new TokenizedStream<TInput, TToken>(source, parser);
     }
 }
