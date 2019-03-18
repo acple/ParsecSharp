@@ -14,7 +14,7 @@ namespace ParsecSharp.Internal
             this._second = second;
         }
 
-        internal sealed override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
+        protected internal sealed override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
         {
             var _second = this._second;
             return this._first.Run(state, result => result.CaseOf(_ => _second.Run(state, cont), cont));
