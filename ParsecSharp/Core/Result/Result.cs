@@ -17,8 +17,6 @@ namespace ParsecSharp
 
         public abstract TResult CaseOf<TResult>(Func<Fail<TToken, T>, TResult> fail, Func<Success<TToken, T>, TResult> success);
 
-        public abstract override string ToString();
-
         internal Suspended Suspend()
             => new Suspended(this);
 
