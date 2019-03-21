@@ -15,6 +15,6 @@ namespace ParsecSharp.Internal
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IParsecStateStream<TToken>> GetState<TToken>()
-            => Builder.Create<TToken, IParsecStateStream<TToken>>(state => Result.Success(state, state));
+            => Create<TToken, IParsecStateStream<TToken>>(state => Result.Success(state, state));
     }
 }

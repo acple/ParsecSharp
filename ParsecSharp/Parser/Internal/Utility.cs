@@ -6,8 +6,6 @@ namespace ParsecSharp.Internal
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IParsecStateStream<TToken> Advance<TToken>(this IParsecStateStream<TToken> state, int count)
-            => (0 < count && state.HasValue)
-                ? state.Next.Advance(count - 1)
-                : state;
+            => (0 < count && state.HasValue) ? state.Next.Advance(count - 1) : state;
     }
 }
