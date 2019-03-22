@@ -78,6 +78,10 @@ namespace ParsecSharp
             => OneOf("01234567");
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<char, char> DecDigit()
+            => OneOf("0123456789");
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> HexDigit()
             => OneOf("0123456789ABCDEFabcdef");
 
