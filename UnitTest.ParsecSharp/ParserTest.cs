@@ -411,6 +411,32 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
+        public void NextTest()
+        {
+            // parser が成功した場合に続きを実行し、失敗した場合に単一の値を返すパーサを作成します。
+            // 継続として処理されるため、自己再帰の脱出処理に使用することでパフォーマンスを向上できます。
+
+            // Letter にマッチした場合、次の Letter にマッチした結果を返し、失敗した場合は '\n' を返すパーサ。
+            var parser = Letter().Next(_ => Letter(), '\n');
+
+            var source = _abcdEFGH;
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is('b'));
+
+            var source2 = _123456;
+            parser.Parse(source2).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is('\n'));
+
+            // parser が成功し、next が失敗したため失敗を返す。
+            var source3 = "a123";
+            parser.Parse(source3).CaseOf(
+                fail => { },
+                success => Assert.Fail(success.ToString()));
+        }
+
+        [TestMethod]
         public void SepByTest()
         {
             // separator によって区切られた形の parser が0回以上繰り返す入力にマッチするパーサを作成します。
