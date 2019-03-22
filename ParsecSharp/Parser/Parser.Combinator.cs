@@ -65,11 +65,11 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Parser<TToken, IEnumerable<T>> Many_<TToken, T>(Parser<TToken, T> parser, List<T> list)
-            => Try(parser.Bind(x => { list.Add(x); return Many_(parser, list); }), list);
+            => parser.Next(x => { list.Add(x); return Many_(parser, list); }, list);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> SkipMany<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
-            => Fix<TToken, Unit>(self => Try(parser.Right(self), Unit.Instance));
+            => Fix<TToken, Unit>(self => parser.Next(_ => self, Unit.Instance));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> SkipMany1<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
