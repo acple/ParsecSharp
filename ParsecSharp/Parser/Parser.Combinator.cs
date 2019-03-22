@@ -36,8 +36,8 @@ namespace ParsecSharp
             => parser.Alternative(Pure<TToken, T>(resume));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, T> Optional<TToken, T>(Parser<TToken, T> parser, T value)
-            => Try(parser, value);
+        public static Parser<TToken, T> Optional<TToken, T>(Parser<TToken, T> parser, T defaultValue)
+            => Try(parser, defaultValue);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> Optional<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
