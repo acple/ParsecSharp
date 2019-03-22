@@ -111,7 +111,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, string> SurrogatePair()
-            => HighSurrogate().Append(LowSurrogate()).ToStr();
+            => HighSurrogate().Append(LowSurrogate()).AsString();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> ControlChar()

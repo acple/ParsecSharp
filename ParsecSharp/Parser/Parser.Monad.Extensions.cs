@@ -11,6 +11,10 @@ namespace ParsecSharp
             => new Bind<TToken, T, TResult>(parser, function);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, TResult> Bind<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, Parser<TToken, TResult>> next, Func<Fail<TToken, T>, Parser<TToken, TResult>> resume)
+            => new Next<TToken, T, TResult>(parser, next, resume);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Alternative<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, T> next)
             => new Alternative<TToken, T>(parser, next);
 

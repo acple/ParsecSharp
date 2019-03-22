@@ -17,7 +17,7 @@ namespace ParsecSharp.Internal
             this._success = success;
         }
 
-        internal sealed override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
+        protected internal sealed override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
         {
             var _fail = this._fail;
             var _success = this._success;

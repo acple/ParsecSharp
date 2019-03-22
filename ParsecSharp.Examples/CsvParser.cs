@@ -29,11 +29,11 @@ namespace ParsecSharp.Examples
         private static Parser<char, string> EscapedField()
             => Many(Choice(TextChar(), Comma(), EndOfLine(), DoubleQuote().Right(DoubleQuote())))
                 .Between(DoubleQuote())
-                .ToStr();
+                .AsString();
 
         // non-escaped = *TEXTDATA
         private static Parser<char, string> NonEscapedField()
-            => Many(TextChar()).ToStr();
+            => Many(TextChar()).AsString();
 
         // field = ( escaped / non-escaped )
         private static Parser<char, string> Field()
