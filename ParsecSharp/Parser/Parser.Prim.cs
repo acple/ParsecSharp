@@ -17,6 +17,10 @@ namespace ParsecSharp
             => Satisfy<TToken>(x => EqualityComparer<TToken>.Default.Equals(x, token));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, TToken> Token<TToken>(TToken token, IEqualityComparer<TToken> comparer)
+            => Satisfy<TToken>(x => comparer.Equals(x, token));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> EndOfInput<TToken>()
             => Not(Any<TToken>());
 
