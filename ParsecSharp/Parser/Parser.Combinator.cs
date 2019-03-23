@@ -61,11 +61,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Many1<TToken, T>(Parser<TToken, T> parser)
-            => parser.Bind(x => Many_(parser, new List<T> { x }));
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Parser<TToken, IEnumerable<T>> Many_<TToken, T>(Parser<TToken, T> parser, List<T> list)
-            => parser.Next(x => { list.Add(x); return Many_(parser, list); }, list);
+            => parser.Bind(x => ManyRec(parser, new List<T> { x }));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> SkipMany<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
@@ -77,16 +73,11 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> ManyTill<TToken, T, TIgnore>(Parser<TToken, T> parser, Parser<TToken, TIgnore> terminator)
-            => Pure<TToken, List<T>>(() => new List<T>()).Bind(list => ManyTill_(parser, terminator, list));
+            => Pure<TToken, List<T>>(() => new List<T>()).Bind(list => ManyTillRec(parser, terminator, list));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Many1Till<TToken, T, TIgnore>(Parser<TToken, T> parser, Parser<TToken, TIgnore> terminator)
-            => parser.Bind(x => ManyTill_(parser, terminator, new List<T> { x }));
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Parser<TToken, IEnumerable<T>> ManyTill_<TToken, T, TIgnore>(Parser<TToken, T> parser, Parser<TToken, TIgnore> terminator, List<T> list)
-            => terminator.Map(_ => list.AsEnumerable())
-                .Alternative(parser.Bind(x => { list.Add(x); return ManyTill_(parser, terminator, list); }));
+            => parser.Bind(x => ManyTillRec(parser, terminator, new List<T> { x }));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> SkipTill<TToken, TIgnore, T>(Parser<TToken, TIgnore> parser, Parser<TToken, T> terminator)
