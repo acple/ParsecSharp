@@ -7,7 +7,7 @@ namespace ParsecSharp.Internal
         internal ParseError(IParsecStateStream<TToken> state) : base(state)
         { }
 
-        protected sealed override Fail<TToken, TNext> Convert<TNext>()
+        public sealed override Fail<TToken, TNext> Convert<TNext>()
             => new ParseError<TToken, TNext>(this.Rest);
     }
 }
