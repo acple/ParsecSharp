@@ -71,9 +71,9 @@ namespace ParsecSharp.Examples
         private static Parser<char, char> JsonEscapedChar()
             => Char('\\').Right(
                 Choice(
-                    Char('"').Map(_ => '"'),
-                    Char('\\').Map(_ => '\\'),
-                    Char('/').Map(_ => '/'),
+                    Char('"'),
+                    Char('\\'),
+                    Char('/'),
                     Char('b').Map(_ => '\b'),
                     Char('f').Map(_ => '\f'),
                     Char('n').Map(_ => '\n'),
