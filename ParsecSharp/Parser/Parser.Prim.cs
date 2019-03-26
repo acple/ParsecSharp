@@ -56,7 +56,7 @@ namespace ParsecSharp
         public static Parser<TToken, Unit> Skip<TToken>(int count)
             => Builder.Create<TToken, Unit>(state => (state.AsEnumerable().Take(count).Count() == count)
                 ? Result.Success(Unit.Instance, state.Advance(count))
-                : Result.Fail<TToken, Unit>(state));
+                : Result.Fail<TToken, Unit>($"At {nameof(Skip)}, State does not have enough length", state));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> SkipWhile<TToken>(Func<TToken, bool> predicate)
