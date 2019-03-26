@@ -100,12 +100,12 @@ namespace ParsecSharp.Examples
         // JSON Number の整数部にマッチします。
         // int = zero / ( digit1-9 *DIGIT )
         private static Parser<char, int> Int()
-            => Char('0').Map(_ => 0) | OneOf("123456789").Append(Many(Digit())).ToInt();
+            => Char('0').Map(_ => 0) | OneOf("123456789").Append(Many(DecDigit())).ToInt();
 
         // JSON Number の小数部にマッチします。
         // frac = decimal-point 1*DIGIT
         private static Parser<char, double> Frac()
-            => Char('.').Right(Many1(Digit())).AsString()
+            => Char('.').Right(Many1(DecDigit())).AsString()
                 .Map(x => double.Parse("0." + x));
 
         // JSON Number の指数部にマッチします。
@@ -113,7 +113,7 @@ namespace ParsecSharp.Examples
         private static Parser<char, int> Exp()
             => from _ in CharIgnoreCase('e')
                from sign in Char('-').Or(Optional(Char('+'), '+'))
-               from num in Many1(Digit()).AsString()
+               from num in Many1(DecDigit()).AsString()
                select int.Parse(sign + num);
 
         // JSON Number にマッチします。doubleを返します。
