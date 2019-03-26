@@ -251,17 +251,17 @@ namespace UnitTest.ParsecSharp
         {
             // 入力を消費せずに parser によるパースを行うパーサを作成します。
 
-            // 入力を消費せずに Letter にマッチし、その後 Any とマッチしその結果を連結するパーサ。
-            var parser = LookAhead(Letter()).Append(Any());
+            // 入力を消費せずに Any *> Letter にマッチし、その後 Any とマッチしその結果を連結するパーサ。
+            var parser = LookAhead(Any().Right(Letter())).Append(Any());
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Is('a', 'a'));
+                success => success.Value.Is('b', 'a'));
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected '1<0x31>'"),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): At LookAhead, Parser Fail (Line: 1, Column: 2): Unexpected '2<0x32>'"),
                 success => Assert.Fail(success.ToString()));
         }
 

@@ -52,7 +52,7 @@ namespace ParsecSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> LookAhead<TToken, T>(Parser<TToken, T> parser)
             => parser.ModifyResult(
-                (_, fail) => fail,
+                (state, fail) => Result.Fail<TToken, T>($"At {nameof(LookAhead)}, {fail.ToString()}", state),
                 (state, success) => Result.Success(success.Value, state));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
