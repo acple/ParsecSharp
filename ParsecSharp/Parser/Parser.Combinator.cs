@@ -40,8 +40,8 @@ namespace ParsecSharp
             => Try(parser, defaultValue);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, Unit> Optional<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
-            => Try(parser.Ignore(), Unit.Instance);
+        public static Parser<TToken, bool> Optional<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
+            => Try(parser.Map(_ => true), false);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> Not<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
