@@ -15,7 +15,7 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void ArrayStreamTest()
         {
-            // 任意の型の配列、あるいはIReadOnlyList<T>をソースにする場合
+            // 任意の型の配列、あるいは IReadOnlyList<T> をソースにする場合
             var source = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
             var parser = Any<int>().FoldL(0, (x, y) => x + y);
 
@@ -27,7 +27,7 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void EnumerableStreamTest()
         {
-            // 任意の型のIEnumerable<T>をソースにする場合
+            // 任意の型の IEnumerable<T> をソースにする場合
             var source = Enumerable.Range(1, 10);
             var parser = Any<int>().FoldR(0, (x, y) => x + y);
 
@@ -51,7 +51,7 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void TextStreamTest()
         {
-            // System.IO.Streamをソースにする場合
+            // System.IO.Stream をソースにする場合
             var source = "The quick brown fox jumps over the lazy dog";
             using (var stream = new MemoryStream(new UTF8Encoding(false).GetBytes(source)))
             {

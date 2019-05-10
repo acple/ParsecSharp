@@ -20,7 +20,7 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void AnyTest()
         {
-            // 全ての値にマッチするパーサを作成します。
+            // 任意の値にマッチするパーサを作成します。
             // このパーサは入力が終端の場合にのみ失敗します。
 
             var parser = Any();
@@ -94,6 +94,7 @@ namespace UnitTest.ParsecSharp
         public void SkipTest()
         {
             // 数を指定してスキップするパーサを作成します。
+            // 0以下の数値を指定した場合、入力は消費されません。
 
             var parser = Skip(3).Right(Any());
 
@@ -119,6 +120,7 @@ namespace UnitTest.ParsecSharp
         {
             // 成功したという結果を返すパーサを作成します。
             // パーサに任意の値を投入する場合に使用します。
+            // このパーサは入力を消費しません。
 
             var parser = Pure("success!");
 
@@ -132,6 +134,7 @@ namespace UnitTest.ParsecSharp
         public void FailTest()
         {
             // 失敗したという結果を返すパーサを作成します。
+            // このパーサは入力を消費しません。
 
             var source = _abcdEFGH;
 
@@ -204,8 +207,8 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void TryTest()
         {
-            // parser によるパースを実行し、それが失敗した場合は resume の値を結果として返すパーサを作成します。
-            // パース失敗時は入力は消費されません。
+            // parser によるパースを実行し、それが失敗した場合は resume の値を結果として返す、常に成功するパーサを作成します。
+            // parser のマッチング失敗時は入力は消費されません。
 
             // 'a' にマッチし、成功した場合は 'a'、失敗した場合は 'x' を返すパーサ。
             var parser = Try(Char('a'), 'x');
@@ -230,7 +233,8 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void OptionalTest()
         {
-            // parser によるパースを実行し、その結果を破棄し、常に成功するパーサを作成します。
+            // parser によるパースを実行し、マッチしたかどうかを返す、常に成功するパーサを作成します。
+            // parser のマッチング失敗時は入力は消費されません。
 
             // Digit へのマッチングを行い、その値を破棄し、Any にマッチするパーサ。
             var parser = Optional(Digit()).Right(Any());
@@ -269,7 +273,7 @@ namespace UnitTest.ParsecSharp
         public void ManyTest()
         {
             // parser に0回以上繰り返しマッチし、その結果をシーケンスとして返すパーサを作成します。
-            // 1回もマッチしなかった場合、パーサは空のシーケンスを結果として返します。
+            // 1回もマッチしなかった場合、パーサは空のシーケンスを結果として返します。その場合、入力を消費しません。
 
             // Lower に0回以上繰り返しマッチするパーサ。
             var parser = Many(Lower());
@@ -309,6 +313,7 @@ namespace UnitTest.ParsecSharp
         public void SkipManyTest()
         {
             // parser に0回以上繰り返しマッチし、その結果を破棄するパーサを作成します。
+            // 1回もマッチしなかった場合、入力を消費しません。
 
             // Lower に0回以上繰り返しマッチし、その結果を破棄し、Any にマッチした結果を返すパーサ。
             var parser = SkipMany(Lower()).Right(Any());
@@ -376,7 +381,7 @@ namespace UnitTest.ParsecSharp
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is("cd"));
 
-            // "cd" の前に Upper が存在する場合は失敗する。
+            // "cd" の前に Upper が存在するため失敗する。
             var source2 = "xyzABcdef";
             parser.Parse(source2).CaseOf(
                 fail => { },
@@ -388,16 +393,15 @@ namespace UnitTest.ParsecSharp
         {
             // parser にマッチするまでスキップし、parser にマッチした結果を返すパーサを作成します。
 
-            var source = _abcdEFGH;
-            var source2 = _123456;
-
             // "FG" にマッチするまでスキップするパーサ。
             var parser = Match(String("FG"));
 
+            var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is("FG"));
 
+            var source2 = _123456;
             parser.Parse(source2).CaseOf(
                 fail => { },
                 success => Assert.Fail(success.ToString()));
@@ -414,7 +418,7 @@ namespace UnitTest.ParsecSharp
         public void NextTest()
         {
             // parser が成功した場合に続きを実行し、失敗した場合に単一の値を返すパーサを作成します。
-            // 継続として処理されるため、自己再帰の脱出処理に使用することでパフォーマンスを向上できます。
+            // 継続として処理されるため、自己再帰の脱出処理に利用することでパフォーマンスを向上できます。
 
             // Letter にマッチした場合、次の Letter にマッチした結果を返し、失敗した場合は '\n' を返すパーサ。
             var parser = Letter().Next(_ => Letter(), '\n');
@@ -429,7 +433,7 @@ namespace UnitTest.ParsecSharp
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is('\n'));
 
-            // parser が成功し、next が失敗したため失敗を返す。
+            // parser が成功し、next が失敗したため全体の結果は失敗となる。
             var source3 = "a123";
             parser.Parse(source3).CaseOf(
                 fail => { },
@@ -440,7 +444,7 @@ namespace UnitTest.ParsecSharp
         public void SepByTest()
         {
             // separator によって区切られた形の parser が0回以上繰り返す入力にマッチするパーサを作成します。
-            // separator が返す結果は破棄されます。
+            // separator にマッチした結果は破棄されます。
 
             // [ 1*Number *( "," 1*Number ) ]
             var parser = Many1(Number()).AsString().SepBy(Char(','));
@@ -635,7 +639,7 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void ChainLTest()
         {
-            // ChainLはChainを利用して簡単に作成できます。
+            // ChainL は Chain を利用して簡単に作成できます。
             Parser<TToken, T> ChainL<TToken, T>(Parser<TToken, T> token, Parser<TToken, Func<T, T, T>> function)
                 => token.Chain(x => from func in function
                                     from y in token
@@ -649,7 +653,7 @@ namespace UnitTest.ParsecSharp
                 Char('+').Map(_ => (Func<int, int, int>)((x, y) => x + y)),
                 Char('-').Map(_ => (Func<int, int, int>)((x, y) => x - y)));
 
-            // 1文字以上の数字にマッチし、intに変換するパーサ。
+            // 1文字以上の数字にマッチし、int に変換するパーサ。
             var num = Many1(Digit()).ToInt();
 
             // num *( op num )
@@ -679,7 +683,7 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void ChainRTest()
         {
-            // ChainRはChainを利用して簡単に作成できます。
+            // ChainR は Chain を利用して簡単に作成できます。
             Parser<TToken, T> ChainR<TToken, T>(Parser<TToken, T> token, Parser<TToken, Func<T, T, T>> function)
                 => token.Chain(x => from func in function
                                     from y in ChainR(token, function)
@@ -693,7 +697,7 @@ namespace UnitTest.ParsecSharp
                 Char('+').Map(_ => (Func<int, int, int>)((x, y) => x + y)),
                 Char('-').Map(_ => (Func<int, int, int>)((x, y) => x - y)));
 
-            // 1文字以上の数字にマッチし、intに変換するパーサ。
+            // 1文字以上の数字にマッチし、int に変換するパーサ。
             var num = Many1(Digit()).ToInt();
 
             // num *( op num )
@@ -916,9 +920,9 @@ namespace UnitTest.ParsecSharp
         public void AbortIfEnteredTest()
         {
             // パーサが入力を消費した状態で失敗した場合にパース処理を中止します。
-            // LLパーサのような分岐と失敗処理を実現するための拡張です。
+            // LL(k) パーサのような分岐と失敗処理を実現するための拡張です。
 
-            var parser = Sequence(Char('1'), Char('2'), Char('3'), Char('4')).AsString().AbortIfEntered(_ => "1234")
+            var parser = Sequence(Char('1'), Char('2'), Char('3'), Char('4')).AsString().AbortIfEntered(_ => "abort1234")
                 .Or(Pure("recovery"));
 
             var source = _123456;
@@ -933,7 +937,7 @@ namespace UnitTest.ParsecSharp
 
             var source3 = _commanum;
             parser.Parse(source3).CaseOf(
-                fail => fail.Message.Is("1234"), // 123まで入力を消費して失敗したため復旧が行われない
+                fail => fail.Message.Is("abort1234"), // 123まで入力を消費して失敗したため復旧が行われない
                 success => Assert.Fail(success.ToString()));
         }
 
@@ -968,8 +972,8 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void ExceptionTest()
         {
-            // 例外発生時は即座にパース処理を中止し、例外の Name をメッセージに含む Fail を返します。
-            // 例外による失敗に対して復旧は行われません。
+            // 処理中に例外が発生した場合は即座にパース処理を中止し、例外の Name をメッセージに含む Fail を返します。
+            // 例外による失敗に対して復旧は行われません。復旧を行う手段はありません。
 
             // null に対して ToString した結果を返し、失敗した場合に "success" を返すことを試みるパーサ。
             var parser = Pure(null as object).Map(x => x.ToString()).Or(Pure("success"));
@@ -984,7 +988,7 @@ namespace UnitTest.ParsecSharp
         public void FixTest()
         {
             // ローカル変数上やパーサ定義式内に自己再帰パーサを構築する際のヘルパコンビネータです。
-            // C#の仕様上、単体で使用する場合は型情報が不足するため、型引数を与える必要があります。
+            // C# の仕様上、単体で使用する場合は型情報が不足するため、型引数を与える必要があります。
 
             // 任意の回数の "{}" に挟まれた一文字にマッチするパーサ。
             var parser = Fix<char, char>(self => self.Or(Any()).Between(Char('{'), Char('}')));
