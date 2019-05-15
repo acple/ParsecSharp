@@ -17,6 +17,10 @@ namespace ParsecSharp
             => parser.Bind(next, _ => Pure<TToken, TResult>(result));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, TResult> Next<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, TResult> result, Func<Fail<TToken, T>, Parser<TToken, TResult>> resume)
+            => parser.Bind(x => Pure<TToken, TResult>(result(x)), resume);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> SepBy<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> separator)
             => Try(parser.SepBy1(separator), Enumerable.Empty<T>());
 
