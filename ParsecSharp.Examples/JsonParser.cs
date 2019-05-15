@@ -8,10 +8,10 @@ using static ParsecSharp.Text;
 
 namespace ParsecSharp.Examples
 {
-    // JSONパーサ RFC8259に忠実なつくり
+    // JSON パーサ、RFC8259 に忠実なつくり
     public static class JsonParser
     {
-        // パース結果をdynamicに詰める拡張メソッド。
+        // パース結果を dynamic に詰める拡張メソッド。
         private static Parser<TToken, dynamic> AsDynamic<TToken, T>(this Parser<TToken, T> parser)
             => parser.Map(x => x as dynamic);
 
@@ -67,7 +67,7 @@ namespace ParsecSharp.Examples
             => Any().Except(Char('"'), Char('\\'), Satisfy(x => x <= 0x1F));
 
         // エスケープされた文字にマッチします。
-        // 詳細はRFC8259をみてください。
+        // 詳細は RFC8259 をみてください。
         private static Parser<char, char> JsonEscapedChar()
             => Char('\\').Right(
                 Choice(
@@ -116,7 +116,7 @@ namespace ParsecSharp.Examples
                from num in Many1(DecDigit()).AsString()
                select int.Parse(sign + num);
 
-        // JSON Number にマッチします。doubleを返します。
+        // JSON Number にマッチします。double を返します。
         // number = [ minus ] int [ frac ] [ exp ]
         private static Parser<char, double> JsonNumber()
             => from sign in Sign()
@@ -161,11 +161,11 @@ namespace ParsecSharp.Examples
         private static Parser<char, dynamic> Json()
             => JsonValue().Between(WhiteSpace()).End();
 
-        // stringをパースしてdynamicに詰めて返します。
+        // string をパースして dynamic に詰めて返します。
         public static Result<char, dynamic> Parse(string json)
             => Json().Parse(json);
 
-        // Streamをパースしてdynamicに詰めて返します。テキストはUTF-8でエンコードされている必要があります。
+        // Stream をパースして dynamic に詰めて返します。テキストは UTF-8 でエンコードされている必要があります。
         public static Result<char, dynamic> Parse(Stream json)
             => Json().Parse(json);
     }
