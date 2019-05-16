@@ -11,25 +11,38 @@ This project is affected by [parsec](https://hackage.haskell.org/package/parsec)
 
 
 ## Concept
-* Monad on C#
-* Pure/Immutable/Functional programming on C#
-* Pursues possibility of .NET JIT Compiler
+* Easy construction APIs with monad on C#
+* Pure/Immutable/Functional framework on C#
+* Replace regular expressions on your code (applicable from smallest to largest)
+* Most readable APIs source code
+
+
+## Overview
+* Supports parsing infinitely recursive data structures
+* Supports full backtracking: Parsing Expression Grammar (PEG) style parsing strategy
+* Supports parsing any token types of stream (e.g. binary stream, byte array)
+* Supports tokenization
+* Supports partial parsing
+* Faster running
+* Easy to expand Core APIs
+* Just enough error messages
+* No left-recursion support
+* No packrat parsing support (is increased parsing time in most cases)
 
 
 ## How to install
 
-
 ### from NuGet
-NuGet Package Manager Console:
-
-```powershell
-> Install-Package ParsecSharp
-```
-
 dotnet-cli:
 
 ```sh
 > dotnet add package ParsecSharp
+```
+
+NuGet Package Manager Console:
+
+```powershell
+> Install-Package ParsecSharp
 ```
 
 Download manually:
@@ -38,7 +51,7 @@ Download manually:
 
 
 ## Supported platform
-**Caution** This project targets only x64 runtime with RyuJit (Next-Gen .NET JIT Compiler). Not guaranteed to run on any other platforms.
+**Caution** This project targets only x64 runtime with RyuJit (Next-Gen .NET JIT Compiler, since .NET Framework 4.6). Not guaranteed to run on any other platforms.
 
 * netstandard1.0 (compatible with net45 or later, netcoreapp, uap, xamarin, and more)
 * netstandard1.6 (provides same API as netstandard1.0, with slightly performance improvement)
@@ -57,7 +70,7 @@ Here is examples:
 * [JsonParser implementation](ParsecSharp.Examples/JsonParser.cs)
 * [CsvParser implementation](ParsecSharp.Examples/CsvParser.cs)
 
-Documents are included in [UnitTest code](UnitTest.ParsecSharp/ParserTest.cs) (jp)
+Documents are included in [UnitTest code](UnitTest.ParsecSharp/ParserTest.cs) (jp).
 
 If you want more information, read [APIs source code](ParsecSharp/Parser), all is there.
 
