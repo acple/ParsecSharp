@@ -639,12 +639,6 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void ChainLTest()
         {
-            // ChainL は Chain を利用して簡単に作成できます。
-            Parser<TToken, T> ChainL<TToken, T>(Parser<TToken, T> token, Parser<TToken, Func<T, T, T>> function)
-                => token.Chain(x => from func in function
-                                    from y in token
-                                    select func(x, y));
-
             // 1個以上の値と演算子に交互にマッチし、指定した演算を左から順に適用するパーサを作成します。
 
             // '+'、または '-' にマッチし、それぞれ (x + y)、(x - y) の二項演算関数を返すパーサ。
@@ -657,7 +651,7 @@ namespace UnitTest.ParsecSharp
             var num = Many1(Digit()).ToInt();
 
             // num *( op num )
-            var parser = ChainL(num, op);
+            var parser = num.ChainL(op);
 
             var source = "10+5-3+1";
             parser.Parse(source).CaseOf(
@@ -678,17 +672,16 @@ namespace UnitTest.ParsecSharp
             parser.Parse(source4).CaseOf(
                 fail => { },
                 success => Assert.Fail(success.ToString()));
+
+            var source5 = "1-2+3+ABCD";
+            parser.Parse(source5).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is((1 - 2) + 3));
         }
 
         [TestMethod]
         public void ChainRTest()
         {
-            // ChainR は Chain を利用して簡単に作成できます。
-            Parser<TToken, T> ChainR<TToken, T>(Parser<TToken, T> token, Parser<TToken, Func<T, T, T>> function)
-                => token.Chain(x => from func in function
-                                    from y in ChainR(token, function)
-                                    select func(x, y));
-
             // 1個以上の値と演算子に交互にマッチし、指定した演算を右から順に適用するパーサを作成します
 
             // '+'、または '-' にマッチし、それぞれ (x + y)、(x - y) の二項演算関数を返すパーサ。
@@ -701,7 +694,7 @@ namespace UnitTest.ParsecSharp
             var num = Many1(Digit()).ToInt();
 
             // num *( op num )
-            var parser = ChainR(num, op);
+            var parser = num.ChainR(op);
 
             var source = "10+5-3+1";
             parser.Parse(source).CaseOf(
@@ -722,6 +715,11 @@ namespace UnitTest.ParsecSharp
             parser.Parse(source4).CaseOf(
                 fail => { },
                 success => Assert.Fail(success.ToString()));
+
+            var source5 = "1-2+3+ABCD";
+            parser.Parse(source5).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is(1 - (2 + 3)));
         }
 
         [TestMethod]
