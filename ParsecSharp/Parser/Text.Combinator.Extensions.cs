@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
@@ -20,9 +21,9 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, int> ToInt(this Parser<char, string> parser)
-            => parser.Bind(digits => (int.TryParse(digits, out var integer))
+            => parser.Bind(value => (int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var integer))
                 ? Pure(integer)
-                : Fail<int>($"Expected digits but was '{digits}'"));
+                : Fail<int>($"Expected digits but was '{value}'"));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, string> Join(this Parser<char, IEnumerable<string>> parser)
