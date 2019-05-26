@@ -16,6 +16,7 @@ namespace UnitTest.ParsecSharp
         public void CharTest()
         {
             // 指定した一文字にマッチするパーサを作成します。
+            // 汎用の Token パーサと同様の結果を得られます。char 特化のためパフォーマンス面でやや有利です。
 
             var parser = Char('a');
 

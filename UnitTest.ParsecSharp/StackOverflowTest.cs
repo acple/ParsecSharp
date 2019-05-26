@@ -13,6 +13,7 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void StackOverflowTest1()
         {
+            // 単純な再帰ループ
             var parser = SkipMany(Any<int>());
             var source = new int[1000000];
 
@@ -22,6 +23,7 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void StackOverflowTest2()
         {
+            // トークンが値型の場合
             var parser = Many(Any<(int, int, int)>());
             var source = Enumerable.Range(0, 1000000).Select(x => (x, x, x));
 
@@ -31,6 +33,7 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void StackOverflowTest3()
         {
+            // トークンが参照型の場合
             var parser = Many(Any<Tuple<int, int, int>>());
             var source = Enumerable.Range(0, 1000000).Select(x => Tuple.Create(x, x, x));
 

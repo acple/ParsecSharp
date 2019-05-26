@@ -20,7 +20,7 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void AnyTest()
         {
-            // 任意の値にマッチするパーサを作成します。
+            // 任意のトークンにマッチするパーサを作成します。
             // このパーサは入力が終端の場合にのみ失敗します。
 
             var parser = Any();
@@ -29,6 +29,39 @@ namespace UnitTest.ParsecSharp
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is('a'));
+        }
+
+        [TestMethod]
+        public void TokenTest()
+        {
+            // 指定したトークンにマッチするパーサを作成します。
+            // EqualityComparer<T>.Default を利用して一致判定を行います。
+
+            var source = _abcdEFGH;
+            var source2 = _123456;
+
+            // トークン 'a' にマッチするパーサ。
+            var parser = Token('a');
+
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is('a'));
+
+            parser.Parse(source2).CaseOf(
+                fail => { },
+                success => Assert.Fail(success.ToString()));
+
+            // IEqualityComparer<T> を受け取るオーバーロード。
+            // 'A' にマッチするが、大文字小文字を無視する。
+            var parser2 = Token('A', new AssertEqualityComparer<char>((x, y) => char.ToUpperInvariant(x) == char.ToUpperInvariant(y)));
+
+            parser2.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is('a')); // source 側の結果が得られる
+
+            parser2.Parse(source2).CaseOf(
+                fail => { },
+                success => Assert.Fail(success.ToString()));
         }
 
         [TestMethod]
@@ -47,8 +80,9 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void OneOfTest()
         {
-            // 指定したシーケンスに値が含まれている場合に成功するパーサを作成します。
+            // トークンが指定したシーケンスに含まれている場合に成功するパーサを作成します。
 
+            // トークンが '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e' のいずれかに該当した場合に成功するパーサ。
             var parser = OneOf("6789abcde");
 
             var source = _abcdEFGH;
@@ -61,8 +95,8 @@ namespace UnitTest.ParsecSharp
                 fail => { },
                 success => Assert.Fail(success.ToString()));
 
-            // IEnumerable<char>を取るオーバーロード。
-            var parser2 = OneOf("6789abcde".AsEnumerable());
+            // params char[] を取るオーバーロード。IEnumerable<char> も受け取れる。
+            var parser2 = OneOf('6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e');
             parser2.Parse(source).CaseOf(
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is('a'));
@@ -75,19 +109,57 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void NoneOfTest()
         {
-            // 指定したシーケンスに値が含まれていない場合に成功するパーサを作成します。
-
-            var parser = NoneOf("dcba987");
+            // トークンが指定したシーケンスに含まれていない場合に成功するパーサを作成します。
 
             var source = _abcdEFGH;
+            var source2 = _123456;
+
+            // トークンが 'd', 'c', 'b', 'a', '9', '8', '7' のいずれにも該当しない場合に成功するパーサ。
+            var parser = NoneOf("dcba987");
+
             parser.Parse(source).CaseOf(
                 fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected 'a<0x61>'"),
                 success => Assert.Fail(success.ToString()));
 
-            var source2 = _123456;
             parser.Parse(source2).CaseOf(
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is('1'));
+
+            // params char[] を取るオーバーロード。IEnumerable<char> も受け取れる。
+            var parser2 = NoneOf('d', 'c', 'b', 'a', '9', '8', '7');
+
+            parser2.Parse(source).CaseOf(
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected 'a<0x61>'"),
+                success => Assert.Fail(success.ToString()));
+
+            parser2.Parse(source2).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is('1'));
+        }
+
+        [TestMethod]
+        public void TakeTest()
+        {
+            // 指定した数だけ入力を読み進め、その結果をシーケンスとして返すパーサを作成します。
+
+            // 3 トークン読み進めるパーサ。
+            var parser = Take(3);
+
+            var source = _abcdEFGH;
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is('a', 'b', 'c'));
+
+            var source2 = _123456;
+            parser.Parse(source2).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is('1', '2', '3'));
+
+            // 残りの入力よりも大きい数値を指定していた場合は失敗します。
+            var parser2 = Take(9);
+            parser2.Parse(source).CaseOf(
+                fail => fail.Message.Is("Unexpected '<EndOfStream>'"),
+                success => Assert.Fail());
         }
 
         [TestMethod]
@@ -96,9 +168,11 @@ namespace UnitTest.ParsecSharp
             // 数を指定してスキップするパーサを作成します。
             // 0以下の数値を指定した場合、入力は消費されません。
 
+            var source = _abcdEFGH;
+
+            // 3 トークンスキップした後次のトークンを返すパーサ。
             var parser = Skip(3).Right(Any());
 
-            var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is('d'));
@@ -108,10 +182,10 @@ namespace UnitTest.ParsecSharp
                 fail => Assert.Fail(fail.ToString()),
                 success => { });
 
-            // 指定数スキップできない場合は失敗します。
+            // 指定数スキップできなかった場合は失敗します。
             var parser3 = Skip(9);
             parser3.Parse(source).CaseOf(
-                fail => { },
+                fail => fail.Message.Is("At Skip, State does not have enough length"),
                 success => Assert.Fail(success.ToString()));
         }
 
@@ -236,18 +310,30 @@ namespace UnitTest.ParsecSharp
             // parser によるパースを実行し、マッチしたかどうかを返す、常に成功するパーサを作成します。
             // parser のマッチング失敗時は入力は消費されません。
 
+            var source = _abcdEFGH;
+            var source2 = _123456;
+
             // Digit へのマッチングを行い、その値を破棄し、Any にマッチするパーサ。
             var parser = Optional(Digit()).Right(Any());
 
-            var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is('a'));
 
-            var source2 = _123456;
             parser.Parse(source2).CaseOf(
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is('2'));
+
+            // 失敗時に default value を結果とするオーバーロード。
+            var parser2 = Optional(Lower(), '\n');
+
+            parser2.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is('a'));
+
+            parser2.Parse(source2).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is('\n'));
         }
 
         [TestMethod]
@@ -389,6 +475,28 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
+        public void TakeTillTest()
+        {
+            // terminator にマッチするまで入力を読み、その結果をシーケンスとして返すパーサを作成します。
+            // terminator にマッチした結果は消費されます。消費したくない場合は LookAhead コンビネータを併用してください。
+
+            // 'E' にマッチするまで入力を読むパーサ。
+            var parser = TakeTill(Char('E'));
+
+            var source = _abcdEFGH;
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is('a', 'b', 'c', 'd'));
+
+            // 最後までマッチしない terminator を与えた場合、ストリームを最後まで読むことになるため、
+            // パフォーマンスに影響を与える場合があります。
+            var source2 = _123456;
+            parser.Parse(source2).CaseOf(
+                fail => { },
+                success => Assert.Fail(success.ToString()));
+        }
+
+        [TestMethod]
         public void MatchTest()
         {
             // parser にマッチするまでスキップし、parser にマッチした結果を返すパーサを作成します。
@@ -412,6 +520,50 @@ namespace UnitTest.ParsecSharp
             parser2.Parse(source).CaseOf(
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is("dE"));
+        }
+
+        [TestMethod]
+        public void DelayTest()
+        {
+            // 指定したパーサの組み立てをパース実行時まで遅延します。
+            // 参照保持としても使えるため、前方参照や再帰等を行う場合に必須となります。
+
+            // 'a' にマッチするパーサ。ただしパース実行時に組み立てられる。
+            var parser = Delay(() => Char('a'));
+
+            var source = _abcdEFGH;
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is('a'));
+
+            // Delay に渡す Func<T> はパース実行時に一度だけ Invoke されます。
+            // オブジェクトを再利用することでパフォーマンスを向上できます。
+            // 利用例の詳細については Examples を参照。
+        }
+
+        [TestMethod]
+        public void FixTest()
+        {
+            // ローカル変数上やパーサ定義式内に自己再帰パーサを構築する際のヘルパコンビネータです。
+            // C# の仕様上、単体で使用する場合は型情報が不足するため、型引数を与える必要があります。
+
+            // 任意の回数の "{}" に挟まれた一文字にマッチするパーサ。
+            var parser = Fix<char, char>(self => self.Or(Any()).Between(Char('{'), Char('}')));
+
+            var source = "{{{{{*}}}}}";
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is('*'));
+
+            // パラメータを取るオーバーロード。柔軟に再帰パーサを記述できます。
+            // 有名な回文パーサ。 S ::= "a" S "a" | "b" S "b" | ""
+            var parser2 = Fix<char, Parser<char, Unit>, Unit>((self, rest) =>
+                Char('a').Right(self(Char('a').Right(rest))) | Char('b').Right(self(Char('b').Right(rest))) | rest);
+
+            var source2 = "abbaabba";
+            parser2(EndOfInput()).Parse(source2).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is(Unit.Instance));
         }
 
         [TestMethod]
@@ -940,6 +1092,31 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
+        public void GuardTest()
+        {
+            // parser がマッチした結果に対して条件式で成功と失敗を分岐します。
+
+            // 数値にマッチし、100 以下の場合のみ成功とするパーサ。
+            var parser = Many1(DecDigit()).ToInt().Guard(x => x < 1000);
+
+            var source = _123456;
+            parser.Parse(source).CaseOf(
+                fail => fail.Message.Is("At Guard, A value '123456' does not satisfy condition"),
+                success => Assert.Fail(success.ToString()));
+
+            var source2 = "999";
+            parser.Parse(source2).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is(999));
+
+            // parser がマッチしない場合は検証自体が行われない。
+            var source3 = _abcdEFGH;
+            parser.Parse(source3).CaseOf(
+                fail => { },
+                success => Assert.Fail(success.ToString()));
+        }
+
+        [TestMethod]
         public void DoTest()
         {
             // パース実行時に定義したアクションを実行します。
@@ -980,31 +1157,6 @@ namespace UnitTest.ParsecSharp
             parser.Parse(source).CaseOf(
                 fail => fail.ToString().Is(message => message.Contains("Exception 'NullReferenceException' occurred:")),
                 success => Assert.Fail(success.ToString()));
-        }
-
-        [TestMethod]
-        public void FixTest()
-        {
-            // ローカル変数上やパーサ定義式内に自己再帰パーサを構築する際のヘルパコンビネータです。
-            // C# の仕様上、単体で使用する場合は型情報が不足するため、型引数を与える必要があります。
-
-            // 任意の回数の "{}" に挟まれた一文字にマッチするパーサ。
-            var parser = Fix<char, char>(self => self.Or(Any()).Between(Char('{'), Char('}')));
-
-            var source = "{{{{{*}}}}}";
-            parser.Parse(source).CaseOf(
-                fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Is('*'));
-
-            // パラメータを取るオーバーロード。柔軟に再帰パーサを記述できます。
-            // 有名な回文パーサ。 S ::= "a" S "a" | "b" S "b" | ""
-            var parser2 = Fix<char, Parser<char, Unit>, Unit>((self, rest) =>
-                Char('a').Right(self(Char('a').Right(rest))) | Char('b').Right(self(Char('b').Right(rest))) | rest);
-
-            var source2 = "abbaabba";
-            parser2(EndOfInput()).Parse(source2).CaseOf(
-                fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Is(Unit.Instance));
         }
 
         [TestMethod]
