@@ -7,6 +7,7 @@ using static ParsecSharp.Parser;
 namespace UnitTest.ParsecSharp
 {
     [TestClass]
+    [TestCategory("SkipWhenLiveUnitTesting")]
     public class StackOverflowTest
     {
         [TestMethod]
