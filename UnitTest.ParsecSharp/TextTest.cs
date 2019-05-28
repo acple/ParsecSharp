@@ -69,5 +69,26 @@ namespace UnitTest.ParsecSharp
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is("abcdE"));
         }
+
+        [TestMethod]
+        public void ToIntTest()
+        {
+            // 結果の文字列を数値に変換するコンビネータです。
+
+            var source = "1234abcd";
+
+            // [0 - 9] にマッチし int に変換したものを返すパーサ。
+            var parser = Many1(DecDigit()).ToInt();
+
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is(1234));
+
+            // 変換対象に数値以外の文字を含ませた場合、変換に失敗する。
+            var parser2 = Many1(Any()).ToInt();
+            parser2.Parse(source).CaseOf(
+                fail => fail.Message.Is("Expected digits but was '1234abcd'"),
+                success => Assert.Fail(success.ToString()));
+        }
     }
 }
