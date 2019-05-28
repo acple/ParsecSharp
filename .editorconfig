@@ -27,6 +27,9 @@ tab_width = 4
 indent_size = 2
 trim_trailing_whitespace = false
 
+# Project files
+[*.csproj]
+indent_size = 2
 
 #### .NET Coding Conventions ####
 
@@ -161,4 +164,3 @@ csharp_space_between_square_brackets = false
 # Wrapping preferences
 csharp_preserve_single_line_blocks = true
 csharp_preserve_single_line_statements = true
-
