@@ -1,9 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard1.6;netstandard1.0</TargetFrameworks>
     <LangVersion>8.0</LangVersion>
     <RootNamespace>ParsecSharp</RootNamespace>
-    <DebugType Condition="'$(Configuration)'=='Release'">none</DebugType>
+    <PathMap>$(MSBuildProjectDirectory)=.</PathMap>
+    <EmbedAllSources>true</EmbedAllSources>
+    <IncludeSymbols>true</IncludeSymbols>
     <PackageId>ParsecSharp</PackageId>
     <Version>2.0.0-pre</Version>
     <Authors>acple</Authors>
@@ -17,4 +20,11 @@
     <RepositoryBranch>v$(Version)</RepositoryBranch>
     <PackageTags>parser;combinator;linq;peg;functional</PackageTags>
   </PropertyGroup>
+
+  <Target Name="DeterministicAssemblyAttributesPath" BeforeTargets="GenerateTargetFrameworkMonikerAttribute">
+    <PropertyGroup>
+      <TargetFrameworkMonikerAssemblyAttributesPath>$(IntermediateOutputPath)AssemblyAttributes$(DefaultLanguageSourceExtension)</TargetFrameworkMonikerAssemblyAttributesPath>
+    </PropertyGroup>
+  </Target>
+
 </Project>
