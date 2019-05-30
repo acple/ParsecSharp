@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -22,6 +23,19 @@ namespace UnitTest.ParsecSharp
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is(55));
+        }
+
+        [TestMethod]
+        public void ByteStreamTest()
+        {
+            // System.IO.Stream をバイト列としてソースにする場合
+            var source = Enumerable.Repeat(new Random("seed".GetHashCode()), 999).Select(random => (byte)random.Next(256)).ToArray();
+            using var stream = new MemoryStream(source);
+            var parser = Many1(Any<byte>());
+
+            parser.Parse(stream).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is(source));
         }
 
         [TestMethod]
