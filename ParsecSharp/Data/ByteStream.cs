@@ -1,54 +1,84 @@
 using System;
 using System.IO;
+using System.Linq;
 using ParsecSharp.Internal;
 
 namespace ParsecSharp
 {
     public sealed class ByteStream : IParsecStateStream<byte>
     {
-        private readonly IDisposable disposable;
+        private const int MaxBufferSize = 1024;
+
+        private sealed class Buffer : IDisposable
+        {
+            private readonly IDisposable disposable;
+
+            private readonly Lazy<Buffer> _next;
+
+            public byte[] Current { get; }
+
+            public Buffer Next => this._next.Value;
+
+            public Buffer(Stream stream)
+            {
+                this.disposable = stream;
+                try
+                {
+                    this.Current = Enumerable.Repeat(stream, MaxBufferSize)
+                        .Select(stream => stream.ReadByte())
+                        .TakeWhile(x => x != -1)
+                        .Select(x => (byte)x)
+                        .ToArray();
+                }
+                catch
+                {
+                    this.Dispose();
+                    throw;
+                }
+                finally
+                {
+                    this._next = new Lazy<Buffer>(() => new Buffer(stream));
+                }
+            }
+
+            public void Dispose()
+                => this.disposable.Dispose();
+        }
+
+        private readonly Buffer buffer;
 
         private readonly LinearPosition _position;
 
-        private readonly Lazy<IParsecStateStream<byte>> _next;
+        private int Index => this._position.Column % MaxBufferSize;
 
-        public byte Current { get; }
+        public byte Current => this.buffer.Current[this.Index];
 
-        public bool HasValue { get; }
+        public bool HasValue => this.Index < this.buffer.Current.Length;
 
         public IPosition Position => this._position;
 
-        public IParsecStateStream<byte> Next => this._next.Value;
+        public IParsecStateStream<byte> Next => new ByteStream((this.Index == MaxBufferSize - 1) ? this.buffer.Next : this.buffer, this._position.Next());
 
-        public ByteStream(Stream source) : this(source, LinearPosition.Initial)
+        public ByteStream(Stream source) : this(new Buffer(source), LinearPosition.Initial)
         { }
 
-        private ByteStream(Stream source, LinearPosition position)
+        private ByteStream(Buffer buffer, LinearPosition position)
         {
-            this.disposable = source;
+            this.buffer = buffer;
             this._position = position;
-            try
-            {
-                var token = source.ReadByte();
-                this.HasValue = token != -1;
-                this.Current = (this.HasValue) ? (byte)token : default;
-            }
-            catch
-            {
-                this.Dispose();
-                throw;
-            }
-            finally
-            {
-                this._next = new Lazy<IParsecStateStream<byte>>(() => new ByteStream(source, position.Next()), false);
-            }
         }
 
         public void Dispose()
-            => this.disposable.Dispose();
+            => this.buffer.Dispose();
 
         public bool Equals(IParsecState<byte> other)
-            => ReferenceEquals(this, other);
+            => other is ByteStream state && this.buffer == state.buffer && this._position == state._position;
+
+        public sealed override bool Equals(object obj)
+            => obj is ByteStream state && this.buffer == state.buffer && this._position == state._position;
+
+        public sealed override int GetHashCode()
+            => this.buffer.GetHashCode() ^ this._position.GetHashCode();
 
         public sealed override string ToString()
             => (this.HasValue) ? this.Current.ToString() : "<EndOfStream>";
