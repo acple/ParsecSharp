@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using ParsecSharp.Internal;
 
@@ -45,6 +46,7 @@ namespace ParsecSharp
             this._index = index;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Buffer<char> GenerateBuffer(TextReader reader)
         {
             try

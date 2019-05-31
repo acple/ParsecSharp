@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using ParsecSharp.Internal;
 
 namespace ParsecSharp
@@ -35,6 +36,7 @@ namespace ParsecSharp
             this._position = position;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static Buffer<byte> GenerateBuffer(Stream stream)
         {
             try

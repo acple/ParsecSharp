@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using ParsecSharp.Internal;
 
 namespace ParsecSharp
@@ -38,6 +39,7 @@ namespace ParsecSharp
             this._position = position;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Buffer<TToken> GenerateBuffer(IEnumerator<TToken> enumerator)
         {
             try
