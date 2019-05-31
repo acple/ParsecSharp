@@ -15,9 +15,9 @@ namespace ParsecSharp
 
         private readonly Buffer<char> _buffer;
 
-        private readonly TextPosition _position;
-
         private readonly int _index;
+
+        private readonly TextPosition _position;
 
         public char Current => this._buffer[this._index];
 
@@ -26,8 +26,8 @@ namespace ParsecSharp
         public IPosition Position => this._position;
 
         public IParsecStateStream<char> Next => (this._index == MaxBufferSize - 1)
-            ? new TextStream(this.resource, this._buffer.Next, this._position.Next(this.Current), 0)
-            : new TextStream(this.resource, this._buffer, this._position.Next(this.Current), this._index + 1);
+            ? new TextStream(this.resource, this._buffer.Next, 0, this._position.Next(this.Current))
+            : new TextStream(this.resource, this._buffer, this._index + 1, this._position.Next(this.Current));
 
         public TextStream(Stream source) : this(source, Encoding.UTF8)
         { }
@@ -35,15 +35,15 @@ namespace ParsecSharp
         public TextStream(Stream source, Encoding encoding) : this(new StreamReader(source, encoding))
         { }
 
-        public TextStream(TextReader reader) : this(reader, CreateBuffer(reader), TextPosition.Initial, 0)
+        public TextStream(TextReader reader) : this(reader, CreateBuffer(reader), 0, TextPosition.Initial)
         { }
 
-        private TextStream(IDisposable resource, Buffer<char> buffer, TextPosition position, int index)
+        private TextStream(IDisposable resource, Buffer<char> buffer, int index, TextPosition position)
         {
             this.resource = resource;
             this._buffer = buffer;
-            this._position = position;
             this._index = index;
+            this._position = position;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
