@@ -29,7 +29,7 @@ namespace ParsecSharp
         public EnumerableStream(IEnumerable<TToken> source) : this(source.GetEnumerator())
         { }
 
-        public EnumerableStream(IEnumerator<TToken> enumerator) : this(enumerator, GenerateBuffer(enumerator), LinearPosition.Initial)
+        public EnumerableStream(IEnumerator<TToken> enumerator) : this(enumerator, CreateBuffer(enumerator), LinearPosition.Initial)
         { }
 
         private EnumerableStream(IDisposable resource, Buffer<TToken> buffer, LinearPosition position)
@@ -40,7 +40,7 @@ namespace ParsecSharp
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Buffer<TToken> GenerateBuffer(IEnumerator<TToken> enumerator)
+        private static Buffer<TToken> CreateBuffer(IEnumerator<TToken> enumerator)
         {
             try
             {
@@ -48,7 +48,7 @@ namespace ParsecSharp
                     .TakeWhile(enumerator => enumerator.MoveNext())
                     .Select(enumerator => enumerator.Current)
                     .ToArray();
-                return new Buffer<TToken>(buffer, () => GenerateBuffer(enumerator));
+                return new Buffer<TToken>(buffer, () => CreateBuffer(enumerator));
             }
             catch
             {

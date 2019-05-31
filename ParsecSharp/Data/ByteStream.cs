@@ -26,7 +26,7 @@ namespace ParsecSharp
 
         public IParsecStateStream<byte> Next => new ByteStream(this.resource, (this.Index == MaxBufferSize - 1) ? this._buffer.Next : this._buffer, this._position.Next());
 
-        public ByteStream(Stream source) : this(source, GenerateBuffer(source), LinearPosition.Initial)
+        public ByteStream(Stream source) : this(source, CreateBuffer(source), LinearPosition.Initial)
         { }
 
         private ByteStream(IDisposable resource, Buffer<byte> buffer, LinearPosition position)
@@ -37,7 +37,7 @@ namespace ParsecSharp
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static Buffer<byte> GenerateBuffer(Stream stream)
+        private static Buffer<byte> CreateBuffer(Stream stream)
         {
             try
             {
@@ -46,7 +46,7 @@ namespace ParsecSharp
                     .TakeWhile(x => x != -1)
                     .Select(x => (byte)x)
                     .ToArray();
-                return new Buffer<byte>(buffer, () => GenerateBuffer(stream));
+                return new Buffer<byte>(buffer, () => CreateBuffer(stream));
             }
             catch
             {

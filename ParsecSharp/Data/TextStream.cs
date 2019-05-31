@@ -35,7 +35,7 @@ namespace ParsecSharp
         public TextStream(Stream source, Encoding encoding) : this(new StreamReader(source, encoding))
         { }
 
-        public TextStream(TextReader reader) : this(reader, GenerateBuffer(reader), TextPosition.Initial, 0)
+        public TextStream(TextReader reader) : this(reader, CreateBuffer(reader), TextPosition.Initial, 0)
         { }
 
         private TextStream(IDisposable resource, Buffer<char> buffer, TextPosition position, int index)
@@ -47,7 +47,7 @@ namespace ParsecSharp
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Buffer<char> GenerateBuffer(TextReader reader)
+        private static Buffer<char> CreateBuffer(TextReader reader)
         {
             try
             {
@@ -56,7 +56,7 @@ namespace ParsecSharp
                     .TakeWhile(x => x != -1)
                     .Select(x => (char)x)
                     .ToArray();
-                return new Buffer<char>(buffer, () => GenerateBuffer(reader));
+                return new Buffer<char>(buffer, () => CreateBuffer(reader));
             }
             catch
             {
