@@ -8,7 +8,7 @@ namespace ParsecSharp
 {
     public sealed class TextStream : IParsecStateStream<char>
     {
-        private const int MaxBufferSize = 1024;
+        private const int MaxBufferSize = 2048;
 
         private readonly IDisposable resource;
 
