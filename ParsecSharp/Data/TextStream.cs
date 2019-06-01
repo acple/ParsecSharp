@@ -11,7 +11,7 @@ namespace ParsecSharp
     {
         private const int MaxBufferSize = 2048;
 
-        private readonly IDisposable resource;
+        private readonly IDisposable source;
 
         private readonly Buffer<char> _buffer;
 
@@ -26,8 +26,8 @@ namespace ParsecSharp
         public IPosition Position => this._position;
 
         public IParsecStateStream<char> Next => (this._index == MaxBufferSize - 1)
-            ? new TextStream(this.resource, this._buffer.Next, 0, this._position.Next(this.Current))
-            : new TextStream(this.resource, this._buffer, this._index + 1, this._position.Next(this.Current));
+            ? new TextStream(this.source, this._buffer.Next, 0, this._position.Next(this.Current))
+            : new TextStream(this.source, this._buffer, this._index + 1, this._position.Next(this.Current));
 
         public TextStream(Stream source) : this(source, Encoding.UTF8)
         { }
@@ -38,9 +38,9 @@ namespace ParsecSharp
         public TextStream(TextReader reader) : this(reader, CreateBuffer(reader), 0, TextPosition.Initial)
         { }
 
-        private TextStream(IDisposable resource, Buffer<char> buffer, int index, TextPosition position)
+        private TextStream(IDisposable source, Buffer<char> buffer, int index, TextPosition position)
         {
-            this.resource = resource;
+            this.source = source;
             this._buffer = buffer;
             this._index = index;
             this._position = position;
@@ -66,7 +66,7 @@ namespace ParsecSharp
         }
 
         public void Dispose()
-            => this.resource.Dispose();
+            => this.source.Dispose();
 
         public bool Equals(IParsecState<char> other)
             => other is TextStream state && this._buffer == state._buffer && this._position == state._position;

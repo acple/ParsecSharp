@@ -10,7 +10,7 @@ namespace ParsecSharp
     {
         private const int MaxBufferSize = 1024;
 
-        private readonly IDisposable resource;
+        private readonly IDisposable source;
 
         private readonly Buffer<TToken> _buffer;
 
@@ -24,7 +24,7 @@ namespace ParsecSharp
 
         public IPosition Position => this._position;
 
-        public IParsecStateStream<TToken> Next => new EnumerableStream<TToken>(this.resource, (this.Index == MaxBufferSize - 1) ? this._buffer.Next : this._buffer, this._position.Next());
+        public IParsecStateStream<TToken> Next => new EnumerableStream<TToken>(this.source, (this.Index == MaxBufferSize - 1) ? this._buffer.Next : this._buffer, this._position.Next());
 
         public EnumerableStream(IEnumerable<TToken> source) : this(source.GetEnumerator())
         { }
@@ -32,9 +32,9 @@ namespace ParsecSharp
         public EnumerableStream(IEnumerator<TToken> enumerator) : this(enumerator, CreateBuffer(enumerator), LinearPosition.Initial)
         { }
 
-        private EnumerableStream(IDisposable resource, Buffer<TToken> buffer, LinearPosition position)
+        private EnumerableStream(IDisposable source, Buffer<TToken> buffer, LinearPosition position)
         {
-            this.resource = resource;
+            this.source = source;
             this._buffer = buffer;
             this._position = position;
         }
@@ -58,7 +58,7 @@ namespace ParsecSharp
         }
 
         public void Dispose()
-            => this.resource.Dispose();
+            => this.source.Dispose();
 
         public bool Equals(IParsecState<TToken> other)
             => other is EnumerableStream<TToken> state && this._buffer == state._buffer && this._position == state._position;
