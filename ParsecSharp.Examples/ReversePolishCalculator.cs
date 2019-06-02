@@ -8,12 +8,12 @@ namespace ParsecSharp.Examples
     // 逆ポーランド記法の式をパーサで計算してみるネタ
     public static class ReversePolishCalculator
     {
-        // 整数または小数にマッチし、doubleにして返す
+        // 整数または小数にマッチし、double にして返す
         private static readonly Parser<char, double> num =
             Optional(Char('-'), '+')
-                .Append(Many1(Digit()))
-                .Append(Optional(Char('.').Append(Many1(Digit())), Enumerable.Empty<char>()))
-                .ToStr().Map(double.Parse);
+                .Append(Many1(DecDigit()))
+                .Append(Optional(Char('.').Append(Many1(DecDigit())), Enumerable.Empty<char>()))
+                .AsString().Map(double.Parse);
 
         // 四則演算子にマッチし、二項演算関数にマップ
         private static readonly Parser<char, Func<double, double, double>> op =

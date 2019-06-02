@@ -17,13 +17,13 @@ namespace ParsecSharp
             => parser.Map(x => { action(x); return x; });
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, T> Do<TToken, T>(this Parser<TToken, T> parser, Action<T> action, Action<IParsecState<TToken>> onFail)
+        public static Parser<TToken, T> Do<TToken, T>(this Parser<TToken, T> parser, Action<T> action, Action<Fail<TToken, T>> onFail)
             => parser.ModifyResult(
-                (_, fail) => { onFail(fail.State); return fail; },
+                (_, fail) => { onFail(fail); return fail; },
                 (_, success) => { action(success.Value); return success; });
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IParsecStateStream<TToken> Tokenize<TInput, TToken>(this IParsecStateStream<TInput> source, Parser<TInput, TToken> parser)
-            => new TokenizedStream<TInput, TToken>(parser, source);
+            => new TokenizedStream<TInput, TToken>(source, parser);
     }
 }

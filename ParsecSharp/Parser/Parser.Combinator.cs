@@ -36,23 +36,23 @@ namespace ParsecSharp
             => parser.Alternative(Pure<TToken, T>(resume));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, T> Optional<TToken, T>(Parser<TToken, T> parser, T value)
-            => Try(parser, value);
+        public static Parser<TToken, T> Optional<TToken, T>(Parser<TToken, T> parser, T defaultValue)
+            => Try(parser, defaultValue);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, Unit> Optional<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
-            => Try(parser.Ignore(), Unit.Instance);
+        public static Parser<TToken, bool> Optional<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
+            => Try(parser.Map(_ => true), false);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> Not<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
             => parser.ModifyResult(
                 (state, _) => Result.Success(Unit.Instance, state),
-                (state, _) => Result.Fail<TToken, Unit>(state));
+                (state, success) => Result.Fail<TToken, Unit>($"At {nameof(Not)}, Unexpected succeed '{success.ToString()}'", state));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> LookAhead<TToken, T>(Parser<TToken, T> parser)
             => parser.ModifyResult(
-                (_, fail) => fail,
+                (state, fail) => Result.Fail<TToken, T>($"At {nameof(LookAhead)}, {fail.ToString()}", state),
                 (state, success) => Result.Success(success.Value, state));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -61,15 +61,11 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Many1<TToken, T>(Parser<TToken, T> parser)
-            => parser.Bind(x => Many_(parser, new List<T> { x }));
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Parser<TToken, IEnumerable<T>> Many_<TToken, T>(Parser<TToken, T> parser, List<T> list)
-            => Try(parser.Bind(x => { list.Add(x); return Many_(parser, list); }), list);
+            => parser.Bind(x => ManyRec(parser, new List<T> { x }));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> SkipMany<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
-            => Fix<TToken, Unit>(self => Try(parser.Right(self), Unit.Instance));
+            => Fix<TToken, Unit>(self => parser.Next(_ => self, Unit.Instance));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> SkipMany1<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
@@ -77,16 +73,11 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> ManyTill<TToken, T, TIgnore>(Parser<TToken, T> parser, Parser<TToken, TIgnore> terminator)
-            => Pure<TToken, List<T>>(() => new List<T>()).Bind(list => ManyTill_(parser, terminator, list));
+            => Pure<TToken, List<T>>(() => new List<T>()).Bind(list => ManyTillRec(parser, terminator, list));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Many1Till<TToken, T, TIgnore>(Parser<TToken, T> parser, Parser<TToken, TIgnore> terminator)
-            => parser.Bind(x => ManyTill_(parser, terminator, new List<T> { x }));
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Parser<TToken, IEnumerable<T>> ManyTill_<TToken, T, TIgnore>(Parser<TToken, T> parser, Parser<TToken, TIgnore> terminator, List<T> list)
-            => terminator.Map(_ => list.AsEnumerable())
-                .Alternative(parser.Bind(x => { list.Add(x); return ManyTill_(parser, terminator, list); }));
+            => parser.Bind(x => ManyTillRec(parser, terminator, new List<T> { x }));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> SkipTill<TToken, TIgnore, T>(Parser<TToken, TIgnore> parser, Parser<TToken, T> terminator)

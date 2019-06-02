@@ -19,7 +19,7 @@ namespace ParsecSharp
             => 0;
 
         public override string ToString()
-            => "()";
+            => $"<{nameof(Unit)}>";
 
         public static bool operator ==(Unit _, Unit __)
             => true;

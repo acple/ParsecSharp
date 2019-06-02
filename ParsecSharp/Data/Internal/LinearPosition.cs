@@ -26,7 +26,7 @@ namespace ParsecSharp.Internal
             => obj is LinearPosition position && this == position;
 
         public override int GetHashCode()
-            => this.Column.GetHashCode();
+            => this.Column;
 
         public override string ToString()
             => $"Index: {this.Column.ToString()}";

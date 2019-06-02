@@ -7,12 +7,16 @@ namespace ParsecSharp
     public static partial class Parser
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, TResult> Bind<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, Parser<TToken, TResult>> function)
-            => new Bind<TToken, T, TResult>(parser, function);
+        public static Parser<TToken, TResult> Bind<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, Parser<TToken, TResult>> next)
+            => new Bind<TToken, T, TResult>(parser, next);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, T> Alternative<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, T> next)
-            => new Alternative<TToken, T>(parser, next);
+        public static Parser<TToken, TResult> Bind<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, Parser<TToken, TResult>> next, Func<Fail<TToken, T>, Parser<TToken, TResult>> resume)
+            => new Next<TToken, T, TResult>(parser, next, resume);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, T> Alternative<TToken, T>(this Parser<TToken, T> first, Parser<TToken, T> second)
+            => new Alternative<TToken, T>(first, second);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Alternative<TToken, T>(this Parser<TToken, T> parser, Func<Fail<TToken, T>, Parser<TToken, T>> resume)
@@ -24,6 +28,10 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Guard<TToken, T>(this Parser<TToken, T> parser, Func<T, bool> predicate)
-            => parser.Bind(x => (predicate(x)) ? Pure<TToken, T>(x) : Fail<TToken, T>());
+            => parser.Guard(predicate, x => $"A value '{x?.ToString() ?? "<null>"}' does not satisfy condition");
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, T> Guard<TToken, T>(this Parser<TToken, T> parser, Func<T, bool> predicate, Func<T, string> message)
+            => parser.Bind(x => (predicate(x)) ? Pure<TToken, T>(x) : Fail<TToken, T>($"At {nameof(Guard)}, {message(x)}"));
     }
 }

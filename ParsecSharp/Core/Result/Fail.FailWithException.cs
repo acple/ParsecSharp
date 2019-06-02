@@ -15,7 +15,7 @@ namespace ParsecSharp.Internal
             this._exception = exception;
         }
 
-        protected sealed override Fail<TToken, TNext> Convert<TNext>()
+        public sealed override Fail<TToken, TNext> Convert<TNext>()
             => new FailWithException<TToken, TNext>(this._exception, this.Rest);
     }
 }

@@ -12,7 +12,7 @@ namespace ParsecSharp
             this.Value = result;
         }
 
-        private Parser<TToken, TNext> Next<TNext>(Func<T, Parser<TToken, TNext>> next)
+        private Parser<TToken, TNext> TryNext<TNext>(Func<T, Parser<TToken, TNext>> next)
         {
             try
             {
@@ -25,7 +25,7 @@ namespace ParsecSharp
         }
 
         internal sealed override Result<TToken, TResult> Next<TNext, TResult>(Func<T, Parser<TToken, TNext>> next, Func<Result<TToken, TNext>, Result<TToken, TResult>> cont)
-            => this.Next(next).Run(this.Rest, cont);
+            => this.TryNext(next).Run(this.Rest, cont);
 
         public sealed override TResult CaseOf<TResult>(Func<Fail<TToken, T>, TResult> fail, Func<Success<TToken, T>, TResult> success)
             => success(this);

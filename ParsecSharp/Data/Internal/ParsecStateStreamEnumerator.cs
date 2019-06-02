@@ -6,33 +6,26 @@ namespace ParsecSharp.Internal
 {
     public sealed class ParsecStateStreamEnumerator<TToken> : IEnumerator<TToken>
     {
-        private IParsecStateStream<TToken> stream;
+        private readonly IParsecStateStream<TToken> _source;
 
-        public TToken Current { get; private set; }
+        private IParsecStateStream<TToken> current;
+
+        public TToken Current => this.current.Current;
 
         object IEnumerator.Current => this.Current;
 
         public ParsecStateStreamEnumerator(IParsecStateStream<TToken> stream)
         {
-            this.stream = stream;
+            this._source = stream;
         }
 
         public bool MoveNext()
-        {
-            if (!this.stream.HasValue)
-                return false;
-            this.Current = this.stream.Current;
-            this.stream = this.stream.Next;
-            return true;
-        }
+            => (this.current = this.current?.Next ?? this._source).HasValue;
 
         void IEnumerator.Reset()
             => throw new NotSupportedException();
 
         public void Dispose()
-        {
-            this.Current = default;
-            this.stream = EmptyStream<TToken>.Instance;
-        }
+            => this.current = EmptyStream<TToken>.Instance;
     }
 }

@@ -8,17 +8,17 @@ using static ParsecSharp.Text;
 
 namespace ParsecSharp.Examples
 {
-    // JSONパーサ RFC8259に忠実なつくり
+    // JSON パーサ、RFC8259 に忠実なつくり
     public static class JsonParser
     {
-        // パース結果をdynamicに詰める拡張メソッド。
+        // パース結果を dynamic に詰める拡張メソッド。
         private static Parser<TToken, dynamic> AsDynamic<TToken, T>(this Parser<TToken, T> parser)
             => parser.Map(x => x as dynamic);
 
         // JSON WhiteSpace にマッチし、その値は無視します。
         // ws = *( %x20 / %x09 / %x0A / %x0D ) ; Space / Horizontal tab / Line feed or New line / Carriage return
         private static Parser<char, Unit> WhiteSpace()
-            => SkipMany(Choice(Char(' '), Char('\t'), Char('\n'), Char('\r')));
+            => SkipMany(OneOf(" \t\n\r"));
 
         // JSON Object の開始を表す開き波括弧にマッチします。
         // begin-object = ws %x7B ws ; == '{'
@@ -52,7 +52,7 @@ namespace ParsecSharp.Examples
 
         // JSON の値にマッチします。
         // value = false / true / null / object / array / number / string
-        private static Parser<char, dynamic> Json()
+        private static Parser<char, dynamic> JsonValue()
             => Choice(
                 Delay(JsonString).AsDynamic(),
                 Delay(JsonObject).AsDynamic(),
@@ -67,19 +67,19 @@ namespace ParsecSharp.Examples
             => Any().Except(Char('"'), Char('\\'), Satisfy(x => x <= 0x1F));
 
         // エスケープされた文字にマッチします。
-        // 詳細はRFC8259をみてください。
+        // 詳細は RFC8259 をみてください。
         private static Parser<char, char> JsonEscapedChar()
             => Char('\\').Right(
                 Choice(
-                    Char('"').Map(_ => '"'),
-                    Char('\\').Map(_ => '\\'),
-                    Char('/').Map(_ => '/'),
+                    Char('"'),
+                    Char('\\'),
+                    Char('/'),
                     Char('b').Map(_ => '\b'),
                     Char('f').Map(_ => '\f'),
                     Char('n').Map(_ => '\n'),
                     Char('r').Map(_ => '\r'),
                     Char('t').Map(_ => '\t'),
-                    Char('u').Right(HexDigit().Repeat(4).ToStr())
+                    Char('u').Right(HexDigit().Repeat(4).AsString())
                         .Map(hex => (char)int.Parse(hex, NumberStyles.HexNumber))));
 
         // JSON String の一文字にマッチします。
@@ -90,7 +90,7 @@ namespace ParsecSharp.Examples
         // JSON String にマッチします。
         // string = quotation-mark *char quotation-mark
         private static Parser<char, string> JsonString()
-            => Many(JsonChar()).Between(Char('"')).ToStr();
+            => Many(JsonChar()).Between(Char('"')).AsString();
 
         // JSON Number の符号にマッチします。
         // minus = %x2D ; == '-'
@@ -100,23 +100,23 @@ namespace ParsecSharp.Examples
         // JSON Number の整数部にマッチします。
         // int = zero / ( digit1-9 *DIGIT )
         private static Parser<char, int> Int()
-            => Char('0').Map(_ => 0) | OneOf("123456789").Append(Many(Digit())).ToInt();
+            => Char('0').Map(_ => 0) | OneOf("123456789").Append(Many(DecDigit())).ToInt();
 
         // JSON Number の小数部にマッチします。
         // frac = decimal-point 1*DIGIT
         private static Parser<char, double> Frac()
-            => Char('.').Right(Many1(Digit())).ToStr()
+            => Char('.').Right(Many1(DecDigit())).AsString()
                 .Map(x => double.Parse("0." + x));
 
         // JSON Number の指数部にマッチします。
         // exp = e [ minus / plus ] 1*DIGIT
         private static Parser<char, int> Exp()
-            => from _ in OneOf("eE")
+            => from _ in CharIgnoreCase('e')
                from sign in Char('-').Or(Optional(Char('+'), '+'))
-               from num in Many1(Digit()).ToStr()
+               from num in Many1(DecDigit()).AsString()
                select int.Parse(sign + num);
 
-        // JSON Number にマッチします。doubleを返します。
+        // JSON Number にマッチします。double を返します。
         // number = [ minus ] int [ frac ] [ exp ]
         private static Parser<char, double> JsonNumber()
             => from sign in Sign()
@@ -138,30 +138,35 @@ namespace ParsecSharp.Examples
 
         // Key : Value ペアにマッチします。
         // member = string name-separator value
-        private static Parser<char, (string Key, dynamic Value)> KeyValuePair()
+        private static Parser<char, (string Key, dynamic Value)> KeyValue()
             => from key in JsonString()
                from _ in Colon()
-               from value in Json()
+               from value in JsonValue()
                select (key, value);
 
         // JSON Object にマッチします。
         // object = begin-object [ member *( value-separator member ) ] end-object
         private static Parser<char, Dictionary<string, dynamic>> JsonObject()
-            => KeyValuePair().SepBy(Comma())
+            => KeyValue().SepBy(Comma())
                 .Between(OpenBrace(), CloseBrace())
-                .Map(list => list.ToDictionary(x => x.Key, x => x.Value));
+                .Map(members => members.ToDictionary(x => x.Key, x => x.Value));
 
         // JSON Array にマッチします。
         // array = begin-array [ value *( value-separator value ) ] end-array
         private static Parser<char, dynamic[]> JsonArray()
-            => Json().SepBy(Comma()).Between(OpenBracket(), CloseBracket()).ToArray();
+            => JsonValue().SepBy(Comma()).Between(OpenBracket(), CloseBracket()).ToArray();
 
-        // stringをパースしてdynamicに詰めて返します。
+        // JSON ドキュメントにマッチします。
+        // JSON-text = ws value ws
+        private static Parser<char, dynamic> Json()
+            => JsonValue().Between(WhiteSpace()).End();
+
+        // string をパースして dynamic に詰めて返します。
         public static Result<char, dynamic> Parse(string json)
-            => Json().Between(WhiteSpace()).End().Parse(json);
+            => Json().Parse(json);
 
-        // Streamをパースしてdynamicに詰めて返します。テキストはUTF-8でエンコードされている必要があります。
+        // Stream をパースして dynamic に詰めて返します。テキストは UTF-8 でエンコードされている必要があります。
         public static Result<char, dynamic> Parse(Stream json)
-            => Json().Between(WhiteSpace()).End().Parse(json);
+            => Json().Parse(json);
     }
 }

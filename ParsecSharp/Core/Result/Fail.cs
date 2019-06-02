@@ -15,7 +15,7 @@ namespace ParsecSharp
         protected Fail(IParsecStateStream<TToken> state) : base(state)
         { }
 
-        protected abstract Fail<TToken, TNext> Convert<TNext>();
+        public abstract Fail<TToken, TNext> Convert<TNext>();
 
         internal sealed override Result<TToken, TResult> Next<TNext, TResult>(Func<T, Parser<TToken, TNext>> next, Func<Result<TToken, TNext>, Result<TToken, TResult>> cont)
             => cont(this.Convert<TNext>());

@@ -5,7 +5,7 @@ namespace ParsecSharp
 {
     public sealed class TokenizedStream<TInput, TToken> : IParsecStateStream<TToken>
     {
-        private readonly IDisposable disposable;
+        private readonly IDisposable source;
 
         private readonly LinearPosition _position;
 
@@ -19,21 +19,21 @@ namespace ParsecSharp
 
         public IParsecStateStream<TToken> Next => this._next.Value;
 
-        public TokenizedStream(Parser<TInput, TToken> parser, IParsecStateStream<TInput> source) : this(parser, source, LinearPosition.Initial)
+        public TokenizedStream(IParsecStateStream<TInput> source, Parser<TInput, TToken> parser) : this(source, parser, LinearPosition.Initial)
         { }
 
-        private TokenizedStream(Parser<TInput, TToken> parser, IParsecStateStream<TInput> source, LinearPosition position)
+        private TokenizedStream(IParsecStateStream<TInput> source, Parser<TInput, TToken> parser, LinearPosition position)
         {
-            this.disposable = source;
+            this.source = source;
             this._position = position;
             var (result, rest) = parser.ParsePartially(source);
             this.HasValue = result.CaseOf(_ => false, _ => true);
             this.Current = (this.HasValue) ? result.Value : default;
-            this._next = new Lazy<IParsecStateStream<TToken>>(() => new TokenizedStream<TInput, TToken>(parser, rest, position.Next()), false);
+            this._next = new Lazy<IParsecStateStream<TToken>>(() => new TokenizedStream<TInput, TToken>(rest, parser, position.Next()), false);
         }
 
         public void Dispose()
-            => this.disposable.Dispose();
+            => this.source.Dispose();
 
         public bool Equals(IParsecState<TToken> other)
             => ReferenceEquals(this, other);
@@ -41,6 +41,6 @@ namespace ParsecSharp
         public sealed override string ToString()
             => (this.HasValue)
                 ? this.Current?.ToString() ?? string.Empty
-                : string.Empty;
+                : "<EndOfStream>";
     }
 }

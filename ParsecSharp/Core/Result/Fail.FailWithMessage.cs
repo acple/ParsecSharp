@@ -9,7 +9,7 @@ namespace ParsecSharp.Internal
             this.Message = message;
         }
 
-        protected sealed override Fail<TToken, TNext> Convert<TNext>()
+        public sealed override Fail<TToken, TNext> Convert<TNext>()
             => new FailWithMessage<TToken, TNext>(this.Message, this.Rest);
     }
 }
