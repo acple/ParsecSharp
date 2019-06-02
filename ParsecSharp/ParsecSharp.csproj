@@ -8,7 +8,7 @@
     <EmbedAllSources>true</EmbedAllSources>
     <IncludeSymbols>true</IncludeSymbols>
     <PackageId>ParsecSharp</PackageId>
-    <Version>1.5.0</Version>
+    <Version>1.6.0</Version>
     <Authors>acple</Authors>
     <Description>The faster monadic parser combinator library for C#</Description>
     <Copyright>(c) 2015-2019 acple</Copyright>
