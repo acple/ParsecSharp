@@ -1034,6 +1034,26 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
+        public void WithConsumeTest()
+        {
+            // parser が入力を消費せずに成功した場合、それを失敗として扱うパーサを作成します。
+            // Many 等に入力を消費しない可能性のあるパーサを渡す場合に利用できます。
+
+            // Letter にマッチしなかった場合に発生する無限ループを回避したパーサ。
+            var parser = Many1(Many(Letter()).WithConsume().AsString());
+
+            var source = _abcdEFGH;
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is(_abcdEFGH));
+
+            var source2 = _123456;
+            parser.Parse(source2).CaseOf(
+                fail => fail.Message.Is("At Guard, A parser does not consume any input"),
+                success => Assert.Fail(success.ToString()));
+        }
+
+        [TestMethod]
         public void WithMessageTest()
         {
             // パース失敗時のエラーメッセージを書き換えます。
