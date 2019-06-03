@@ -92,6 +92,10 @@ namespace ParsecSharp
             => ManyTill(Any<TToken>(), terminator);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, IEnumerable<TToken>> Take1Till<TToken, TIgnore>(Parser<TToken, TIgnore> terminator)
+            => Many1Till(Any<TToken>(), terminator);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Match<TToken, T>(Parser<TToken, T> parser)
             => SkipTill(Any<TToken>(), parser);
 
