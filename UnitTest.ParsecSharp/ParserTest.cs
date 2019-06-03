@@ -1187,20 +1187,19 @@ namespace UnitTest.ParsecSharp
             // 3文字消費するパーサ。
             var parser = Any().Repeat(3).AsString();
 
-            using (var source = new StringStream(_abcdEFGH))
-            {
-                var (result, rest) = parser.ParsePartially(source);
-                result.Value.Is("abc");
+            using var source = new StringStream(_abcdEFGH);
 
-                var (result2, rest2) = parser.ParsePartially(rest);
-                result2.Value.Is("dEF");
+            var (result, rest) = parser.ParsePartially(source);
+            result.Value.Is("abc");
 
-                var (result3, rest3) = parser.ParsePartially(rest2);
-                result3.CaseOf(fail => { }, success => Assert.Fail(success.ToString()));
+            var (result2, rest2) = parser.ParsePartially(rest);
+            result2.Value.Is("dEF");
 
-                // 失敗時点のstateが返されることに注意する。
-                rest3.HasValue.IsFalse(); // 終端に到達したため失敗
-            }
+            var (result3, rest3) = parser.ParsePartially(rest2);
+            result3.CaseOf(fail => { }, success => Assert.Fail(success.ToString()));
+
+            // 失敗時点のstateが返されることに注意する。
+            rest3.HasValue.IsFalse(); // 終端に到達したため失敗
         }
     }
 }

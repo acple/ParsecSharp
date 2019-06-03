@@ -67,14 +67,12 @@ namespace UnitTest.ParsecSharp
         {
             // System.IO.Stream をソースにする場合
             var source = "The quick brown fox jumps over the lazy dog";
-            using (var stream = new MemoryStream(new UTF8Encoding(false).GetBytes(source)))
-            {
-                var parser = Many(Many1(Letter()).Between(Spaces()).AsString()).ToArray();
+            using var stream = new MemoryStream(new UTF8Encoding(false).GetBytes(source));
+            var parser = Many(Many1(Letter()).Between(Spaces()).AsString()).ToArray();
 
-                parser.Parse(stream).CaseOf(
-                    fail => Assert.Fail(fail.ToString()),
-                    success => success.Value.Is(source.Split(' ')));
-            }
+            parser.Parse(stream).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is(source.Split(' ')));
         }
 
         [TestMethod]
