@@ -185,7 +185,7 @@ namespace UnitTest.ParsecSharp
             // 指定数スキップできなかった場合は失敗します。
             var parser3 = Skip(9);
             parser3.Parse(source).CaseOf(
-                fail => fail.Message.Is("At Skip, State does not have enough length"),
+                fail => fail.Message.Is("At Skip, An input does not have enough length"),
                 success => Assert.Fail(success.ToString()));
         }
 
@@ -1049,7 +1049,7 @@ namespace UnitTest.ParsecSharp
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
-                fail => fail.Message.Is("At Guard, A parser does not consume any input"),
+                fail => fail.Message.Is("At Guard, A parser did not consume any input"),
                 success => Assert.Fail(success.ToString()));
         }
 
