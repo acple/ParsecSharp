@@ -100,6 +100,14 @@ namespace ParsecSharp
             => SkipTill(Any<TToken>(), parser);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, IEnumerable<TToken>> Quoted<TToken, TIgnore>(Parser<TToken, TIgnore> quote)
+            => Quoted(quote, quote);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, IEnumerable<TToken>> Quoted<TToken, TOpen, TClose>(Parser<TToken, TOpen> open, Parser<TToken, TClose> close)
+            => Any<TToken>().Quote(open, close);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Delay<TToken, T>(Func<Parser<TToken, T>> parser)
             => new Delay<TToken, T>(parser);
 

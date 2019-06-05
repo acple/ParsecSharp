@@ -105,6 +105,14 @@ namespace ParsecSharp
             => open.Right(parser.Left(close));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, IEnumerable<T>> Quote<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> quote)
+            => parser.Quote(quote, quote);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, IEnumerable<T>> Quote<TToken, T, TOpen, TClose>(this Parser<TToken, T> parser, Parser<TToken, TOpen> open, Parser<TToken, TClose> close)
+            => open.Right(ManyTill(parser, close));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Append<TToken, T>(this Parser<TToken, T> left, Parser<TToken, T> right)
             => left.Bind(x => right.Map(y => new[] { x, y }.AsEnumerable()));
 
