@@ -523,6 +523,30 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
+        public void QuotedTest()
+        {
+            // 前後のパーサにマッチする間のトークン列を取得するパーサを作成します。
+            // 文字列のようなトークンを取得する際に利用できます。
+            // トークン列のマッチに条件を付ける場合は Quote 拡張メソッドが利用できます。
+
+            // '<' と '>' に挟まれた文字列を取得するパーサ。
+            var parser = Quoted(Char('<'), Char('>')).AsString();
+
+            var source = "<abcd>";
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is("abcd"));
+
+            // '<' と '>' に挟まれた文字列、に挟まれた文字列を返すパーサ。
+            var parser2 = Quoted(parser).AsString();
+
+            var source2 = "<span>test</span>";
+            parser2.Parse(source2).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is("test"));
+        }
+
+        [TestMethod]
         public void DelayTest()
         {
             // 指定したパーサの組み立てをパース実行時まで遅延します。
@@ -974,7 +998,22 @@ namespace UnitTest.ParsecSharp
             parser2.Parse(@"""abCD1234""").CaseOf(
                 fail => { /* Many(Any()) が abCD1234" までマッチしてしまうため、close の " がマッチせずFailになる */ },
                 success => Assert.Fail(success.ToString()));
-            // この形にマッチするパーサを作成したいときは、ManyTill を使用してください。
+            // この形にマッチするパーサを作成したいときは、Quoted や ManyTill の使用を検討してください。
+        }
+
+        [TestMethod]
+        public void QuoteTest()
+        {
+            // 前後のパーサにマッチするまで parser に連続でマッチするパーサを作成します。
+
+            // '"' をエスケープ可能な文字列表現にマッチするパーサ。
+            var dquoteOrAny = String("\\\"").Map(_ => '\"') | Any();
+            var parser = dquoteOrAny.Quote(Char('"')).AsString();
+
+            var source = "\"abcd\\\"EFGH\"";
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is("abcd\"EFGH"));
         }
 
         [TestMethod]
