@@ -16,7 +16,7 @@ namespace ParsecSharp.Examples
     // ライブラリ提供のパーサ/コンビネータは一切の副作用を持ちません。
     public static class JsonParserOptimized
     {
-        private static Parser<TToken, dynamic> AsDynamic<TToken, T>(this Parser<TToken, T> parser)
+        private static Parser<TToken, dynamic?> AsDynamic<TToken, T>(this Parser<TToken, T> parser)
             => parser.Map(x => x as dynamic);
 
         private static readonly Parser<char, Unit> WhiteSpace =
@@ -40,7 +40,7 @@ namespace ParsecSharp.Examples
         private static readonly Parser<char, char> Colon =
             Char(':').Between(WhiteSpace);
 
-        private static readonly Parser<char, dynamic> JsonValue =
+        private static readonly Parser<char, dynamic?> JsonValue =
             Choice(
                 Delay(() => JsonString).AsDynamic(),
                 Delay(() => JsonObject).AsDynamic(),
@@ -98,30 +98,30 @@ namespace ParsecSharp.Examples
         private static readonly Parser<char, bool> JsonBool =
             String("false").Map(_ => false) | String("true").Map(_ => true);
 
-        private static readonly Parser<char, object> JsonNull =
+        private static readonly Parser<char, object?> JsonNull =
             String("null").Map(_ => null as object);
 
-        private static readonly Parser<char, (string Key, dynamic Value)> KeyValue =
+        private static readonly Parser<char, (string Key, dynamic? Value)> KeyValue =
             from key in JsonString
             from _ in Colon
             from value in JsonValue
             select (key, value);
 
-        private static readonly Parser<char, Dictionary<string, dynamic>> JsonObject =
+        private static readonly Parser<char, Dictionary<string, dynamic?>> JsonObject =
             KeyValue.SepBy(Comma)
                 .Between(OpenBrace, CloseBrace)
                 .Map(members => members.ToDictionary(x => x.Key, x => x.Value));
 
-        private static readonly Parser<char, dynamic[]> JsonArray =
+        private static readonly Parser<char, dynamic?[]> JsonArray =
             JsonValue.SepBy(Comma).Between(OpenBracket, CloseBracket).ToArray();
 
-        private static readonly Parser<char, dynamic> Json =
+        private static readonly Parser<char, dynamic?> Json =
             JsonValue.Between(WhiteSpace).End();
 
-        public static Result<char, dynamic> Parse(string json)
+        public static Result<char, dynamic?> Parse(string json)
             => Json.Parse(json);
 
-        public static Result<char, dynamic> Parse(Stream json)
+        public static Result<char, dynamic?> Parse(Stream json)
             => Json.Parse(json);
     }
 }

@@ -12,7 +12,7 @@ namespace ParsecSharp.Examples
     public static class JsonParser
     {
         // パース結果を dynamic に詰める拡張メソッド。
-        private static Parser<TToken, dynamic> AsDynamic<TToken, T>(this Parser<TToken, T> parser)
+        private static Parser<TToken, dynamic?> AsDynamic<TToken, T>(this Parser<TToken, T> parser)
             => parser.Map(x => x as dynamic);
 
         // JSON WhiteSpace にマッチし、その値は無視します。
@@ -52,7 +52,7 @@ namespace ParsecSharp.Examples
 
         // JSON の値にマッチします。
         // value = false / true / null / object / array / number / string
-        private static Parser<char, dynamic> JsonValue()
+        private static Parser<char, dynamic?> JsonValue()
             => Choice(
                 Delay(JsonString).AsDynamic(),
                 Delay(JsonObject).AsDynamic(),
@@ -133,12 +133,12 @@ namespace ParsecSharp.Examples
 
         // JSON Null にマッチします。
         // null = %x6e.75.6c.6c
-        private static Parser<char, object> JsonNull()
+        private static Parser<char, object?> JsonNull()
             => String("null").Map(_ => null as object);
 
         // Key : Value ペアにマッチします。
         // member = string name-separator value
-        private static Parser<char, (string Key, dynamic Value)> KeyValue()
+        private static Parser<char, (string Key, dynamic? Value)> KeyValue()
             => from key in JsonString()
                from _ in Colon()
                from value in JsonValue()
@@ -146,27 +146,27 @@ namespace ParsecSharp.Examples
 
         // JSON Object にマッチします。
         // object = begin-object [ member *( value-separator member ) ] end-object
-        private static Parser<char, Dictionary<string, dynamic>> JsonObject()
+        private static Parser<char, Dictionary<string, dynamic?>> JsonObject()
             => KeyValue().SepBy(Comma())
                 .Between(OpenBrace(), CloseBrace())
                 .Map(members => members.ToDictionary(x => x.Key, x => x.Value));
 
         // JSON Array にマッチします。
         // array = begin-array [ value *( value-separator value ) ] end-array
-        private static Parser<char, dynamic[]> JsonArray()
+        private static Parser<char, dynamic?[]> JsonArray()
             => JsonValue().SepBy(Comma()).Between(OpenBracket(), CloseBracket()).ToArray();
 
         // JSON ドキュメントにマッチします。
         // JSON-text = ws value ws
-        private static Parser<char, dynamic> Json()
+        private static Parser<char, dynamic?> Json()
             => JsonValue().Between(WhiteSpace()).End();
 
         // string をパースして dynamic に詰めて返します。
-        public static Result<char, dynamic> Parse(string json)
+        public static Result<char, dynamic?> Parse(string json)
             => Json().Parse(json);
 
         // Stream をパースして dynamic に詰めて返します。テキストは UTF-8 でエンコードされている必要があります。
-        public static Result<char, dynamic> Parse(Stream json)
+        public static Result<char, dynamic?> Parse(Stream json)
             => Json().Parse(json);
     }
 }
