@@ -20,7 +20,7 @@ namespace ParsecSharp.Internal
         }
 
         public bool MoveNext()
-            => (this.current = this.current?.Next ?? this._source).HasValue;
+            => (this.current = this.current?.Next ?? this._source).HasValue || (this.current = EmptyStream<TToken>.Instance).HasValue;
 
         void IEnumerator.Reset()
             => throw new NotSupportedException();
