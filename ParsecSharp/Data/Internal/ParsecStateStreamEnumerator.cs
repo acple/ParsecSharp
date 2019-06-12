@@ -8,11 +8,11 @@ namespace ParsecSharp.Internal
     {
         private readonly IParsecStateStream<TToken> _source;
 
-        private IParsecStateStream<TToken> current;
+        private IParsecStateStream<TToken>? current;
 
-        public TToken Current => this.current.Current;
+        public TToken Current => this.current!.Current;
 
-        object IEnumerator.Current => this.Current;
+        object? IEnumerator.Current => this.Current;
 
         public ParsecStateStreamEnumerator(IParsecStateStream<TToken> stream)
         {

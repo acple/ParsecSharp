@@ -4,7 +4,7 @@ namespace ParsecSharp.Internal
     {
         public static IParsecStateStream<TToken> Instance { get; } = new EmptyStream<TToken>();
 
-        public TToken Current => default;
+        public TToken Current => default!;
 
         public bool HasValue => false;
 
