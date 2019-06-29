@@ -85,7 +85,7 @@ namespace UnitTest.ParsecSharp
             var token = Many1(LetterOrDigit()).Between(Spaces()).AsString();
 
             var source = "The quick brown fox jumps over the lazy dog";
-            var stream = new StringStream(source);
+            using var stream = new StringStream(source);
             var tokenized = stream.Tokenize(token);
 
             // 任意のトークンにマッチし、その長さを返すパーサ。
