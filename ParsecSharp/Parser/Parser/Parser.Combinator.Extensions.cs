@@ -74,7 +74,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> ChainR<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function)
-            => Fix<TToken, T>(self => parser.Bind(x => Try(function.Bind(function => self.Map(y => function(x, y))), x)));
+            => Fix<TToken, T>(self => parser.Bind(x => function.Next(function => self.Next(y => function(x, y), x), x)));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, TAccum> FoldL<TToken, T, TAccum>(this Parser<TToken, T> parser, TAccum seed, Func<TAccum, T, TAccum> function)
