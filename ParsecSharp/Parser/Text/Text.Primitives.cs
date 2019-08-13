@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using ParsecSharp.Internal;
@@ -9,42 +8,6 @@ namespace ParsecSharp
 {
     public static partial class Text
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<char, char> Any()
-            => Any<char>();
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<char, Unit> EndOfInput()
-            => EndOfInput<char>();
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<char, IEnumerable<char>> Take(int count)
-            => Take<char>(count);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<char, IEnumerable<char>> TakeWhile(Func<char, bool> predicate)
-            => TakeWhile<char>(predicate);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<char, IEnumerable<char>> TakeWhile1(Func<char, bool> predicate)
-            => TakeWhile1<char>(predicate);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<char, Unit> Skip(int count)
-            => Skip<char>(count);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<char, Unit> SkipWhile(Func<char, bool> predicate)
-            => SkipWhile<char>(predicate);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<char, Unit> SkipWhile1(Func<char, bool> predicate)
-            => SkipWhile1<char>(predicate);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<char, char> Satisfy(Func<char, bool> predicate)
-            => Satisfy<char>(predicate);
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> Char(char token)
             => Satisfy(x => x == token);
@@ -148,14 +111,6 @@ namespace ParsecSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> Tab()
             => Char('\t');
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<char, char> OneOf(string candidates)
-            => Satisfy(x => candidates.IndexOf(x) != -1);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<char, char> NoneOf(string candidates)
-            => Satisfy(x => candidates.IndexOf(x) == -1);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, string> String(string text)
