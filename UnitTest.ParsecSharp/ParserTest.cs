@@ -62,6 +62,17 @@ namespace UnitTest.ParsecSharp
             parser2.Parse(source2).CaseOf(
                 fail => { },
                 success => Assert.Fail(success.ToString()));
+
+            // Func<TToken, TToken, bool> による比較を行うオーバーロード。
+            var parser3 = Token('①', (x, y) => char.GetNumericValue(x) == char.GetNumericValue(y));
+
+            parser3.Parse(source).CaseOf(
+                fail => { },
+                success => Assert.Fail(success.ToString()));
+
+            parser3.Parse(source2).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is('1'));
         }
 
         [TestMethod]
