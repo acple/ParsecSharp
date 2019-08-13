@@ -158,7 +158,7 @@ namespace UnitTest.ParsecSharp
             // 残りの入力よりも大きい数値を指定していた場合は失敗します。
             var parser2 = Take(9);
             parser2.Parse(source).CaseOf(
-                fail => fail.Message.Is("Unexpected '<EndOfStream>'"),
+                fail => fail.Message.Is("At Take, An input does not have enough length"),
                 success => Assert.Fail());
         }
 
