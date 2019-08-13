@@ -61,6 +61,6 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<byte, string> Utf8String(int count)
-            => Take(count).ToArray().Map(x => Encoding.UTF8.GetString(x, 0, x.Length));
+            => Take(count).Map(x => Encoding.UTF8.GetString(x.ToArray()));
     }
 }
