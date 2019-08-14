@@ -47,7 +47,7 @@ namespace ParsecSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<TToken>> Take<TToken>(int count)
             => Builder.Create<TToken, IEnumerable<TToken>>(state =>
-                (state.AsEnumerable().Take(count).ToArray() is var result && result.Count() == count)
+                (state.AsEnumerable().Take(count).ToArray() is var result && result.Length == count)
                     ? Result.Success(result.AsEnumerable(), state.Advance(count))
                     : Result.Fail<TToken, IEnumerable<TToken>>($"At {nameof(Take)}, An input does not have enough length", state));
 
