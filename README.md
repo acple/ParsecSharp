@@ -55,6 +55,7 @@ Download manually:
 
 * netstandard1.6 (compatible with net461 or later, netcoreapp, uap, xamarin, and more)
 * netstandard2.0 (provides same API as netstandard1.6, but less dependencies)
+* netstandard2.1 (depended some new features)
 
 
 ## Get started
