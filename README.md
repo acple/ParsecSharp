@@ -50,8 +50,6 @@ Download manually:
 
 
 ## Supported platform
-**Caution** This project targets only x64 runtime with RyuJit (Next-Gen .NET JIT Compiler, since .NET Framework 4.6). Not guaranteed to run on any other platforms.
-
 * netstandard1.6 (compatible with net461 or later, netcoreapp, uap, xamarin, and more)
 * netstandard2.0 (provides same API as netstandard1.6, but less dependencies)
 * netstandard2.1 (depended some new features)
