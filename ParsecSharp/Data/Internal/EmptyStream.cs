@@ -21,7 +21,7 @@ namespace ParsecSharp.Internal
         public bool Equals(IParsecState<TToken> other)
             => other is EmptyStream<TToken>;
 
-        public sealed override bool Equals(object obj)
+        public sealed override bool Equals(object? obj)
             => obj is EmptyStream<TToken>;
 
         public sealed override int GetHashCode()

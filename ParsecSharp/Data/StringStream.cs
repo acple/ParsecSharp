@@ -34,7 +34,7 @@ namespace ParsecSharp
         public bool Equals(IParsecState<char> other)
             => other is StringStream state && this._source == state._source && this._index == state._index;
 
-        public sealed override bool Equals(object obj)
+        public sealed override bool Equals(object? obj)
             => obj is StringStream state && this._source == state._source && this._index == state._index;
 
         public sealed override int GetHashCode()

@@ -1221,7 +1221,7 @@ namespace UnitTest.ParsecSharp
             // 例外による失敗に対して復旧は行われません。復旧を行う手段はありません。
 
             // null に対して ToString した結果を返し、失敗した場合に "success" を返すことを試みるパーサ。
-            var parser = Pure(null as object).Map(x => x!.ToString()).Or(Pure("success"));
+            var parser = Pure(null as object).Map(x => x!.ToString()!).Or(Pure("success"));
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(

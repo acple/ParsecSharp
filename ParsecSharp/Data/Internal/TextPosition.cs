@@ -25,7 +25,7 @@ namespace ParsecSharp.Internal
         public bool Equals(IPosition other)
             => other is TextPosition position && this == position;
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
             => obj is TextPosition position && this == position;
 
         public override int GetHashCode()

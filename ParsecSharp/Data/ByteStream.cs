@@ -61,7 +61,7 @@ namespace ParsecSharp
         public bool Equals(IParsecState<byte> other)
             => other is ByteStream state && this._buffer == state._buffer && this._position == state._position;
 
-        public sealed override bool Equals(object obj)
+        public sealed override bool Equals(object? obj)
             => obj is ByteStream state && this._buffer == state._buffer && this._position == state._position;
 
         public sealed override int GetHashCode()

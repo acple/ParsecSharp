@@ -63,7 +63,7 @@ namespace ParsecSharp
         public bool Equals(IParsecState<TToken> other)
             => other is EnumerableStream<TToken> state && this._buffer == state._buffer && this._position == state._position;
 
-        public sealed override bool Equals(object obj)
+        public sealed override bool Equals(object? obj)
             => obj is EnumerableStream<TToken> state && this._buffer == state._buffer && this._position == state._position;
 
         public sealed override int GetHashCode()
