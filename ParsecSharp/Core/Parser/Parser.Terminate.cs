@@ -11,7 +11,7 @@ namespace ParsecSharp.Internal
             this._message = message;
         }
 
-        protected internal sealed override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
+        internal sealed override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
             => new FailWithMessage<TToken, TResult>(this._message(state), state);
     }
 }

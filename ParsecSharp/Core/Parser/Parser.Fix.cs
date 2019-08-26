@@ -11,7 +11,7 @@ namespace ParsecSharp.Internal
             this._parser = function(this);
         }
 
-        protected internal sealed override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
+        internal sealed override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
             => this._parser.Run(state, cont);
     }
 }

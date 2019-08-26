@@ -24,7 +24,6 @@ This project is affected by [parsec](https://hackage.haskell.org/package/parsec)
 * Supports tokenization
 * Supports partial parsing
 * Faster running
-* Easy to expand Core APIs
 * Just enough error messages
 * No left-recursion support
 * No packrat parsing support (because is increased parsing time in most cases)

@@ -5,7 +5,7 @@ namespace ParsecSharp
 {
     public abstract class Parser<TToken, T>
     {
-        protected internal abstract Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont);
+        internal abstract Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont);
 
         public Result<TToken, T> Parse(IParsecStateStream<TToken> source)
         {
