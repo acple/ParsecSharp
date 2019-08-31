@@ -17,6 +17,14 @@ namespace ParsecSharp
             => Satisfy(x => char.ToUpperInvariant(x) == char.ToUpperInvariant(token));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<char, char> OneOf(string candidates)
+            => Satisfy(x => candidates.IndexOf(x) != -1);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<char, char> NoneOf(string candidates)
+            => Satisfy(x => candidates.IndexOf(x) == -1);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> Letter()
             => Satisfy(x => char.IsLetter(x));
 

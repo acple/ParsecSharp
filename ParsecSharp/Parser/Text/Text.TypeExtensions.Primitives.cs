@@ -42,13 +42,5 @@ namespace ParsecSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> Satisfy(Func<char, bool> predicate)
             => Satisfy<char>(predicate);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<char, char> OneOf(string candidates)
-            => Satisfy(x => candidates.IndexOf(x) != -1);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<char, char> NoneOf(string candidates)
-            => Satisfy(x => candidates.IndexOf(x) == -1);
     }
 }
