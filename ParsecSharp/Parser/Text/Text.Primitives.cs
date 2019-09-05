@@ -18,11 +18,19 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> OneOf(string candidates)
-            => Satisfy(x => candidates.IndexOf(x) != -1);
+            => Satisfy(candidates.Contains);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<char, char> OneOfIgnoreCase(string candidates)
+            => Satisfy(x => candidates.Contains(x, StringComparison.OrdinalIgnoreCase));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> NoneOf(string candidates)
-            => Satisfy(x => candidates.IndexOf(x) == -1);
+            => Satisfy(x => !candidates.Contains(x));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<char, char> NoneOfIgnoreCase(string candidates)
+            => Satisfy(x => candidates.Contains(x, StringComparison.OrdinalIgnoreCase));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> Letter()
