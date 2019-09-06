@@ -90,5 +90,35 @@ namespace UnitTest.ParsecSharp
                 fail => fail.Message.Is("Expected digits but was '1234abcd'"),
                 success => Assert.Fail(success.ToString()));
         }
+
+        [TestMethod]
+        public void OneOfIgnoreCaseTest()
+        {
+            var source = "z";
+
+            var parser = OneOfIgnoreCase("XYZ");
+
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is('z'));
+        }
+
+        [TestMethod]
+        public void NoneOfIgnoreCaseTest()
+        {
+            var source = "z";
+
+            var parser = NoneOfIgnoreCase("XYZ");
+
+            parser.Parse(source).CaseOf(
+                fail => { },
+                success => Assert.Fail(success.ToString()));
+
+            var parser2 = NoneOfIgnoreCase("ABCD");
+
+            parser2.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is('z'));
+        }
     }
 }

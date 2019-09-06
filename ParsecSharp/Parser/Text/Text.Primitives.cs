@@ -30,7 +30,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> NoneOfIgnoreCase(string candidates)
-            => Satisfy(x => candidates.Contains(x, StringComparison.OrdinalIgnoreCase));
+            => Satisfy(x => !candidates.Contains(x, StringComparison.OrdinalIgnoreCase));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> Letter()
