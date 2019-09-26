@@ -27,6 +27,10 @@ tab_width = 4
 indent_size = 2
 trim_trailing_whitespace = false
 
+# Yaml files
+[*.{yml,yaml}]
+indent_size = 2
+
 # Project files
 [*.csproj]
 indent_size = 2
