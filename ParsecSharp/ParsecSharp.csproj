@@ -22,7 +22,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BuildExtensions.DeterministicPdb" Version="0.0.1" PrivateAssets="All" />
+    <PackageReference Include="BuildExtensions.DeterministicPdb" Version="0.0.2" PrivateAssets="All" />
     <PackageReference Include="Fody" Version="6.0.0" PrivateAssets="All" />
     <PackageReference Include="TailCall.Fody" Version="1.0.2" PrivateAssets="All" />
   </ItemGroup>
