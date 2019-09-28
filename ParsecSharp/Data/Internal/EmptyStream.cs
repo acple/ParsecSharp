@@ -4,7 +4,7 @@ namespace ParsecSharp.Internal
     {
         public static IParsecStateStream<TToken> Instance { get; } = new EmptyStream<TToken>();
 
-        public TToken Current => default;
+        public TToken Current => default!;
 
         public bool HasValue => false;
 
@@ -21,13 +21,13 @@ namespace ParsecSharp.Internal
         public bool Equals(IParsecState<TToken> other)
             => other is EmptyStream<TToken>;
 
-        public sealed override bool Equals(object obj)
+        public sealed override bool Equals(object? obj)
             => obj is EmptyStream<TToken>;
 
         public sealed override int GetHashCode()
             => 0;
 
         public sealed override string ToString()
-            => "<EmptyStream>";
+            => "<EndOfStream>";
     }
 }

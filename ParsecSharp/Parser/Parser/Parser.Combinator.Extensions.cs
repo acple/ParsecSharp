@@ -9,18 +9,6 @@ namespace ParsecSharp
     public static partial class Parser
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, TResult> Next<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, Parser<TToken, TResult>> next, TResult result)
-            => parser.Bind(next, _ => Pure<TToken, TResult>(result));
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, TResult> Next<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, Parser<TToken, TResult>> next, Func<TResult> result)
-            => parser.Bind(next, _ => Pure<TToken, TResult>(result));
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, TResult> Next<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, TResult> result, Func<Fail<TToken, T>, Parser<TToken, TResult>> resume)
-            => parser.Bind(x => Pure<TToken, TResult>(result(x)), resume);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> SepBy<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> separator)
             => Try(parser.SepBy1(separator), Enumerable.Empty<T>());
 
@@ -66,7 +54,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> ChainR<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function)
-            => Fix<TToken, T>(self => parser.Bind(x => Try(function.Bind(function => self.Map(y => function(x, y))), x)));
+            => Fix<TToken, T>(self => parser.Bind(x => function.Next(function => self.Next(y => function(x, y), x), x)));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, TAccum> FoldL<TToken, T, TAccum>(this Parser<TToken, T> parser, TAccum seed, Func<TAccum, T, TAccum> function)
@@ -105,6 +93,14 @@ namespace ParsecSharp
             => open.Right(parser.Left(close));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, IEnumerable<T>> Quote<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> quote)
+            => parser.Quote(quote, quote);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, IEnumerable<T>> Quote<TToken, T, TOpen, TClose>(this Parser<TToken, T> parser, Parser<TToken, TOpen> open, Parser<TToken, TClose> close)
+            => open.Right(ManyTill(parser, close));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Append<TToken, T>(this Parser<TToken, T> left, Parser<TToken, T> right)
             => left.Bind(x => right.Map(y => new[] { x, y }.AsEnumerable()));
 
@@ -139,6 +135,10 @@ namespace ParsecSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T[]> ToArray<TToken, T>(this Parser<TToken, IEnumerable<T>> parser)
             => parser.Map(x => x.ToArray());
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, T> WithConsume<TToken, T>(this Parser<TToken, T> parser)
+            => GetPosition<TToken>().Bind(start => parser.Left(GetPosition<TToken>().Guard(end => !start.Equals(end), _ => $"A parser did not consume any input")));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> WithMessage<TToken, T>(this Parser<TToken, T> parser, string message)

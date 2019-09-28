@@ -1,12 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard1.6;netstandard1.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;netstandard2.0;netstandard1.6</TargetFrameworks>
     <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
     <RootNamespace>ParsecSharp</RootNamespace>
-    <PathMap>$(MSBuildProjectDirectory)=.</PathMap>
     <EmbedAllSources>true</EmbedAllSources>
     <IncludeSymbols>true</IncludeSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <PackageId>ParsecSharp</PackageId>
     <Version>1.6.0</Version>
     <Authors>acple</Authors>
@@ -21,10 +24,10 @@
     <PackageTags>parser;combinator;linq;peg;functional</PackageTags>
   </PropertyGroup>
 
-  <Target Name="DeterministicAssemblyAttributesPath" BeforeTargets="GenerateTargetFrameworkMonikerAttribute">
-    <PropertyGroup>
-      <TargetFrameworkMonikerAssemblyAttributesPath>$(IntermediateOutputPath)AssemblyAttributes$(DefaultLanguageSourceExtension)</TargetFrameworkMonikerAssemblyAttributesPath>
-    </PropertyGroup>
-  </Target>
+  <ItemGroup>
+    <PackageReference Include="BuildExtensions.DeterministicPdb" Version="0.0.2" PrivateAssets="All" />
+    <PackageReference Include="Fody" Version="6.0.0" PrivateAssets="All" />
+    <PackageReference Include="TailCall.Fody" Version="1.0.2" PrivateAssets="All" />
+  </ItemGroup>
 
 </Project>

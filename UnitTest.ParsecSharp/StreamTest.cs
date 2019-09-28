@@ -67,14 +67,12 @@ namespace UnitTest.ParsecSharp
         {
             // System.IO.Stream をソースにする場合
             var source = "The quick brown fox jumps over the lazy dog";
-            using (var stream = new MemoryStream(new UTF8Encoding(false).GetBytes(source)))
-            {
-                var parser = Many(Many1(Letter()).Between(Spaces()).AsString()).ToArray();
+            using var stream = new MemoryStream(new UTF8Encoding(false).GetBytes(source));
+            var parser = Many(Many1(Letter()).Between(Spaces()).AsString()).ToArray();
 
-                parser.Parse(stream).CaseOf(
-                    fail => Assert.Fail(fail.ToString()),
-                    success => success.Value.Is(source.Split(' ')));
-            }
+            parser.Parse(stream).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is(source.Split(' ')));
         }
 
         [TestMethod]
@@ -87,7 +85,7 @@ namespace UnitTest.ParsecSharp
             var token = Many1(LetterOrDigit()).Between(Spaces()).AsString();
 
             var source = "The quick brown fox jumps over the lazy dog";
-            var stream = new StringStream(source);
+            using var stream = new StringStream(source);
             var tokenized = stream.Tokenize(token);
 
             // 任意のトークンにマッチし、その長さを返すパーサ。

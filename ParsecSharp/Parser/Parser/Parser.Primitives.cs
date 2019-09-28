@@ -21,6 +21,10 @@ namespace ParsecSharp
             => Satisfy<TToken>(x => comparer.Equals(x, token));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, TToken> Token<TToken>(TToken token, Func<TToken, TToken, bool> comparer)
+            => Satisfy<TToken>(x => comparer(x, token));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> EndOfInput<TToken>()
             => Not(Any<TToken>()).WithMessage(fail => $"Expected <EndOfStream> but was '{fail.State.ToString()}'");
 
@@ -42,7 +46,10 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<TToken>> Take<TToken>(int count)
-            => Any<TToken>().Repeat(count);
+            => Builder.Create<TToken, IEnumerable<TToken>>(state =>
+                (state.AsEnumerable().Take(count).ToArray() is var result && result.Length == count)
+                    ? Result.Success(result.AsEnumerable(), state.Advance(count))
+                    : Result.Fail<TToken, IEnumerable<TToken>>($"At {nameof(Take)}, An input does not have enough length", state));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<TToken>> TakeWhile<TToken>(Func<TToken, bool> predicate)
@@ -56,7 +63,7 @@ namespace ParsecSharp
         public static Parser<TToken, Unit> Skip<TToken>(int count)
             => Builder.Create<TToken, Unit>(state => (state.AsEnumerable().Take(count).Count() == count)
                 ? Result.Success(Unit.Instance, state.Advance(count))
-                : Result.Fail<TToken, Unit>($"At {nameof(Skip)}, State does not have enough length", state));
+                : Result.Fail<TToken, Unit>($"At {nameof(Skip)}, An input does not have enough length", state));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> SkipWhile<TToken>(Func<TToken, bool> predicate)

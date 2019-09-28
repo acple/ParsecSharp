@@ -62,6 +62,17 @@ namespace UnitTest.ParsecSharp
             parser2.Parse(source2).CaseOf(
                 fail => { },
                 success => Assert.Fail(success.ToString()));
+
+            // Func<TToken, TToken, bool> による比較を行うオーバーロード。
+            var parser3 = Token('①', (x, y) => char.GetNumericValue(x) == char.GetNumericValue(y));
+
+            parser3.Parse(source).CaseOf(
+                fail => { },
+                success => Assert.Fail(success.ToString()));
+
+            parser3.Parse(source2).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is('1'));
         }
 
         [TestMethod]
@@ -158,7 +169,7 @@ namespace UnitTest.ParsecSharp
             // 残りの入力よりも大きい数値を指定していた場合は失敗します。
             var parser2 = Take(9);
             parser2.Parse(source).CaseOf(
-                fail => fail.Message.Is("Unexpected '<EndOfStream>'"),
+                fail => fail.Message.Is("At Take, An input does not have enough length"),
                 success => Assert.Fail());
         }
 
@@ -185,7 +196,7 @@ namespace UnitTest.ParsecSharp
             // 指定数スキップできなかった場合は失敗します。
             var parser3 = Skip(9);
             parser3.Parse(source).CaseOf(
-                fail => fail.Message.Is("At Skip, State does not have enough length"),
+                fail => fail.Message.Is("At Skip, An input does not have enough length"),
                 success => Assert.Fail(success.ToString()));
         }
 
@@ -520,6 +531,30 @@ namespace UnitTest.ParsecSharp
             parser2.Parse(source).CaseOf(
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is("dE"));
+        }
+
+        [TestMethod]
+        public void QuotedTest()
+        {
+            // 前後のパーサにマッチする間のトークン列を取得するパーサを作成します。
+            // 文字列のようなトークンを取得する際に利用できます。
+            // トークン列のマッチに条件を付ける場合は Quote 拡張メソッドが利用できます。
+
+            // '<' と '>' に挟まれた文字列を取得するパーサ。
+            var parser = Quoted(Char('<'), Char('>')).AsString();
+
+            var source = "<abcd>";
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is("abcd"));
+
+            // '<' と '>' に挟まれた文字列、に挟まれた文字列を返すパーサ。
+            var parser2 = Quoted(parser).AsString();
+
+            var source2 = "<span>test</span>";
+            parser2.Parse(source2).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is("test"));
         }
 
         [TestMethod]
@@ -974,7 +1009,22 @@ namespace UnitTest.ParsecSharp
             parser2.Parse(@"""abCD1234""").CaseOf(
                 fail => { /* Many(Any()) が abCD1234" までマッチしてしまうため、close の " がマッチせずFailになる */ },
                 success => Assert.Fail(success.ToString()));
-            // この形にマッチするパーサを作成したいときは、ManyTill を使用してください。
+            // この形にマッチするパーサを作成したいときは、Quoted や ManyTill の使用を検討してください。
+        }
+
+        [TestMethod]
+        public void QuoteTest()
+        {
+            // 前後のパーサにマッチするまで parser に連続でマッチするパーサを作成します。
+
+            // '"' をエスケープ可能な文字列表現にマッチするパーサ。
+            var dquoteOrAny = String("\\\"").Map(_ => '\"') | Any();
+            var parser = dquoteOrAny.Quote(Char('"')).AsString();
+
+            var source = "\"abcd\\\"EFGH\"";
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is("abcd\"EFGH"));
         }
 
         [TestMethod]
@@ -1030,6 +1080,26 @@ namespace UnitTest.ParsecSharp
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
                 fail => { },
+                success => Assert.Fail(success.ToString()));
+        }
+
+        [TestMethod]
+        public void WithConsumeTest()
+        {
+            // parser が入力を消費せずに成功した場合、それを失敗として扱うパーサを作成します。
+            // Many 等に入力を消費しない可能性のあるパーサを渡す場合に利用できます。
+
+            // Letter にマッチしなかった場合に発生する無限ループを回避したパーサ。
+            var parser = Many1(Many(Letter()).WithConsume().AsString());
+
+            var source = _abcdEFGH;
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is(_abcdEFGH));
+
+            var source2 = _123456;
+            parser.Parse(source2).CaseOf(
+                fail => fail.Message.Is("At Guard, A parser did not consume any input"),
                 success => Assert.Fail(success.ToString()));
         }
 
@@ -1151,7 +1221,7 @@ namespace UnitTest.ParsecSharp
             // 例外による失敗に対して復旧は行われません。復旧を行う手段はありません。
 
             // null に対して ToString した結果を返し、失敗した場合に "success" を返すことを試みるパーサ。
-            var parser = Pure(null as object).Map(x => x.ToString()).Or(Pure("success"));
+            var parser = Pure(null as object).Map(x => x!.ToString()!).Or(Pure("success"));
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
@@ -1167,20 +1237,19 @@ namespace UnitTest.ParsecSharp
             // 3文字消費するパーサ。
             var parser = Any().Repeat(3).AsString();
 
-            using (var source = new StringStream(_abcdEFGH))
-            {
-                var (result, rest) = parser.ParsePartially(source);
-                result.Value.Is("abc");
+            using var source = new StringStream(_abcdEFGH);
 
-                var (result2, rest2) = parser.ParsePartially(rest);
-                result2.Value.Is("dEF");
+            var (result, rest) = parser.ParsePartially(source);
+            result.Value.Is("abc");
 
-                var (result3, rest3) = parser.ParsePartially(rest2);
-                result3.CaseOf(fail => { }, success => Assert.Fail(success.ToString()));
+            var (result2, rest2) = parser.ParsePartially(rest);
+            result2.Value.Is("dEF");
 
-                // 失敗時点のstateが返されることに注意する。
-                rest3.HasValue.IsFalse(); // 終端に到達したため失敗
-            }
+            var (result3, rest3) = parser.ParsePartially(rest2);
+            result3.CaseOf(fail => { }, success => Assert.Fail(success.ToString()));
+
+            // 失敗時点のstateが返されることに注意する。
+            rest3.HasValue.IsFalse(); // 終端に到達したため失敗
         }
     }
 }

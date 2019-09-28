@@ -8,7 +8,7 @@ namespace ParsecSharp
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CaseOf<TToken, T>(this Result<TToken, T> result, Action<Fail<TToken, T>> fail, Action<Success<TToken, T>> success)
-            => result.CaseOf<object>(
+            => result.CaseOf<object?>(
                 x => { fail(x); return default; },
                 x => { success(x); return default; });
 

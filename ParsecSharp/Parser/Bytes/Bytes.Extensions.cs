@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace ParsecSharp
 {
-    public static class Bytes
+    public static partial class Bytes
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Result<byte, T> Parse<T>(this Parser<byte, T> parser, Stream source)

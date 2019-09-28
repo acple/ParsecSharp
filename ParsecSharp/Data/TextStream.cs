@@ -69,13 +69,13 @@ namespace ParsecSharp
             => this.source.Dispose();
 
         public bool Equals(IParsecState<char> other)
-            => other is TextStream state && this._buffer == state._buffer && this._position == state._position;
+            => other is TextStream state && this._buffer == state._buffer && this._index == state._index;
 
-        public sealed override bool Equals(object obj)
-            => obj is TextStream state && this._buffer == state._buffer && this._position == state._position;
+        public sealed override bool Equals(object? obj)
+            => obj is TextStream state && this._buffer == state._buffer && this._index == state._index;
 
         public sealed override int GetHashCode()
-            => this._buffer.GetHashCode() ^ this._position.GetHashCode();
+            => this._buffer.GetHashCode() ^ this._index.GetHashCode();
 
         public sealed override string ToString()
             => (this.HasValue) ? this.Current.ToReadableStringWithCharCode() : "<EndOfStream>";

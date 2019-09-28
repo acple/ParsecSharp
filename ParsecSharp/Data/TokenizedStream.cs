@@ -28,7 +28,7 @@ namespace ParsecSharp
             this._position = position;
             var (result, rest) = parser.ParsePartially(source);
             this.HasValue = result.CaseOf(_ => false, _ => true);
-            this.Current = (this.HasValue) ? result.Value : default;
+            this.Current = (this.HasValue) ? result.Value : default!;
             this._next = new Lazy<IParsecStateStream<TToken>>(() => new TokenizedStream<TInput, TToken>(rest, parser, position.Next()), false);
         }
 

@@ -1,4 +1,6 @@
 # ParsecSharp
+[![Nuget](https://img.shields.io/nuget/v/ParsecSharp)](https://www.nuget.org/packages/ParsecSharp/)
+
 The faster monadic parser combinator library for C#
 
 
@@ -24,10 +26,9 @@ This project is affected by [parsec](https://hackage.haskell.org/package/parsec)
 * Supports tokenization
 * Supports partial parsing
 * Faster running
-* Easy to expand Core APIs
 * Just enough error messages
 * No left-recursion support
-* No packrat parsing support (is increased parsing time in most cases)
+* No packrat parsing support (because is increased parsing time in most cases)
 
 
 ## How to install
@@ -51,11 +52,9 @@ Download manually:
 
 
 ## Supported platform
-**Caution** This project targets only x64 runtime with RyuJit (Next-Gen .NET JIT Compiler, since .NET Framework 4.6). Not guaranteed to run on any other platforms.
-
-* netstandard1.0 (compatible with net45 or later, netcoreapp, uap, xamarin, and more)
-* netstandard1.6 (provides same API as netstandard1.0, with slightly performance improvement)
+* netstandard1.6 (compatible with net461 or later, netcoreapp, uap, xamarin, and more)
 * netstandard2.0 (provides same API as netstandard1.6, but less dependencies)
+* netstandard2.1 (some performance improvements and some additional APIs that depends new runtime features)
 
 
 ## Get started
@@ -77,3 +76,6 @@ If you want more information, read [APIs source code](ParsecSharp/Parser), all i
 
 ## License
 This software is released under the MIT License, see [LICENSE](LICENSE).
+
+#### Using
+* [Fody](https://github.com/Fody/Fody) ([MIT](https://github.com/Fody/Fody/blob/master/License.txt)): Only for internal use, does NOT propagate license acceptance to users.

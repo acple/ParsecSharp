@@ -41,7 +41,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, bool> Optional<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
-            => Try(parser.Map(_ => true), false);
+            => parser.Next(_ => true, false);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> Not<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
@@ -92,8 +92,20 @@ namespace ParsecSharp
             => ManyTill(Any<TToken>(), terminator);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, IEnumerable<TToken>> Take1Till<TToken, TIgnore>(Parser<TToken, TIgnore> terminator)
+            => Many1Till(Any<TToken>(), terminator);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Match<TToken, T>(Parser<TToken, T> parser)
             => SkipTill(Any<TToken>(), parser);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, IEnumerable<TToken>> Quoted<TToken, TIgnore>(Parser<TToken, TIgnore> quote)
+            => Quoted(quote, quote);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, IEnumerable<TToken>> Quoted<TToken, TOpen, TClose>(Parser<TToken, TOpen> open, Parser<TToken, TClose> close)
+            => Any<TToken>().Quote(open, close);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Delay<TToken, T>(Func<Parser<TToken, T>> parser)

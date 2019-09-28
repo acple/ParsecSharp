@@ -1,0 +1,135 @@
+version: 2.1
+
+executors:
+  dotnet:
+    parameters: &sdk_version
+      sdk_version: { type: string, default: "3.0" }
+    docker:
+      - image: mcr.microsoft.com/dotnet/core/sdk:<< parameters.sdk_version >>-alpine
+    working_directory: /project
+    environment:
+      NUGET_PACKAGES: /project/packages
+
+jobs:
+  build:
+    executor: dotnet
+    steps:
+      - checkout
+      - run:
+          name: build
+          command: dotnet build -c Release --no-incremental -v=normal
+      - persist_to_workspace:
+          root: .
+          paths: ./*
+
+  create_testmaterial:
+    parameters: *sdk_version
+    executor: dotnet
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: publish
+          command: >-
+            dotnet publish -c Release --no-build UnitTest.ParsecSharp
+            -f netcoreapp<< parameters.sdk_version >>
+            --output ./testmaterial<< parameters.sdk_version >>
+      - persist_to_workspace:
+          root: .
+          paths: ./testmaterial<< parameters.sdk_version >>
+
+  unittest:
+    parameters: *sdk_version
+    executor:
+      name: dotnet
+      sdk_version: << parameters.sdk_version >>
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: run test
+          command: >-
+            dotnet vstest --logger:"trx;LogFileName=TestResult.xml"
+            testmaterial<< parameters.sdk_version >>/UnitTest.ParsecSharp.dll
+      - store_artifacts:
+          path: ./TestResults/TestResult.xml
+          destination: TestResult_netcoreapp<< parameters.sdk_version >>.xml
+
+  pack:
+    executor: dotnet
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: pack
+          command: dotnet pack -c Release ParsecSharp --output ./nuget
+      - store_artifacts:
+          path: ./nuget
+      - persist_to_workspace:
+          root: ./nuget
+          paths: ./ParsecSharp.*.symbols.nupkg
+
+  push:
+    executor: dotnet
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: push to NuGet Gallery
+          command: >-
+            dotnet nuget push ./ParsecSharp.*.symbols.nupkg
+            -s https://www.nuget.org -k ${NUGET_APIKEY}
+
+workflows:
+  workflow:
+    jobs:
+      - build:
+          filters: &default_filter
+            branches:
+              only:
+                - master
+                - dev
+            tags:
+              only: /^v\d+\.\d+\.\d+(-.+)?$/
+
+      - create_testmaterial:
+          name: testmaterial3.0
+          requires:
+            - build
+          filters: *default_filter
+
+      - unittest:
+          name: unittest3.0
+          requires:
+            - testmaterial3.0
+          filters: *default_filter
+
+      - create_testmaterial:
+          name: testmaterial2.2
+          sdk_version: "2.2"
+          requires:
+            - build
+          filters: *default_filter
+
+      - unittest:
+          name: unittest2.2
+          sdk_version: "2.2"
+          requires:
+            - testmaterial2.2
+          filters: *default_filter
+
+      - pack:
+          requires:
+            - build
+          filters: *default_filter
+
+      - push:
+          context: nuget-publish
+          requires:
+            - pack
+            - unittest2.2
+            - unittest3.0
+          filters:
+            <<: *default_filter
+            branches:
+              ignore: /.*/
