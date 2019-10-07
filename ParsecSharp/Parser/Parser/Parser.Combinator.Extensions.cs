@@ -138,7 +138,11 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> WithConsume<TToken, T>(this Parser<TToken, T> parser)
-            => GetPosition<TToken>().Bind(start => parser.Left(GetPosition<TToken>().Guard(end => !start.Equals(end), _ => $"A parser did not consume any input")));
+            => parser.WithConsume(_ => "A parser did not consume any input");
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, T> WithConsume<TToken, T>(this Parser<TToken, T> parser, Func<IPosition, string> message)
+            => GetPosition<TToken>().Bind(start => parser.Left(GetPosition<TToken>().Guard(end => !start.Equals(end), message)));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> WithMessage<TToken, T>(this Parser<TToken, T> parser, string message)

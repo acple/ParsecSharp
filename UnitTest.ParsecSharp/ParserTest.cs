@@ -1099,7 +1099,7 @@ namespace UnitTest.ParsecSharp
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
-                fail => fail.Message.Is("At Guard, A parser did not consume any input"),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): At Guard, A parser did not consume any input"),
                 success => Assert.Fail(success.ToString()));
         }
 
