@@ -54,12 +54,12 @@ namespace ParsecSharp.Examples
         // value = false / true / null / object / array / number / string
         private static Parser<char, dynamic?> JsonValue()
             => Choice(
-                Delay(JsonString).AsDynamic(),
-                Delay(JsonObject).AsDynamic(),
-                Delay(JsonArray).AsDynamic(),
-                Delay(JsonNumber).AsDynamic(),
-                Delay(JsonBool).AsDynamic(),
-                Delay(JsonNull).AsDynamic());
+                Delay(JsonString).AsDynamic().AbortIfEntered(),
+                Delay(JsonObject).AsDynamic().AbortIfEntered(),
+                Delay(JsonArray).AsDynamic().AbortIfEntered(),
+                Delay(JsonNumber).AsDynamic().AbortIfEntered(),
+                Delay(JsonBool).AsDynamic().AbortIfEntered(),
+                Delay(JsonNull).AsDynamic()).AbortIfEntered();
 
         // エスケープ不要な文字にマッチします。
         // unescaped = %x20-21 / %x23-5B / %x5D-10FFFF ; %x22 == '"', %x5C == '\'
