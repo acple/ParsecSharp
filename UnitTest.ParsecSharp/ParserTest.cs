@@ -1157,7 +1157,7 @@ namespace UnitTest.ParsecSharp
 
             var source3 = _commanum;
             parser.Parse(source3).CaseOf(
-                fail => fail.Message.Is("abort1234"), // 123まで入力を消費して失敗したため復旧が行われない
+                fail => fail.Message.Is("At AbortIfEntered, abort1234"), // 123まで入力を消費して失敗したため復旧が行われない
                 success => Assert.Fail(success.ToString()));
         }
 
