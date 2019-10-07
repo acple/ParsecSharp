@@ -169,7 +169,7 @@ namespace UnitTest.ParsecSharp
             // 残りの入力よりも大きい数値を指定していた場合は失敗します。
             var parser2 = Take(9);
             parser2.Parse(source).CaseOf(
-                fail => fail.Message.Is("At Take, An input does not have enough length"),
+                fail => fail.Message.Is("At Take -> An input does not have enough length"),
                 success => Assert.Fail());
         }
 
@@ -196,7 +196,7 @@ namespace UnitTest.ParsecSharp
             // 指定数スキップできなかった場合は失敗します。
             var parser3 = Skip(9);
             parser3.Parse(source).CaseOf(
-                fail => fail.Message.Is("At Skip, An input does not have enough length"),
+                fail => fail.Message.Is("At Skip -> An input does not have enough length"),
                 success => Assert.Fail(success.ToString()));
         }
 
@@ -362,7 +362,7 @@ namespace UnitTest.ParsecSharp
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): At LookAhead, Parser Fail (Line: 1, Column: 2): Unexpected '2<0x32>'"),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): At LookAhead -> Parser Fail (Line: 1, Column: 2): Unexpected '2<0x32>'"),
                 success => Assert.Fail(success.ToString()));
         }
 
@@ -1099,7 +1099,7 @@ namespace UnitTest.ParsecSharp
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): At Guard, A parser did not consume any input"),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): At Guard -> At WithConsume -> A parser did not consume any input"),
                 success => Assert.Fail(success.ToString()));
         }
 
@@ -1157,7 +1157,7 @@ namespace UnitTest.ParsecSharp
 
             var source3 = _commanum;
             parser.Parse(source3).CaseOf(
-                fail => fail.Message.Is("At AbortIfEntered, abort1234"), // 123まで入力を消費して失敗したため復旧が行われない
+                fail => fail.Message.Is("At AbortIfEntered -> abort1234"), // 123まで入力を消費して失敗したため復旧が行われない
                 success => Assert.Fail(success.ToString()));
         }
 
@@ -1171,7 +1171,7 @@ namespace UnitTest.ParsecSharp
 
             var source = _123456;
             parser.Parse(source).CaseOf(
-                fail => fail.Message.Is("At Guard, A value '123456' does not satisfy condition"),
+                fail => fail.Message.Is("At Guard -> A value '123456' does not satisfy condition"),
                 success => Assert.Fail(success.ToString()));
 
             var source2 = "999";

@@ -52,6 +52,6 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Guard<TToken, T>(this Parser<TToken, T> parser, Func<T, bool> predicate, Func<T, string> message)
-            => parser.Bind(x => (predicate(x)) ? Pure<TToken, T>(x) : Fail<TToken, T>($"At {nameof(Guard)}, {message(x)}"));
+            => parser.Bind(x => (predicate(x)) ? Pure<TToken, T>(x) : Fail<TToken, T>($"At {nameof(Guard)} -> {message(x)}"));
     }
 }

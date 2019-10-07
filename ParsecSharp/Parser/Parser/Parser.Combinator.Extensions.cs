@@ -142,7 +142,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> WithConsume<TToken, T>(this Parser<TToken, T> parser, Func<IPosition, string> message)
-            => GetPosition<TToken>().Bind(start => parser.Left(GetPosition<TToken>().Guard(end => !start.Equals(end), message)));
+            => GetPosition<TToken>().Bind(start => parser.Left(GetPosition<TToken>().Guard(end => !start.Equals(end), position => $"At {nameof(WithConsume)} -> {message(position)}")));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> WithMessage<TToken, T>(this Parser<TToken, T> parser, string message)
@@ -163,6 +163,6 @@ namespace ParsecSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> AbortIfEntered<TToken, T>(this Parser<TToken, T> parser, Func<Fail<TToken, T>, string> message)
             => parser.Alternative(fail => GetPosition<TToken>()
-                .Bind(position => (position.Equals(fail.State.Position)) ? Fail<TToken, T>(fail.Message) : Abort<TToken, T>(_ => $"At {nameof(AbortIfEntered)}, {message(fail)}")));
+                .Bind(position => (position.Equals(fail.State.Position)) ? Fail<TToken, T>(fail.Message) : Abort<TToken, T>(_ => $"At {nameof(AbortIfEntered)} -> {message(fail)}")));
     }
 }
