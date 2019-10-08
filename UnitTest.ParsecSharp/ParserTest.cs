@@ -914,7 +914,7 @@ namespace UnitTest.ParsecSharp
         {
             // 初期値と集計関数を引数にとり、パースした結果を左から集計するパーサを作成します。
 
-            // 0個以上の Digit にマッチし、初期値10に対して左から (x => accum - x) を繰り返し適用するパーサ。
+            // 0個以上の Digit にマッチし、初期値10に対して左から (x => accumulator - x) を繰り返し適用するパーサ。
             var parser = Digit().AsString().ToInt().FoldL(10, (x, y) => x - y);
 
             var source = "12345";
@@ -928,7 +928,7 @@ namespace UnitTest.ParsecSharp
         {
             // 初期値と集計関数を引数にとり、パース結果を右から集計するパーサを作成します。
 
-            // 0個以上の Digit にマッチし、初期値10に対して右から (x => x - accum) を繰り返し適用するパーサ。
+            // 0個以上の Digit にマッチし、初期値10に対して右から (x => x - accumulator) を繰り返し適用するパーサ。
             var parser = Digit().AsString().ToInt().FoldR(10, (x, y) => x - y);
 
             var source = "12345";
