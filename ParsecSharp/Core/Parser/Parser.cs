@@ -24,7 +24,7 @@ namespace ParsecSharp
             }
             catch (Exception exception)
             {
-                return new FailWithException<TToken, T>(exception, source);
+                return new FailWithException<TToken, T>(exception, EmptyStream<TToken>.Instance);
             }
         }
 

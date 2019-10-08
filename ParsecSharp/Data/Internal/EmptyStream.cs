@@ -8,7 +8,7 @@ namespace ParsecSharp.Internal
 
         public bool HasValue => false;
 
-        public IPosition Position => LinearPosition.Initial;
+        public IPosition Position => EmptyPosition.Initial;
 
         public IParsecStateStream<TToken> Next => this;
 
