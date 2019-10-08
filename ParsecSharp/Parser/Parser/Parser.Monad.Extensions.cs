@@ -24,7 +24,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, TResult> Map<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, TResult> function)
-            => parser.Bind(x => Pure<TToken, TResult>(function(x)));
+            => new Map<TToken, T, TResult>(parser, function);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, TResult> Next<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, Parser<TToken, TResult>> next, TResult result)
