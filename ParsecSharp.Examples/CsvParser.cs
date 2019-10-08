@@ -41,7 +41,7 @@ namespace ParsecSharp.Examples
 
         // record = field *( COMMA field )
         private static Parser<char, string[]> Record()
-            => Field().SepBy1(Comma()).ToArray();
+            => Field().SeparatedBy1(Comma()).ToArray();
 
         // file = [header CRLF] record *(CRLF record) [CRLF]
         // header は無視して record と同一に扱う

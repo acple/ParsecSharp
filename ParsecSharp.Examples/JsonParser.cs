@@ -147,14 +147,14 @@ namespace ParsecSharp.Examples
         // JSON Object にマッチします。
         // object = begin-object [ member *( value-separator member ) ] end-object
         private static Parser<char, Dictionary<string, dynamic?>> JsonObject()
-            => KeyValue().SepBy(Comma())
+            => KeyValue().SeparatedBy(Comma())
                 .Between(OpenBrace(), CloseBrace())
                 .Map(members => members.ToDictionary(x => x.Key, x => x.Value));
 
         // JSON Array にマッチします。
         // array = begin-array [ value *( value-separator value ) ] end-array
         private static Parser<char, dynamic?[]> JsonArray()
-            => JsonValue().SepBy(Comma()).Between(OpenBracket(), CloseBracket()).ToArray();
+            => JsonValue().SeparatedBy(Comma()).Between(OpenBracket(), CloseBracket()).ToArray();
 
         // JSON ドキュメントにマッチします。
         // JSON-text = ws value ws

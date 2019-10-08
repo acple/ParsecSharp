@@ -9,11 +9,11 @@ namespace ParsecSharp
     public static partial class Parser
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, IEnumerable<T>> SepBy<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> separator)
-            => Try(parser.SepBy1(separator), Enumerable.Empty<T>());
+        public static Parser<TToken, IEnumerable<T>> SeparatedBy<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> separator)
+            => Try(parser.SeparatedBy1(separator), Enumerable.Empty<T>());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, IEnumerable<T>> SepBy1<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> separator)
+        public static Parser<TToken, IEnumerable<T>> SeparatedBy1<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> separator)
             => parser.Bind(x => ManyRec(separator.Right(parser), new List<T> { x }));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -25,12 +25,12 @@ namespace ParsecSharp
             => Many1(parser.Left(separator));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, IEnumerable<T>> SepEndBy<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> separator)
-            => Try(parser.SepEndBy1(separator), Enumerable.Empty<T>());
+        public static Parser<TToken, IEnumerable<T>> SeparatedEndBy<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> separator)
+            => Try(parser.SeparatedEndBy1(separator), Enumerable.Empty<T>());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, IEnumerable<T>> SepEndBy1<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> separator)
-            => parser.SepBy1(separator).Left(Optional(separator));
+        public static Parser<TToken, IEnumerable<T>> SeparatedEndBy1<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> separator)
+            => parser.SeparatedBy1(separator).Left(Optional(separator));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Except<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> exception)

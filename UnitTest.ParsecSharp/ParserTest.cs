@@ -628,13 +628,13 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
-        public void SepByTest()
+        public void SeparatedByTest()
         {
             // separator によって区切られた形の parser が0回以上繰り返す入力にマッチするパーサを作成します。
             // separator にマッチした結果は破棄されます。
 
             // [ 1*Number *( "," 1*Number ) ]
-            var parser = Many1(Number()).AsString().SepBy(Char(','));
+            var parser = Many1(Number()).AsString().SeparatedBy(Char(','));
 
             var source = _commanum;
             parser.Parse(source).CaseOf(
@@ -653,12 +653,12 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
-        public void SepBy1Test()
+        public void SeparatedBy1Test()
         {
             // separator によって区切られた形の parser が1回以上繰り返す入力にマッチするパーサを作成します。
 
             // 1*Number *( "," 1*Number )
-            var parser = Many1(Number()).AsString().SepBy1(Char(','));
+            var parser = Many1(Number()).AsString().SeparatedBy1(Char(','));
 
             var source = _commanum;
             parser.Parse(source).CaseOf(
@@ -715,12 +715,12 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
-        public void SepEndByTest()
+        public void SeparatedEndByTest()
         {
-            // SepBy、または Endby のどちらかとして振る舞うパーサを作成します。
+            // SeparatedBy、または Endby のどちらかとして振る舞うパーサを作成します。
 
             // [ 1*Number *( "," 1*Number ) [ "," ] ]
-            var parser = Many1(Number()).AsString().SepEndBy(Char(','));
+            var parser = Many1(Number()).AsString().SeparatedEndBy(Char(','));
 
             var source = _commanum;
             parser.Parse(source).CaseOf(
@@ -739,12 +739,12 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
-        public void SepEndBy1Test()
+        public void SeparatedEndBy1Test()
         {
-            // SepBy1、または Endby1 のどちらかとして振る舞うパーサを作成します。
+            // SeparatedBy1、または Endby1 のどちらかとして振る舞うパーサを作成します。
 
             // 1*Number *( "," 1*Number ) [ "," ]
-            var parser = Many1(Number()).AsString().SepEndBy1(Char(','));
+            var parser = Many1(Number()).AsString().SeparatedEndBy1(Char(','));
 
             var source = _commanum;
             parser.Parse(source).CaseOf(
