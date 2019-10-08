@@ -5,8 +5,6 @@ namespace ParsecSharp
 {
     public sealed class TokenizedStream<TInput, TToken> : IParsecStateStream<TToken>
     {
-        private readonly IDisposable source;
-
         private readonly LinearPosition _position;
 
         private readonly Lazy<IParsecStateStream<TToken>> _next;
@@ -17,6 +15,8 @@ namespace ParsecSharp
 
         public IPosition Position => this._position;
 
+        public IDisposable? InnerResource { get; }
+
         public IParsecStateStream<TToken> Next => this._next.Value;
 
         public TokenizedStream(IParsecStateStream<TInput> source, Parser<TInput, TToken> parser) : this(source, parser, LinearPosition.Initial)
@@ -24,7 +24,7 @@ namespace ParsecSharp
 
         private TokenizedStream(IParsecStateStream<TInput> source, Parser<TInput, TToken> parser, LinearPosition position)
         {
-            this.source = source;
+            this.InnerResource = source.InnerResource;
             this._position = position;
             var (result, rest) = parser.ParsePartially(source);
             this.HasValue = result.CaseOf(_ => false, _ => true);
@@ -33,7 +33,7 @@ namespace ParsecSharp
         }
 
         public void Dispose()
-            => this.source.Dispose();
+            => this.InnerResource?.Dispose();
 
         public bool Equals(IParsecState<TToken> other)
             => ReferenceEquals(this, other);

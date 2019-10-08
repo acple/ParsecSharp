@@ -10,8 +10,6 @@ namespace ParsecSharp
     {
         private const int MaxBufferSize = 2048;
 
-        private readonly IDisposable source;
-
         private readonly Buffer<byte> _buffer;
 
         private readonly LinearPosition _position;
@@ -24,14 +22,16 @@ namespace ParsecSharp
 
         public IPosition Position => this._position;
 
-        public IParsecStateStream<byte> Next => new ByteStream(this.source, (this.Index == MaxBufferSize - 1) ? this._buffer.Next : this._buffer, this._position.Next());
+        public IDisposable InnerResource { get; }
+
+        public IParsecStateStream<byte> Next => new ByteStream(this.InnerResource, (this.Index == MaxBufferSize - 1) ? this._buffer.Next : this._buffer, this._position.Next());
 
         public ByteStream(Stream source) : this(source, CreateBuffer(source), LinearPosition.Initial)
         { }
 
         private ByteStream(IDisposable source, Buffer<byte> buffer, LinearPosition position)
         {
-            this.source = source;
+            this.InnerResource = source;
             this._buffer = buffer;
             this._position = position;
         }
@@ -56,7 +56,7 @@ namespace ParsecSharp
         }
 
         public void Dispose()
-            => this.source.Dispose();
+            => this.InnerResource.Dispose();
 
         public bool Equals(IParsecState<byte> other)
             => other is ByteStream state && this._buffer == state._buffer && this._position == state._position;

@@ -9,7 +9,7 @@ namespace ParsecSharp
 
         public Result<TToken, T> Parse(IParsecStateStream<TToken> source)
         {
-            using (source)
+            using (source.InnerResource)
                 return this.Run(source);
         }
 

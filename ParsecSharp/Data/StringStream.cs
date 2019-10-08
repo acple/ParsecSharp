@@ -1,3 +1,4 @@
+using System;
 using ParsecSharp.Internal;
 
 namespace ParsecSharp
@@ -15,6 +16,8 @@ namespace ParsecSharp
         public bool HasValue => this._index < this._source.Length;
 
         public IPosition Position => this._position;
+
+        public IDisposable? InnerResource => default;
 
         public IParsecStateStream<char> Next => new StringStream(this._source, this._index + 1, this._position.Next(this.Current));
 
