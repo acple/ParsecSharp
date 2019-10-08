@@ -26,6 +26,16 @@ namespace ParsecSharp
                 : Fail<int>($"Expected digits but was '{value}'"));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<char, long> ToLong(this Parser<char, IEnumerable<char>> parser)
+            => parser.AsString().ToLong();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<char, long> ToLong(this Parser<char, string> parser)
+            => parser.Bind(value => (long.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var integer))
+                ? Pure(integer)
+                : Fail<long>($"Expected digits but was '{value}'"));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, string> Join(this Parser<char, IEnumerable<string>> parser)
             => parser.Map(x => string.Concat(x));
 
