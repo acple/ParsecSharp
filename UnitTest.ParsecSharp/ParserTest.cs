@@ -715,12 +715,12 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
-        public void SeparatedEndByTest()
+        public void SeparatedOrEndByTest()
         {
             // SeparatedBy、または Endby のどちらかとして振る舞うパーサを作成します。
 
             // [ 1*Number *( "," 1*Number ) [ "," ] ]
-            var parser = Many1(Number()).AsString().SeparatedEndBy(Char(','));
+            var parser = Many1(Number()).AsString().SeparatedOrEndBy(Char(','));
 
             var source = _commanum;
             parser.Parse(source).CaseOf(
@@ -739,12 +739,12 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
-        public void SeparatedEndBy1Test()
+        public void SeparatedOrEndBy1Test()
         {
             // SeparatedBy1、または Endby1 のどちらかとして振る舞うパーサを作成します。
 
             // 1*Number *( "," 1*Number ) [ "," ]
-            var parser = Many1(Number()).AsString().SeparatedEndBy1(Char(','));
+            var parser = Many1(Number()).AsString().SeparatedOrEndBy1(Char(','));
 
             var source = _commanum;
             parser.Parse(source).CaseOf(
