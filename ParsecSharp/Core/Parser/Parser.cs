@@ -1,4 +1,6 @@
 using System;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using ParsecSharp.Internal;
 
 namespace ParsecSharp
@@ -10,23 +12,27 @@ namespace ParsecSharp
         public Result<TToken, T> Parse(IParsecStateStream<TToken> source)
         {
             using (source.InnerResource)
-                return this.Run(source);
+                return this.Run(ref source); // move parameter ownership here
         }
 
         public Result<TToken, T>.Suspended ParsePartially(IParsecStateStream<TToken> source)
-            => this.Run(source).Suspend();
+            => this.Run(ref source).Suspend();
 
-        private Result<TToken, T> Run(IParsecStateStream<TToken> source)
+        private Result<TToken, T> Run(ref IParsecStateStream<TToken> source)
         {
             try
             {
-                return this.Run(source, result => result);
+                return this.RunCore(ref source);
             }
             catch (Exception exception)
             {
                 return new FailWithException<TToken, T>(exception, EmptyStream<TToken>.Instance);
             }
         }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private Result<TToken, T> RunCore(ref IParsecStateStream<TToken> source)
+            => this.Run(Interlocked.Exchange(ref source, default!), result => result); // consume source here
 
         public static Parser<TToken, T> operator |(Parser<TToken, T> first, Parser<TToken, T> second)
             => new Alternative<TToken, T>(first, second);
