@@ -34,7 +34,7 @@ namespace ParsecSharp.Internal
             }
             catch (Exception exception)
             {
-                return new Abort<TToken, T>(exception);
+                return new Terminate<TToken, T>(exception);
             }
         }
     }

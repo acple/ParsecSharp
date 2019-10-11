@@ -20,7 +20,7 @@ namespace ParsecSharp
             }
             catch (Exception exception)
             {
-                return new Abort<TToken, TNext>(exception);
+                return new Terminate<TToken, TNext>(exception);
             }
         }
 

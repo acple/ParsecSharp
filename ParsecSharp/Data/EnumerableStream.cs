@@ -9,6 +9,7 @@ namespace ParsecSharp
     public sealed class EnumerableStream<TToken> : IParsecStateStream<TToken>
     {
         private const int MaxBufferSize = 1024;
+
         private readonly Buffer<TToken> _buffer;
 
         private readonly LinearPosition _position;
