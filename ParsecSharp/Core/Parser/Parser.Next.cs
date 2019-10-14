@@ -22,20 +22,8 @@ namespace ParsecSharp.Internal
             var _success = this._success;
             var _fail = this._fail;
             return this._parser.Run(state, result => result.CaseOf(
-                fail => TryNext(_fail, fail).Run(state, cont),
+                fail => _fail(fail).Run(state, cont),
                 success => success.Next(_success, cont)));
-        }
-
-        private static Parser<TToken, T> TryNext(Func<Fail<TToken, TIntermediate>, Parser<TToken, T>> next, Fail<TToken, TIntermediate> fail)
-        {
-            try
-            {
-                return next(fail);
-            }
-            catch (Exception exception)
-            {
-                return new Terminate<TToken, T>(exception);
-            }
         }
     }
 }
