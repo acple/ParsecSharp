@@ -4,9 +4,9 @@ namespace ParsecSharp.Internal
     {
         public static EmptyPosition Initial => default;
 
-        public int Line => default;
+        public int Line => 0;
 
-        public int Column => default;
+        public int Column => -1;
 
         public int CompareTo(IPosition other)
             => (other is EmptyPosition) ? 0 : -1;
@@ -18,7 +18,7 @@ namespace ParsecSharp.Internal
             => obj is EmptyPosition;
 
         public override int GetHashCode()
-            => default;
+            => 0;
 
         public override string ToString()
             => "Position: none";
