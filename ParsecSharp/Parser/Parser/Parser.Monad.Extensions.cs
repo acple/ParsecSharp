@@ -40,11 +40,11 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, TResult> Next<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, TResult> function, TResult result)
-            => parser.Next(x => Pure<TToken, TResult>(function(x)), result);
+            => parser.ModifyResult((state, _) => Result.Success(result, state), (_, success) => success.Map(function));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, TResult> Next<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, TResult> function, Func<TResult> result)
-            => parser.Next(x => Pure<TToken, TResult>(function(x)), result);
+            => parser.ModifyResult((state, _) => Result.Success(result(), state), (_, success) => success.Map(function));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Guard<TToken, T>(this Parser<TToken, T> parser, Func<T, bool> predicate)
