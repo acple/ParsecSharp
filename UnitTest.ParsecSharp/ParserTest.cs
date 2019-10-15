@@ -1123,11 +1123,11 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
-        public void ErrorTest()
+        public void AbortWhenFailTest()
         {
             // パース失敗時にパース処理を中止します。
 
-            var parser = Many(Lower().Error(fail => $"Fatal Error! '{fail.State.Current.ToString()}' is not a lower char!")).AsString()
+            var parser = Many(Lower().AbortWhenFail(fail => $"Fatal Error! '{fail.State.Current.ToString()}' is not a lower char!")).AsString()
                 .Or(Pure("recovery"));
 
             var source = _abcdEFGH;

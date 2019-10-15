@@ -153,7 +153,11 @@ namespace ParsecSharp
             => parser.Alternative(fail => Fail<TToken, T>(message(fail)));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, T> Error<TToken, T>(this Parser<TToken, T> parser, Func<Fail<TToken, T>, string> message)
+        public static Parser<TToken, T> AbortWhenFail<TToken, T>(this Parser<TToken, T> parser)
+            => parser.AbortWhenFail(fail => $"At {nameof(AbortWhenFail)} -> {fail.ToString()}");
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, T> AbortWhenFail<TToken, T>(this Parser<TToken, T> parser, Func<Fail<TToken, T>, string> message)
             => parser.Alternative(fail => Abort<TToken, T>(_ => message(fail)));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
