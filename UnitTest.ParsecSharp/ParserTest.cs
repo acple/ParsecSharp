@@ -1132,7 +1132,7 @@ namespace UnitTest.ParsecSharp
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 5): Fatal Error! 'E' is not a lower char!"),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 5): At AbortWhenFail -> Fatal Error! 'E' is not a lower char!"),
                 success => Assert.Fail(success.ToString()));
         }
 
