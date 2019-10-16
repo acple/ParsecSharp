@@ -1,21 +1,24 @@
 namespace ParsecSharp.Internal
 {
-    public readonly struct EmptyPosition : IPosition
+    public class EmptyPosition : IPosition
     {
-        public static EmptyPosition Initial => default;
+        public static IPosition Initial { get; } = new EmptyPosition();
 
         public int Line => 0;
 
         public int Column => -1;
 
+        private EmptyPosition()
+        { }
+
         public int CompareTo(IPosition other)
-            => (other is EmptyPosition) ? 0 : -1;
+            => (this.Equals(other)) ? 0 : -1;
 
         public bool Equals(IPosition other)
-            => other is EmptyPosition;
+            => ReferenceEquals(this, other);
 
         public override bool Equals(object? obj)
-            => obj is EmptyPosition;
+            => ReferenceEquals(this, obj);
 
         public override int GetHashCode()
             => 0;
