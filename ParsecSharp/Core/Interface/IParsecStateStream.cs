@@ -2,8 +2,10 @@ using System;
 
 namespace ParsecSharp
 {
-    public interface IParsecStateStream<TToken> : IParsecState<TToken>, IDisposable
+    public partial interface IParsecStateStream<TToken> : IParsecState<TToken>, IDisposable
     {
+        IDisposable? InnerResource { get; }
+
         IParsecStateStream<TToken> Next { get; }
     }
 }

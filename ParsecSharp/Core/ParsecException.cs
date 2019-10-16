@@ -7,7 +7,7 @@ namespace ParsecSharp
         public ParsecException(string message) : base(message)
         { }
 
-        public ParsecException(string message, Exception exception) : base(message, exception)
+        public ParsecException(string message, Exception innerException) : base(message, innerException)
         { }
     }
 }

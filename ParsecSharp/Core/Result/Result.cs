@@ -17,6 +17,8 @@ namespace ParsecSharp
 
         public abstract TResult CaseOf<TResult>(Func<Fail<TToken, T>, TResult> fail, Func<Success<TToken, T>, TResult> success);
 
+        public abstract Result<TToken, TResult> Map<TResult>(Func<T, TResult> function);
+
         internal Suspended Suspend()
             => new Suspended(this);
 

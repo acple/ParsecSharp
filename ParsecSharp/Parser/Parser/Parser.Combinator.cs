@@ -47,12 +47,12 @@ namespace ParsecSharp
         public static Parser<TToken, Unit> Not<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
             => parser.ModifyResult(
                 (state, _) => Result.Success(Unit.Instance, state),
-                (state, success) => Result.Fail<TToken, Unit>($"At {nameof(Not)}, Unexpected succeed '{success.ToString()}'", state));
+                (state, success) => Result.Fail<TToken, Unit>($"At {nameof(Not)} -> Unexpected succeed '{success.ToString()}'", state));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> LookAhead<TToken, T>(Parser<TToken, T> parser)
             => parser.ModifyResult(
-                (state, fail) => Result.Fail<TToken, T>($"At {nameof(LookAhead)}, {fail.ToString()}", state),
+                (state, fail) => Result.Fail<TToken, T>($"At {nameof(LookAhead)} -> {fail.ToString()}", state),
                 (state, success) => Result.Success(success.Value, state));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -106,6 +106,10 @@ namespace ParsecSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<TToken>> Quoted<TToken, TOpen, TClose>(Parser<TToken, TOpen> open, Parser<TToken, TClose> close)
             => Any<TToken>().Quote(open, close);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, IEnumerable<T>> Singleton<TToken, T>(Parser<TToken, T> parser)
+            => parser.Map(x => new[] { x }.AsEnumerable());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Delay<TToken, T>(Func<Parser<TToken, T>> parser)

@@ -9,11 +9,11 @@ namespace ParsecSharp
     public static partial class Parser
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, IEnumerable<T>> SepBy<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> separator)
-            => Try(parser.SepBy1(separator), Enumerable.Empty<T>());
+        public static Parser<TToken, IEnumerable<T>> SeparatedBy<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> separator)
+            => Try(parser.SeparatedBy1(separator), Enumerable.Empty<T>());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, IEnumerable<T>> SepBy1<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> separator)
+        public static Parser<TToken, IEnumerable<T>> SeparatedBy1<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> separator)
             => parser.Bind(x => ManyRec(separator.Right(parser), new List<T> { x }));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -25,12 +25,12 @@ namespace ParsecSharp
             => Many1(parser.Left(separator));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, IEnumerable<T>> SepEndBy<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> separator)
-            => Try(parser.SepEndBy1(separator), Enumerable.Empty<T>());
+        public static Parser<TToken, IEnumerable<T>> SeparatedOrEndBy<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> separator)
+            => Try(parser.SeparatedOrEndBy1(separator), Enumerable.Empty<T>());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, IEnumerable<T>> SepEndBy1<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> separator)
-            => parser.SepBy1(separator).Left(Optional(separator));
+        public static Parser<TToken, IEnumerable<T>> SeparatedOrEndBy1<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> separator)
+            => parser.SeparatedBy1(separator).Left(Optional(separator));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Except<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> exception)
@@ -49,28 +49,28 @@ namespace ParsecSharp
             => parser.Bind(x => ChainRec(rest, x));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, T> ChainL<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function)
+        public static Parser<TToken, T> ChainLeft<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function)
             => parser.Chain(x => function.Bind(function => parser.Map(y => function(x, y))));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, T> ChainR<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function)
+        public static Parser<TToken, T> ChainRight<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function)
             => Fix<TToken, T>(self => parser.Bind(x => function.Next(function => self.Next(y => function(x, y), x), x)));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, TAccum> FoldL<TToken, T, TAccum>(this Parser<TToken, T> parser, TAccum seed, Func<TAccum, T, TAccum> function)
-            => parser.Next(x => parser.FoldL(function(seed, x), function), seed);
+        public static Parser<TToken, TAccumulator> FoldLeft<TToken, T, TAccumulator>(this Parser<TToken, T> parser, TAccumulator seed, Func<TAccumulator, T, TAccumulator> function)
+            => parser.Next(x => parser.FoldLeft(function(seed, x), function), seed);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, TAccum> FoldL<TToken, T, TAccum>(this Parser<TToken, T> parser, Func<TAccum> seed, Func<TAccum, T, TAccum> function)
-            => Pure<TToken, TAccum>(seed).Bind(x => parser.FoldL(x, function));
+        public static Parser<TToken, TAccumulator> FoldLeft<TToken, T, TAccumulator>(this Parser<TToken, T> parser, Func<TAccumulator> seed, Func<TAccumulator, T, TAccumulator> function)
+            => Pure<TToken, TAccumulator>(seed).Bind(x => parser.FoldLeft(x, function));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, TAccum> FoldR<TToken, T, TAccum>(this Parser<TToken, T> parser, TAccum seed, Func<T, TAccum, TAccum> function)
-            => Fix<TToken, TAccum>(self => parser.Next(x => self.Map(accum => function(x, accum)), seed));
+        public static Parser<TToken, TAccumulator> FoldRight<TToken, T, TAccumulator>(this Parser<TToken, T> parser, TAccumulator seed, Func<T, TAccumulator, TAccumulator> function)
+            => Fix<TToken, TAccumulator>(self => parser.Next(x => self.Map(accumulator => function(x, accumulator)), seed));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, TAccum> FoldR<TToken, T, TAccum>(this Parser<TToken, T> parser, Func<TAccum> seed, Func<T, TAccum, TAccum> function)
-            => Pure<TToken, TAccum>(seed).Bind(x => parser.FoldR(x, function));
+        public static Parser<TToken, TAccumulator> FoldRight<TToken, T, TAccumulator>(this Parser<TToken, T> parser, Func<TAccumulator> seed, Func<T, TAccumulator, TAccumulator> function)
+            => Pure<TToken, TAccumulator>(seed).Bind(x => parser.FoldRight(x, function));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Repeat<TToken, T>(this Parser<TToken, T> parser, int count)
@@ -138,7 +138,11 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> WithConsume<TToken, T>(this Parser<TToken, T> parser)
-            => GetPosition<TToken>().Bind(start => parser.Left(GetPosition<TToken>().Guard(end => !start.Equals(end), _ => $"A parser did not consume any input")));
+            => parser.WithConsume(_ => "A parser did not consume any input");
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, T> WithConsume<TToken, T>(this Parser<TToken, T> parser, Func<IPosition, string> message)
+            => GetPosition<TToken>().Bind(start => parser.Left(GetPosition<TToken>().Guard(end => !start.Equals(end), position => $"At {nameof(WithConsume)} -> {message(position)}")));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> WithMessage<TToken, T>(this Parser<TToken, T> parser, string message)
@@ -149,12 +153,20 @@ namespace ParsecSharp
             => parser.Alternative(fail => Fail<TToken, T>(message(fail)));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, T> Error<TToken, T>(this Parser<TToken, T> parser, Func<Fail<TToken, T>, string> message)
-            => parser.Alternative(fail => Abort<TToken, T>(_ => message(fail)));
+        public static Parser<TToken, T> AbortWhenFail<TToken, T>(this Parser<TToken, T> parser)
+            => parser.AbortWhenFail(fail => fail.ToString());
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, T> AbortWhenFail<TToken, T>(this Parser<TToken, T> parser, Func<Fail<TToken, T>, string> message)
+            => parser.Alternative(fail => Abort<TToken, T>(_ => $"At {nameof(AbortWhenFail)} -> {message(fail)}"));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, T> AbortIfEntered<TToken, T>(this Parser<TToken, T> parser)
+            => parser.AbortIfEntered(fail => fail.ToString());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> AbortIfEntered<TToken, T>(this Parser<TToken, T> parser, Func<Fail<TToken, T>, string> message)
             => parser.Alternative(fail => GetPosition<TToken>()
-                .Bind(position => (position.Equals(fail.State.Position)) ? Fail<TToken, T>(fail.Message) : Abort<TToken, T>(_ => message(fail))));
+                .Bind(position => (position.Equals(fail.State.Position)) ? Fail<TToken, T>(fail.Message) : Abort<TToken, T>(_ => $"At {nameof(AbortIfEntered)} -> {message(fail)}")));
     }
 }

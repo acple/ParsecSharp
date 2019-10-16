@@ -108,12 +108,12 @@ namespace ParsecSharp.Examples
             select (key, value);
 
         private static readonly Parser<char, Dictionary<string, dynamic?>> JsonObject =
-            KeyValue.SepBy(Comma)
+            KeyValue.SeparatedBy(Comma)
                 .Between(OpenBrace, CloseBrace)
                 .Map(members => members.ToDictionary(x => x.Key, x => x.Value));
 
         private static readonly Parser<char, dynamic?[]> JsonArray =
-            JsonValue.SepBy(Comma).Between(OpenBracket, CloseBracket).ToArray();
+            JsonValue.SeparatedBy(Comma).Between(OpenBracket, CloseBracket).ToArray();
 
         private static readonly Parser<char, dynamic?> Json =
             JsonValue.Between(WhiteSpace).End();

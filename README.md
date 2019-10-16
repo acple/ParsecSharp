@@ -37,7 +37,7 @@ This project is affected by [parsec](https://hackage.haskell.org/package/parsec)
 dotnet-cli:
 
 ```sh
-> dotnet add package ParsecSharp
+$ dotnet add package ParsecSharp
 ```
 
 NuGet Package Manager Console:

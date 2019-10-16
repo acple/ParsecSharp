@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using ParsecSharp.Internal;
 
@@ -14,6 +15,8 @@ namespace ParsecSharp
         public bool HasValue => this._position.Column < this._source.Count;
 
         public IPosition Position => this._position;
+
+        public IDisposable? InnerResource => default;
 
         public IParsecStateStream<TToken> Next => new ArrayStream<TToken>(this._source, this._position.Next());
 

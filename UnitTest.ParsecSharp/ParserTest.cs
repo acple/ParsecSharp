@@ -169,7 +169,7 @@ namespace UnitTest.ParsecSharp
             // 残りの入力よりも大きい数値を指定していた場合は失敗します。
             var parser2 = Take(9);
             parser2.Parse(source).CaseOf(
-                fail => fail.Message.Is("At Take, An input does not have enough length"),
+                fail => fail.Message.Is("At Take -> An input does not have enough length"),
                 success => Assert.Fail());
         }
 
@@ -196,7 +196,7 @@ namespace UnitTest.ParsecSharp
             // 指定数スキップできなかった場合は失敗します。
             var parser3 = Skip(9);
             parser3.Parse(source).CaseOf(
-                fail => fail.Message.Is("At Skip, An input does not have enough length"),
+                fail => fail.Message.Is("At Skip -> An input does not have enough length"),
                 success => Assert.Fail(success.ToString()));
         }
 
@@ -362,7 +362,7 @@ namespace UnitTest.ParsecSharp
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): At LookAhead, Parser Fail (Line: 1, Column: 2): Unexpected '2<0x32>'"),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): At LookAhead -> Parser Fail (Line: 1, Column: 2): Unexpected '2<0x32>'"),
                 success => Assert.Fail(success.ToString()));
         }
 
@@ -628,13 +628,13 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
-        public void SepByTest()
+        public void SeparatedByTest()
         {
             // separator によって区切られた形の parser が0回以上繰り返す入力にマッチするパーサを作成します。
             // separator にマッチした結果は破棄されます。
 
             // [ 1*Number *( "," 1*Number ) ]
-            var parser = Many1(Number()).AsString().SepBy(Char(','));
+            var parser = Many1(Number()).AsString().SeparatedBy(Char(','));
 
             var source = _commanum;
             parser.Parse(source).CaseOf(
@@ -653,12 +653,12 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
-        public void SepBy1Test()
+        public void SeparatedBy1Test()
         {
             // separator によって区切られた形の parser が1回以上繰り返す入力にマッチするパーサを作成します。
 
             // 1*Number *( "," 1*Number )
-            var parser = Many1(Number()).AsString().SepBy1(Char(','));
+            var parser = Many1(Number()).AsString().SeparatedBy1(Char(','));
 
             var source = _commanum;
             parser.Parse(source).CaseOf(
@@ -715,12 +715,12 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
-        public void SepEndByTest()
+        public void SeparatedOrEndByTest()
         {
-            // SepBy、または Endby のどちらかとして振る舞うパーサを作成します。
+            // SeparatedBy、または Endby のどちらかとして振る舞うパーサを作成します。
 
             // [ 1*Number *( "," 1*Number ) [ "," ] ]
-            var parser = Many1(Number()).AsString().SepEndBy(Char(','));
+            var parser = Many1(Number()).AsString().SeparatedOrEndBy(Char(','));
 
             var source = _commanum;
             parser.Parse(source).CaseOf(
@@ -739,12 +739,12 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
-        public void SepEndBy1Test()
+        public void SeparatedOrEndBy1Test()
         {
-            // SepBy1、または Endby1 のどちらかとして振る舞うパーサを作成します。
+            // SeparatedBy1、または Endby1 のどちらかとして振る舞うパーサを作成します。
 
             // 1*Number *( "," 1*Number ) [ "," ]
-            var parser = Many1(Number()).AsString().SepEndBy1(Char(','));
+            var parser = Many1(Number()).AsString().SeparatedOrEndBy1(Char(','));
 
             var source = _commanum;
             parser.Parse(source).CaseOf(
@@ -824,7 +824,7 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
-        public void ChainLTest()
+        public void ChainLeftTest()
         {
             // 1個以上の値と演算子に交互にマッチし、指定した演算を左から順に適用するパーサを作成します。
 
@@ -838,7 +838,7 @@ namespace UnitTest.ParsecSharp
             var num = Many1(Digit()).ToInt();
 
             // num *( op num )
-            var parser = num.ChainL(op);
+            var parser = num.ChainLeft(op);
 
             var source = "10+5-3+1";
             parser.Parse(source).CaseOf(
@@ -867,7 +867,7 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
-        public void ChainRTest()
+        public void ChainRightTest()
         {
             // 1個以上の値と演算子に交互にマッチし、指定した演算を右から順に適用するパーサを作成します
 
@@ -881,7 +881,7 @@ namespace UnitTest.ParsecSharp
             var num = Many1(Digit()).ToInt();
 
             // num *( op num )
-            var parser = num.ChainR(op);
+            var parser = num.ChainRight(op);
 
             var source = "10+5-3+1";
             parser.Parse(source).CaseOf(
@@ -910,12 +910,12 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
-        public void FoldLTest()
+        public void FoldLeftTest()
         {
             // 初期値と集計関数を引数にとり、パースした結果を左から集計するパーサを作成します。
 
-            // 0個以上の Digit にマッチし、初期値10に対して左から (x => accum - x) を繰り返し適用するパーサ。
-            var parser = Digit().AsString().ToInt().FoldL(10, (x, y) => x - y);
+            // 0個以上の Digit にマッチし、初期値10に対して左から (x => accumulator - x) を繰り返し適用するパーサ。
+            var parser = Digit().AsString().ToInt().FoldLeft(10, (x, y) => x - y);
 
             var source = "12345";
             parser.Parse(source).CaseOf(
@@ -924,12 +924,12 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
-        public void FoldRTest()
+        public void FoldRightTest()
         {
             // 初期値と集計関数を引数にとり、パース結果を右から集計するパーサを作成します。
 
-            // 0個以上の Digit にマッチし、初期値10に対して右から (x => x - accum) を繰り返し適用するパーサ。
-            var parser = Digit().AsString().ToInt().FoldR(10, (x, y) => x - y);
+            // 0個以上の Digit にマッチし、初期値10に対して右から (x => x - accumulator) を繰り返し適用するパーサ。
+            var parser = Digit().AsString().ToInt().FoldRight(10, (x, y) => x - y);
 
             var source = "12345";
             parser.Parse(source).CaseOf(
@@ -1099,7 +1099,7 @@ namespace UnitTest.ParsecSharp
 
             var source2 = _123456;
             parser.Parse(source2).CaseOf(
-                fail => fail.Message.Is("At Guard, A parser did not consume any input"),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): At Guard -> At WithConsume -> A parser did not consume any input"),
                 success => Assert.Fail(success.ToString()));
         }
 
@@ -1123,16 +1123,16 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
-        public void ErrorTest()
+        public void AbortWhenFailTest()
         {
             // パース失敗時にパース処理を中止します。
 
-            var parser = Many(Lower().Error(fail => $"Fatal Error! '{fail.State.Current.ToString()}' is not a lower char!")).AsString()
+            var parser = Many(Lower().AbortWhenFail(fail => $"Fatal Error! '{fail.State.Current.ToString()}' is not a lower char!")).AsString()
                 .Or(Pure("recovery"));
 
             var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
-                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 5): Fatal Error! 'E' is not a lower char!"),
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 5): At AbortWhenFail -> Fatal Error! 'E' is not a lower char!"),
                 success => Assert.Fail(success.ToString()));
         }
 
@@ -1157,7 +1157,7 @@ namespace UnitTest.ParsecSharp
 
             var source3 = _commanum;
             parser.Parse(source3).CaseOf(
-                fail => fail.Message.Is("abort1234"), // 123まで入力を消費して失敗したため復旧が行われない
+                fail => fail.Message.Is("At AbortIfEntered -> abort1234"), // 123まで入力を消費して失敗したため復旧が行われない
                 success => Assert.Fail(success.ToString()));
         }
 
@@ -1171,7 +1171,7 @@ namespace UnitTest.ParsecSharp
 
             var source = _123456;
             parser.Parse(source).CaseOf(
-                fail => fail.Message.Is("At Guard, A value '123456' does not satisfy condition"),
+                fail => fail.Message.Is("At Guard -> A value '123456' does not satisfy condition"),
                 success => Assert.Fail(success.ToString()));
 
             var source2 = "999";

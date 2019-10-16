@@ -18,7 +18,7 @@ namespace UnitTest.ParsecSharp
         {
             // 任意の型の配列、あるいは IReadOnlyList<T> をソースにする場合
             var source = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-            var parser = Any<int>().FoldL(0, (x, y) => x + y);
+            var parser = Any<int>().FoldLeft(0, (x, y) => x + y);
 
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(fail.ToString()),
@@ -43,7 +43,7 @@ namespace UnitTest.ParsecSharp
         {
             // 任意の型の IEnumerable<T> をソースにする場合
             var source = Enumerable.Range(1, 10);
-            var parser = Any<int>().FoldR(0, (x, y) => x + y);
+            var parser = Any<int>().FoldRight(0, (x, y) => x + y);
 
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(fail.ToString()),

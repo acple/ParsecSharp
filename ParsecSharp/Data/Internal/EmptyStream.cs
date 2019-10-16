@@ -1,3 +1,5 @@
+using System;
+
 namespace ParsecSharp.Internal
 {
     public sealed class EmptyStream<TToken> : IParsecStateStream<TToken>
@@ -8,7 +10,9 @@ namespace ParsecSharp.Internal
 
         public bool HasValue => false;
 
-        public IPosition Position => LinearPosition.Initial;
+        public IPosition Position => EmptyPosition.Initial;
+
+        public IDisposable? InnerResource => default;
 
         public IParsecStateStream<TToken> Next => this;
 

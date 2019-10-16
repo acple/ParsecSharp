@@ -23,6 +23,9 @@ namespace ParsecSharp
         public sealed override TResult CaseOf<TResult>(Func<Fail<TToken, T>, TResult> fail, Func<Success<TToken, T>, TResult> success)
             => fail(this);
 
+        public sealed override Result<TToken, TResult> Map<TResult>(Func<T, TResult> function)
+            => this.Convert<TResult>();
+
         public sealed override string ToString()
             => $"Parser Fail ({this.State.Position.ToString()}): {this.Message}";
     }

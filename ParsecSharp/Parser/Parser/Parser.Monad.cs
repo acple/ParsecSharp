@@ -32,7 +32,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Abort<TToken, T>(Exception exception)
-            => new Abort<TToken, T>(exception);
+            => new Terminate<TToken, T>(exception);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IPosition> GetPosition<TToken>()
