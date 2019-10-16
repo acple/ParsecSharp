@@ -824,7 +824,7 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
-        public void ChainLTest()
+        public void ChainLeftTest()
         {
             // 1個以上の値と演算子に交互にマッチし、指定した演算を左から順に適用するパーサを作成します。
 
@@ -838,7 +838,7 @@ namespace UnitTest.ParsecSharp
             var num = Many1(Digit()).ToInt();
 
             // num *( op num )
-            var parser = num.ChainL(op);
+            var parser = num.ChainLeft(op);
 
             var source = "10+5-3+1";
             parser.Parse(source).CaseOf(
@@ -867,7 +867,7 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
-        public void ChainRTest()
+        public void ChainRightTest()
         {
             // 1個以上の値と演算子に交互にマッチし、指定した演算を右から順に適用するパーサを作成します
 
@@ -881,7 +881,7 @@ namespace UnitTest.ParsecSharp
             var num = Many1(Digit()).ToInt();
 
             // num *( op num )
-            var parser = num.ChainR(op);
+            var parser = num.ChainRight(op);
 
             var source = "10+5-3+1";
             parser.Parse(source).CaseOf(
@@ -910,12 +910,12 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
-        public void FoldLTest()
+        public void FoldLeftTest()
         {
             // 初期値と集計関数を引数にとり、パースした結果を左から集計するパーサを作成します。
 
             // 0個以上の Digit にマッチし、初期値10に対して左から (x => accumulator - x) を繰り返し適用するパーサ。
-            var parser = Digit().AsString().ToInt().FoldL(10, (x, y) => x - y);
+            var parser = Digit().AsString().ToInt().FoldLeft(10, (x, y) => x - y);
 
             var source = "12345";
             parser.Parse(source).CaseOf(
@@ -924,12 +924,12 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
-        public void FoldRTest()
+        public void FoldRightTest()
         {
             // 初期値と集計関数を引数にとり、パース結果を右から集計するパーサを作成します。
 
             // 0個以上の Digit にマッチし、初期値10に対して右から (x => x - accumulator) を繰り返し適用するパーサ。
-            var parser = Digit().AsString().ToInt().FoldR(10, (x, y) => x - y);
+            var parser = Digit().AsString().ToInt().FoldRight(10, (x, y) => x - y);
 
             var source = "12345";
             parser.Parse(source).CaseOf(

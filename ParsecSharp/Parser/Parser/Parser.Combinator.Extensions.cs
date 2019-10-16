@@ -49,28 +49,28 @@ namespace ParsecSharp
             => parser.Bind(x => ChainRec(rest, x));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, T> ChainL<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function)
+        public static Parser<TToken, T> ChainLeft<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function)
             => parser.Chain(x => function.Bind(function => parser.Map(y => function(x, y))));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, T> ChainR<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function)
+        public static Parser<TToken, T> ChainRight<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function)
             => Fix<TToken, T>(self => parser.Bind(x => function.Next(function => self.Next(y => function(x, y), x), x)));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, TAccumulator> FoldL<TToken, T, TAccumulator>(this Parser<TToken, T> parser, TAccumulator seed, Func<TAccumulator, T, TAccumulator> function)
-            => parser.Next(x => parser.FoldL(function(seed, x), function), seed);
+        public static Parser<TToken, TAccumulator> FoldLeft<TToken, T, TAccumulator>(this Parser<TToken, T> parser, TAccumulator seed, Func<TAccumulator, T, TAccumulator> function)
+            => parser.Next(x => parser.FoldLeft(function(seed, x), function), seed);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, TAccumulator> FoldL<TToken, T, TAccumulator>(this Parser<TToken, T> parser, Func<TAccumulator> seed, Func<TAccumulator, T, TAccumulator> function)
-            => Pure<TToken, TAccumulator>(seed).Bind(x => parser.FoldL(x, function));
+        public static Parser<TToken, TAccumulator> FoldLeft<TToken, T, TAccumulator>(this Parser<TToken, T> parser, Func<TAccumulator> seed, Func<TAccumulator, T, TAccumulator> function)
+            => Pure<TToken, TAccumulator>(seed).Bind(x => parser.FoldLeft(x, function));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, TAccumulator> FoldR<TToken, T, TAccumulator>(this Parser<TToken, T> parser, TAccumulator seed, Func<T, TAccumulator, TAccumulator> function)
+        public static Parser<TToken, TAccumulator> FoldRight<TToken, T, TAccumulator>(this Parser<TToken, T> parser, TAccumulator seed, Func<T, TAccumulator, TAccumulator> function)
             => Fix<TToken, TAccumulator>(self => parser.Next(x => self.Map(accumulator => function(x, accumulator)), seed));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, TAccumulator> FoldR<TToken, T, TAccumulator>(this Parser<TToken, T> parser, Func<TAccumulator> seed, Func<T, TAccumulator, TAccumulator> function)
-            => Pure<TToken, TAccumulator>(seed).Bind(x => parser.FoldR(x, function));
+        public static Parser<TToken, TAccumulator> FoldRight<TToken, T, TAccumulator>(this Parser<TToken, T> parser, Func<TAccumulator> seed, Func<T, TAccumulator, TAccumulator> function)
+            => Pure<TToken, TAccumulator>(seed).Bind(x => parser.FoldRight(x, function));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Repeat<TToken, T>(this Parser<TToken, T> parser, int count)
