@@ -36,6 +36,16 @@ namespace ParsecSharp
                 : Fail<long>($"Expected digits but was '{value}'"));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<char, double> ToDouble(this Parser<char, IEnumerable<char>> parser)
+            => parser.AsString().ToDouble();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<char, double> ToDouble(this Parser<char, string> parser)
+            => parser.Bind(value => (double.TryParse(value, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out var number))
+                ? Pure(number)
+                : Fail<double>($"Expected number but was '{value}'"));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, string> Join(this Parser<char, IEnumerable<string>> parser)
             => parser.Map(x => string.Concat(x));
 
