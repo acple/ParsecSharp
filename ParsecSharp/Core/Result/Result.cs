@@ -22,6 +22,12 @@ namespace ParsecSharp
         internal Suspended Suspend()
             => new Suspended(this);
 
+        public sealed override bool Equals(object? obj)
+            => base.Equals(obj);
+
+        public sealed override int GetHashCode()
+            => base.GetHashCode();
+
         public readonly struct Suspended
         {
             private readonly Result<TToken, T> _result;
