@@ -11,8 +11,8 @@ namespace ParsecSharp
             => Builder.Create<TToken, T>(state => Result.Success(value, state));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, T> Pure<TToken, T>(Func<T> value)
-            => Builder.Create<TToken, T>(state => Result.Success(value(), state));
+        public static Parser<TToken, T> Pure<TToken, T>(Func<IParsecState<TToken>, T> value)
+            => Builder.Create<TToken, T>(state => Result.Success(value(state), state));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Fail<TToken, T>()

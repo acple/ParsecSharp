@@ -309,7 +309,7 @@ namespace UnitTest.ParsecSharp
                 success => success.Value.Is('x'));
 
             // resume の評価を遅延させるオーバーロード。
-            var parser2 = Try(Char('a'), () => 'x');
+            var parser2 = Try(Char('a'), _ => 'x');
             parser2.Parse(source).CaseOf(
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is('a'));

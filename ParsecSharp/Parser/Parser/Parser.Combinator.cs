@@ -19,7 +19,7 @@ namespace ParsecSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Sequence<TToken, T>(IEnumerable<Parser<TToken, T>> parsers)
             => parsers.Reverse()
-                .Aggregate(Pure<TToken, Stack<T>>(() => new Stack<T>()),
+                .Aggregate(Pure<TToken, Stack<T>>(_ => new Stack<T>()),
                     (next, parser) => parser.Bind(x => next.Map(stack => { stack.Push(x); return stack; })))
                 .Map(stack => stack.AsEnumerable());
 
@@ -32,8 +32,8 @@ namespace ParsecSharp
             => parser.Alternative(Pure<TToken, T>(resume));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, T> Try<TToken, T>(Parser<TToken, T> parser, Func<T> resume)
-            => parser.Alternative(Pure<TToken, T>(resume));
+        public static Parser<TToken, T> Try<TToken, T>(Parser<TToken, T> parser, Func<Fail<TToken, T>, T> resume)
+            => parser.Next(x => x, resume);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Optional<TToken, T>(Parser<TToken, T> parser, T defaultValue)
@@ -73,7 +73,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> ManyTill<TToken, T, TIgnore>(Parser<TToken, T> parser, Parser<TToken, TIgnore> terminator)
-            => Pure<TToken, List<T>>(() => new List<T>()).Bind(list => ManyTillRec(parser, terminator, list));
+            => Pure<TToken, List<T>>(_ => new List<T>()).Bind(list => ManyTillRec(parser, terminator, list));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Many1Till<TToken, T, TIgnore>(Parser<TToken, T> parser, Parser<TToken, TIgnore> terminator)

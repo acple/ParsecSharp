@@ -11,7 +11,7 @@ namespace ParsecSharp
             => Pure<char, T>(value);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<char, T> Pure<T>(Func<T> value)
+        public static Parser<char, T> Pure<T>(Func<IParsecState<char>, T> value)
             => Pure<char, T>(value);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
