@@ -1,6 +1,6 @@
 namespace ParsecSharp.Internal
 {
-    public class EmptyPosition : IPosition
+    public sealed class EmptyPosition : IPosition
     {
         public static IPosition Initial { get; } = new EmptyPosition();
 
