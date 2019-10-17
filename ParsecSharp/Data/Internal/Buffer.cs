@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace ParsecSharp.Internal
 {
-    internal sealed class Buffer<TToken> : IReadOnlyList<TToken>
+    public sealed class Buffer<TToken> : IReadOnlyList<TToken>
     {
         private readonly TToken[] _buffer;
 

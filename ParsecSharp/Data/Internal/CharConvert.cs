@@ -2,14 +2,14 @@ using System.Runtime.CompilerServices;
 
 namespace ParsecSharp.Internal
 {
-    internal static class CharConvert
+    public static class CharConvert
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string ToReadableStringWithCharCode(this char token)
-            => $"{token.ToReadableString()}<0x{((int)token).ToString("X2")}>";
+        public static string ToReadableStringWithCharCode(char token)
+            => $"{ToReadableString(token)}<0x{((int)token).ToString("X2")}>";
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string ToReadableString(this char token)
+        public static string ToReadableString(char token)
             => token switch
             {
                 '\0' => "\\0",
