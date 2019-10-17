@@ -17,7 +17,7 @@ namespace ParsecSharp
         public sealed override TResult CaseOf<TResult>(Func<Fail<TToken, T>, TResult> fail, Func<Success<TToken, T>, TResult> success)
             => success(this);
 
-        public sealed override Result<TToken, TResult> Map<TResult>(Func<T, TResult> function)
+        public override Result<TToken, TResult> Map<TResult>(Func<T, TResult> function)
             => new Success<TToken, TResult>(function(this.Value), this.Rest);
 
         public override string ToString()
