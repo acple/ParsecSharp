@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 
 namespace ParsecSharp.Internal
 {
-    internal static class CharConvert
+    public static class CharConvert
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string ToReadableStringWithCharCode(char token)
