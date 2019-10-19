@@ -16,6 +16,10 @@ namespace ParsecSharp
             => EndOfInput<char>();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<char, Unit> Null()
+            => Null<char>();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, IEnumerable<char>> Take(int count)
             => Take<char>(count);
 
