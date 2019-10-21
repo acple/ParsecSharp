@@ -1166,7 +1166,7 @@ namespace UnitTest.ParsecSharp
         {
             // parser がマッチした結果に対して条件式で成功と失敗を分岐します。
 
-            // 数値にマッチし、100 以下の場合のみ成功とするパーサ。
+            // 数値にマッチし、1000 未満の場合のみ成功とするパーサ。
             var parser = Many1(DecDigit()).ToInt().Guard(x => x < 1000);
 
             var source = _123456;

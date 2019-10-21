@@ -13,13 +13,17 @@ namespace ParsecSharp.Internal
 
         public TToken this[int index] => this._buffer[index];
 
-        public int Count => this._buffer.Length;
+        public int Count { get; }
 
         public Buffer<TToken> Next => this._next.Value;
 
-        public Buffer(TToken[] buffer, Func<Buffer<TToken>> next)
+        public Buffer(TToken[] buffer, Func<Buffer<TToken>> next) : this(buffer, buffer.Length, next)
+        { }
+
+        public Buffer(TToken[] buffer, int length, Func<Buffer<TToken>> next)
         {
             this._buffer = buffer;
+            this.Count = length;
             this._next = new Lazy<Buffer<TToken>>(next, false);
         }
 

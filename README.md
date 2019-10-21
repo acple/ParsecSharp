@@ -20,6 +20,8 @@ This project is affected by [parsec](https://hackage.haskell.org/package/parsec)
 
 
 ## Overview
+* Strictly typed parsers/combinators that support natural type inference
+* A lot of reasonable built-in parsers/combinators
 * Supports parsing infinitely recursive data structures
 * Supports full backtracking: Parsing Expression Grammar (PEG) style parsing strategy
 * Supports parsing any token types of stream (e.g. binary stream, byte array)
@@ -52,8 +54,8 @@ Download manually:
 
 
 ## Supported platform
-* netstandard1.6 (compatible with net461 or later, netcoreapp, uap, xamarin, and more)
-* netstandard2.0 (provides same API as netstandard1.6, but less dependencies)
+* netstandard1.6 (compatible with netcoreapp, net461 or later, uap, xamarin and more)
+* netstandard2.0 (provides same APIs as netstandard1.6, but less dependencies)
 * netstandard2.1 (some performance improvements and some additional APIs that depends new runtime features)
 
 

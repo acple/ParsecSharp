@@ -54,15 +54,15 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> OctDigit()
-            => OneOf("01234567");
+            => Satisfy(x => '0' <= x && x <= '7');
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> DecDigit()
-            => OneOf("0123456789");
+            => Satisfy(x => '0' <= x && x <= '9');
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> HexDigit()
-            => OneOf("0123456789ABCDEFabcdef");
+            => Satisfy(x => '0' <= x && x <= '9' || 'A' <= x && x <= 'F' || 'a' <= x && x <= 'f');
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> Symbol()

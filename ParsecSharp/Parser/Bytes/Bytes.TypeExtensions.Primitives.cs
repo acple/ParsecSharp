@@ -16,6 +16,10 @@ namespace ParsecSharp
             => EndOfInput<byte>();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<byte, Unit> Null()
+            => Null<byte>();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<byte, IEnumerable<byte>> Take(int count)
             => Take<byte>(count);
 

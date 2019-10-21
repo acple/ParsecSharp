@@ -21,10 +21,10 @@ namespace ParsecSharp
         public override string ToString()
             => $"<{nameof(Unit)}>";
 
-        public static bool operator ==(Unit _, Unit __)
+        public static bool operator ==(Unit _0, Unit _1)
             => true;
 
-        public static bool operator !=(Unit _, Unit __)
+        public static bool operator !=(Unit _0, Unit _1)
             => false;
     }
 }
