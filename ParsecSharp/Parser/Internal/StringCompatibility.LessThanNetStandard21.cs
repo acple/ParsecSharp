@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace ParsecSharp.Internal
 {
-    internal static partial class Utility
+    internal static class StringCompatibility
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Contains(this string source, char value)

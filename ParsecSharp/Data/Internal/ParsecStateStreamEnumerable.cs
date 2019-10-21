@@ -1,17 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace ParsecSharp.Internal
 {
-    public static class ParsecStateStreamEnumerable
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IEnumerable<TToken> AsEnumerable<TToken>(this IParsecStateStream<TToken> stream)
-            => new ParsecStateStreamEnumerable<TToken>(stream);
-    }
-
-    internal sealed class ParsecStateStreamEnumerable<TToken> : IEnumerable<TToken>
+    public sealed class ParsecStateStreamEnumerable<TToken> : IEnumerable<TToken>
     {
         private readonly IParsecStateStream<TToken> _stream;
 
