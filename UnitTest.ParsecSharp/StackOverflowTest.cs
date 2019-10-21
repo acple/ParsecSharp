@@ -11,7 +11,7 @@ namespace UnitTest.ParsecSharp
     public class StackOverflowTest
     {
         [TestMethod]
-        public void StackOverflowTest1()
+        public void SimpleRecursionStackOverflowTest()
         {
             // 単純な再帰ループ
             var parser = SkipMany(Any<int>());
@@ -21,7 +21,7 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
-        public void StackOverflowTest2()
+        public void ValueTypesStackOverflowTest()
         {
             // トークンが値型の場合
             var parser = Many(Any<(int, int, int)>());
@@ -31,7 +31,7 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
-        public void StackOverflowTest3()
+        public void ReferenceTypesStackOverflowTest()
         {
             // トークンが参照型の場合
             var parser = Many(Any<Tuple<int, int, int>>());
