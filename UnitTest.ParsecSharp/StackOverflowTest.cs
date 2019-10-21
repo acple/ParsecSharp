@@ -1,8 +1,10 @@
 #if !DEBUG
 using System;
 using System.Linq;
+using ChainingAssertion;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static ParsecSharp.Parser;
+using static ParsecSharp.Text;
 
 namespace UnitTest.ParsecSharp
 {
@@ -38,6 +40,19 @@ namespace UnitTest.ParsecSharp
             var source = Enumerable.Range(0, 1000000).Select(x => Tuple.Create(x, x, x));
 
             parser.Parse(source);
+        }
+
+        [TestMethod]
+        public void RecursiveDataStructuresStackOverflowTest()
+        {
+            // 極端に深い構造を辿る場合
+            const int depth = 10000;
+            var source = Enumerable.Repeat('[', depth).Concat(Enumerable.Repeat(']', depth)).ToArray();
+            var parser = Fix<char, int>(self => self.Or(Pure(1234)).Between(Char('['), Char(']'))).End();
+
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is(1234));
         }
     }
 }
