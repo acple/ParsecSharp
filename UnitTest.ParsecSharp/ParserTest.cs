@@ -1136,6 +1136,12 @@ namespace UnitTest.ParsecSharp
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is(((((10 - 1) - 2) - 3) - 4) - 5));
+
+            // 初期値を用いないオーバーロード。
+            var parser2 = Digit().AsString().ToInt().FoldLeft((x, y) => x - y);
+            parser2.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is((((1 - 2) - 3) - 4) - 5));
         }
 
         [TestMethod]
@@ -1150,6 +1156,12 @@ namespace UnitTest.ParsecSharp
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is(1 - (2 - (3 - (4 - (5 - 10))))));
+
+            // 初期値を用いないオーバーロード。
+            var parser2 = Digit().AsString().ToInt().FoldRight((x, y) => x - y);
+            parser2.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is(1 - (2 - (3 - (4 - 5)))));
         }
 
         [TestMethod]
@@ -1326,8 +1338,10 @@ namespace UnitTest.ParsecSharp
 
             var source = _abcdEFGH;
 
+            // 2つのトークンを取るパーサ。
+            var token = Any().Repeat(2);
             // 2つのトークンを取るパーサに1回以上繰り返しマッチするパーサ。
-            var parser = Many1(Any().Repeat(2));
+            var parser = Many1(token);
             // parser の結果を潰したパーサ。
             var parser2 = parser.Flatten();
 
@@ -1336,6 +1350,12 @@ namespace UnitTest.ParsecSharp
                 success => success.Value.Is(value => value.Count() == 4 && value.All(x => x.Count() == 2)));
 
             parser2.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is('a', 'b', 'c', 'd', 'E', 'F', 'G', 'H'));
+
+            // Many1 を用いたために二重になってしまうような状況では、代わりに FoldLeft の利用が検討できます。
+            var parser3 = token.FoldLeft((x, y) => x.Concat(y));
+            parser3.Parse(source).CaseOf(
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is('a', 'b', 'c', 'd', 'E', 'F', 'G', 'H'));
         }
