@@ -89,6 +89,24 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
+        public void NullTest()
+        {
+            // 空文字にマッチし、任意の状態において常に成功するパーサを作成します。
+
+            var parser = Null();
+
+            var source = _abcdEFGH;
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is(Unit.Instance));
+
+            var source2 = string.Empty;
+            parser.Parse(source2).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is(Unit.Instance));
+        }
+
+        [TestMethod]
         public void OneOfTest()
         {
             // トークンが指定したシーケンスに含まれている場合に成功するパーサを作成します。
@@ -152,8 +170,10 @@ namespace UnitTest.ParsecSharp
         public void TakeTest()
         {
             // 指定した数だけ入力を読み進め、その結果をシーケンスとして返すパーサを作成します。
+            // 0を指定した場合は入力を消費せずに成功します。
+            // 0未満の値を指定した場合は常に失敗します。
 
-            // 3 トークン読み進めるパーサ。
+            // 3トークン読み進めるパーサ。
             var parser = Take(3);
 
             var source = _abcdEFGH;
@@ -177,11 +197,12 @@ namespace UnitTest.ParsecSharp
         public void SkipTest()
         {
             // 数を指定してスキップするパーサを作成します。
-            // 0以下の数値を指定した場合、入力は消費されません。
+            // 0を指定した場合は入力を消費せずに成功します。
+            // 0未満の値を指定した場合は常に失敗します。
 
             var source = _abcdEFGH;
 
-            // 3 トークンスキップした後次のトークンを返すパーサ。
+            // 3トークンスキップした後次のトークンを返すパーサ。
             var parser = Skip(3).Right(Any());
 
             parser.Parse(source).CaseOf(
@@ -201,6 +222,105 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
+        public void TakeWhileTest()
+        {
+            // 与えた条件を満たす限り入力を読み続けるパーサを作成します。
+
+            // トークンが Lower である限り入力を読み続けるパーサ。
+            var parser = TakeWhile(x => char.IsLower(x));
+
+            var source = _abcdEFGH;
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is('a', 'b', 'c', 'd'));
+
+            var source2 = _123456;
+            parser.Parse(source2).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is(Enumerable.Empty<char>()));
+        }
+
+        [TestMethod]
+        public void TakeWhile1Test()
+        {
+            // 与えた条件を満たす限り入力を読み続けるパーサを作成します。
+            // 1件もマッチしなかった場合、失敗を返します。
+
+            // トークンが Lower である限り入力を読み続けるパーサ。
+            var parser = TakeWhile1(x => char.IsLower(x));
+
+            var source = _abcdEFGH;
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is('a', 'b', 'c', 'd'));
+
+            var source2 = _123456;
+            parser.Parse(source2).CaseOf(
+                fail => { },
+                success => Assert.Fail(success.ToString()));
+        }
+
+        [TestMethod]
+        public void SkipWhileTest()
+        {
+            // 与えた条件を満たす限り入力を消費し続け、その結果を破棄するパーサを作成します。
+            // TakeWhile と同様に動作しますが、結果を収集しないため高効率で動作します。
+
+            // トークンが Lower である限り入力を消費し続けるパーサ。
+            var parser = SkipWhile(x => char.IsLower(x));
+
+            var source = _abcdEFGH;
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is(Unit.Instance));
+
+            var source2 = _123456;
+            parser.Parse(source2).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is(Unit.Instance));
+        }
+
+        [TestMethod]
+        public void SkipWhile1Test()
+        {
+            // 与えた条件を満たす限り入力を消費し続け、その結果を破棄するパーサを作成します。
+            // 1件以上スキップできない場合、失敗を返します。
+
+            // トークンが Lower である限り入力を消費し続けるパーサ。
+            var parser = SkipWhile1(x => char.IsLower(x));
+
+            var source = _abcdEFGH;
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is(Unit.Instance));
+
+            var source2 = _123456;
+            parser.Parse(source2).CaseOf(
+                fail => { },
+                success => Assert.Fail(success.ToString()));
+        }
+
+        public void SatisfyTest()
+        {
+            // 入力を1つ取り、条件を満たす場合に成功するパーサを作成します。
+            // 入力消費を伴う全てのパーサを構成可能です。
+
+            var source = _abcdEFGH;
+
+            // 'a' にマッチするパーサ。
+            var parser = Satisfy(x => x == 'a'); // == Char('a');
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is('a'));
+
+            // 'a', 'b', 'c' のいずれかにマッチするパーサ。
+            var parser2 = Satisfy(x => "abc".Contains(x)); // == Contains("abc");
+            parser2.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is('a'));
+        }
+
+        [TestMethod]
         public void PureTest()
         {
             // 成功したという結果を返すパーサを作成します。
@@ -213,6 +333,12 @@ namespace UnitTest.ParsecSharp
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is("success!"));
+
+            // 値の生成をパーサ実行時まで遅延させる。
+            var parser2 = Pure(_ => Unit.Instance);
+            parser2.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is(Unit.Instance));
         }
 
         [TestMethod]
@@ -229,9 +355,30 @@ namespace UnitTest.ParsecSharp
                 success => Assert.Fail(success.ToString()));
 
             // エラーメッセージを記述することができるオーバーロード。
-            var parser2 = Fail<Unit>(_ => "errormessagetest");
+            var parser2 = Fail<Unit>("errormessagetest");
             parser2.Parse(source).CaseOf(
                 fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): errormessagetest"),
+                success => Assert.Fail(success.ToString()));
+
+            // パース失敗時の state をハンドル可能。
+            var parser3 = Fail<Unit>(state => $"errormessagetest, current state: '{state.ToString()}'");
+            parser3.Parse(source).CaseOf(
+                fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): errormessagetest, current state: 'a<0x61>'"),
+                success => Assert.Fail(success.ToString()));
+        }
+
+        [TestMethod]
+        public void AbortTest()
+        {
+            // 実行した時点でパース処理を中止するパーサを作成します。
+            // 通常これを直接利用することはありません。AbortIfEntered か AbortWhenFail コンビネータを利用します。
+
+            // Abort または Any にマッチするが、Abort を評価した時点でパース処理が終了する。
+            var parser = Abort<char>(_ => "aborted").Or(Any());
+
+            var source = _123456;
+            parser.Parse(source).CaseOf(
+                fail => fail.Message.Is("aborted"),
                 success => Assert.Fail(success.ToString()));
         }
 
@@ -293,7 +440,7 @@ namespace UnitTest.ParsecSharp
         public void TryTest()
         {
             // parser によるパースを実行し、それが失敗した場合は resume の値を結果として返す、常に成功するパーサを作成します。
-            // parser のマッチング失敗時は入力は消費されません。
+            // parser のマッチング失敗時は入力を消費しません。
 
             // 'a' にマッチし、成功した場合は 'a'、失敗した場合は 'x' を返すパーサ。
             var parser = Try(Char('a'), 'x');
@@ -318,8 +465,8 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void OptionalTest()
         {
-            // parser によるパースを実行し、マッチしたかどうかを返す、常に成功するパーサを作成します。
-            // parser のマッチング失敗時は入力は消費されません。
+            // parser によるパースを実行し、マッチしたかどうかの bool 値を返す、常に成功するパーサを作成します。
+            // parser のマッチング失敗時は入力を消費しません。
 
             var source = _abcdEFGH;
             var source2 = _123456;
@@ -335,7 +482,7 @@ namespace UnitTest.ParsecSharp
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is('2'));
 
-            // 失敗時に default value を結果とするオーバーロード。
+            // 成功時には値を取り出し、失敗時には default value を結果とするオーバーロード。
             var parser2 = Optional(Lower(), '\n');
 
             parser2.Parse(source).CaseOf(
@@ -345,6 +492,26 @@ namespace UnitTest.ParsecSharp
             parser2.Parse(source2).CaseOf(
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is('\n'));
+        }
+
+        [TestMethod]
+        public void NotTest()
+        {
+            // parser が失敗した場合に成功するパーサを作成します。
+            // このパーサは入力を消費しません。
+
+            // トークンが Lower でない場合に成功するパーサ。
+            var parser = Not(Lower());
+
+            var source = _abcdEFGH;
+            parser.Parse(source).CaseOf(
+                fail => { },
+                success => Assert.Fail(success.ToString()));
+
+            var source2 = _123456;
+            parser.Parse(source2).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is(Unit.Instance));
         }
 
         [TestMethod]
@@ -370,7 +537,7 @@ namespace UnitTest.ParsecSharp
         public void ManyTest()
         {
             // parser に0回以上繰り返しマッチし、その結果をシーケンスとして返すパーサを作成します。
-            // 1回もマッチしなかった場合、パーサは空のシーケンスを結果として返します。その場合、入力を消費しません。
+            // 1回もマッチしなかった場合、パーサは空のシーケンスを結果として返します。その場合は入力を消費しません。
 
             // Lower に0回以上繰り返しマッチするパーサ。
             var parser = Many(Lower());
@@ -410,7 +577,7 @@ namespace UnitTest.ParsecSharp
         public void SkipManyTest()
         {
             // parser に0回以上繰り返しマッチし、その結果を破棄するパーサを作成します。
-            // 1回もマッチしなかった場合、入力を消費しません。
+            // 1回もマッチしなかった場合は入力を消費しません。
 
             // Lower に0回以上繰り返しマッチし、その結果を破棄し、Any にマッチした結果を返すパーサ。
             var parser = SkipMany(Lower()).Right(Any());
@@ -451,16 +618,30 @@ namespace UnitTest.ParsecSharp
             // terminator にマッチするまでの間 parser に繰り返しマッチし、その結果をシーケンスとして返すパーサを作成します。
             // terminator にマッチした結果は破棄されます。
 
+            var source = _abcdEFGH;
+            var source2 = _123456;
+
             // 'F' にマッチするまでの間 Any に繰り返しマッチするパーサ。
             var parser = ManyTill(Any(), Char('F'));
 
-            var source = _abcdEFGH;
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is('a', 'b', 'c', 'd', 'E'));
 
-            var source2 = _123456;
+            // terminator にマッチしなかった場合、失敗を返します。
             parser.Parse(source2).CaseOf(
+                fail => { },
+                success => Assert.Fail(success.ToString()));
+
+            // 最低1回以上 parser にマッチすることを保証する場合は Many1Till を利用する。
+            var parser2 = Many1Till(Letter(), EndOfInput());
+
+            parser2.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is('a', 'b', 'c', 'd', 'E', 'F', 'G', 'H'));
+
+            // Letter にマッチしないため失敗。
+            parser2.Parse(source2).CaseOf(
                 fail => { },
                 success => Assert.Fail(success.ToString()));
         }
@@ -483,13 +664,19 @@ namespace UnitTest.ParsecSharp
             parser.Parse(source2).CaseOf(
                 fail => { },
                 success => Assert.Fail(success.ToString()));
+
+            // 最低1回以上 parser にマッチすることを保証する場合は Skip1Till を利用する。
+            var parser2 = Skip1Till(Letter(), EndOfInput());
+            parser2.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is(Unit.Instance));
         }
 
         [TestMethod]
         public void TakeTillTest()
         {
             // terminator にマッチするまで入力を読み、その結果をシーケンスとして返すパーサを作成します。
-            // terminator にマッチした結果は消費されます。消費したくない場合は LookAhead コンビネータを併用してください。
+            // terminator にマッチした結果は破棄されます。消費したくない場合は LookAhead コンビネータを併用してください。
 
             // 'E' にマッチするまで入力を読むパーサ。
             var parser = TakeTill(Char('E'));
@@ -571,9 +758,24 @@ namespace UnitTest.ParsecSharp
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is('a'));
 
-            // Delay に渡す Func<T> はパース実行時に一度だけ Invoke されます。
-            // オブジェクトを再利用することでパフォーマンスを向上できます。
+            // Delay に渡す Func<T> はパース実行時に一度だけ実行されます。
+            // そのため、処理が副作用を含む場合に意図しない動作となるため注意が必要です。
+            // このパーサオブジェクトを再利用することでパフォーマンスを向上できます。
             // 利用例の詳細については Examples を参照。
+        }
+
+        [TestMethod]
+        public void SingletonTest()
+        {
+            // parser にマッチした結果を1要素のシーケンスとして返すパーサを作成します。
+
+            // 'a' にマッチし、[ 'a' ] を返すパーサ。
+            var parser = Singleton(Char('a'));
+
+            var source = _abcdEFGH;
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Count().Is(1));
         }
 
         [TestMethod]
@@ -622,6 +824,31 @@ namespace UnitTest.ParsecSharp
 
             // parser が成功し、next が失敗したため全体の結果は失敗となる。
             var source3 = "a123";
+            parser.Parse(source3).CaseOf(
+                fail => { },
+                success => Assert.Fail(success.ToString()));
+        }
+
+        [TestMethod]
+        public void GuardTest()
+        {
+            // parser がマッチした結果に対して条件式で成功と失敗を分岐します。
+
+            // 数値にマッチし、1000 未満の場合のみ成功とするパーサ。
+            var parser = Many1(DecDigit()).ToInt().Guard(x => x < 1000);
+
+            var source = _123456;
+            parser.Parse(source).CaseOf(
+                fail => fail.Message.Is("At Guard -> A value '123456' does not satisfy condition"),
+                success => Assert.Fail(success.ToString()));
+
+            var source2 = "999";
+            parser.Parse(source2).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is(999));
+
+            // parser がマッチしない場合は検証自体が行われない。
+            var source3 = _abcdEFGH;
             parser.Parse(source3).CaseOf(
                 fail => { },
                 success => Assert.Fail(success.ToString()));
@@ -805,22 +1032,24 @@ namespace UnitTest.ParsecSharp
             // 本来、自己を最初に参照するパーサを直接記述することはできない(無限再帰となるため)。
             // 有名な二項演算の左再帰定義。
             // expr = expr op digit / digit
-
-            // この定義を変形して左再帰を除去することが可能。
-            // 二項演算の左再帰除去後の定義。
-            // expr = digit *( op digit )
-
-            // Chain を使うことで左再帰除去後の定義をそのまま記述することができます。
-            var expr = Digit().Chain(x => Char('+').Right(Digit()));
-
-            // 直接左再帰定義の例。こちらは実行すると死にます。
             var num = Many1(Digit()).ToInt();
+
             Parser<char, int> Expr()
                 => (from x in Expr() // ここで無限再帰
                     from func in Char('+')
                     from y in num
                     select x + y)
                     .Or(num);
+
+            // この定義を変形して左再帰を除去することが可能。
+            // 二項演算の左再帰除去後の定義。
+            // expr = digit *( op digit )
+
+            // Chain を使うことで左再帰除去後の定義をそのまま記述することができます。
+            Parser<char, int> Expr2()
+                => num.Chain(x => Char('+').Right(num).Map(y => x + y));
+
+            Expr2().Parse("1+2+3+4").Value.Is(1 + 2 + 3 + 4);
         }
 
         [TestMethod]
@@ -999,7 +1228,7 @@ namespace UnitTest.ParsecSharp
             // ( "[" 1*Letter "]" )
             var parser = Many1(Letter()).Between(Char('['), Char(']'));
 
-            var source = "[" + _abcdEFGH + "]";
+            var source = $"[{_abcdEFGH}]";
             parser.Parse(source).CaseOf(
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is(_abcdEFGH));
@@ -1084,6 +1313,27 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
+        public void EndTest()
+        {
+            // parser が入力を終端まで消費しきったことを保証するコンビネータです。
+            // 終端に到達していなかった場合に失敗となります。
+
+            var source = _abcdEFGH;
+
+            // 1文字以上の小文字にマッチし、その時点で全ての入力を消費していなければならないパーサ。
+            var parser = Many1(Lower()).End();
+            parser.Parse(source).CaseOf(
+                fail => fail.Message.Is("Expected <EndOfStream> but was 'E<0x45>'"),
+                success => Assert.Fail(success.ToString()));
+
+            // 1文字以上の小文字または大文字にマッチし、その時点ですべての入力を消費していなければならないパーサ。
+            var parser2 = Many1(Lower() | Upper()).End();
+            parser2.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is('a', 'b', 'c', 'd', 'E', 'F', 'G', 'H'));
+        }
+
+        [TestMethod]
         public void WithConsumeTest()
         {
             // parser が入力を消費せずに成功した場合、それを失敗として扱うパーサを作成します。
@@ -1140,7 +1390,7 @@ namespace UnitTest.ParsecSharp
         public void AbortIfEnteredTest()
         {
             // パーサが入力を消費した状態で失敗した場合にパース処理を中止します。
-            // LL(k) パーサのような分岐と失敗処理を実現するための拡張です。
+            // LL(k) パーサのような失敗時の早期脱出を実現します。
 
             var parser = Sequence(Char('1'), Char('2'), Char('3'), Char('4')).AsString().AbortIfEntered(_ => "abort1234")
                 .Or(Pure("recovery"));
@@ -1158,31 +1408,6 @@ namespace UnitTest.ParsecSharp
             var source3 = _commanum;
             parser.Parse(source3).CaseOf(
                 fail => fail.Message.Is("At AbortIfEntered -> abort1234"), // 123まで入力を消費して失敗したため復旧が行われない
-                success => Assert.Fail(success.ToString()));
-        }
-
-        [TestMethod]
-        public void GuardTest()
-        {
-            // parser がマッチした結果に対して条件式で成功と失敗を分岐します。
-
-            // 数値にマッチし、1000 未満の場合のみ成功とするパーサ。
-            var parser = Many1(DecDigit()).ToInt().Guard(x => x < 1000);
-
-            var source = _123456;
-            parser.Parse(source).CaseOf(
-                fail => fail.Message.Is("At Guard -> A value '123456' does not satisfy condition"),
-                success => Assert.Fail(success.ToString()));
-
-            var source2 = "999";
-            parser.Parse(source2).CaseOf(
-                fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Is(999));
-
-            // parser がマッチしない場合は検証自体が行われない。
-            var source3 = _abcdEFGH;
-            parser.Parse(source3).CaseOf(
-                fail => { },
                 success => Assert.Fail(success.ToString()));
         }
 
