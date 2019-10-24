@@ -108,10 +108,6 @@ namespace ParsecSharp
             => Any<TToken>().Quote(open, close);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, IEnumerable<T>> Singleton<TToken, T>(Parser<TToken, T> parser)
-            => parser.Map(x => new[] { x }.AsEnumerable());
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Delay<TToken, T>(Func<Parser<TToken, T>> parser)
             => new Delay<TToken, T>(parser);
 

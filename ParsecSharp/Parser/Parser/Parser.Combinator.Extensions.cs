@@ -137,6 +137,14 @@ namespace ParsecSharp
             => parser.Map(x => x.ToArray());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, IEnumerable<T>> Flatten<TToken, T>(this Parser<TToken, IEnumerable<IEnumerable<T>>> parser)
+            => parser.Map(x => x.Aggregate(Enumerable.Empty<T>(), (accumulator, x) => accumulator.Concat(x)));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, IEnumerable<T>> Singleton<TToken, T>(this Parser<TToken, T> parser)
+            => parser.Map(x => new[] { x }.AsEnumerable());
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> WithConsume<TToken, T>(this Parser<TToken, T> parser)
             => parser.WithConsume(_ => "A parser did not consume any input");
 

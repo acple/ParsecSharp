@@ -765,20 +765,6 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
-        public void SingletonTest()
-        {
-            // parser にマッチした結果を1要素のシーケンスとして返すパーサを作成します。
-
-            // 'a' にマッチし、[ 'a' ] を返すパーサ。
-            var parser = Singleton(Char('a'));
-
-            var source = _abcdEFGH;
-            parser.Parse(source).CaseOf(
-                fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Count().Is(1));
-        }
-
-        [TestMethod]
         public void FixTest()
         {
             // ローカル変数上やパーサ定義式内に自己再帰パーサを構築する際のヘルパコンビネータです。
@@ -1331,6 +1317,41 @@ namespace UnitTest.ParsecSharp
             parser2.Parse(source).CaseOf(
                 fail => Assert.Fail(fail.ToString()),
                 success => success.Value.Is('a', 'b', 'c', 'd', 'E', 'F', 'G', 'H'));
+        }
+
+        [TestMethod]
+        public void FlattenTest()
+        {
+            // 二重の IEnumerable を結果に持つパーサに対して、一つに潰すコンビネータです。
+
+            var source = _abcdEFGH;
+
+            // 2つのトークンを取るパーサに1回以上繰り返しマッチするパーサ。
+            var parser = Many1(Any().Repeat(2));
+            // parser の結果を潰したパーサ。
+            var parser2 = parser.Flatten();
+
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is(value => value.Count() == 4 && value.All(x => x.Count() == 2)));
+
+            parser2.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Is('a', 'b', 'c', 'd', 'E', 'F', 'G', 'H'));
+        }
+
+        [TestMethod]
+        public void SingletonTest()
+        {
+            // parser にマッチした結果を1要素のシーケンスとして返すコンビネータです。
+
+            // 'a' にマッチし、[ 'a' ] を返すパーサ。
+            var parser = Char('a').Singleton();
+
+            var source = _abcdEFGH;
+            parser.Parse(source).CaseOf(
+                fail => Assert.Fail(fail.ToString()),
+                success => success.Value.Count().Is(1));
         }
 
         [TestMethod]
