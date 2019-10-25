@@ -20,9 +20,7 @@ namespace UnitTest.ParsecSharp
             var source = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
             var parser = Any<int>().FoldLeft(0, (x, y) => x + y);
 
-            parser.Parse(source).CaseOf(
-                fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Is(55));
+            parser.Parse(source).WillSucceed(value => value.Is(55));
         }
 
         [TestMethod]
@@ -33,9 +31,7 @@ namespace UnitTest.ParsecSharp
             using var stream = new MemoryStream(source);
             var parser = Many1(Any<byte>());
 
-            parser.Parse(stream).CaseOf(
-                fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Is(source));
+            parser.Parse(stream).WillSucceed(value => value.Is(source));
         }
 
         [TestMethod]
@@ -45,9 +41,7 @@ namespace UnitTest.ParsecSharp
             var source = Enumerable.Range(1, 10);
             var parser = Any<int>().FoldRight(0, (x, y) => x + y);
 
-            parser.Parse(source).CaseOf(
-                fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Is(55));
+            parser.Parse(source).WillSucceed(value => value.Is(55));
         }
 
         [TestMethod]
@@ -57,9 +51,7 @@ namespace UnitTest.ParsecSharp
             var source = "The quick brown fox jumps over the lazy dog";
             var parser = Many(Many1(Letter()).Between(Spaces()).AsString()).ToArray();
 
-            parser.Parse(source).CaseOf(
-                fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Is(source.Split(' ')));
+            parser.Parse(source).WillSucceed(value => value.Is(source.Split(' ')));
         }
 
         [TestMethod]
@@ -70,9 +62,7 @@ namespace UnitTest.ParsecSharp
             using var stream = new MemoryStream(new UTF8Encoding(false).GetBytes(source));
             var parser = Many(Many1(Letter()).Between(Spaces()).AsString()).ToArray();
 
-            parser.Parse(stream).CaseOf(
-                fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Is(source.Split(' ')));
+            parser.Parse(stream).WillSucceed(value => value.Is(source.Split(' ')));
         }
 
         [TestMethod]
@@ -86,14 +76,12 @@ namespace UnitTest.ParsecSharp
 
             var source = "The quick brown fox jumps over the lazy dog";
             using var stream = new StringStream(source);
-            var tokenized = stream.Tokenize(token);
+            using var tokenized = stream.Tokenize(token);
 
             // 任意のトークンにマッチし、その長さを返すパーサ。
             var parser = Many(Any<string>().Map(x => x.Length));
 
-            parser.Parse(tokenized).CaseOf(
-                fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Is(source.Split(' ').Select(x => x.Length)));
+            parser.Parse(tokenized).WillSucceed(value => value.Is(source.Split(' ').Select(x => x.Length)));
         }
     }
 }
