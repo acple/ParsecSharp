@@ -33,7 +33,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Try<TToken, T>(Parser<TToken, T> parser, Func<Fail<TToken, T>, T> resume)
-            => parser.Next(x => x, resume);
+            => parser.ModifyResult((state, fail) => Result.Success(resume(fail), state), (_, success) => success);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Optional<TToken, T>(Parser<TToken, T> parser, T defaultValue)
