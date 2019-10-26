@@ -66,7 +66,9 @@ Download manually:
 
 
 ## How to use
-Here is examples:
+* [Starter's tutorial](UnitTest.ParsecSharp/Tutorial.cs)
+
+Implementation examples:
 
 * [JsonParser implementation](ParsecSharp.Examples/JsonParser.cs)
 * [CsvParser implementation](ParsecSharp.Examples/CsvParser.cs)
