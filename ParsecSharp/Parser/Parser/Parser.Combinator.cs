@@ -33,7 +33,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Try<TToken, T>(Parser<TToken, T> parser, Func<Fail<TToken, T>, T> resume)
-            => parser.Next(x => x, resume);
+            => parser.ModifyResult((state, fail) => Result.Success(resume(fail), state), (_, success) => success);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Optional<TToken, T>(Parser<TToken, T> parser, T defaultValue)
@@ -106,10 +106,6 @@ namespace ParsecSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<TToken>> Quoted<TToken, TOpen, TClose>(Parser<TToken, TOpen> open, Parser<TToken, TClose> close)
             => Any<TToken>().Quote(open, close);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, IEnumerable<T>> Singleton<TToken, T>(Parser<TToken, T> parser)
-            => parser.Map(x => new[] { x }.AsEnumerable());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Delay<TToken, T>(Func<Parser<TToken, T>> parser)

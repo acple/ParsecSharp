@@ -21,14 +21,10 @@ namespace UnitTest.ParsecSharp
             var parser = Char('a');
 
             var source = _abcdEFGH;
-            parser.Parse(source).CaseOf(
-                fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Is('a'));
+            parser.Parse(source).WillSucceed(value => value.Is('a'));
 
             var source2 = _123456;
-            parser.Parse(source2).CaseOf(
-                fail => { },
-                success => Assert.Fail(success.ToString()));
+            parser.Parse(source2).WillFail();
         }
 
         [TestMethod]
@@ -39,9 +35,7 @@ namespace UnitTest.ParsecSharp
             var parser = CharIgnoreCase('A');
 
             var source = _abcdEFGH;
-            parser.Parse(source).CaseOf(
-                fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Is('a'));
+            parser.Parse(source).WillSucceed(value => value.Is('a'));
         }
 
         [TestMethod]
@@ -52,9 +46,7 @@ namespace UnitTest.ParsecSharp
             var parser = String("abc");
 
             var source = _abcdEFGH;
-            parser.Parse(source).CaseOf(
-                fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Is("abc"));
+            parser.Parse(source).WillSucceed(value => value.Is("abc"));
         }
 
         [TestMethod]
@@ -65,9 +57,7 @@ namespace UnitTest.ParsecSharp
             var parser = StringIgnoreCase("abcde");
 
             var source = _abcdEFGH;
-            parser.Parse(source).CaseOf(
-                fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Is("abcdE"));
+            parser.Parse(source).WillSucceed(value => value.Is("abcdE"));
         }
 
         [TestMethod]
@@ -80,22 +70,15 @@ namespace UnitTest.ParsecSharp
             // [0 - 9] にマッチし int に変換したものを返すパーサ。
             var parser = Many1(DecDigit()).ToInt();
 
-            parser.Parse(source).CaseOf(
-                fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Is(1234));
+            parser.Parse(source).WillSucceed(value => value.Is(1234));
 
             // 変換対象に数値以外の文字を含ませた場合、変換に失敗する。
             var parser2 = Many1(Any()).ToInt();
-            parser2.Parse(source).CaseOf(
-                fail => fail.Message.Is("Expected digits but was '1234abcd'"),
-                success => Assert.Fail(success.ToString()));
+            parser2.Parse(source).WillFail(fail => fail.Message.Is("Expected digits but was '1234abcd'"));
 
             // 32 bit を超えた範囲の数値を与えると失敗となる。
             var source2 = "1234567890123456";
-            parser.Parse(source2).CaseOf(
-                fail => fail.Message.Is("Expected digits but was '1234567890123456'"),
-                success => Assert.Fail(success.Value.ToString()));
-
+            parser.Parse(source2).WillFail(fail => fail.Message.Is("Expected digits but was '1234567890123456'"));
         }
 
         [TestMethod]
@@ -108,21 +91,15 @@ namespace UnitTest.ParsecSharp
             // [0 - 9] にマッチし long に変換したものを返すパーサ。
             var parser = Many1(DecDigit()).ToLong();
 
-            parser.Parse(source).CaseOf(
-                fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Is(1234L));
+            parser.Parse(source).WillSucceed(value => value.Is(1234L));
 
             // 変換対象に数値以外の文字を含ませた場合、変換に失敗する。
             var parser2 = Many1(Any()).ToLong();
-            parser2.Parse(source).CaseOf(
-                fail => fail.Message.Is("Expected digits but was '1234abcd'"),
-                success => Assert.Fail(success.ToString()));
+            parser2.Parse(source).WillFail(fail => fail.Message.Is("Expected digits but was '1234abcd'"));
 
             // 64 bit までの数値を変換できる。
             var source2 = "1234567890123456";
-            parser.Parse(source2).CaseOf(
-                fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Is(1234567890123456L));
+            parser.Parse(source2).WillSucceed(value => value.Is(1234567890123456L));
         }
 
         [TestMethod]
@@ -135,21 +112,15 @@ namespace UnitTest.ParsecSharp
             // [0 - 9] / '.' にマッチし double に変換したものを返すパーサ。
             var parser = Many1(DecDigit() | Char('.')).ToDouble();
 
-            parser.Parse(source).CaseOf(
-                fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Is(1234.5678));
+            parser.Parse(source).WillSucceed(value => value.Is(1234.5678));
 
             // 変換対象に数値以外の文字を含ませた場合、変換に失敗する。
             var parser2 = Many1(Any()).ToDouble();
-            parser2.Parse(source).CaseOf(
-                fail => fail.Message.Is("Expected number but was '1234.5678abcd'"),
-                success => Assert.Fail(success.ToString()));
+            parser2.Parse(source).WillFail(fail => fail.Message.Is("Expected number but was '1234.5678abcd'"));
 
             // double.Parse(string? s) で変換可能な文字列に対応する。
             var source2 = "1.234567890123456";
-            parser.Parse(source2).CaseOf(
-                fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Is(1.234567890123456));
+            parser.Parse(source2).WillSucceed(value => value.Is(1.234567890123456));
         }
 
         [TestMethod]
@@ -159,9 +130,7 @@ namespace UnitTest.ParsecSharp
 
             var parser = OneOfIgnoreCase("XYZ");
 
-            parser.Parse(source).CaseOf(
-                fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Is('z'));
+            parser.Parse(source).WillSucceed(value => value.Is('z'));
         }
 
         [TestMethod]
@@ -171,15 +140,11 @@ namespace UnitTest.ParsecSharp
 
             var parser = NoneOfIgnoreCase("XYZ");
 
-            parser.Parse(source).CaseOf(
-                fail => { },
-                success => Assert.Fail(success.ToString()));
+            parser.Parse(source).WillFail();
 
             var parser2 = NoneOfIgnoreCase("ABCD");
 
-            parser2.Parse(source).CaseOf(
-                fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Is('z'));
+            parser2.Parse(source).WillSucceed(value => value.Is('z'));
         }
     }
 }

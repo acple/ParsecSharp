@@ -31,9 +31,7 @@ namespace UnitTest.ParsecSharp
             var parser = Many(Any<(int, int, int)>());
             var source = Enumerable.Range(0, count).Select(x => (x, x, x));
 
-            parser.Parse(source).CaseOf(
-                fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Count().Is(count));
+            parser.Parse(source).WillSucceed(value => value.Count().Is(count));
         }
 
         [TestMethod]
@@ -44,9 +42,7 @@ namespace UnitTest.ParsecSharp
             var parser = Many(Any<Tuple<int, int, int>>());
             var source = Enumerable.Range(0, count).Select(x => Tuple.Create(x, x, x));
 
-            parser.Parse(source).CaseOf(
-                fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Count().Is(count));
+            parser.Parse(source).WillSucceed(value => value.Count().Is(count));
         }
 
         [TestMethod]
@@ -57,9 +53,7 @@ namespace UnitTest.ParsecSharp
             var source = Enumerable.Repeat('[', depth).Concat(Enumerable.Repeat(']', depth)).ToArray();
             var parser = Fix<char, int>(self => self.Or(Pure(1234)).Between(Char('['), Char(']'))).End();
 
-            parser.Parse(source).CaseOf(
-                fail => Assert.Fail(fail.ToString()),
-                success => success.Value.Is(1234));
+            parser.Parse(source).WillSucceed(value => value.Is(1234));
         }
     }
 }

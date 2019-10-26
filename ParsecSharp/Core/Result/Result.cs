@@ -28,6 +28,8 @@ namespace ParsecSharp
         public sealed override int GetHashCode()
             => base.GetHashCode();
 
+        public abstract override string ToString();
+
         public readonly struct Suspended
         {
             private readonly Result<TToken, T> _result;

@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../ParsecSharp/ParsecSharp.csproj" />
+    <ProjectReference Include="../ParsecSharp.Examples/ParsecSharp.Examples.csproj" />
   </ItemGroup>
 
 </Project>

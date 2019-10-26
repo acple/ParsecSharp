@@ -57,12 +57,20 @@ namespace ParsecSharp
             => Fix<TToken, T>(self => parser.Bind(x => function.Next(function => self.Next(y => function(x, y), x), x)));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, T> FoldLeft<TToken, T>(this Parser<TToken, T> parser, Func<T, T, T> function)
+            => parser.Bind(x => parser.FoldLeft(x, function));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, TAccumulator> FoldLeft<TToken, T, TAccumulator>(this Parser<TToken, T> parser, TAccumulator seed, Func<TAccumulator, T, TAccumulator> function)
             => parser.Next(x => parser.FoldLeft(function(seed, x), function), seed);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, TAccumulator> FoldLeft<TToken, T, TAccumulator>(this Parser<TToken, T> parser, Func<IParsecState<TToken>, TAccumulator> seed, Func<TAccumulator, T, TAccumulator> function)
             => Pure(seed).Bind(x => parser.FoldLeft(x, function));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, T> FoldRight<TToken, T>(this Parser<TToken, T> parser, Func<T, T, T> function)
+            => Fix<TToken, T>(self => parser.Bind(x => self.Next(accumulator => function(x, accumulator), x)));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, TAccumulator> FoldRight<TToken, T, TAccumulator>(this Parser<TToken, T> parser, TAccumulator seed, Func<T, TAccumulator, TAccumulator> function)
@@ -135,6 +143,14 @@ namespace ParsecSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T[]> ToArray<TToken, T>(this Parser<TToken, IEnumerable<T>> parser)
             => parser.Map(x => x.ToArray());
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, IEnumerable<T>> Flatten<TToken, T>(this Parser<TToken, IEnumerable<IEnumerable<T>>> parser)
+            => parser.Map(x => x.Aggregate(Enumerable.Empty<T>(), (accumulator, x) => accumulator.Concat(x)));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, IEnumerable<T>> Singleton<TToken, T>(this Parser<TToken, T> parser)
+            => parser.Map(x => new[] { x }.AsEnumerable());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> WithConsume<TToken, T>(this Parser<TToken, T> parser)
