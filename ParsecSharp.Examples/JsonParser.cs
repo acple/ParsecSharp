@@ -59,7 +59,7 @@ namespace ParsecSharp.Examples
                 Delay(JsonArray).AsDynamic().AbortIfEntered(),
                 Delay(JsonNumber).AsDynamic().AbortIfEntered(),
                 Delay(JsonBool).AsDynamic().AbortIfEntered(),
-                Delay(JsonNull).AsDynamic()).AbortIfEntered();
+                Delay(JsonNull).AsDynamic().AbortIfEntered());
 
         // エスケープ不要な文字にマッチします。
         // unescaped = %x20-21 / %x23-5B / %x5D-10FFFF ; %x22 == '"', %x5C == '\'
@@ -147,8 +147,7 @@ namespace ParsecSharp.Examples
         // JSON Object にマッチします。
         // object = begin-object [ member *( value-separator member ) ] end-object
         private static Parser<char, Dictionary<string, dynamic?>> JsonObject()
-            => KeyValue().SeparatedBy(Comma())
-                .Between(OpenBrace(), CloseBrace())
+            => KeyValue().SeparatedBy(Comma()).Between(OpenBrace(), CloseBrace())
                 .Map(members => members.ToDictionary(x => x.Key, x => x.Value));
 
         // JSON Array にマッチします。
