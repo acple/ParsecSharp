@@ -1,6 +1,8 @@
+using System;
+
 namespace ParsecSharp.Internal
 {
-    public readonly struct LinearPosition : IPosition
+    public readonly struct LinearPosition : IPosition, IEquatable<LinearPosition>
     {
         public static LinearPosition Initial => default;
 
@@ -21,6 +23,9 @@ namespace ParsecSharp.Internal
 
         public bool Equals(IPosition other)
             => other is LinearPosition position && this == position;
+
+        public bool Equals(LinearPosition other)
+            => this == other;
 
         public override bool Equals(object? obj)
             => obj is LinearPosition position && this == position;

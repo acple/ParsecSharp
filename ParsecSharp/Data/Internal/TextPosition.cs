@@ -1,6 +1,8 @@
+using System;
+
 namespace ParsecSharp.Internal
 {
-    public readonly struct TextPosition : IPosition
+    public readonly struct TextPosition : IPosition, IEquatable<TextPosition>
     {
         public static TextPosition Initial => new TextPosition(1, 1);
 
@@ -24,6 +26,9 @@ namespace ParsecSharp.Internal
 
         public bool Equals(IPosition other)
             => other is TextPosition position && this == position;
+
+        public bool Equals(TextPosition other)
+            => this == other;
 
         public override bool Equals(object? obj)
             => obj is TextPosition position && this == position;
