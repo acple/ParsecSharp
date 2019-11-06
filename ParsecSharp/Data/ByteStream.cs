@@ -6,7 +6,7 @@ using ParsecSharp.Internal;
 
 namespace ParsecSharp
 {
-    public sealed class ByteStream : IParsecStateStream<byte>
+    public sealed class ByteStream : IParsecState<byte, ByteStream>
     {
         private const int MaxBufferSize = 2048;
 
@@ -24,7 +24,7 @@ namespace ParsecSharp
 
         public IDisposable InnerResource { get; }
 
-        public IParsecStateStream<byte> Next => new ByteStream(this.InnerResource, (this.Index == MaxBufferSize - 1) ? this._buffer.Next : this._buffer, this._position.Next());
+        public ByteStream Next => new ByteStream(this.InnerResource, (this.Index == MaxBufferSize - 1) ? this._buffer.Next : this._buffer, this._position.Next());
 
         public ByteStream(Stream source) : this(source, CreateBuffer(source), LinearPosition.Initial)
         { }
@@ -55,11 +55,14 @@ namespace ParsecSharp
             }
         }
 
+        public IParsecState<byte> GetState()
+            => this;
+
         public void Dispose()
             => this.InnerResource.Dispose();
 
-        public bool Equals(IParsecState<byte> other)
-            => other is ByteStream state && this._buffer == state._buffer && this._position == state._position;
+        public bool Equals(ByteStream other)
+            => this._buffer == other._buffer && this._position == other._position;
 
         public sealed override bool Equals(object? obj)
             => obj is ByteStream state && this._buffer == state._buffer && this._position == state._position;

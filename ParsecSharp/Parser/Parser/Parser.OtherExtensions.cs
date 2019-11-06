@@ -1,6 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
-using ParsecSharp.Internal;
+using ParsecSharp.Internal.Parsers;
 
 namespace ParsecSharp
 {
@@ -18,12 +18,11 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Do<TToken, T>(this Parser<TToken, T> parser, Action<T> action, Action<Fail<TToken, T>> onFail)
-            => parser.ModifyResult(
-                (_, fail) => { onFail(fail); return fail; },
-                (_, success) => { action(success.Value); return success; });
+            => new Do<TToken, T>(parser, onFail, action);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IParsecStateStream<TToken> Tokenize<TInput, TToken>(this IParsecStateStream<TInput> source, Parser<TInput, TToken> parser)
-            => new TokenizedStream<TInput, TToken>(source, parser);
+        public static TokenizedStream<TInput, TState, TToken> Tokenize<TInput, TState, TToken>(this TState source, Parser<TInput, TToken> parser)
+            where TState : IParsecState<TInput, TState>
+            => new TokenizedStream<TInput, TState, TToken>(source, parser);
     }
 }

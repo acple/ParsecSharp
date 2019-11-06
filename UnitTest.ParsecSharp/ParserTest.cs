@@ -76,6 +76,7 @@ namespace UnitTest.ParsecSharp
         public void NullTest()
         {
             // 空文字にマッチし、任意の状態において常に成功するパーサを作成します。
+            // このパーサは入力を消費しません。
 
             var parser = Null();
 
@@ -1208,10 +1209,10 @@ namespace UnitTest.ParsecSharp
             result2.WillSucceed(value => value.Is("dEF"));
 
             var (result3, rest3) = parser.ParsePartially(rest2);
-            result3.WillFail();
+            result3.WillFail(); // 終端に到達したため失敗
 
             // 失敗時点のstateが返されることに注意する。
-            rest3.HasValue.IsFalse(); // 終端に到達したため失敗
+            EndOfInput().Parse(rest3).WillSucceed(value => value.Is(Unit.Instance));
         }
     }
 }

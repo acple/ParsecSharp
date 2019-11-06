@@ -2,9 +2,9 @@ using System;
 
 namespace ParsecSharp.Internal
 {
-    public sealed class EmptyStream<TToken> : IParsecStateStream<TToken>
+    public sealed class EmptyStream<TToken> : IParsecState<TToken, EmptyStream<TToken>>
     {
-        public static IParsecStateStream<TToken> Instance { get; } = new EmptyStream<TToken>();
+        public static EmptyStream<TToken> Instance { get; } = new EmptyStream<TToken>();
 
         public TToken Current => default!;
 
@@ -14,15 +14,18 @@ namespace ParsecSharp.Internal
 
         public IDisposable? InnerResource => default;
 
-        public IParsecStateStream<TToken> Next => this;
+        public EmptyStream<TToken> Next => this;
 
         private EmptyStream()
         { }
 
+        public IParsecState<TToken> GetState()
+            => this;
+
         public void Dispose()
         { }
 
-        public bool Equals(IParsecState<TToken> other)
+        public bool Equals(EmptyStream<TToken> other)
             => ReferenceEquals(this, other);
 
         public sealed override bool Equals(object? obj)

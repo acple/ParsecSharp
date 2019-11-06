@@ -3,7 +3,7 @@ using ParsecSharp.Internal;
 
 namespace ParsecSharp
 {
-    public sealed class StringStream : IParsecStateStream<char>
+    public sealed class StringStream : IParsecState<char, StringStream>
     {
         private readonly string _source;
 
@@ -19,7 +19,7 @@ namespace ParsecSharp
 
         public IDisposable? InnerResource => default;
 
-        public IParsecStateStream<char> Next => new StringStream(this._source, this._index + 1, this._position.Next(this.Current));
+        public StringStream Next => new StringStream(this._source, this._index + 1, this._position.Next(this.Current));
 
         public StringStream(string source) : this(source, 0, TextPosition.Initial)
         { }
@@ -31,11 +31,14 @@ namespace ParsecSharp
             this._position = position;
         }
 
+        public IParsecState<char> GetState()
+            => this;
+
         public void Dispose()
         { }
 
-        public bool Equals(IParsecState<char> other)
-            => other is StringStream state && this._source == state._source && this._index == state._index;
+        public bool Equals(StringStream other)
+            => this._source == other._source && this._index == other._index;
 
         public sealed override bool Equals(object? obj)
             => obj is StringStream state && this._source == state._source && this._index == state._index;

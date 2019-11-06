@@ -1,6 +1,6 @@
 using System;
 
-namespace ParsecSharp.Internal
+namespace ParsecSharp.Internal.Parsers
 {
     internal sealed class Next<TToken, TIntermediate, T> : Parser<TToken, T>
     {
@@ -10,14 +10,14 @@ namespace ParsecSharp.Internal
 
         private readonly Func<Fail<TToken, TIntermediate>, Parser<TToken, T>> _fail;
 
-        internal Next(Parser<TToken, TIntermediate> parser, Func<TIntermediate, Parser<TToken, T>> success, Func<Fail<TToken, TIntermediate>, Parser<TToken, T>> fail)
+        public Next(Parser<TToken, TIntermediate> parser, Func<TIntermediate, Parser<TToken, T>> success, Func<Fail<TToken, TIntermediate>, Parser<TToken, T>> fail)
         {
             this._parser = parser;
             this._success = success;
             this._fail = fail;
         }
 
-        internal sealed override Result<TToken, TResult> Run<TResult>(IParsecStateStream<TToken> state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
+        internal sealed override Result<TToken, TResult> Run<TState, TResult>(TState state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
         {
             var _success = this._success;
             var _fail = this._fail;

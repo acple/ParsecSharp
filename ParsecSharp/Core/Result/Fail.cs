@@ -6,14 +6,11 @@ namespace ParsecSharp
     {
         public sealed override T Value => throw this.Exception;
 
-        public IParsecState<TToken> State => this.Rest;
+        public abstract IParsecState<TToken> State { get; }
 
         public virtual ParsecException Exception => new ParsecException(this.ToString());
 
         public abstract string Message { get; }
-
-        protected Fail(IParsecStateStream<TToken> state) : base(state)
-        { }
 
         public abstract Fail<TToken, TNext> Convert<TNext>();
 

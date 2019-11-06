@@ -1,6 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
-using ParsecSharp.Internal;
+using ParsecSharp.Internal.Parsers;
 
 namespace ParsecSharp
 {
@@ -40,11 +40,11 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, TResult> Next<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, TResult> function, TResult result)
-            => parser.ModifyResult((state, _) => Result.Success(result, state), (_, success) => success.Map(function));
+            => new BiMapConst<TToken, T, TResult>(parser, function, result);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, TResult> Next<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, TResult> function, Func<Fail<TToken, T>, TResult> result)
-            => parser.ModifyResult((state, fail) => Result.Success(result(fail), state), (_, success) => success.Map(function));
+            => new BiMap<TToken, T, TResult>(parser, function, result);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Guard<TToken, T>(this Parser<TToken, T> parser, Func<T, bool> predicate)

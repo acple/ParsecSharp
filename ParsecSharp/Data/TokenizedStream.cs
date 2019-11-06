@@ -3,11 +3,12 @@ using ParsecSharp.Internal;
 
 namespace ParsecSharp
 {
-    public sealed class TokenizedStream<TInput, TToken> : IParsecStateStream<TToken>
+    public sealed class TokenizedStream<TInput, TState, TToken> : IParsecState<TToken, TokenizedStream<TInput, TState, TToken>>
+        where TState : IParsecState<TInput, TState>
     {
         private readonly LinearPosition _position;
 
-        private readonly Lazy<IParsecStateStream<TToken>> _next;
+        private readonly Lazy<TokenizedStream<TInput, TState, TToken>> _next;
 
         public TToken Current { get; }
 
@@ -17,25 +18,28 @@ namespace ParsecSharp
 
         public IDisposable? InnerResource { get; }
 
-        public IParsecStateStream<TToken> Next => this._next.Value;
+        public TokenizedStream<TInput, TState, TToken> Next => this._next.Value;
 
-        public TokenizedStream(IParsecStateStream<TInput> source, Parser<TInput, TToken> parser) : this(source, parser, LinearPosition.Initial)
+        public TokenizedStream(TState source, Parser<TInput, TToken> parser) : this(source.InnerResource, parser.ParsePartially(source), parser, LinearPosition.Initial)
         { }
 
-        private TokenizedStream(IParsecStateStream<TInput> source, Parser<TInput, TToken> parser, LinearPosition position)
+        private TokenizedStream(IDisposable? resource, SuspendedResult<TInput, TToken> state, Parser<TInput, TToken> parser, LinearPosition position)
         {
-            this.InnerResource = source.InnerResource;
+            this.InnerResource = resource;
             this._position = position;
-            var (result, rest) = parser.ParsePartially(source);
+            var (result, rest) = state;
             this.HasValue = result.CaseOf(_ => false, _ => true);
             this.Current = (this.HasValue) ? result.Value : default!;
-            this._next = new Lazy<IParsecStateStream<TToken>>(() => new TokenizedStream<TInput, TToken>(rest, parser, position.Next()), false);
+            this._next = new Lazy<TokenizedStream<TInput, TState, TToken>>(() => new TokenizedStream<TInput, TState, TToken>(rest.InnerResource, parser.ParsePartially(rest), parser, position.Next()), false);
         }
+
+        public IParsecState<TToken> GetState()
+            => this;
 
         public void Dispose()
             => this.InnerResource?.Dispose();
 
-        public bool Equals(IParsecState<TToken> other)
+        public bool Equals(TokenizedStream<TInput, TState, TToken> other)
             => ReferenceEquals(this, other);
 
         public sealed override string ToString()

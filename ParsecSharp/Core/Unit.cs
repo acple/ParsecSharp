@@ -1,7 +1,9 @@
 using System;
+using System.Runtime.InteropServices;
 
 namespace ParsecSharp
 {
+    [StructLayout(LayoutKind.Auto)]
     public readonly struct Unit : IComparable<Unit>, IEquatable<Unit>
     {
         public static Unit Instance => default;

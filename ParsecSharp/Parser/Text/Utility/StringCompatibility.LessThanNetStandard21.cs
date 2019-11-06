@@ -2,7 +2,7 @@
 using System;
 using System.Runtime.CompilerServices;
 
-namespace ParsecSharp.Internal
+namespace ParsecSharp
 {
     internal static class StringCompatibility
     {

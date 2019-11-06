@@ -1,7 +1,6 @@
 using System;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using ParsecSharp.Internal;
+using ParsecSharp.Internal.Parsers;
 using static ParsecSharp.Parser;
 
 namespace ParsecSharp
@@ -138,9 +137,6 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, string> String(string text, StringComparison comparison)
-            => Builder.Create<char, string>(state =>
-                (new string(state.AsEnumerable().Take(text.Length).ToArray()) is var result && string.Equals(result, text, comparison))
-                    ? Result.Success(result, state.Advance(text.Length))
-                    : Result.Fail<char, string>($"Expected '{text}' but was '{result}'", state));
+            => new ParserString(text, comparison);
     }
 }

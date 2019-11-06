@@ -1,7 +1,9 @@
 using System;
+using System.Runtime.InteropServices;
 
 namespace ParsecSharp.Internal
 {
+    [StructLayout(LayoutKind.Auto)]
     public readonly struct LinearPosition : IPosition, IEquatable<LinearPosition>
     {
         public static LinearPosition Initial => default;
