@@ -2,7 +2,7 @@ using System;
 
 namespace ParsecSharp.Internal.Results
 {
-    internal class Success<TToken, TState, T> : Success<TToken, T>
+    internal sealed class Success<TToken, TState, T> : Success<TToken, T>
         where TState : IParsecState<TToken, TState>
     {
         private readonly TState _state;
