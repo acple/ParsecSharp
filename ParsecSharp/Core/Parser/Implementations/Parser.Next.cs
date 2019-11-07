@@ -8,21 +8,21 @@ namespace ParsecSharp.Internal.Parsers
 
         private readonly Func<TIntermediate, Parser<TToken, T>> _success;
 
-        private readonly Func<Fail<TToken, TIntermediate>, Parser<TToken, T>> _fail;
+        private readonly Func<Failure<TToken, TIntermediate>, Parser<TToken, T>> _failure;
 
-        public Next(Parser<TToken, TIntermediate> parser, Func<TIntermediate, Parser<TToken, T>> success, Func<Fail<TToken, TIntermediate>, Parser<TToken, T>> fail)
+        public Next(Parser<TToken, TIntermediate> parser, Func<TIntermediate, Parser<TToken, T>> success, Func<Failure<TToken, TIntermediate>, Parser<TToken, T>> failure)
         {
             this._parser = parser;
             this._success = success;
-            this._fail = fail;
+            this._failure = failure;
         }
 
         internal sealed override Result<TToken, TResult> Run<TState, TResult>(TState state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
         {
             var _success = this._success;
-            var _fail = this._fail;
+            var _failure = this._failure;
             return this._parser.Run(state, result => result.CaseOf(
-                fail => _fail(fail).Run(state, cont),
+                failure => _failure(failure).Run(state, cont),
                 success => success.Next(_success, cont)));
         }
     }

@@ -2,7 +2,7 @@ using System;
 
 namespace ParsecSharp.Internal.Results
 {
-    internal sealed class FailWithException<TToken, TState, T> : Fail<TToken, T>
+    internal sealed class FailureWithException<TToken, TState, T> : Failure<TToken, T>
         where TState : IParsecState<TToken, TState>
     {
         private readonly TState _state;
@@ -15,7 +15,7 @@ namespace ParsecSharp.Internal.Results
 
         public sealed override string Message => $"Exception '{this._exception.GetType().Name}' occurred: {this._exception.ToString()}";
 
-        public FailWithException(Exception exception, TState state)
+        public FailureWithException(Exception exception, TState state)
         {
             this._state = state;
             this._exception = exception;
@@ -24,7 +24,7 @@ namespace ParsecSharp.Internal.Results
         public sealed override SuspendedResult<TToken, T> Suspend()
             => SuspendedResult<TToken, T>.Create(this, this._state);
 
-        public sealed override Fail<TToken, TNext> Convert<TNext>()
-            => new FailWithException<TToken, TState, TNext>(this._exception, this._state);
+        public sealed override Failure<TToken, TNext> Convert<TNext>()
+            => new FailureWithException<TToken, TState, TNext>(this._exception, this._state);
     }
 }

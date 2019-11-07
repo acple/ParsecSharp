@@ -21,7 +21,7 @@ namespace ParsecSharp.Internal.Parsers
             var text = new string(result.Select(x => x.Current).ToArray());
             return (string.Equals(text, this._text, this._comparison))
                 ? Result.Success<char, TState, string>(text, (result.Length == 0) ? state : result.Last().Next)
-                : Result.Fail<char, TState, string>($"Expected '{this._text}' but was '{text}'", state);
+                : Result.Failure<char, TState, string>($"Expected '{this._text}' but was '{text}'", state);
         }
     }
 }

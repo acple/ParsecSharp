@@ -14,6 +14,6 @@ namespace ParsecSharp.Internal.Parsers
         protected sealed override Result<TToken, Unit> Run<TState>(TState state)
             => (state.AsEnumerable<TToken, TState>().Take(this._count).ToArray() is var result && result.Length == this._count)
                 ? Result.Success<TToken, TState, Unit>(Unit.Instance, (result.Length == 0) ? state : result.Last().Next)
-                : Result.Fail<TToken, TState, Unit>($"At {nameof(Skip<TToken>)} -> An input does not have enough length", state);
+                : Result.Failure<TToken, TState, Unit>($"At {nameof(Skip<TToken>)} -> An input does not have enough length", state);
     }
 }

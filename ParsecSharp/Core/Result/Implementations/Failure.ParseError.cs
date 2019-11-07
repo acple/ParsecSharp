@@ -1,6 +1,6 @@
 namespace ParsecSharp.Internal.Results
 {
-    internal sealed class ParseError<TToken, TState, T> : Fail<TToken, T>
+    internal sealed class ParseError<TToken, TState, T> : Failure<TToken, T>
         where TState : IParsecState<TToken, TState>
     {
         private readonly TState _state;
@@ -17,7 +17,7 @@ namespace ParsecSharp.Internal.Results
         public sealed override SuspendedResult<TToken, T> Suspend()
             => SuspendedResult<TToken, T>.Create(this, this._state);
 
-        public sealed override Fail<TToken, TNext> Convert<TNext>()
+        public sealed override Failure<TToken, TNext> Convert<TNext>()
             => new ParseError<TToken, TState, TNext>(this._state);
     }
 }

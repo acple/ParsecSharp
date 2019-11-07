@@ -12,6 +12,6 @@ namespace ParsecSharp.Internal.Parsers
         }
 
         internal sealed override Result<TToken, TResult> Run<TState, TResult>(TState state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
-            => Result.Fail<TToken, TState, TResult>(this._exception, state);
+            => Result.Failure<TToken, TState, TResult>(this._exception, state);
     }
 }

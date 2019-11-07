@@ -6,18 +6,18 @@ namespace ParsecSharp.Internal.Parsers
     {
         private readonly Func<TIntermediate, T> _function;
 
-        private readonly Func<Fail<TToken, TIntermediate>, T> _result;
+        private readonly Func<Failure<TToken, TIntermediate>, T> _result;
 
-        public BiMap(Parser<TToken, TIntermediate> parser, Func<TIntermediate, T> function, Func<Fail<TToken, TIntermediate>, T> result) : base(parser)
+        public BiMap(Parser<TToken, TIntermediate> parser, Func<TIntermediate, T> function, Func<Failure<TToken, TIntermediate>, T> result) : base(parser)
         {
             this._function = function;
             this._result = result;
         }
 
-        protected sealed override Result<TToken, T> Fail<TState>(TState state, Fail<TToken, TIntermediate> fail)
-            => Result.Success<TToken, TState, T>(this._result(fail), state);
+        protected sealed override Result<TToken, T> Fail<TState>(TState state, Failure<TToken, TIntermediate> failure)
+            => Result.Success<TToken, TState, T>(this._result(failure), state);
 
-        protected sealed override Result<TToken, T> Success<TState>(TState state, Success<TToken, TIntermediate> success)
+        protected sealed override Result<TToken, T> Succeed<TState>(TState state, Success<TToken, TIntermediate> success)
             => success.Map(this._function);
     }
 
@@ -33,10 +33,10 @@ namespace ParsecSharp.Internal.Parsers
             this._result = result;
         }
 
-        protected sealed override Result<TToken, T> Fail<TState>(TState state, Fail<TToken, TIntermediate> fail)
+        protected sealed override Result<TToken, T> Fail<TState>(TState state, Failure<TToken, TIntermediate> failure)
             => Result.Success<TToken, TState, T>(this._result, state);
 
-        protected sealed override Result<TToken, T> Success<TState>(TState state, Success<TToken, TIntermediate> success)
+        protected sealed override Result<TToken, T> Succeed<TState>(TState state, Success<TToken, TIntermediate> success)
             => success.Map(this._function);
     }
 }

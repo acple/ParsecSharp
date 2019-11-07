@@ -29,7 +29,7 @@ namespace UnitTest.ParsecSharp
 
                 {
                     // gets result value or string.Empty
-                    var value = result.CaseOf(fail => string.Empty, success => success.Value);
+                    var value = result.CaseOf(failure => string.Empty, success => success.Value);
                     value.Is("aa");
                 }
 
@@ -48,7 +48,7 @@ namespace UnitTest.ParsecSharp
                 var result = parser.Parse(source);
 
                 {
-                    var value = result.CaseOf(fail => string.Empty, success => success.Value);
+                    var value = result.CaseOf(failure => string.Empty, success => success.Value);
                     value.Is(string.Empty);
                 }
 
@@ -99,7 +99,7 @@ namespace UnitTest.ParsecSharp
                     regex.Match(source).Success.IsFalse();
 
                     var parser = Many1(Char('b'));
-                    parser.Parse(source).WillFail(fail => fail.Message.Is("Unexpected 'a<0x61>'"));
+                    parser.Parse(source).WillFail(failure => failure.Message.Is("Unexpected 'a<0x61>'"));
                 }
             }
 
@@ -108,7 +108,7 @@ namespace UnitTest.ParsecSharp
                 regex.Match(source).Success.IsFalse();
 
                 var parser = Many(Char('a')).End();
-                parser.Parse(source).WillFail(fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 3): Expected <EndOfStream> but was 'b<0x62>'"));
+                parser.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 3): Expected <EndOfStream> but was 'b<0x62>'"));
             }
 
             {
@@ -117,10 +117,10 @@ namespace UnitTest.ParsecSharp
                     regex.Match(source).Success.IsFalse();
 
                     var parser = Sequence(Char('a'), Char('b'));
-                    parser.Parse(source).WillFail(fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 2): Unexpected 'a<0x61>'"));
+                    parser.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 2): Unexpected 'a<0x61>'"));
 
                     var parser2 = String("ab");
-                    parser2.Parse(source).WillFail(fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Expected 'ab' but was 'aa'"));
+                    parser2.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 1): Expected 'ab' but was 'aa'"));
                 }
 
                 {
@@ -160,7 +160,7 @@ namespace UnitTest.ParsecSharp
         {
             var source = @"{""key1"":123,""key2"":""abc"",""key3"":{""key3_1"":true,""key3_2"":[1,2,3]}}";
             var result = JsonParser.Parse(source)
-                .CaseOf(fail => default, success => success.Value);
+                .CaseOf(failure => default, success => success.Value);
 
             var key1 = (double)result?["key1"];
             key1.Is(123.0);

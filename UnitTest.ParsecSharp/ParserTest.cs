@@ -119,14 +119,14 @@ namespace UnitTest.ParsecSharp
             // トークンが 'd', 'c', 'b', 'a', '9', '8', '7' のいずれにも該当しない場合に成功するパーサ。
             var parser = NoneOf("dcba987");
 
-            parser.Parse(source).WillFail(fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected 'a<0x61>'"));
+            parser.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 1): Unexpected 'a<0x61>'"));
 
             parser.Parse(source2).WillSucceed(value => value.Is('1'));
 
             // params char[] を取るオーバーロード。IEnumerable<char> も受け取れる。
             var parser2 = NoneOf('d', 'c', 'b', 'a', '9', '8', '7');
 
-            parser2.Parse(source).WillFail(fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected 'a<0x61>'"));
+            parser2.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 1): Unexpected 'a<0x61>'"));
 
             parser2.Parse(source2).WillSucceed(value => value.Is('1'));
         }
@@ -149,7 +149,7 @@ namespace UnitTest.ParsecSharp
 
             // 残りの入力よりも大きい数値を指定していた場合は失敗します。
             var parser2 = Take(9);
-            parser2.Parse(source).WillFail(fail => fail.Message.Is("At Take -> An input does not have enough length"));
+            parser2.Parse(source).WillFail(failure => failure.Message.Is("At Take -> An input does not have enough length"));
         }
 
         [TestMethod]
@@ -171,7 +171,7 @@ namespace UnitTest.ParsecSharp
 
             // 指定数スキップできなかった場合は失敗します。
             var parser3 = Skip(9);
-            parser3.Parse(source).WillFail(fail => fail.Message.Is("At Skip -> An input does not have enough length"));
+            parser3.Parse(source).WillFail(failure => failure.Message.Is("At Skip -> An input does not have enough length"));
         }
 
         [TestMethod]
@@ -279,28 +279,28 @@ namespace UnitTest.ParsecSharp
             var source = _abcdEFGH;
 
             var parser = Fail<Unit>();
-            parser.Parse(source).WillFail(fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): Unexpected 'a<0x61>'"));
+            parser.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 1): Unexpected 'a<0x61>'"));
 
             // エラーメッセージを記述することができるオーバーロード。
             var parser2 = Fail<Unit>("errormessagetest");
-            parser2.Parse(source).WillFail(fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): errormessagetest"));
+            parser2.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 1): errormessagetest"));
 
             // パース失敗時の state をハンドル可能。
             var parser3 = Fail<Unit>(state => $"errormessagetest, current state: '{state.ToString()}'");
-            parser3.Parse(source).WillFail(fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): errormessagetest, current state: 'a<0x61>'"));
+            parser3.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 1): errormessagetest, current state: 'a<0x61>'"));
         }
 
         [TestMethod]
         public void AbortTest()
         {
             // 実行した時点でパース処理を中止するパーサを作成します。
-            // 通常これを直接利用することはありません。AbortIfEntered か AbortWhenFail コンビネータを利用します。
+            // 通常これを直接利用することはありません。AbortIfEntered コンビネータか AbortWhenFail コンビネータを利用します。
 
             // Abort または Any にマッチするが、Abort を評価した時点でパース処理が終了する。
             var parser = Abort<char>(_ => "aborted").Or(Any());
 
             var source = _123456;
-            parser.Parse(source).WillFail(fail => fail.Message.Is("aborted"));
+            parser.Parse(source).WillFail(failure => failure.Message.Is("aborted"));
         }
 
         [TestMethod]
@@ -344,7 +344,7 @@ namespace UnitTest.ParsecSharp
             parser.Parse(source).WillSucceed(value => value.Is("abcd"));
 
             var source2 = "abCDEF";
-            parser.Parse(source2).WillFail(fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 3): Unexpected 'C<0x43>'"));
+            parser.Parse(source2).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 3): Unexpected 'C<0x43>'"));
         }
 
         [TestMethod]
@@ -419,7 +419,7 @@ namespace UnitTest.ParsecSharp
             parser.Parse(source).WillSucceed(value => value.Is('b', 'a'));
 
             var source2 = _123456;
-            parser.Parse(source2).WillFail(fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): At LookAhead -> Parser Fail (Line: 1, Column: 2): Unexpected '2<0x32>'"));
+            parser.Parse(source2).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 1): At LookAhead -> Parser Failure (Line: 1, Column: 2): Unexpected '2<0x32>'"));
         }
 
         [TestMethod]
@@ -657,7 +657,7 @@ namespace UnitTest.ParsecSharp
             var parser = Many1(DecDigit()).ToInt().Guard(x => x < 1000);
 
             var source = _123456;
-            parser.Parse(source).WillFail(fail => fail.Message.Is("At Guard -> A value '123456' does not satisfy condition"));
+            parser.Parse(source).WillFail(failure => failure.Message.Is("At Guard -> A value '123456' does not satisfy condition"));
 
             var source2 = "999";
             parser.Parse(source2).WillSucceed(value => value.Is(999));
@@ -978,7 +978,7 @@ namespace UnitTest.ParsecSharp
 
             // Many(Any()) などを parser に渡した場合、終端まで Any にマッチするため、 close は EndOfInput にマッチします。
             var parser2 = Many(Any()).Between(Char('"'), Char('"')); // ( dquote *Any dquote ) とはならない
-            parser2.Parse(@"""abCD1234""").WillFail(); // Many(Any()) が abCD1234" までマッチしてしまうため、close の " がマッチせず Fail になる
+            parser2.Parse(@"""abCD1234""").WillFail(); // Many(Any()) が abCD1234" までマッチしてしまうため、close の " がマッチせず失敗する
             // この形にマッチするパーサを作成したいときは、Quoted や ManyTill の使用を検討してください。
         }
 
@@ -1047,7 +1047,7 @@ namespace UnitTest.ParsecSharp
 
             // 1文字以上の小文字にマッチし、その時点で全ての入力を消費していなければならないパーサ。
             var parser = Many1(Lower()).End();
-            parser.Parse(source).WillFail(fail => fail.Message.Is("Expected <EndOfStream> but was 'E<0x45>'"));
+            parser.Parse(source).WillFail(failure => failure.Message.Is("Expected <EndOfStream> but was 'E<0x45>'"));
 
             // 1文字以上の小文字または大文字にマッチし、その時点ですべての入力を消費していなければならないパーサ。
             var parser2 = Many1(Lower() | Upper()).End();
@@ -1102,7 +1102,7 @@ namespace UnitTest.ParsecSharp
             parser.Parse(source).WillSucceed(value => value.Is(_abcdEFGH));
 
             var source2 = _123456;
-            parser.Parse(source2).WillFail(fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): At Guard -> At WithConsume -> A parser did not consume any input"));
+            parser.Parse(source2).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 1): At Guard -> At WithConsume -> A parser did not consume any input"));
         }
 
         [TestMethod]
@@ -1111,25 +1111,25 @@ namespace UnitTest.ParsecSharp
             // パース失敗時のエラーメッセージを書き換えます。
 
             var parser = Many1(Digit())
-                .WithMessage(fail => $"MessageTest Current: '{fail.State.Current.ToString()}', original message: {fail.Message}");
+                .WithMessage(failure => $"MessageTest Current: '{failure.State.Current.ToString()}', original message: {failure.Message}");
 
             var source = _abcdEFGH;
-            parser.Parse(source).WillFail(fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 1): MessageTest Current: 'a', original message: Unexpected 'a<0x61>'"));
+            parser.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 1): MessageTest Current: 'a', original message: Unexpected 'a<0x61>'"));
 
             var source2 = _123456;
             parser.Parse(source2).WillSucceed(value => value.Is('1', '2', '3', '4', '5', '6'));
         }
 
         [TestMethod]
-        public void AbortWhenFailTest()
+        public void AbortWhenFailureTest()
         {
             // パース失敗時にパース処理を中止します。
 
-            var parser = Many(Lower().AbortWhenFail(fail => $"Fatal Error! '{fail.State.Current.ToString()}' is not a lower char!")).AsString()
+            var parser = Many(Lower().AbortWhenFail(failure => $"Fatal Error! '{failure.State.Current.ToString()}' is not a lower char!")).AsString()
                 .Or(Pure("recovery"));
 
             var source = _abcdEFGH;
-            parser.Parse(source).WillFail(fail => fail.ToString().Is("Parser Fail (Line: 1, Column: 5): At AbortWhenFail -> Fatal Error! 'E' is not a lower char!"));
+            parser.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 5): At AbortWhenFail -> Fatal Error! 'E' is not a lower char!"));
         }
 
         [TestMethod]
@@ -1148,7 +1148,7 @@ namespace UnitTest.ParsecSharp
             parser.Parse(source2).WillSucceed(value => value.Is("recovery"));
 
             var source3 = _commanum;
-            parser.Parse(source3).WillFail(fail => fail.Message.Is("At AbortIfEntered -> abort1234")); // 123まで入力を消費して失敗したため復旧が行われない
+            parser.Parse(source3).WillFail(failure => failure.Message.Is("At AbortIfEntered -> abort1234")); // 123まで入力を消費して失敗したため復旧が行われない
         }
 
         [TestMethod]
@@ -1168,28 +1168,28 @@ namespace UnitTest.ParsecSharp
             parser.Parse(source);
             count.Is(8);
 
-            // Lower のパース成功時に success の値を1増やし、パース失敗時に fail の値を1増やします。
+            // Lower のパース成功時に success の値を1増やし、パース失敗時に failure の値を1増やします。
             // Any を接続しているので、source を最後までパースします。
             var success = 0;
-            var fail = 0;
-            var parser2 = Many(Lower().Do(_ => success++, _ => fail++).Or(Any()));
+            var failure = 0;
+            var parser2 = Many(Lower().Do(_ => success++, _ => failure++).Or(Any()));
 
             parser2.Parse(source);
             success.Is(4);
-            fail.Is(5);
+            failure.Is(5);
         }
 
         [TestMethod]
         public void ExceptionTest()
         {
-            // 処理中に例外が発生した場合は即座にパース処理を中止し、例外の Name をメッセージに含む Fail を返します。
+            // 処理中に例外が発生した場合は即座にパース処理を中止し、例外の Name をメッセージに含む Failure を返します。
             // 例外による失敗に対して復旧は行われません。復旧を行う手段はありません。
 
             // null に対して ToString した結果を返し、失敗した場合に "success" を返すことを試みるパーサ。
             var parser = Pure(null as object).Map(x => x!.ToString()!).Or(Pure("success"));
 
             var source = _abcdEFGH;
-            parser.Parse(source).WillFail(fail => fail.ToString().Is(message => message.Contains("Exception 'NullReferenceException' occurred:")));
+            parser.Parse(source).WillFail(failure => failure.ToString().Is(message => message.Contains("Exception 'NullReferenceException' occurred:")));
         }
 
         [TestMethod]

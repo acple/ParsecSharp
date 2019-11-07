@@ -5,7 +5,7 @@ namespace ParsecSharp.Internal.Parsers
     internal sealed class ParseError<TToken, T> : PrimitiveParser<TToken, T>
     {
         protected sealed override Result<TToken, T> Run<TState>(TState state)
-            => Result.Fail<TToken, TState, T>(state);
+            => Result.Failure<TToken, TState, T>(state);
     }
 
     internal sealed class FailWithMessage<TToken, T> : PrimitiveParser<TToken, T>
@@ -18,7 +18,7 @@ namespace ParsecSharp.Internal.Parsers
         }
 
         protected sealed override Result<TToken, T> Run<TState>(TState state)
-            => Result.Fail<TToken, TState, T>(this._message, state);
+            => Result.Failure<TToken, TState, T>(this._message, state);
     }
 
     internal sealed class FailWithMessageDelayed<TToken, T> : PrimitiveParser<TToken, T>
@@ -31,7 +31,7 @@ namespace ParsecSharp.Internal.Parsers
         }
 
         protected sealed override Result<TToken, T> Run<TState>(TState state)
-            => Result.Fail<TToken, TState, T>(this._message(state.GetState()), state);
+            => Result.Failure<TToken, TState, T>(this._message(state.GetState()), state);
     }
 
     internal sealed class FailWithException<TToken, T> : PrimitiveParser<TToken, T>
@@ -44,6 +44,6 @@ namespace ParsecSharp.Internal.Parsers
         }
 
         protected sealed override Result<TToken, T> Run<TState>(TState state)
-            => Result.Fail<TToken, TState, T>(this._exception, state);
+            => Result.Failure<TToken, TState, T>(this._exception, state);
     }
 }

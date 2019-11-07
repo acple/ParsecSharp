@@ -39,7 +39,7 @@ namespace ParsecSharp
             }
             catch (Exception exception)
             {
-                return Result.Fail<TToken, EmptyStream<TToken>, T>(exception, EmptyStream<TToken>.Instance);
+                return Result.Failure<TToken, EmptyStream<TToken>, T>(exception, EmptyStream<TToken>.Instance);
             }
         }
 

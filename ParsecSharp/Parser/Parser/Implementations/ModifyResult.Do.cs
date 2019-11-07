@@ -4,25 +4,25 @@ namespace ParsecSharp.Internal.Parsers
 {
     internal sealed class Do<TToken, T> : ModifyResult<TToken, T, T>
     {
-        private readonly Action<Fail<TToken, T>> _fail;
+        private readonly Action<Failure<TToken, T>> _fail;
 
-        private readonly Action<T> _success;
+        private readonly Action<T> _succeed;
 
-        public Do(Parser<TToken, T> parser, Action<Fail<TToken, T>> fail, Action<T> success) : base(parser)
+        public Do(Parser<TToken, T> parser, Action<Failure<TToken, T>> fail, Action<T> succeed) : base(parser)
         {
             this._fail = fail;
-            this._success = success;
+            this._succeed = succeed;
         }
 
-        protected sealed override Result<TToken, T> Fail<TState>(TState state, Fail<TToken, T> fail)
+        protected sealed override Result<TToken, T> Fail<TState>(TState state, Failure<TToken, T> failure)
         {
-            this._fail(fail);
-            return fail;
+            this._fail(failure);
+            return failure;
         }
 
-        protected sealed override Result<TToken, T> Success<TState>(TState state, Success<TToken, T> success)
+        protected sealed override Result<TToken, T> Succeed<TState>(TState state, Success<TToken, T> success)
         {
-            this._success(success.Value);
+            this._succeed(success.Value);
             return success;
         }
     }

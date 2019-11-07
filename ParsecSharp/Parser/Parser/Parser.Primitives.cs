@@ -26,7 +26,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> EndOfInput<TToken>()
-            => Not(Any<TToken>()).WithMessage(fail => $"Expected <EndOfStream> but was '{fail.State.ToString()}'");
+            => Not(Any<TToken>()).WithMessage(failure => $"Expected <EndOfStream> but was '{failure.State.ToString()}'");
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> Null<TToken>()
