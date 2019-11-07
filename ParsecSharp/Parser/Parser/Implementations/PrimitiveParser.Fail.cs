@@ -33,17 +33,4 @@ namespace ParsecSharp.Internal.Parsers
         protected sealed override Result<TToken, T> Run<TState>(TState state)
             => Result.Failure<TToken, TState, T>(this._message(state.GetState()), state);
     }
-
-    internal sealed class FailWithException<TToken, T> : PrimitiveParser<TToken, T>
-    {
-        private readonly Exception _exception;
-
-        public FailWithException(Exception exception)
-        {
-            this._exception = exception;
-        }
-
-        protected sealed override Result<TToken, T> Run<TState>(TState state)
-            => Result.Failure<TToken, TState, T>(this._exception, state);
-    }
 }
