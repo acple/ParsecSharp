@@ -16,7 +16,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Fail<TToken, T>()
-            => new ParseError<TToken, T>();
+            => new Fail<TToken, T>();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Fail<TToken, T>(string message)

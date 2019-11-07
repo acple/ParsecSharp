@@ -2,7 +2,7 @@ using System;
 
 namespace ParsecSharp.Internal.Parsers
 {
-    internal sealed class ParseError<TToken, T> : PrimitiveParser<TToken, T>
+    internal sealed class Fail<TToken, T> : PrimitiveParser<TToken, T>
     {
         protected sealed override Result<TToken, T> Run<TState>(TState state)
             => Result.Failure<TToken, TState, T>(state);
