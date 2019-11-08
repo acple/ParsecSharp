@@ -137,6 +137,6 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, string> String(string text, StringComparison comparison)
-            => new ParserString(text, comparison);
+            => new StringParser(text, comparison);
     }
 }

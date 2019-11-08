@@ -3,13 +3,13 @@ using System.Linq;
 
 namespace ParsecSharp.Internal.Parsers
 {
-    internal class ParserString : PrimitiveParser<char, string>
+    internal class StringParser : PrimitiveParser<char, string>
     {
         private readonly string _text;
 
         private readonly StringComparison _comparison;
 
-        public ParserString(string text, StringComparison comparison)
+        public StringParser(string text, StringComparison comparison)
         {
             this._text = text;
             this._comparison = comparison;
