@@ -19,10 +19,5 @@ namespace ParsecSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Do<TToken, T>(this Parser<TToken, T> parser, Action<T> action, Action<Failure<TToken, T>> failure)
             => new Do<TToken, T>(parser, failure, action);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TokenizedStream<TInput, TState, TToken> Tokenize<TInput, TState, TToken>(this TState source, Parser<TInput, TToken> parser)
-            where TState : IParsecState<TInput, TState>
-            => new TokenizedStream<TInput, TState, TToken>(source, parser);
     }
 }
