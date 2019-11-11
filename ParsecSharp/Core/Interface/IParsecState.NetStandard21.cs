@@ -3,7 +3,7 @@ using System;
 
 namespace ParsecSharp
 {
-    public partial interface IParsecStateStream<TToken>
+    public partial interface IParsecState<TToken, TState>
     {
         void IDisposable.Dispose()
             => this.InnerResource?.Dispose();

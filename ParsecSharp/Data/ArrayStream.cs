@@ -4,7 +4,7 @@ using ParsecSharp.Internal;
 
 namespace ParsecSharp
 {
-    public sealed class ArrayStream<TToken> : IParsecStateStream<TToken>
+    public sealed class ArrayStream<TToken> : IParsecState<TToken, ArrayStream<TToken>>
     {
         private readonly IReadOnlyList<TToken> _source;
 
@@ -18,7 +18,7 @@ namespace ParsecSharp
 
         public IDisposable? InnerResource => default;
 
-        public IParsecStateStream<TToken> Next => new ArrayStream<TToken>(this._source, this._position.Next());
+        public ArrayStream<TToken> Next => new ArrayStream<TToken>(this._source, this._position.Next());
 
         public ArrayStream(IReadOnlyList<TToken> source) : this(source, LinearPosition.Initial)
         { }
@@ -29,11 +29,14 @@ namespace ParsecSharp
             this._position = position;
         }
 
+        public IParsecState<TToken> GetState()
+            => this;
+
         public void Dispose()
         { }
 
-        public bool Equals(IParsecState<TToken> other)
-            => other is ArrayStream<TToken> state && this._source == state._source && this._position == state._position;
+        public bool Equals(ArrayStream<TToken> other)
+            => this._source == other._source && this._position == other._position;
 
         public sealed override bool Equals(object? obj)
             => obj is ArrayStream<TToken> state && this._source == state._source && this._position == state._position;

@@ -17,13 +17,13 @@ namespace ParsecSharp.Internal
         public bool Equals(IPosition other)
             => ReferenceEquals(this, other);
 
-        public override bool Equals(object? obj)
+        public sealed override bool Equals(object? obj)
             => ReferenceEquals(this, obj);
 
-        public override int GetHashCode()
+        public sealed override int GetHashCode()
             => 0;
 
-        public override string ToString()
+        public sealed override string ToString()
             => "Position: none";
     }
 }

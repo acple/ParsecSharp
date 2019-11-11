@@ -1,7 +1,9 @@
 using System;
+using System.Runtime.InteropServices;
 
 namespace ParsecSharp.Internal
 {
+    [StructLayout(LayoutKind.Auto)]
     public readonly struct TextPosition : IPosition, IEquatable<TextPosition>
     {
         public static TextPosition Initial => new TextPosition(1, 1);

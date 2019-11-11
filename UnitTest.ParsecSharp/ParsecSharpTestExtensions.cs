@@ -9,14 +9,14 @@ namespace UnitTest.ParsecSharp
         public static void WillFail<TToken, T>(this Result<TToken, T> result)
             => result.WillFail(_ => { /* expect to fail */ });
 
-        public static void WillFail<TToken, T>(this Result<TToken, T> result, Action<Fail<TToken, T>> assert)
+        public static void WillFail<TToken, T>(this Result<TToken, T> result, Action<Failure<TToken, T>> assert)
             => result.CaseOf(
-                fail => assert(fail),
+                failure => assert(failure),
                 success => Assert.Fail(success.ToString()));
 
         public static void WillSucceed<TToken, T>(this Result<TToken, T> result, Action<T> assert)
             => result.CaseOf(
-                fail => Assert.Fail(fail.ToString()),
+                failure => Assert.Fail(failure.ToString()),
                 success => assert(success.Value));
     }
 }

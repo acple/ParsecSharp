@@ -7,7 +7,7 @@ using ParsecSharp.Internal;
 
 namespace ParsecSharp
 {
-    public sealed class TextStream : IParsecStateStream<char>
+    public sealed class TextStream : IParsecState<char, TextStream>
     {
         private const int MaxBufferSize = 2048;
 
@@ -25,7 +25,7 @@ namespace ParsecSharp
 
         public IDisposable InnerResource { get; }
 
-        public IParsecStateStream<char> Next => (this._index == MaxBufferSize - 1)
+        public TextStream Next => (this._index == MaxBufferSize - 1)
             ? new TextStream(this.InnerResource, this._buffer.Next, 0, this._position.Next(this.Current))
             : new TextStream(this.InnerResource, this._buffer, this._index + 1, this._position.Next(this.Current));
 
@@ -65,11 +65,14 @@ namespace ParsecSharp
             }
         }
 
+        public IParsecState<char> GetState()
+            => this;
+
         public void Dispose()
             => this.InnerResource.Dispose();
 
-        public bool Equals(IParsecState<char> other)
-            => other is TextStream state && this._buffer == state._buffer && this._index == state._index;
+        public bool Equals(TextStream other)
+            => this._buffer == other._buffer && this._index == other._index;
 
         public sealed override bool Equals(object? obj)
             => obj is TextStream state && this._buffer == state._buffer && this._index == state._index;

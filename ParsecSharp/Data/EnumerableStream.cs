@@ -6,7 +6,7 @@ using ParsecSharp.Internal;
 
 namespace ParsecSharp
 {
-    public sealed class EnumerableStream<TToken> : IParsecStateStream<TToken>
+    public sealed class EnumerableStream<TToken> : IParsecState<TToken, EnumerableStream<TToken>>
     {
         private const int MaxBufferSize = 1024;
 
@@ -24,7 +24,7 @@ namespace ParsecSharp
 
         public IDisposable InnerResource { get; }
 
-        public IParsecStateStream<TToken> Next => new EnumerableStream<TToken>(this.InnerResource, (this.Index == MaxBufferSize - 1) ? this._buffer.Next : this._buffer, this._position.Next());
+        public EnumerableStream<TToken> Next => new EnumerableStream<TToken>(this.InnerResource, (this.Index == MaxBufferSize - 1) ? this._buffer.Next : this._buffer, this._position.Next());
 
         public EnumerableStream(IEnumerable<TToken> source) : this(source.GetEnumerator())
         { }
@@ -57,11 +57,14 @@ namespace ParsecSharp
             }
         }
 
+        public IParsecState<TToken> GetState()
+            => this;
+
         public void Dispose()
             => this.InnerResource.Dispose();
 
-        public bool Equals(IParsecState<TToken> other)
-            => other is EnumerableStream<TToken> state && this._buffer == state._buffer && this._position == state._position;
+        public bool Equals(EnumerableStream<TToken> other)
+            => this._buffer == other._buffer && this._position == other._position;
 
         public sealed override bool Equals(object? obj)
             => obj is EnumerableStream<TToken> state && this._buffer == state._buffer && this._position == state._position;
