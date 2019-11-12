@@ -17,7 +17,7 @@ namespace ParsecSharp.Internal.Parsers
 
         protected sealed override Result<char, string> Run<TState>(TState state)
         {
-            var result = state.AsEnumerable<char, TState>().Take(this._text.Length).ToArray();
+            var result = ParsecState.AsEnumerable<char, TState>(state).Take(this._text.Length).ToArray();
             var text = new string(result.Select(x => x.Current).ToArray());
             return (string.Equals(text, this._text, this._comparison))
                 ? Result.Success<char, TState, string>(text, (result.Length == 0) ? state : result.Last().Next)
