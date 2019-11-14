@@ -128,6 +128,10 @@ namespace ParsecSharp
             => Char('\t');
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<char, char> Ascii()
+            => Satisfy(x => x <= 0x7F);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, string> String(string text)
             => String(text, StringComparison.Ordinal);
 
