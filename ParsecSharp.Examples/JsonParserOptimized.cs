@@ -114,7 +114,7 @@ namespace ParsecSharp.Examples
         private static readonly Parser<char, dynamic?[]> JsonArray =
             JsonValue.SeparatedBy(Comma).Between(OpenBracket, CloseBracket).ToArray();
 
-        private static readonly Parser<char, dynamic?> Json =
+        public static Parser<char, dynamic?> Json { get; } =
             JsonValue.Between(WhiteSpace).End();
 
         public static Result<char, dynamic?> Parse(string json)
