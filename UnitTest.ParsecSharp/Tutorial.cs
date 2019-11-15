@@ -18,8 +18,8 @@ namespace UnitTest.ParsecSharp
         {
             var source = "aabbb";
 
+            // will succeed
             {
-                // will succeed
 
                 // define parser
                 var parser = String("aa");
@@ -29,7 +29,9 @@ namespace UnitTest.ParsecSharp
 
                 {
                     // gets result value or string.Empty
-                    var value = result.CaseOf(failure => string.Empty, success => success.Value);
+                    var value = result.CaseOf(
+                        failure => string.Empty, // failure path
+                        success => success.Value); // success path
                     value.Is("aa");
                 }
 
@@ -40,15 +42,16 @@ namespace UnitTest.ParsecSharp
                 }
             }
 
+            // will fail
             {
-                // will fail
-
                 var parser = String("bb");
 
                 var result = parser.Parse(source);
 
                 {
-                    var value = result.CaseOf(failure => string.Empty, success => success.Value);
+                    var value = result.CaseOf(
+                        failure => string.Empty,
+                        success => success.Value);
                     value.Is(string.Empty);
                 }
 
