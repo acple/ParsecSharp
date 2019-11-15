@@ -175,7 +175,7 @@ namespace UnitTest.ParsecSharp
             key3_1.IsTrue();
 
             var key3_2 = result?["key3"]["key3_2"] as IEnumerable<dynamic>;
-            key3_2!.Is(1.0, 2.0, 3.0);
+            key3_2.Is(1.0, 2.0, 3.0);
         }
 
         [TestMethod]
