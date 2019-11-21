@@ -20,7 +20,6 @@ namespace UnitTest.ParsecSharp
 
             // will succeed
             {
-
                 // define parser
                 var parser = String("aa");
 

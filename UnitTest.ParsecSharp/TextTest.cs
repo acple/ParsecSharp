@@ -126,25 +126,31 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void OneOfIgnoreCaseTest()
         {
-            var source = "z";
+            // 大文字小文字の違いを無視した上で、トークンが候補に含まれる場合に成功するパーサを作成します。
 
-            var parser = OneOfIgnoreCase("XYZ");
+            // 大文字小文字を無視して [x-z] にマッチするパーサ。
+            var parser = OneOfIgnoreCase("xyz");
 
-            parser.Parse(source).WillSucceed(value => value.Is('z'));
+            var source = "ZZZ";
+            parser.Parse(source).WillSucceed(value => value.Is('Z'));
+
+            var source2 = "ABC";
+            parser.Parse(source2).WillFail();
         }
 
         [TestMethod]
         public void NoneOfIgnoreCaseTest()
         {
-            var source = "z";
+            // 大文字小文字の違いを無視した上で、トークンが候補に含まれない場合に成功するパーサを作成します。
 
-            var parser = NoneOfIgnoreCase("XYZ");
+            // 大文字小文字を無視して [x-z] 以外にマッチするパーサ。
+            var parser = NoneOfIgnoreCase("xyz");
 
+            var source = "ZZZ";
             parser.Parse(source).WillFail();
 
-            var parser2 = NoneOfIgnoreCase("ABCD");
-
-            parser2.Parse(source).WillSucceed(value => value.Is('z'));
+            var source2 = "ABC";
+            parser.Parse(source2).WillSucceed(value => value.Is('A'));
         }
     }
 }
