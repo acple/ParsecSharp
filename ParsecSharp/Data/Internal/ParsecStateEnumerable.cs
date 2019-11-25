@@ -14,7 +14,7 @@ namespace ParsecSharp.Internal
         }
 
         public IEnumerator<TState> GetEnumerator()
-        => new ParsecStateEnumerator<TToken, TState>(this._source);
+            => new ParsecStateEnumerator<TToken, TState>(this._source);
 
         IEnumerator IEnumerable.GetEnumerator()
             => this.GetEnumerator();

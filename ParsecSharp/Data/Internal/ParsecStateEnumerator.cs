@@ -20,7 +20,7 @@ namespace ParsecSharp.Internal
         }
 
         public bool MoveNext()
-            => (this.Current = (this.Current?.HasValue == true) ? this.Current.Next : this._source).HasValue;
+            => (this.Current = (this.Current?.HasValue == true) ? this.Current.Next : this._source).HasValue; // this definition violates IEnumerator implementation guidelines deliberately
 
         void IEnumerator.Reset()
             => throw new NotSupportedException();
