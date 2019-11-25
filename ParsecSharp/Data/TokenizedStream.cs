@@ -3,13 +3,6 @@ using ParsecSharp.Internal;
 
 namespace ParsecSharp
 {
-    public static class TokenizedStream
-    {
-        public static TokenizedStream<TInput, TState, TToken> Create<TInput, TState, TToken>(TState source, Parser<TInput, TToken> parser)
-            where TState : IParsecState<TInput, TState>
-            => new TokenizedStream<TInput, TState, TToken>(source, parser);
-    }
-
     public sealed class TokenizedStream<TInput, TState, TToken> : IParsecState<TToken, TokenizedStream<TInput, TState, TToken>>
         where TState : IParsecState<TInput, TState>
     {
