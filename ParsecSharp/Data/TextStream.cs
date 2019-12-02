@@ -7,7 +7,38 @@ using ParsecSharp.Internal;
 
 namespace ParsecSharp
 {
-    public sealed class TextStream : IParsecState<char, TextStream>
+    public static class TextStream
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static TextStream<TextPosition> Create(Stream source)
+            => Create(source, TextPosition.Initial);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static TextStream<TextPosition> Create(Stream source, Encoding encoding)
+            => Create(source, encoding, TextPosition.Initial);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static TextStream<TextPosition> Create(TextReader reader)
+            => Create(reader, TextPosition.Initial);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static TextStream<TPosition> Create<TPosition>(Stream source, TPosition position)
+            where TPosition : IPosition<char, TPosition>
+            => new TextStream<TPosition>(source, position);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static TextStream<TPosition> Create<TPosition>(Stream source, Encoding encoding, TPosition position)
+            where TPosition : IPosition<char, TPosition>
+            => new TextStream<TPosition>(source, encoding, position);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static TextStream<TPosition> Create<TPosition>(TextReader reader, TPosition position)
+            where TPosition : IPosition<char, TPosition>
+            => new TextStream<TPosition>(reader, position);
+    }
+
+    public sealed class TextStream<TPosition> : IParsecState<char, TextStream<TPosition>>
+        where TPosition : IPosition<char, TPosition>
     {
         private const int MaxBufferSize = 2048;
 
@@ -15,7 +46,7 @@ namespace ParsecSharp
 
         private readonly int _index;
 
-        private readonly TextPosition _position;
+        private readonly TPosition _position;
 
         public char Current => this._buffer[this._index];
 
@@ -25,20 +56,20 @@ namespace ParsecSharp
 
         public IDisposable InnerResource { get; }
 
-        public TextStream Next => (this._index == MaxBufferSize - 1)
-            ? new TextStream(this.InnerResource, this._buffer.Next, 0, this._position.Next(this.Current))
-            : new TextStream(this.InnerResource, this._buffer, this._index + 1, this._position.Next(this.Current));
+        public TextStream<TPosition> Next => (this._index == MaxBufferSize - 1)
+            ? new TextStream<TPosition>(this.InnerResource, this._buffer.Next, 0, this._position.Next(this.Current))
+            : new TextStream<TPosition>(this.InnerResource, this._buffer, this._index + 1, this._position.Next(this.Current));
 
-        public TextStream(Stream source) : this(source, Encoding.UTF8)
+        public TextStream(Stream source, TPosition position) : this(source, Encoding.UTF8, position)
         { }
 
-        public TextStream(Stream source, Encoding encoding) : this(new StreamReader(source, encoding))
+        public TextStream(Stream source, Encoding encoding, TPosition position) : this(new StreamReader(source, encoding), position)
         { }
 
-        public TextStream(TextReader reader) : this(reader, CreateBuffer(reader), 0, TextPosition.Initial)
+        public TextStream(TextReader reader, TPosition position) : this(reader, CreateBuffer(reader), 0, position)
         { }
 
-        private TextStream(IDisposable source, Buffer<char> buffer, int index, TextPosition position)
+        private TextStream(IDisposable source, Buffer<char> buffer, int index, TPosition position)
         {
             this.InnerResource = source;
             this._buffer = buffer;
@@ -71,11 +102,11 @@ namespace ParsecSharp
         public void Dispose()
             => this.InnerResource.Dispose();
 
-        public bool Equals(TextStream other)
+        public bool Equals(TextStream<TPosition> other)
             => this._buffer == other._buffer && this._index == other._index;
 
         public sealed override bool Equals(object? obj)
-            => obj is TextStream state && this._buffer == state._buffer && this._index == state._index;
+            => obj is TextStream<TPosition> state && this._buffer == state._buffer && this._index == state._index;
 
         public sealed override int GetHashCode()
             => this._buffer.GetHashCode() ^ this._index.GetHashCode();

@@ -1,14 +1,27 @@
 using System;
 using System.Collections.Generic;
-using ParsecSharp.Internal;
+using System.Runtime.CompilerServices;
 
 namespace ParsecSharp
 {
-    public sealed class ArrayStream<TToken> : IParsecState<TToken, ArrayStream<TToken>>
+    public static class ArrayStream
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ArrayStream<TToken, LinearPosition<TToken>> Create<TToken>(IReadOnlyList<TToken> source)
+            => Create(source, LinearPosition<TToken>.Initial);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ArrayStream<TToken, TPosition> Create<TToken, TPosition>(IReadOnlyList<TToken> source, TPosition position)
+            where TPosition : IPosition<TToken, TPosition>
+            => new ArrayStream<TToken, TPosition>(source, position);
+    }
+
+    public sealed class ArrayStream<TToken, TPosition> : IParsecState<TToken, ArrayStream<TToken, TPosition>>
+        where TPosition : IPosition<TToken, TPosition>
     {
         private readonly IReadOnlyList<TToken> _source;
 
-        private readonly LinearPosition _position;
+        private readonly TPosition _position;
 
         public TToken Current => this._source[this._position.Column];
 
@@ -18,12 +31,9 @@ namespace ParsecSharp
 
         public IDisposable? InnerResource => default;
 
-        public ArrayStream<TToken> Next => new ArrayStream<TToken>(this._source, this._position.Next());
+        public ArrayStream<TToken, TPosition> Next => new ArrayStream<TToken, TPosition>(this._source, this._position.Next(this.Current));
 
-        public ArrayStream(IReadOnlyList<TToken> source) : this(source, LinearPosition.Initial)
-        { }
-
-        private ArrayStream(IReadOnlyList<TToken> source, LinearPosition position)
+        public ArrayStream(IReadOnlyList<TToken> source, TPosition position)
         {
             this._source = source;
             this._position = position;
@@ -35,11 +45,11 @@ namespace ParsecSharp
         public void Dispose()
         { }
 
-        public bool Equals(ArrayStream<TToken> other)
-            => this._source == other._source && this._position == other._position;
+        public bool Equals(ArrayStream<TToken, TPosition> other)
+            => this._source == other._source && this._position.Equals(other._position);
 
         public sealed override bool Equals(object? obj)
-            => obj is ArrayStream<TToken> state && this._source == state._source && this._position == state._position;
+            => obj is ArrayStream<TToken, TPosition> state && this._source == state._source && this._position.Equals(state._position);
 
         public sealed override int GetHashCode()
             => this._source.GetHashCode() ^ this._position.GetHashCode();

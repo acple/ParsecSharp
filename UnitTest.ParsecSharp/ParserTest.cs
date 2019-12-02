@@ -1200,7 +1200,7 @@ namespace UnitTest.ParsecSharp
             // 3文字消費するパーサ。
             var parser = Any().Repeat(3).AsString();
 
-            using var source = new StringStream(_abcdEFGH);
+            using var source = StringStream.Create(_abcdEFGH);
 
             var (result, rest) = parser.ParsePartially(source);
             result.WillSucceed(value => value.Is("abc"));

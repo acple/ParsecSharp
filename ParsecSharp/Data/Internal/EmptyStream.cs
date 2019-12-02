@@ -10,7 +10,7 @@ namespace ParsecSharp.Internal
 
         public bool HasValue => false;
 
-        public IPosition Position => EmptyPosition.Initial;
+        public IPosition Position => EmptyPosition<TToken>.Initial;
 
         public IDisposable? InnerResource => default;
 

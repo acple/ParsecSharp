@@ -1,8 +1,8 @@
 namespace ParsecSharp.Internal
 {
-    public sealed class EmptyPosition : IPosition
+    public sealed class EmptyPosition<TToken> : IPosition<TToken, EmptyPosition<TToken>>
     {
-        public static IPosition Initial { get; } = new EmptyPosition();
+        public static EmptyPosition<TToken> Initial { get; } = new EmptyPosition<TToken>();
 
         public int Line => 0;
 
@@ -10,6 +10,9 @@ namespace ParsecSharp.Internal
 
         private EmptyPosition()
         { }
+
+        public EmptyPosition<TToken> Next(TToken token)
+            => this;
 
         public int CompareTo(IPosition other)
             => (this.Equals(other)) ? 0 : -1;

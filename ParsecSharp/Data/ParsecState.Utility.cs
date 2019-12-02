@@ -12,8 +12,14 @@ namespace ParsecSharp
             => new ParsecStateEnumerable<TToken, TState>(stream);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TokenizedStream<TInput, TState, TToken> Tokenize<TInput, TState, TToken>(TState source, Parser<TInput, TToken> parser)
+        public static TokenizedStream<TInput, TState, TToken, LinearPosition<TToken>> Tokenize<TInput, TState, TToken>(TState source, Parser<TInput, TToken> parser)
             where TState : IParsecState<TInput, TState>
-            => new TokenizedStream<TInput, TState, TToken>(source, parser);
+            => Tokenize(source, parser, LinearPosition<TToken>.Initial);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static TokenizedStream<TInput, TState, TToken, TPosition> Tokenize<TInput, TState, TToken, TPosition>(TState source, Parser<TInput, TToken> parser, TPosition position)
+            where TState : IParsecState<TInput, TState>
+            where TPosition : IPosition<TToken, TPosition>
+            => new TokenizedStream<TInput, TState, TToken, TPosition>(source, parser, position);
     }
 }

@@ -1,15 +1,29 @@
 using System;
+using System.Runtime.CompilerServices;
 using ParsecSharp.Internal;
 
 namespace ParsecSharp
 {
-    public sealed class StringStream : IParsecState<char, StringStream>
+    public static class StringStream
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static StringStream<TextPosition> Create(string source)
+            => Create(source, TextPosition.Initial);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static StringStream<TPosition> Create<TPosition>(string source, TPosition position)
+            where TPosition : IPosition<char, TPosition>
+            => new StringStream<TPosition>(source, position);
+    }
+
+    public sealed class StringStream<TPosition> : IParsecState<char, StringStream<TPosition>>
+        where TPosition : IPosition<char, TPosition>
     {
         private readonly string _source;
 
         private readonly int _index;
 
-        private readonly TextPosition _position;
+        private readonly TPosition _position;
 
         public char Current => this._source[this._index];
 
@@ -19,12 +33,12 @@ namespace ParsecSharp
 
         public IDisposable? InnerResource => default;
 
-        public StringStream Next => new StringStream(this._source, this._index + 1, this._position.Next(this.Current));
+        public StringStream<TPosition> Next => new StringStream<TPosition>(this._source, this._index + 1, this._position.Next(this.Current));
 
-        public StringStream(string source) : this(source, 0, TextPosition.Initial)
+        public StringStream(string source, TPosition position) : this(source, 0, position)
         { }
 
-        private StringStream(string source, int index, TextPosition position)
+        private StringStream(string source, int index, TPosition position)
         {
             this._source = source;
             this._index = index;
@@ -37,11 +51,11 @@ namespace ParsecSharp
         public void Dispose()
         { }
 
-        public bool Equals(StringStream other)
+        public bool Equals(StringStream<TPosition> other)
             => this._source == other._source && this._index == other._index;
 
         public sealed override bool Equals(object? obj)
-            => obj is StringStream state && this._source == state._source && this._index == state._index;
+            => obj is StringStream<TPosition> state && this._source == state._source && this._index == state._index;
 
         public sealed override int GetHashCode()
             => this._source.GetHashCode() ^ this._index.GetHashCode();

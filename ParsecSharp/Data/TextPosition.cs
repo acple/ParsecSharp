@@ -1,10 +1,10 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace ParsecSharp.Internal
+namespace ParsecSharp
 {
     [StructLayout(LayoutKind.Auto)]
-    public readonly struct TextPosition : IPosition, IEquatable<TextPosition>
+    public readonly struct TextPosition : IPosition<char, TextPosition>, IEquatable<TextPosition>
     {
         public static TextPosition Initial => new TextPosition(1, 1);
 

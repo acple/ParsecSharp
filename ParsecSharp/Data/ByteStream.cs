@@ -6,13 +6,24 @@ using ParsecSharp.Internal;
 
 namespace ParsecSharp
 {
-    public sealed class ByteStream : IParsecState<byte, ByteStream>
+    public partial class ByteStream
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ByteStream Create(Stream source)
+            => new ByteStream(source);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ByteStream Create(Stream source, LinearPosition<byte> position)
+            => new ByteStream(source, position);
+    }
+
+    public sealed partial class ByteStream : IParsecState<byte, ByteStream>
     {
         private const int MaxBufferSize = 2048;
 
         private readonly Buffer<byte> _buffer;
 
-        private readonly LinearPosition _position;
+        private readonly LinearPosition<byte> _position;
 
         private int Index => this._position.Column % MaxBufferSize;
 
@@ -24,12 +35,15 @@ namespace ParsecSharp
 
         public IDisposable InnerResource { get; }
 
-        public ByteStream Next => new ByteStream(this.InnerResource, (this.Index == MaxBufferSize - 1) ? this._buffer.Next : this._buffer, this._position.Next());
+        public ByteStream Next => new ByteStream(this.InnerResource, (this.Index == MaxBufferSize - 1) ? this._buffer.Next : this._buffer, this._position.Next(this.Current));
 
-        public ByteStream(Stream source) : this(source, CreateBuffer(source), LinearPosition.Initial)
+        public ByteStream(Stream source) : this(source, LinearPosition<byte>.Initial)
         { }
 
-        private ByteStream(IDisposable source, Buffer<byte> buffer, LinearPosition position)
+        public ByteStream(Stream source, LinearPosition<byte> position) : this(source, CreateBuffer(source), position)
+        { }
+
+        private ByteStream(IDisposable source, Buffer<byte> buffer, LinearPosition<byte> position)
         {
             this.InnerResource = source;
             this._buffer = buffer;

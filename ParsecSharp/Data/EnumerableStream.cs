@@ -6,13 +6,35 @@ using ParsecSharp.Internal;
 
 namespace ParsecSharp
 {
-    public sealed class EnumerableStream<TToken> : IParsecState<TToken, EnumerableStream<TToken>>
+    public static class EnumerableStream
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static EnumerableStream<TToken, LinearPosition<TToken>> Create<TToken>(IEnumerable<TToken> source)
+            => Create(source, LinearPosition<TToken>.Initial);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static EnumerableStream<TToken, LinearPosition<TToken>> Create<TToken>(IEnumerator<TToken> source)
+            => Create(source, LinearPosition<TToken>.Initial);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static EnumerableStream<TToken, TPosition> Create<TToken, TPosition>(IEnumerable<TToken> source, TPosition position)
+            where TPosition : IPosition<TToken, TPosition>
+            => new EnumerableStream<TToken, TPosition>(source, position);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static EnumerableStream<TToken, TPosition> Create<TToken, TPosition>(IEnumerator<TToken> source, TPosition position)
+            where TPosition : IPosition<TToken, TPosition>
+            => new EnumerableStream<TToken, TPosition>(source, position);
+    }
+
+    public sealed class EnumerableStream<TToken, TPosition> : IParsecState<TToken, EnumerableStream<TToken, TPosition>>
+        where TPosition : IPosition<TToken, TPosition>
     {
         private const int MaxBufferSize = 1024;
 
         private readonly Buffer<TToken> _buffer;
 
-        private readonly LinearPosition _position;
+        private readonly TPosition _position;
 
         private int Index => this._position.Column % MaxBufferSize;
 
@@ -24,15 +46,18 @@ namespace ParsecSharp
 
         public IDisposable InnerResource { get; }
 
-        public EnumerableStream<TToken> Next => new EnumerableStream<TToken>(this.InnerResource, (this.Index == MaxBufferSize - 1) ? this._buffer.Next : this._buffer, this._position.Next());
+        public EnumerableStream<TToken, TPosition> Next => new EnumerableStream<TToken, TPosition>(
+            this.InnerResource,
+            (this.Index == MaxBufferSize - 1) ? this._buffer.Next : this._buffer,
+            this._position.Next(this.Current));
 
-        public EnumerableStream(IEnumerable<TToken> source) : this(source.GetEnumerator())
+        public EnumerableStream(IEnumerable<TToken> source, TPosition position) : this(source.GetEnumerator(), position)
         { }
 
-        public EnumerableStream(IEnumerator<TToken> enumerator) : this(enumerator, CreateBuffer(enumerator), LinearPosition.Initial)
+        public EnumerableStream(IEnumerator<TToken> enumerator, TPosition position) : this(enumerator, CreateBuffer(enumerator), position)
         { }
 
-        private EnumerableStream(IDisposable source, Buffer<TToken> buffer, LinearPosition position)
+        private EnumerableStream(IDisposable source, Buffer<TToken> buffer, TPosition position)
         {
             this.InnerResource = source;
             this._buffer = buffer;
@@ -63,11 +88,11 @@ namespace ParsecSharp
         public void Dispose()
             => this.InnerResource.Dispose();
 
-        public bool Equals(EnumerableStream<TToken> other)
-            => this._buffer == other._buffer && this._position == other._position;
+        public bool Equals(EnumerableStream<TToken, TPosition> other)
+            => this._buffer == other._buffer && this._position.Equals(other._position);
 
         public sealed override bool Equals(object? obj)
-            => obj is EnumerableStream<TToken> state && this._buffer == state._buffer && this._position == state._position;
+            => obj is EnumerableStream<TToken, TPosition> state && this._buffer == state._buffer && this._position.Equals(state._position);
 
         public sealed override int GetHashCode()
             => this._buffer.GetHashCode() ^ this._position.GetHashCode();
