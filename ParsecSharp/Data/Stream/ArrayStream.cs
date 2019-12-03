@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using ParsecSharp.Internal;
 
 namespace ParsecSharp
 {
@@ -15,7 +16,10 @@ namespace ParsecSharp
             where TPosition : IPosition<TToken, TPosition>
             => new ArrayStream<TToken, TPosition>(source, position);
     }
+}
 
+namespace ParsecSharp.Internal
+{
     public sealed class ArrayStream<TToken, TPosition> : IParsecState<TToken, ArrayStream<TToken, TPosition>>
         where TPosition : IPosition<TToken, TPosition>
     {

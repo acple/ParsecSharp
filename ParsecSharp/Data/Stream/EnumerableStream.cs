@@ -26,7 +26,10 @@ namespace ParsecSharp
             where TPosition : IPosition<TToken, TPosition>
             => new EnumerableStream<TToken, TPosition>(source, position);
     }
+}
 
+namespace ParsecSharp.Internal
+{
     public sealed class EnumerableStream<TToken, TPosition> : IParsecState<TToken, EnumerableStream<TToken, TPosition>>
         where TPosition : IPosition<TToken, TPosition>
     {

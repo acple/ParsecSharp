@@ -17,7 +17,10 @@ namespace ParsecSharp
             where TPosition : IPosition<byte, TPosition>
             => new ByteStream<TPosition>(source, position);
     }
+}
 
+namespace ParsecSharp.Internal
+{
     public sealed class ByteStream<TPosition> : IParsecState<byte, ByteStream<TPosition>>
         where TPosition : IPosition<byte, TPosition>
     {

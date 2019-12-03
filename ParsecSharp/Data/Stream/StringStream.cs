@@ -15,7 +15,10 @@ namespace ParsecSharp
             where TPosition : IPosition<char, TPosition>
             => new StringStream<TPosition>(source, position);
     }
+}
 
+namespace ParsecSharp.Internal
+{
     public sealed class StringStream<TPosition> : IParsecState<char, StringStream<TPosition>>
         where TPosition : IPosition<char, TPosition>
     {

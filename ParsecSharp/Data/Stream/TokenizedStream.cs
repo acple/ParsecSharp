@@ -1,6 +1,6 @@
 using System;
 
-namespace ParsecSharp
+namespace ParsecSharp.Internal
 {
     public sealed class TokenizedStream<TInput, TState, TToken, TPosition> : IParsecState<TToken, TokenizedStream<TInput, TState, TToken, TPosition>>
         where TState : IParsecState<TInput, TState>
