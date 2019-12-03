@@ -6,24 +6,26 @@ using ParsecSharp.Internal;
 
 namespace ParsecSharp
 {
-    public partial class ByteStream
+    public static class ByteStream
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ByteStream Create(Stream source)
-            => new ByteStream(source);
+        public static ByteStream<LinearPosition<byte>> Create(Stream source)
+            => Create(source, LinearPosition<byte>.Initial);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ByteStream Create(Stream source, LinearPosition<byte> position)
-            => new ByteStream(source, position);
+        public static ByteStream<TPosition> Create<TPosition>(Stream source, TPosition position)
+            where TPosition : IPosition<byte, TPosition>
+            => new ByteStream<TPosition>(source, position);
     }
 
-    public sealed partial class ByteStream : IParsecState<byte, ByteStream>
+    public sealed class ByteStream<TPosition> : IParsecState<byte, ByteStream<TPosition>>
+        where TPosition : IPosition<byte, TPosition>
     {
         private const int MaxBufferSize = 2048;
 
         private readonly Buffer<byte> _buffer;
 
-        private readonly LinearPosition<byte> _position;
+        private readonly TPosition _position;
 
         private int Index => this._position.Column % MaxBufferSize;
 
@@ -35,15 +37,15 @@ namespace ParsecSharp
 
         public IDisposable InnerResource { get; }
 
-        public ByteStream Next => new ByteStream(this.InnerResource, (this.Index == MaxBufferSize - 1) ? this._buffer.Next : this._buffer, this._position.Next(this.Current));
+        public ByteStream<TPosition> Next => new ByteStream<TPosition>(
+            this.InnerResource,
+            (this.Index == MaxBufferSize - 1) ? this._buffer.Next : this._buffer,
+            this._position.Next(this.Current));
 
-        public ByteStream(Stream source) : this(source, LinearPosition<byte>.Initial)
+        public ByteStream(Stream source, TPosition position) : this(source, CreateBuffer(source), position)
         { }
 
-        public ByteStream(Stream source, LinearPosition<byte> position) : this(source, CreateBuffer(source), position)
-        { }
-
-        private ByteStream(IDisposable source, Buffer<byte> buffer, LinearPosition<byte> position)
+        private ByteStream(IDisposable source, Buffer<byte> buffer, TPosition position)
         {
             this.InnerResource = source;
             this._buffer = buffer;
@@ -75,11 +77,11 @@ namespace ParsecSharp
         public void Dispose()
             => this.InnerResource.Dispose();
 
-        public bool Equals(ByteStream other)
-            => this._buffer == other._buffer && this._position == other._position;
+        public bool Equals(ByteStream<TPosition> other)
+            => this._buffer == other._buffer && this._position.Equals(other._position);
 
         public sealed override bool Equals(object? obj)
-            => obj is ByteStream state && this._buffer == state._buffer && this._position == state._position;
+            => obj is ByteStream<TPosition> state && this._buffer == state._buffer && this._position.Equals(state._position);
 
         public sealed override int GetHashCode()
             => this._buffer.GetHashCode() ^ this._position.GetHashCode();
