@@ -10,7 +10,7 @@ namespace ParsecSharp
 
         public ISuspendedState<TToken> Rest { get; }
 
-        IDisposable? ISuspendedState<TToken>.InnerResource => this.Rest?.InnerResource;
+        IDisposable? ISuspendedState<TToken>.InnerResource => this.Rest.InnerResource;
 
         private SuspendedResult(Result<TToken, T> result, ISuspendedState<TToken> rest)
         {
@@ -28,7 +28,7 @@ namespace ParsecSharp
             => this.Rest.Continue(parser);
 
         public void Dispose()
-            => this.Rest?.Dispose();
+            => this.Rest.Dispose();
 
         public static SuspendedResult<TToken, T> Create<TState>(Result<TToken, T> result, TState state)
             where TState : IParsecState<TToken, TState>
