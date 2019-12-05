@@ -7,10 +7,10 @@ namespace ParsecSharp
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Result<TToken, T> Parse<TToken, T>(this Parser<TToken, T> parser, IEnumerable<TToken> source)
-            => parser.Parse(new EnumerableStream<TToken>(source));
+            => parser.Parse(EnumerableStream.Create(source));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Result<TToken, T> Parse<TToken, T>(this Parser<TToken, T> parser, IReadOnlyList<TToken> source)
-            => parser.Parse(new ArrayStream<TToken>(source));
+            => parser.Parse(ArrayStream.Create(source));
     }
 }

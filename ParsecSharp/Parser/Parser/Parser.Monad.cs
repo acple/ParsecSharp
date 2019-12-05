@@ -1,6 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
-using ParsecSharp.Internal;
+using ParsecSharp.Internal.Parsers;
 
 namespace ParsecSharp
 {
@@ -8,23 +8,23 @@ namespace ParsecSharp
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Pure<TToken, T>(T value)
-            => Builder.Create<TToken, T>(state => Result.Success(value, state));
+            => new Pure<TToken, T>(value);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Pure<TToken, T>(Func<IParsecState<TToken>, T> value)
-            => Builder.Create<TToken, T>(state => Result.Success(value(state), state));
+            => new PureDelayed<TToken, T>(value);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Fail<TToken, T>()
-            => Builder.Create<TToken, T>(state => Result.Fail<TToken, T>(state));
+            => new Fail<TToken, T>();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Fail<TToken, T>(string message)
-            => Builder.Create<TToken, T>(state => Result.Fail<TToken, T>(message, state));
+            => new FailWithMessage<TToken, T>(message);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Fail<TToken, T>(Func<IParsecState<TToken>, string> message)
-            => Builder.Create<TToken, T>(state => Result.Fail<TToken, T>(message(state), state));
+            => new FailWithMessageDelayed<TToken, T>(message);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Abort<TToken, T>(Func<IParsecState<TToken>, string> message)
@@ -32,10 +32,10 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Abort<TToken, T>(Exception exception)
-            => new Terminate<TToken, T>(exception);
+            => new Abort<TToken, T>(exception);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IPosition> GetPosition<TToken>()
-            => Builder.Create<TToken, IPosition>(state => Result.Success(state.Position, state));
+            => new GetPosition<TToken>();
     }
 }

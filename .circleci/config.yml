@@ -3,7 +3,7 @@ version: 2.1
 executors:
   dotnet:
     parameters: &sdk_version
-      sdk_version: { type: string, default: "3.0" }
+      sdk_version: { type: string, default: "3.1" }
     docker:
       - image: mcr.microsoft.com/dotnet/core/sdk:<< parameters.sdk_version >>-alpine
     working_directory: /project
@@ -75,7 +75,7 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: push to NuGet Gallery
+          name: push to NuGet gallery
           command: >-
             dotnet nuget push ./ParsecSharp.*.symbols.nupkg
             -s https://www.nuget.org -k ${NUGET_APIKEY}
@@ -93,15 +93,15 @@ workflows:
               only: /^v\d+\.\d+\.\d+(-.+)?$/
 
       - create_testmaterial:
-          name: testmaterial3.0
+          name: testmaterial3.1
           requires:
             - build
           filters: *default_filter
 
       - unittest:
-          name: unittest3.0
+          name: unittest3.1
           requires:
-            - testmaterial3.0
+            - testmaterial3.1
           filters: *default_filter
 
       - create_testmaterial:
@@ -128,7 +128,7 @@ workflows:
           requires:
             - pack
             - unittest2.2
-            - unittest3.0
+            - unittest3.1
           filters:
             <<: *default_filter
             branches:

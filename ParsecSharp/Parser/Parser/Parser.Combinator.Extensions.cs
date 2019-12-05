@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using ParsecSharp.Internal;
 
 namespace ParsecSharp
 {
@@ -165,24 +164,24 @@ namespace ParsecSharp
             => parser.Alternative(Fail<TToken, T>(message));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, T> WithMessage<TToken, T>(this Parser<TToken, T> parser, Func<Fail<TToken, T>, string> message)
-            => parser.Alternative(fail => Fail<TToken, T>(message(fail)));
+        public static Parser<TToken, T> WithMessage<TToken, T>(this Parser<TToken, T> parser, Func<Failure<TToken, T>, string> message)
+            => parser.Alternative(failure => Fail<TToken, T>(message(failure)));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> AbortWhenFail<TToken, T>(this Parser<TToken, T> parser)
-            => parser.AbortWhenFail(fail => fail.ToString());
+            => parser.AbortWhenFail(failure => failure.ToString());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, T> AbortWhenFail<TToken, T>(this Parser<TToken, T> parser, Func<Fail<TToken, T>, string> message)
-            => parser.Alternative(fail => Abort<TToken, T>(_ => $"At {nameof(AbortWhenFail)} -> {message(fail)}"));
+        public static Parser<TToken, T> AbortWhenFail<TToken, T>(this Parser<TToken, T> parser, Func<Failure<TToken, T>, string> message)
+            => parser.Alternative(failure => Abort<TToken, T>(_ => $"At {nameof(AbortWhenFail)} -> {message(failure)}"));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> AbortIfEntered<TToken, T>(this Parser<TToken, T> parser)
-            => parser.AbortIfEntered(fail => fail.ToString());
+            => parser.AbortIfEntered(failure => failure.ToString());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, T> AbortIfEntered<TToken, T>(this Parser<TToken, T> parser, Func<Fail<TToken, T>, string> message)
-            => parser.Alternative(fail => GetPosition<TToken>()
-                .Bind(position => (position.Equals(fail.State.Position)) ? Fail<TToken, T>(fail.Message) : Abort<TToken, T>(_ => $"At {nameof(AbortIfEntered)} -> {message(fail)}")));
+        public static Parser<TToken, T> AbortIfEntered<TToken, T>(this Parser<TToken, T> parser, Func<Failure<TToken, T>, string> message)
+            => parser.Alternative(failure => GetPosition<TToken>()
+                .Bind(position => (position.Equals(failure.State.Position)) ? Fail<TToken, T>(failure.Message) : Abort<TToken, T>(_ => $"At {nameof(AbortIfEntered)} -> {message(failure)}")));
     }
 }

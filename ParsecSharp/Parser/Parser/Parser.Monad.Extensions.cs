@@ -1,6 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
-using ParsecSharp.Internal;
+using ParsecSharp.Internal.Parsers;
 
 namespace ParsecSharp
 {
@@ -15,7 +15,7 @@ namespace ParsecSharp
             => new Alternative<TToken, T>(first, second);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, T> Alternative<TToken, T>(this Parser<TToken, T> parser, Func<Fail<TToken, T>, Parser<TToken, T>> resume)
+        public static Parser<TToken, T> Alternative<TToken, T>(this Parser<TToken, T> parser, Func<Failure<TToken, T>, Parser<TToken, T>> resume)
             => new Resume<TToken, T>(parser, resume);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -23,7 +23,7 @@ namespace ParsecSharp
             => new Map<TToken, T, TResult>(parser, function);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, TResult> Next<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, Parser<TToken, TResult>> next, Func<Fail<TToken, T>, Parser<TToken, TResult>> resume)
+        public static Parser<TToken, TResult> Next<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, Parser<TToken, TResult>> next, Func<Failure<TToken, T>, Parser<TToken, TResult>> resume)
             => new Next<TToken, T, TResult>(parser, next, resume);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -31,20 +31,20 @@ namespace ParsecSharp
             => parser.Next(next, _ => Pure<TToken, TResult>(result));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, TResult> Next<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, Parser<TToken, TResult>> next, Func<Fail<TToken, T>, TResult> result)
-            => parser.Next(next, fail => Pure<TToken, TResult>(result(fail)));
+        public static Parser<TToken, TResult> Next<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, Parser<TToken, TResult>> next, Func<Failure<TToken, T>, TResult> result)
+            => parser.Next(next, failure => Pure<TToken, TResult>(result(failure)));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, TResult> Next<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, TResult> function, Func<Fail<TToken, T>, Parser<TToken, TResult>> resume)
+        public static Parser<TToken, TResult> Next<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, TResult> function, Func<Failure<TToken, T>, Parser<TToken, TResult>> resume)
             => parser.Next(x => Pure<TToken, TResult>(function(x)), resume);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, TResult> Next<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, TResult> function, TResult result)
-            => parser.ModifyResult((state, _) => Result.Success(result, state), (_, success) => success.Map(function));
+            => new BimapConst<TToken, T, TResult>(parser, function, result);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, TResult> Next<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, TResult> function, Func<Fail<TToken, T>, TResult> result)
-            => parser.ModifyResult((state, fail) => Result.Success(result(fail), state), (_, success) => success.Map(function));
+        public static Parser<TToken, TResult> Next<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, TResult> function, Func<Failure<TToken, T>, TResult> result)
+            => new Bimap<TToken, T, TResult>(parser, function, result);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Guard<TToken, T>(this Parser<TToken, T> parser, Func<T, bool> predicate)

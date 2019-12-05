@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using ParsecSharp.Internal;
+using ParsecSharp.Internal.Parsers;
 
 namespace ParsecSharp
 {
@@ -32,8 +32,8 @@ namespace ParsecSharp
             => parser.Alternative(Pure<TToken, T>(resume));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, T> Try<TToken, T>(Parser<TToken, T> parser, Func<Fail<TToken, T>, T> resume)
-            => parser.ModifyResult((state, fail) => Result.Success(resume(fail), state), (_, success) => success);
+        public static Parser<TToken, T> Try<TToken, T>(Parser<TToken, T> parser, Func<Failure<TToken, T>, T> resume)
+            => new Try<TToken, T>(parser, resume);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Optional<TToken, T>(Parser<TToken, T> parser, T defaultValue)
@@ -45,15 +45,11 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> Not<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
-            => parser.ModifyResult(
-                (state, _) => Result.Success(Unit.Instance, state),
-                (state, success) => Result.Fail<TToken, Unit>($"At {nameof(Not)} -> Unexpected succeed '{success.ToString()}'", state));
+            => new Not<TToken, TIgnore>(parser);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> LookAhead<TToken, T>(Parser<TToken, T> parser)
-            => parser.ModifyResult(
-                (state, fail) => Result.Fail<TToken, T>($"At {nameof(LookAhead)} -> {fail.ToString()}", state),
-                (state, success) => Result.Success(success.Value, state));
+            => new LookAhead<TToken, T>(parser);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Many<TToken, T>(Parser<TToken, T> parser)

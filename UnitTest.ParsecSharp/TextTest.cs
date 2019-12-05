@@ -74,11 +74,11 @@ namespace UnitTest.ParsecSharp
 
             // 変換対象に数値以外の文字を含ませた場合、変換に失敗する。
             var parser2 = Many1(Any()).ToInt();
-            parser2.Parse(source).WillFail(fail => fail.Message.Is("Expected digits but was '1234abcd'"));
+            parser2.Parse(source).WillFail(failure => failure.Message.Is("Expected digits but was '1234abcd'"));
 
             // 32 bit を超えた範囲の数値を与えると失敗となる。
             var source2 = "1234567890123456";
-            parser.Parse(source2).WillFail(fail => fail.Message.Is("Expected digits but was '1234567890123456'"));
+            parser.Parse(source2).WillFail(failure => failure.Message.Is("Expected digits but was '1234567890123456'"));
         }
 
         [TestMethod]
@@ -126,25 +126,31 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void OneOfIgnoreCaseTest()
         {
-            var source = "z";
+            // 大文字小文字の違いを無視した上で、トークンが候補に含まれる場合に成功するパーサを作成します。
 
-            var parser = OneOfIgnoreCase("XYZ");
+            // 大文字小文字を無視して [x-z] にマッチするパーサ。
+            var parser = OneOfIgnoreCase("xyz");
 
-            parser.Parse(source).WillSucceed(value => value.Is('z'));
+            var source = "ZZZ";
+            parser.Parse(source).WillSucceed(value => value.Is('Z'));
+
+            var source2 = "ABC";
+            parser.Parse(source2).WillFail();
         }
 
         [TestMethod]
         public void NoneOfIgnoreCaseTest()
         {
-            var source = "z";
+            // 大文字小文字の違いを無視した上で、トークンが候補に含まれない場合に成功するパーサを作成します。
 
-            var parser = NoneOfIgnoreCase("XYZ");
+            // 大文字小文字を無視して [x-z] 以外にマッチするパーサ。
+            var parser = NoneOfIgnoreCase("xyz");
 
+            var source = "ZZZ";
             parser.Parse(source).WillFail();
 
-            var parser2 = NoneOfIgnoreCase("ABCD");
-
-            parser2.Parse(source).WillSucceed(value => value.Is('z'));
+            var source2 = "ABC";
+            parser.Parse(source2).WillSucceed(value => value.Is('A'));
         }
     }
 }
