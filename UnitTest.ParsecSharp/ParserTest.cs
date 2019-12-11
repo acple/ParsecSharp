@@ -590,6 +590,21 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
+        public void AtomTest()
+        {
+            // 指定したパーサをパーサの最小単位として扱います。
+            // パース処理が途中で失敗した場合であっても、起点までバックトラックを行います。
+            // WithConsume / AbortIfEntered と組み合わせて使用します。
+
+            var abCD = Sequence(Char('a'), Char('b'), Char('C'), Char('D'));
+            var parser = Atom(abCD);
+
+            var source = _abcdEFGH;
+            abCD.Parse(source).WillFail(failure => failure.State.Position.Is(position => position.Line == 1 && position.Column == 3));
+            parser.Parse(source).WillFail(failure => failure.State.Position.Is(position => position.Line == 1 && position.Column == 1));
+        }
+
+        [TestMethod]
         public void DelayTest()
         {
             // 指定したパーサの組み立てをパース実行時まで遅延します。
