@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using ParsecSharp.Internal;
@@ -19,7 +20,7 @@ namespace ParsecSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TokenizedStream<TInput, TState, TToken, TPosition> Tokenize<TInput, TState, TToken, TPosition>(TState source, Parser<TInput, TToken> parser, TPosition position)
             where TState : IParsecState<TInput, TState>
-            where TPosition : IPosition<TToken, TPosition>
+            where TPosition : IPosition<TToken, TPosition>, IEquatable<TPosition>
             => new TokenizedStream<TInput, TState, TToken, TPosition>(source, parser, position);
     }
 }

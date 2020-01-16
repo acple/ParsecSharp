@@ -4,7 +4,7 @@ namespace ParsecSharp.Internal
 {
     public sealed class TokenizedStream<TInput, TState, TToken, TPosition> : IParsecState<TToken, TokenizedStream<TInput, TState, TToken, TPosition>>
         where TState : IParsecState<TInput, TState>
-        where TPosition : IPosition<TToken, TPosition>
+        where TPosition : IPosition<TToken, TPosition>, IEquatable<TPosition>
     {
         private readonly TPosition _position;
 

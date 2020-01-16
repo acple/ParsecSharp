@@ -1,6 +1,8 @@
+using System;
+
 namespace ParsecSharp.Internal
 {
-    public sealed class EmptyPosition<TToken> : IPosition<TToken, EmptyPosition<TToken>>
+    public sealed class EmptyPosition<TToken> : IPosition<TToken, EmptyPosition<TToken>>, IEquatable<EmptyPosition<TToken>>
     {
         public static EmptyPosition<TToken> Initial { get; } = new EmptyPosition<TToken>();
 
@@ -19,6 +21,9 @@ namespace ParsecSharp.Internal
 
         public bool Equals(IPosition other)
             => ReferenceEquals(this, other);
+
+        public bool Equals(EmptyPosition<TToken> other)
+            => true;
 
         public sealed override bool Equals(object? obj)
             => ReferenceEquals(this, obj);

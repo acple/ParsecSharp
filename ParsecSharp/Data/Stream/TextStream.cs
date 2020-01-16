@@ -23,17 +23,17 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TextStream<TPosition> Create<TPosition>(Stream source, TPosition position)
-            where TPosition : IPosition<char, TPosition>
+            where TPosition : IPosition<char, TPosition>, IEquatable<TPosition>
             => new TextStream<TPosition>(source, position);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TextStream<TPosition> Create<TPosition>(Stream source, Encoding encoding, TPosition position)
-            where TPosition : IPosition<char, TPosition>
+            where TPosition : IPosition<char, TPosition>, IEquatable<TPosition>
             => new TextStream<TPosition>(source, encoding, position);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TextStream<TPosition> Create<TPosition>(TextReader reader, TPosition position)
-            where TPosition : IPosition<char, TPosition>
+            where TPosition : IPosition<char, TPosition>, IEquatable<TPosition>
             => new TextStream<TPosition>(reader, position);
     }
 }
@@ -41,7 +41,7 @@ namespace ParsecSharp
 namespace ParsecSharp.Internal
 {
     public sealed class TextStream<TPosition> : IParsecState<char, TextStream<TPosition>>
-        where TPosition : IPosition<char, TPosition>
+        where TPosition : IPosition<char, TPosition>, IEquatable<TPosition>
     {
         private const int MaxBufferSize = 2048;
 
