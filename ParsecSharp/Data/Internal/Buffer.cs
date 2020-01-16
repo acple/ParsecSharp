@@ -34,6 +34,6 @@ namespace ParsecSharp.Internal
             => new ArraySegment<TToken>(this._buffer, this._index, this.Count).AsEnumerable().GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator()
-            => this._buffer.GetEnumerator();
+            => this.AsEnumerable().GetEnumerator();
     }
 }
