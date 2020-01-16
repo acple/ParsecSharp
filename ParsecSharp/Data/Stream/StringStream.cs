@@ -12,7 +12,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static StringStream<TPosition> Create<TPosition>(string source, TPosition position)
-            where TPosition : IPosition<char, TPosition>, IComparable<TPosition>, IEquatable<TPosition>
+            where TPosition : IPosition<char, TPosition>
             => new StringStream<TPosition>(source, position);
     }
 }
@@ -20,7 +20,7 @@ namespace ParsecSharp
 namespace ParsecSharp.Internal
 {
     public sealed class StringStream<TPosition> : IParsecState<char, StringStream<TPosition>>
-        where TPosition : IPosition<char, TPosition>, IComparable<TPosition>, IEquatable<TPosition>
+        where TPosition : IPosition<char, TPosition>
     {
         private readonly string _source;
 

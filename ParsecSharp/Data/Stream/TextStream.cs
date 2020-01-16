@@ -33,7 +33,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TextStream<TPosition> Create<TPosition>(TextReader reader, TPosition position)
-            where TPosition : IPosition<char, TPosition>, IComparable<TPosition>, IEquatable<TPosition>
+            where TPosition : IPosition<char, TPosition>
             => new TextStream<TPosition>(reader, position);
     }
 }
@@ -41,7 +41,7 @@ namespace ParsecSharp
 namespace ParsecSharp.Internal
 {
     public sealed class TextStream<TPosition> : IParsecState<char, TextStream<TPosition>>
-        where TPosition : IPosition<char, TPosition>, IComparable<TPosition>, IEquatable<TPosition>
+        where TPosition : IPosition<char, TPosition>
     {
         private const int MaxBufferSize = 2048;
 

@@ -13,7 +13,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ArrayStream<TToken, TPosition> Create<TToken, TPosition>(IReadOnlyList<TToken> source, TPosition position)
-            where TPosition : IPosition<TToken, TPosition>, IComparable<TPosition>, IEquatable<TPosition>
+            where TPosition : IPosition<TToken, TPosition>, IEquatable<TPosition>
             => new ArrayStream<TToken, TPosition>(source, position);
     }
 }
@@ -21,7 +21,7 @@ namespace ParsecSharp
 namespace ParsecSharp.Internal
 {
     public sealed class ArrayStream<TToken, TPosition> : IParsecState<TToken, ArrayStream<TToken, TPosition>>
-        where TPosition : IPosition<TToken, TPosition>, IComparable<TPosition>, IEquatable<TPosition>
+        where TPosition : IPosition<TToken, TPosition>, IEquatable<TPosition>
     {
         private readonly IReadOnlyList<TToken> _source;
 

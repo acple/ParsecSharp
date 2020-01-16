@@ -14,7 +14,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ByteStream<TPosition> Create<TPosition>(Stream source, TPosition position)
-            where TPosition : IPosition<byte, TPosition>, IComparable<TPosition>, IEquatable<TPosition>
+            where TPosition : IPosition<byte, TPosition>, IEquatable<TPosition>
             => new ByteStream<TPosition>(source, position);
     }
 }
@@ -22,7 +22,7 @@ namespace ParsecSharp
 namespace ParsecSharp.Internal
 {
     public sealed class ByteStream<TPosition> : IParsecState<byte, ByteStream<TPosition>>
-        where TPosition : IPosition<byte, TPosition>, IComparable<TPosition>, IEquatable<TPosition>
+        where TPosition : IPosition<byte, TPosition>, IEquatable<TPosition>
     {
         private const int MaxBufferSize = 2048;
 
