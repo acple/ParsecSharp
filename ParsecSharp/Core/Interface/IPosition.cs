@@ -10,7 +10,7 @@ namespace ParsecSharp
     }
 
     public interface IPosition<TToken, TPosition> : IPosition
-        where TPosition : IPosition<TToken, TPosition>, IEquatable<TPosition>
+        where TPosition : IPosition<TToken, TPosition>, IComparable<TPosition>, IEquatable<TPosition>
     {
         TPosition Next(TToken token);
     }
