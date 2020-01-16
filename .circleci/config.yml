@@ -105,17 +105,17 @@ workflows:
           filters: *default_filter
 
       - create_testmaterial:
-          name: testmaterial2.2
-          sdk_version: "2.2"
+          name: testmaterial2.1
+          sdk_version: "2.1"
           requires:
             - build
           filters: *default_filter
 
       - unittest:
-          name: unittest2.2
-          sdk_version: "2.2"
+          name: unittest2.1
+          sdk_version: "2.1"
           requires:
-            - testmaterial2.2
+            - testmaterial2.1
           filters: *default_filter
 
       - pack:
@@ -127,7 +127,7 @@ workflows:
           context: nuget-publish
           requires:
             - pack
-            - unittest2.2
+            - unittest2.1
             - unittest3.1
           filters:
             <<: *default_filter
