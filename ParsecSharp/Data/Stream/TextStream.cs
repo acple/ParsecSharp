@@ -23,12 +23,12 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TextStream<TPosition> Create<TPosition>(Stream source, TPosition position)
-            where TPosition : IPosition<char, TPosition>, IComparable<TPosition>, IEquatable<TPosition>
+            where TPosition : IPosition<char, TPosition>, IComparable<TPosition>
             => new TextStream<TPosition>(source, position);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TextStream<TPosition> Create<TPosition>(Stream source, Encoding encoding, TPosition position)
-            where TPosition : IPosition<char, TPosition>, IComparable<TPosition>, IEquatable<TPosition>
+            where TPosition : IPosition<char, TPosition>, IComparable<TPosition>
             => new TextStream<TPosition>(source, encoding, position);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

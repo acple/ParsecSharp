@@ -18,12 +18,12 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static EnumerableStream<TToken, TPosition> Create<TToken, TPosition>(IEnumerable<TToken> source, TPosition position)
-            where TPosition : IPosition<TToken, TPosition>, IEquatable<TPosition>
+            where TPosition : IPosition<TToken, TPosition>
             => new EnumerableStream<TToken, TPosition>(source, position);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static EnumerableStream<TToken, TPosition> Create<TToken, TPosition>(IEnumerator<TToken> source, TPosition position)
-            where TPosition : IPosition<TToken, TPosition>, IEquatable<TPosition>
+            where TPosition : IPosition<TToken, TPosition>
             => new EnumerableStream<TToken, TPosition>(source, position);
     }
 }
@@ -31,7 +31,7 @@ namespace ParsecSharp
 namespace ParsecSharp.Internal
 {
     public sealed class EnumerableStream<TToken, TPosition> : IParsecState<TToken, EnumerableStream<TToken, TPosition>>
-        where TPosition : IPosition<TToken, TPosition>, IEquatable<TPosition>
+        where TPosition : IPosition<TToken, TPosition>
     {
         private const int MaxBufferSize = 1024;
 
@@ -92,10 +92,10 @@ namespace ParsecSharp.Internal
             => this.InnerResource.Dispose();
 
         public bool Equals(EnumerableStream<TToken, TPosition> other)
-            => this._buffer == other._buffer && this._position.Equals(other._position);
+            => this._buffer == other._buffer && this._index == other._index;
 
         public sealed override bool Equals(object? obj)
-            => obj is EnumerableStream<TToken, TPosition> state && this._buffer == state._buffer && this._position.Equals(state._position);
+            => obj is EnumerableStream<TToken, TPosition> state && this._buffer == state._buffer && this._index == state._index;
 
         public sealed override int GetHashCode()
             => this._buffer.GetHashCode() ^ this._position.GetHashCode();

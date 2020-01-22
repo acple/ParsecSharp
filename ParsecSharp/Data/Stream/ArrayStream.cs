@@ -13,7 +13,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ArrayStream<TToken, TPosition> Create<TToken, TPosition>(IReadOnlyList<TToken> source, TPosition position)
-            where TPosition : IPosition<TToken, TPosition>, IEquatable<TPosition>
+            where TPosition : IPosition<TToken, TPosition>
             => new ArrayStream<TToken, TPosition>(source, position);
     }
 }
@@ -21,7 +21,7 @@ namespace ParsecSharp
 namespace ParsecSharp.Internal
 {
     public sealed class ArrayStream<TToken, TPosition> : IParsecState<TToken, ArrayStream<TToken, TPosition>>
-        where TPosition : IPosition<TToken, TPosition>, IEquatable<TPosition>
+        where TPosition : IPosition<TToken, TPosition>
     {
         private readonly IReadOnlyList<TToken> _source;
 
@@ -56,10 +56,10 @@ namespace ParsecSharp.Internal
         { }
 
         public bool Equals(ArrayStream<TToken, TPosition> other)
-            => this._source == other._source && this._position.Equals(other._position);
+            => this._source == other._source && this._index == other._index;
 
         public sealed override bool Equals(object? obj)
-            => obj is ArrayStream<TToken, TPosition> state && this._source == state._source && this._position.Equals(state._position);
+            => obj is ArrayStream<TToken, TPosition> state && this._source == state._source && this._index == state._index;
 
         public sealed override int GetHashCode()
             => this._source.GetHashCode() ^ this._position.GetHashCode();

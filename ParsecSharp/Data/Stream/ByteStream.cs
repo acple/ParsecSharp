@@ -14,7 +14,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ByteStream<TPosition> Create<TPosition>(Stream source, TPosition position)
-            where TPosition : IPosition<byte, TPosition>, IEquatable<TPosition>
+            where TPosition : IPosition<byte, TPosition>
             => new ByteStream<TPosition>(source, position);
     }
 }
@@ -22,7 +22,7 @@ namespace ParsecSharp
 namespace ParsecSharp.Internal
 {
     public sealed class ByteStream<TPosition> : IParsecState<byte, ByteStream<TPosition>>
-        where TPosition : IPosition<byte, TPosition>, IEquatable<TPosition>
+        where TPosition : IPosition<byte, TPosition>
     {
         private const int MaxBufferSize = 2048;
 
@@ -81,10 +81,10 @@ namespace ParsecSharp.Internal
             => this.InnerResource.Dispose();
 
         public bool Equals(ByteStream<TPosition> other)
-            => this._buffer == other._buffer && this._position.Equals(other._position);
+            => this._buffer == other._buffer && this._index == other._index;
 
         public sealed override bool Equals(object? obj)
-            => obj is ByteStream<TPosition> state && this._buffer == state._buffer && this._position.Equals(state._position);
+            => obj is ByteStream<TPosition> state && this._buffer == state._buffer && this._index == state._index;
 
         public sealed override int GetHashCode()
             => this._buffer.GetHashCode() ^ this._position.GetHashCode();
