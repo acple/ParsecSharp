@@ -11,10 +11,10 @@
 
   <PropertyGroup>
     <PackageId>ParsecSharp</PackageId>
-    <Version>3.1.0</Version>
+    <Version>3.1.1</Version>
     <Authors>acple</Authors>
     <Description>The faster monadic parser combinator library for C#</Description>
-    <Copyright>(c) 2015-2019 acple</Copyright>
+    <Copyright>(c) 2015-2020 acple</Copyright>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/acple/ParsecSharp</PackageProjectUrl>
