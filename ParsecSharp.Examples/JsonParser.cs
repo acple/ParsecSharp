@@ -80,7 +80,7 @@ namespace ParsecSharp.Examples
                     Char('r').Map(_ => '\r'),
                     Char('t').Map(_ => '\t'),
                     Char('u').Right(HexDigit().Repeat(4).AsString())
-                        .Map(hex => (char)int.Parse(hex, NumberStyles.HexNumber))));
+                        .Map(hex => (char)int.Parse(hex, NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo))));
 
         // JSON String の一文字にマッチします。
         // char = unescaped / escaped
@@ -106,7 +106,7 @@ namespace ParsecSharp.Examples
         // frac = decimal-point 1*DIGIT
         private static Parser<char, double> Frac()
             => Char('.').Right(Many1(DecDigit())).AsString()
-                .Map(x => double.Parse("0." + x));
+                .Map(x => double.Parse("0." + x, NumberFormatInfo.InvariantInfo));
 
         // JSON Number の指数部にマッチします。
         // exp = e [ minus / plus ] 1*DIGIT

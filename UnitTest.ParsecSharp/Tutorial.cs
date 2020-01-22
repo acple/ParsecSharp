@@ -170,10 +170,10 @@ namespace UnitTest.ParsecSharp
             var key2 = result?["key2"] as string;
             key2.Is("abc");
 
-            var key3_1 = (bool)result?["key3"]["key3_1"];
+            var key3_1 = (bool)result?["key3"]?["key3_1"];
             key3_1.IsTrue();
 
-            var key3_2 = result?["key3"]["key3_2"] as IEnumerable<dynamic>;
+            var key3_2 = result?["key3"]?["key3_2"] as IEnumerable<dynamic>;
             key3_2.Is(1.0, 2.0, 3.0);
         }
 

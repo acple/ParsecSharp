@@ -64,7 +64,7 @@ namespace ParsecSharp.Examples
                     Char('r').Map(_ => '\r'),
                     Char('t').Map(_ => '\t'),
                     Char('u').Right(HexDigit().Repeat(4).AsString())
-                        .Map(hex => (char)int.Parse(hex, NumberStyles.HexNumber))));
+                        .Map(hex => (char)int.Parse(hex, NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo))));
 
         private static readonly Parser<char, char> JsonChar =
             JsonUnescapedChar | JsonEscapedChar;
@@ -80,7 +80,7 @@ namespace ParsecSharp.Examples
 
         private static readonly Parser<char, double> Frac =
             Char('.').Right(Many1(DecDigit())).AsString()
-                .Map(x => double.Parse("0." + x));
+                .Map(x => double.Parse("0." + x, NumberFormatInfo.InvariantInfo));
 
         private static readonly Parser<char, int> Exp =
             from _ in CharIgnoreCase('e')

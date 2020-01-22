@@ -7,7 +7,7 @@ namespace ParsecSharp.Internal.Results
 
         public sealed override IParsecState<TToken> State => this._state.GetState();
 
-        public sealed override string Message => $"Unexpected '{this.State.ToString()}'";
+        public sealed override string Message => $"Unexpected '{this._state.ToString()}'";
 
         public ParseError(TState state)
         {

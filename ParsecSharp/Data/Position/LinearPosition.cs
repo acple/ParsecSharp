@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace ParsecSharp
 {
     [StructLayout(LayoutKind.Auto)]
-    public readonly struct LinearPosition<TToken> : IPosition<TToken, LinearPosition<TToken>>, IEquatable<LinearPosition<TToken>>
+    public readonly struct LinearPosition<TToken> : IPosition<TToken, LinearPosition<TToken>>, IComparable<LinearPosition<TToken>>, IEquatable<LinearPosition<TToken>>
     {
         public static LinearPosition<TToken> Initial => default;
 
@@ -22,6 +22,9 @@ namespace ParsecSharp
 
         public int CompareTo(IPosition other)
             => (this.Line != other.Line) ? this.Line.CompareTo(other.Line) : this.Column.CompareTo(other.Column);
+
+        public int CompareTo(LinearPosition<TToken> other)
+            => this.Column.CompareTo(other.Column);
 
         public bool Equals(IPosition other)
             => other is LinearPosition<TToken> position && this == position;
