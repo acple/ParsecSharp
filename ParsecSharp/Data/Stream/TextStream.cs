@@ -60,7 +60,7 @@ namespace ParsecSharp.Internal
         public IDisposable InnerResource { get; }
 
         public TextStream<TPosition> Next => (this._index == MaxBufferSize - 1)
-            ? new TextStream<TPosition>(this.InnerResource, this._buffer.Next, 0, this._position.Next(this.Current))
+            ? new TextStream<TPosition>(this.InnerResource, this._buffer.Next, index: 0, this._position.Next(this.Current))
             : new TextStream<TPosition>(this.InnerResource, this._buffer, this._index + 1, this._position.Next(this.Current));
 
         public TextStream(Stream source, TPosition position) : this(source, Encoding.UTF8, position)
@@ -69,7 +69,7 @@ namespace ParsecSharp.Internal
         public TextStream(Stream source, Encoding encoding, TPosition position) : this(new StreamReader(source, encoding), position)
         { }
 
-        public TextStream(TextReader reader, TPosition position) : this(reader, CreateBuffer(reader), 0, position)
+        public TextStream(TextReader reader, TPosition position) : this(reader, CreateBuffer(reader), index: 0, position)
         { }
 
         private TextStream(IDisposable source, Buffer<char> buffer, int index, TPosition position)

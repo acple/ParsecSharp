@@ -37,33 +37,33 @@ namespace ParsecSharp.Internal
 
         private readonly Buffer<TToken> _buffer;
 
+        private readonly int _index;
+
         private readonly TPosition _position;
 
-        private int Index => this._position.Column % MaxBufferSize;
+        public TToken Current => this._buffer[this._index];
 
-        public TToken Current => this._buffer[this.Index];
-
-        public bool HasValue => this.Index < this._buffer.Count;
+        public bool HasValue => this._index < this._buffer.Count;
 
         public IPosition Position => this._position;
 
         public IDisposable InnerResource { get; }
 
-        public EnumerableStream<TToken, TPosition> Next => new EnumerableStream<TToken, TPosition>(
-            this.InnerResource,
-            (this.Index == MaxBufferSize - 1) ? this._buffer.Next : this._buffer,
-            this._position.Next(this.Current));
+        public EnumerableStream<TToken, TPosition> Next => (this._index == MaxBufferSize - 1)
+            ? new EnumerableStream<TToken, TPosition>(this.InnerResource, this._buffer.Next, index: 0, this._position.Next(this.Current))
+            : new EnumerableStream<TToken, TPosition>(this.InnerResource, this._buffer, this._index + 1, this._position.Next(this.Current));
 
         public EnumerableStream(IEnumerable<TToken> source, TPosition position) : this(source.GetEnumerator(), position)
         { }
 
-        public EnumerableStream(IEnumerator<TToken> enumerator, TPosition position) : this(enumerator, CreateBuffer(enumerator), position)
+        public EnumerableStream(IEnumerator<TToken> enumerator, TPosition position) : this(enumerator, CreateBuffer(enumerator), index: 0, position)
         { }
 
-        private EnumerableStream(IDisposable source, Buffer<TToken> buffer, TPosition position)
+        private EnumerableStream(IDisposable source, Buffer<TToken> buffer, int index, TPosition position)
         {
             this.InnerResource = source;
             this._buffer = buffer;
+            this._index = index;
             this._position = position;
         }
 

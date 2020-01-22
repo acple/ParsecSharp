@@ -25,21 +25,27 @@ namespace ParsecSharp.Internal
     {
         private readonly IReadOnlyList<TToken> _source;
 
+        private readonly int _index;
+
         private readonly TPosition _position;
 
-        public TToken Current => this._source[this._position.Column];
+        public TToken Current => this._source[this._index];
 
-        public bool HasValue => this._position.Column < this._source.Count;
+        public bool HasValue => this._index < this._source.Count;
 
         public IPosition Position => this._position;
 
         public IDisposable? InnerResource => default;
 
-        public ArrayStream<TToken, TPosition> Next => new ArrayStream<TToken, TPosition>(this._source, this._position.Next(this.Current));
+        public ArrayStream<TToken, TPosition> Next => new ArrayStream<TToken, TPosition>(this._source, this._index + 1, this._position.Next(this.Current));
 
-        public ArrayStream(IReadOnlyList<TToken> source, TPosition position)
+        public ArrayStream(IReadOnlyList<TToken> source, TPosition position) : this(source, index: 0, position)
+        { }
+
+        private ArrayStream(IReadOnlyList<TToken> source, int index, TPosition position)
         {
             this._source = source;
+            this._index = index;
             this._position = position;
         }
 
