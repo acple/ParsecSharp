@@ -87,7 +87,7 @@ namespace ParsecSharp.Internal
             => obj is ByteStream<TPosition> state && this._buffer == state._buffer && this._index == state._index;
 
         public sealed override int GetHashCode()
-            => this._buffer.GetHashCode() ^ this._position.GetHashCode();
+            => this._buffer.GetHashCode() ^ this._index.GetHashCode();
 
         public sealed override string ToString()
             => (this.HasValue) ? this.Current.ToString() : "<EndOfStream>";

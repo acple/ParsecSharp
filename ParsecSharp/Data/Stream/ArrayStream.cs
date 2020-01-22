@@ -62,7 +62,7 @@ namespace ParsecSharp.Internal
             => obj is ArrayStream<TToken, TPosition> state && this._source == state._source && this._index == state._index;
 
         public sealed override int GetHashCode()
-            => this._source.GetHashCode() ^ this._position.GetHashCode();
+            => this._source.GetHashCode() ^ this._index.GetHashCode();
 
         public sealed override string ToString()
             => (this.HasValue)
