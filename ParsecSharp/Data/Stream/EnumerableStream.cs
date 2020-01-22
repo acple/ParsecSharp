@@ -76,7 +76,7 @@ namespace ParsecSharp.Internal
                     .TakeWhile(enumerator => enumerator.MoveNext())
                     .Select(enumerator => enumerator.Current)
                     .ToArray();
-                return new Buffer<TToken>(buffer, () => CreateBuffer(enumerator));
+                return (buffer.Length == 0) ? Buffer<TToken>.Empty : new Buffer<TToken>(buffer, () => CreateBuffer(enumerator));
             }
             catch
             {

@@ -65,7 +65,7 @@ namespace ParsecSharp.Internal
                     .TakeWhile(x => x != -1)
                     .Select(x => (byte)x)
                     .ToArray();
-                return new Buffer<byte>(buffer, () => CreateBuffer(stream));
+                return (buffer.Length == 0) ? Buffer<byte>.Empty : new Buffer<byte>(buffer, () => CreateBuffer(stream));
             }
             catch
             {

@@ -90,7 +90,7 @@ namespace ParsecSharp.Internal
                     .TakeWhile(x => x != -1)
                     .Select(x => (char)x)
                     .ToArray();
-                return new Buffer<char>(buffer, () => CreateBuffer(reader));
+                return (buffer.Length == 0) ? Buffer<char>.Empty : new Buffer<char>(buffer, () => CreateBuffer(reader));
             }
             catch
             {
