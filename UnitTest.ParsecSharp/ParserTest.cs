@@ -44,21 +44,6 @@ namespace UnitTest.ParsecSharp
             parser.Parse(source).WillSucceed(value => value.Is('a'));
 
             parser.Parse(source2).WillFail();
-
-            // IEqualityComparer<T> を受け取るオーバーロード。
-            // 'A' にマッチするが、大文字小文字を無視する。
-            var parser2 = Token('A', new AssertEqualityComparer<char>((x, y) => char.ToUpperInvariant(x) == char.ToUpperInvariant(y)));
-
-            parser2.Parse(source).WillSucceed(value => value.Is('a')); // source 側の結果が得られる
-
-            parser2.Parse(source2).WillFail();
-
-            // Func<TToken, TToken, bool> による比較を行うオーバーロード。
-            var parser3 = Token('①', (x, y) => char.GetNumericValue(x) == char.GetNumericValue(y));
-
-            parser3.Parse(source).WillFail();
-
-            parser3.Parse(source2).WillSucceed(value => value.Is('1'));
         }
 
         [TestMethod]
