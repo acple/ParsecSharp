@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using ParsecSharp.Internal;
 
 namespace ParsecSharp
 {
@@ -89,7 +90,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, TRight> Right<TToken, TLeft, TRight>(this Parser<TToken, TLeft> left, Parser<TToken, TRight> right)
-            => left.Bind(_ => right);
+            => left.Bind(right.Const);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Between<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> bracket)
@@ -173,7 +174,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> AbortWhenFail<TToken, T>(this Parser<TToken, T> parser, Func<Failure<TToken, T>, string> message)
-            => parser.Alternative(failure => Abort<TToken, T>(_ => $"At {nameof(AbortWhenFail)} -> {message(failure)}"));
+            => parser.Alternative(failure => Abort<TToken, T>($"At {nameof(AbortWhenFail)} -> {message(failure)}".Const));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> AbortIfEntered<TToken, T>(this Parser<TToken, T> parser)
@@ -182,6 +183,6 @@ namespace ParsecSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> AbortIfEntered<TToken, T>(this Parser<TToken, T> parser, Func<Failure<TToken, T>, string> message)
             => parser.Alternative(failure => GetPosition<TToken>()
-                .Bind(position => (position.Equals(failure.State.Position)) ? Fail<TToken, T>(failure.Message) : Abort<TToken, T>(_ => $"At {nameof(AbortIfEntered)} -> {message(failure)}")));
+                .Bind(position => (position.Equals(failure.State.Position)) ? Fail<TToken, T>(failure.Message) : Abort<TToken, T>($"At {nameof(AbortIfEntered)} -> {message(failure)}".Const)));
     }
 }

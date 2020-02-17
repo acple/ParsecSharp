@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using ParsecSharp.Internal;
 using ParsecSharp.Internal.Parsers;
 
 namespace ParsecSharp
@@ -61,7 +62,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> SkipMany<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
-            => Fix<TToken, Unit>(self => parser.Next(_ => self, Unit.Instance));
+            => Fix<TToken, Unit>(self => parser.Next(self.Const, Unit.Instance));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> SkipMany1<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
