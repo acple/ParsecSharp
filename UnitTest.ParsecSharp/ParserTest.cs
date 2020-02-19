@@ -1211,7 +1211,7 @@ namespace UnitTest.ParsecSharp
             var (result3, rest3) = parser.ParsePartially(rest2);
             result3.WillFail(failure => failure.Message.Is("Unexpected '<EndOfStream>'")); // 終端に到達したため失敗
 
-            // 失敗時点のstateが返されることに注意する。
+            // 失敗時点の state が返されることに注意する。
             EndOfInput().Parse(rest3).WillSucceed(value => value.Is(Unit.Instance));
         }
     }
