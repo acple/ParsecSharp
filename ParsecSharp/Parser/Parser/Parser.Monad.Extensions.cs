@@ -48,6 +48,10 @@ namespace ParsecSharp
             => new Bimap<TToken, T, TResult>(parser, function, result);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, T> Flatten<TToken, T>(this Parser<TToken, Parser<TToken, T>> parser)
+            => parser.Bind(parser => parser);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Guard<TToken, T>(this Parser<TToken, T> parser, Func<T, bool> predicate)
             => parser.Guard(predicate, x => $"A value '{x?.ToString() ?? "<null>"}' does not satisfy condition");
 
