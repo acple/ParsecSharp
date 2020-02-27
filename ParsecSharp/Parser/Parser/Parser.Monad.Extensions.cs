@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
+using ParsecSharp.Internal;
 using ParsecSharp.Internal.Parsers;
 
 namespace ParsecSharp
@@ -28,7 +29,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, TResult> Next<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, Parser<TToken, TResult>> next, TResult result)
-            => parser.Next(next, _ => Pure<TToken, TResult>(result));
+            => parser.Next(next, Pure<TToken, TResult>(result).Const);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, TResult> Next<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, Parser<TToken, TResult>> next, Func<Failure<TToken, T>, TResult> result)
@@ -45,6 +46,10 @@ namespace ParsecSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, TResult> Next<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, TResult> function, Func<Failure<TToken, T>, TResult> result)
             => new Bimap<TToken, T, TResult>(parser, function, result);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, T> Flatten<TToken, T>(this Parser<TToken, Parser<TToken, T>> parser)
+            => parser.Bind(parser => parser);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Guard<TToken, T>(this Parser<TToken, T> parser, Func<T, bool> predicate)

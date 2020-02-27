@@ -17,20 +17,20 @@ namespace ParsecSharp
             => Satisfy<TToken>(x => EqualityComparer<TToken>.Default.Equals(x, token));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, TToken> Token<TToken>(TToken token, IEqualityComparer<TToken> comparer)
-            => Satisfy<TToken>(x => comparer.Equals(x, token));
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, TToken> Token<TToken>(TToken token, Func<TToken, TToken, bool> comparer)
-            => Satisfy<TToken>(x => comparer(x, token));
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> EndOfInput<TToken>()
             => Not(Any<TToken>()).WithMessage(failure => $"Expected <EndOfStream> but was '{failure.State.ToString()}'");
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> Null<TToken>()
             => Pure<TToken, Unit>(Unit.Instance);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, Unit> Condition<TToken>(bool success)
+            => Condition<TToken>(success, "Given condition was false");
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, Unit> Condition<TToken>(bool success, string message)
+            => (success) ? Null<TToken>() : Fail<TToken, Unit>(message);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, TToken> OneOf<TToken>(IEnumerable<TToken> candidates)
