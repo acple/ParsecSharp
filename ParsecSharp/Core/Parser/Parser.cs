@@ -7,6 +7,9 @@ namespace ParsecSharp
 {
     public abstract class Parser<TToken, T>
     {
+        private protected Parser()
+        { }
+
         internal abstract Result<TToken, TResult> Run<TState, TResult>(TState state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
             where TState : IParsecState<TToken, TState>;
 
