@@ -18,7 +18,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> EndOfInput<TToken>()
-            => Not(Any<TToken>()).WithMessage(failure => $"Expected <EndOfStream> but was '{failure.State.ToString()}'");
+            => Not(Any<TToken>()).WithMessage(failure => $"Expected '<EndOfStream>' but was '{failure.State.ToString()}'");
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> Null<TToken>()
@@ -26,7 +26,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> Condition<TToken>(bool success)
-            => Condition<TToken>(success, "Given condition was false");
+            => Condition<TToken>(success, $"At {nameof(Condition)} -> Given condition was false");
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> Condition<TToken>(bool success, string message)
