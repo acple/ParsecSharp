@@ -22,7 +22,5 @@ namespace ParsecSharp
 
         public sealed override int GetHashCode()
             => base.GetHashCode();
-
-        public abstract override string ToString();
     }
 }

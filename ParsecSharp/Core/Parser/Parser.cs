@@ -59,6 +59,12 @@ namespace ParsecSharp
             return result;
         }
 
+        public sealed override bool Equals(object? obj)
+            => base.Equals(obj);
+
+        public sealed override int GetHashCode()
+            => base.GetHashCode();
+
         public static Parser<TToken, T> operator |(Parser<TToken, T> first, Parser<TToken, T> second)
             => new Alternative<TToken, T>(first, second);
     }
