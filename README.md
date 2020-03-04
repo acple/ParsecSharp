@@ -59,7 +59,7 @@ Download manually:
 * netstandard2.0 (provides same APIs as netstandard1.6, but less dependencies)
 * netstandard2.1 (some performance improvements and some additional APIs that depends new runtime features)
 
-Requires C# 7.3 or later for generic overloading resolution.
+**Requires C# 7.3 or later** for generic overloading resolution.
 
 
 ## Get started
