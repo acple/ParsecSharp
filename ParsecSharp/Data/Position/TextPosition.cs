@@ -39,7 +39,7 @@ namespace ParsecSharp
             => obj is TextPosition position && this == position;
 
         public override int GetHashCode()
-            => this.Line >> 16 ^ this.Line << 16 ^ this.Column;
+            => this.Line ^ this.Line << 16 ^ this.Column;
 
         public override string ToString()
             => $"Line: {this.Line.ToString()}, Column: {this.Column.ToString()}";
