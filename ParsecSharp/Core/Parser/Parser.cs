@@ -7,6 +7,9 @@ namespace ParsecSharp
 {
     public abstract class Parser<TToken, T>
     {
+        private protected Parser()
+        { }
+
         internal abstract Result<TToken, TResult> Run<TState, TResult>(TState state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
             where TState : IParsecState<TToken, TState>;
 
@@ -55,6 +58,12 @@ namespace ParsecSharp
             value = default!;
             return result;
         }
+
+        public sealed override bool Equals(object? obj)
+            => base.Equals(obj);
+
+        public sealed override int GetHashCode()
+            => base.GetHashCode();
 
         public static Parser<TToken, T> operator |(Parser<TToken, T> first, Parser<TToken, T> second)
             => new Alternative<TToken, T>(first, second);

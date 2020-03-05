@@ -110,7 +110,7 @@ namespace UnitTest.ParsecSharp
                 regex.Match(source).Success.IsFalse();
 
                 var parser = Many(Char('a')).End();
-                parser.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 3): Expected <EndOfStream> but was 'b<0x62>'"));
+                parser.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 3): Expected '<EndOfStream>' but was 'b<0x62>'"));
             }
 
             {

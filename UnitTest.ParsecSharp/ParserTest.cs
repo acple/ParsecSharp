@@ -1047,7 +1047,7 @@ namespace UnitTest.ParsecSharp
 
             // 1文字以上の小文字にマッチし、その時点で全ての入力を消費していなければならないパーサ。
             var parser = Many1(Lower()).End();
-            parser.Parse(source).WillFail(failure => failure.Message.Is("Expected <EndOfStream> but was 'E<0x45>'"));
+            parser.Parse(source).WillFail(failure => failure.Message.Is("Expected '<EndOfStream>' but was 'E<0x45>'"));
 
             // 1文字以上の小文字または大文字にマッチし、その時点ですべての入力を消費していなければならないパーサ。
             var parser2 = Many1(Lower() | Upper()).End();

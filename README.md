@@ -24,13 +24,14 @@ This project is affected by [parsec](https://hackage.haskell.org/package/parsec)
 * A lot of reasonable built-in parsers/combinators
 * Supports parsing infinitely recursive data structures
 * Supports full backtracking: Parsing Expression Grammar (PEG) style parsing strategy
-* Supports parsing any token types of stream (e.g. binary stream, byte array)
+* Supports parsing streams with any token type (e.g. string, char stream, byte array, binary stream)
 * Supports tokenization
 * Supports partial parsing
+* Supports nullable reference types (with C# 8.0 or later)
 * Faster running
 * Just enough error messages
 * No left-recursion support
-* No packrat parsing support (because is increased parsing time in most cases)
+* No packrat parsing support (because it increases parsing time in most cases)
 
 
 ## How to install
@@ -58,7 +59,7 @@ Download manually:
 * netstandard2.0 (provides same APIs as netstandard1.6, but less dependencies)
 * netstandard2.1 (some performance improvements and some additional APIs that depends new runtime features)
 
-Requires C# 7.3 or later for generic overloading resolution.
+**Requires C# 7.3 or later** for generic overloading resolution.
 
 
 ## Get started

@@ -6,6 +6,9 @@ namespace ParsecSharp
     {
         public abstract T Value { get; }
 
+        private protected Result()
+        { }
+
         internal abstract Result<TToken, TResult> Next<TNext, TResult>(Func<T, Parser<TToken, TNext>> next, Func<Result<TToken, TNext>, Result<TToken, TResult>> cont);
 
         public abstract TResult CaseOf<TResult>(Func<Failure<TToken, T>, TResult> failure, Func<Success<TToken, T>, TResult> success);
@@ -19,7 +22,5 @@ namespace ParsecSharp
 
         public sealed override int GetHashCode()
             => base.GetHashCode();
-
-        public abstract override string ToString();
     }
 }
