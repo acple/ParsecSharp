@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace ParsecSharp.Internal.Parsers
 {
-    internal class StringParser : PrimitiveParser<char, string>
+    internal sealed class StringParser : PrimitiveParser<char, string>
     {
         private readonly string _text;
 
