@@ -20,13 +20,15 @@ namespace ParsecSharp
         public LinearPosition<TToken> Next(TToken token)
             => new LinearPosition<TToken>(this.Column + 1);
 
-        public int CompareTo(IPosition other)
-            => (this.Line != other.Line) ? this.Line.CompareTo(other.Line) : this.Column.CompareTo(other.Column);
+        public int CompareTo(IPosition? other)
+            => (other == null)
+                ? 1 // always greater than null
+                : (this.Line != other.Line) ? this.Line.CompareTo(other.Line) : this.Column.CompareTo(other.Column);
 
         public int CompareTo(LinearPosition<TToken> other)
             => this.Column.CompareTo(other.Column);
 
-        public bool Equals(IPosition other)
+        public bool Equals(IPosition? other)
             => other is LinearPosition<TToken> position && this == position;
 
         public bool Equals(LinearPosition<TToken> other)

@@ -54,8 +54,8 @@ namespace ParsecSharp.Internal
         public void Dispose()
         { }
 
-        public bool Equals(StringStream<TPosition> other)
-            => this._source == other._source && this._index == other._index;
+        public bool Equals(StringStream<TPosition>? other)
+            => other != null && this._source == other._source && this._index == other._index;
 
         public sealed override bool Equals(object? obj)
             => obj is StringStream<TPosition> state && this._source == state._source && this._index == state._index;

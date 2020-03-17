@@ -25,7 +25,7 @@ namespace ParsecSharp.Internal
         public void Dispose()
         { }
 
-        public bool Equals(EmptyStream<TToken> other)
+        public bool Equals(EmptyStream<TToken>? other)
             => ReferenceEquals(this, other);
 
         public sealed override bool Equals(object? obj)

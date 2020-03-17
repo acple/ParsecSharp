@@ -41,7 +41,7 @@ namespace ParsecSharp.Internal
         public void Dispose()
             => this.InnerResource?.Dispose();
 
-        public bool Equals(TokenizedStream<TInput, TState, TToken, TPosition> other)
+        public bool Equals(TokenizedStream<TInput, TState, TToken, TPosition>? other)
             => ReferenceEquals(this, other);
 
         public sealed override string ToString()

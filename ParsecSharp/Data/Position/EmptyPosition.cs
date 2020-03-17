@@ -16,17 +16,17 @@ namespace ParsecSharp.Internal
         public EmptyPosition<TToken> Next(TToken token)
             => this;
 
-        public int CompareTo(IPosition other)
-            => (this.Equals(other)) ? 0 : -1;
+        public int CompareTo(IPosition? other)
+            => (this.Equals(other)) ? 0 : (other == null) ? 1 : -1; // null < empty < others
 
-        public int CompareTo(EmptyPosition<TToken> other)
-            => 0;
+        public int CompareTo(EmptyPosition<TToken>? other)
+            => (other == null) ? 1 : 0;
 
-        public bool Equals(IPosition other)
+        public bool Equals(IPosition? other)
             => ReferenceEquals(this, other);
 
-        public bool Equals(EmptyPosition<TToken> other)
-            => true;
+        public bool Equals(EmptyPosition<TToken>? other)
+            => other != null;
 
         public sealed override bool Equals(object? obj)
             => ReferenceEquals(this, obj);
