@@ -30,7 +30,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> Condition<TToken>(bool success, string message)
-            => (success) ? Null<TToken>() : Fail<TToken, Unit>(message);
+            => success ? Null<TToken>() : Fail<TToken, Unit>(message);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, TToken> OneOf<TToken>(IEnumerable<TToken> candidates)

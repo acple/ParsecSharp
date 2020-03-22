@@ -101,7 +101,7 @@ namespace ParsecSharp.Internal
             => this._buffer.GetHashCode() ^ this._index;
 
         public sealed override string ToString()
-            => (this.HasValue)
+            => this.HasValue
                 ? this.Current?.ToString() ?? string.Empty
                 : "<EndOfStream>";
     }

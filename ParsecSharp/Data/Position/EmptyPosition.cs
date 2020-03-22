@@ -17,7 +17,7 @@ namespace ParsecSharp.Internal
             => this;
 
         public int CompareTo(IPosition? other)
-            => (this.Equals(other)) ? 0 : (other == null) ? 1 : -1; // null < empty < others
+            => this.Equals(other) ? 0 : (other == null) ? 1 : -1; // null < empty < others
 
         public int CompareTo(EmptyPosition<TToken>? other)
             => (other == null) ? 1 : 0;

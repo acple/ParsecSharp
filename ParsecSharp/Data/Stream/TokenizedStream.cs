@@ -29,7 +29,7 @@ namespace ParsecSharp.Internal
             this._position = position;
             var (result, rest) = state;
             this.HasValue = result.CaseOf(_ => false, _ => true);
-            var current = this.Current = (this.HasValue) ? result.Value : default!;
+            var current = this.Current = this.HasValue ? result.Value : default!;
             this._next = new Lazy<TokenizedStream<TInput, TState, TToken, TPosition>>(
                 () => new TokenizedStream<TInput, TState, TToken, TPosition>(rest.InnerResource, parser.ParsePartially(rest), parser, position.Next(current)),
                 false);
@@ -45,7 +45,7 @@ namespace ParsecSharp.Internal
             => ReferenceEquals(this, other);
 
         public sealed override string ToString()
-            => (this.HasValue)
+            => this.HasValue
                 ? this.Current?.ToString() ?? string.Empty
                 : "<EndOfStream>";
     }
