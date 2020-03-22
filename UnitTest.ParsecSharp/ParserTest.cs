@@ -806,12 +806,14 @@ namespace UnitTest.ParsecSharp
             // 有名な二項演算の左再帰定義。
             // expr = expr op digit / digit
             var num = Many1(Digit()).ToInt();
+#nullable disable warnings
             Parser<char, int> Expr()
                 => (from x in Expr() // ここで無限再帰
                     from func in Char('+')
                     from y in num
                     select x + y)
                     .Or(num);
+#nullable restore
 
             // この定義を変形して左再帰を除去することが可能。
             // 二項演算の左再帰除去後の定義。
