@@ -49,7 +49,7 @@ namespace ParsecSharp.Internal
 
         public IDisposable InnerResource { get; }
 
-        public EnumerableStream<TToken, TPosition> Next => (this._index == MaxBufferSize - 1)
+        public EnumerableStream<TToken, TPosition> Next => this._index == MaxBufferSize - 1
             ? new EnumerableStream<TToken, TPosition>(this.InnerResource, this._buffer.Next, index: 0, this._position.Next(this.Current))
             : new EnumerableStream<TToken, TPosition>(this.InnerResource, this._buffer, this._index + 1, this._position.Next(this.Current));
 
@@ -76,7 +76,7 @@ namespace ParsecSharp.Internal
                     .TakeWhile(enumerator => enumerator.MoveNext())
                     .Select(enumerator => enumerator.Current)
                     .ToArray();
-                return (buffer.Length == 0) ? Buffer<TToken>.Empty : new Buffer<TToken>(buffer, () => CreateBuffer(enumerator));
+                return buffer.Length == 0 ? Buffer<TToken>.Empty : new Buffer<TToken>(buffer, () => CreateBuffer(enumerator));
             }
             catch
             {

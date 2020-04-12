@@ -19,17 +19,17 @@ namespace ParsecSharp
         }
 
         public TextPosition Next(char token)
-            => (token == '\n')
+            => token == '\n'
                 ? new TextPosition(this.Line + 1, 1)
                 : new TextPosition(this.Line, this.Column + 1);
 
         public int CompareTo(IPosition? other)
-            => (other == null)
+            => other == null
                 ? 1 // always greater than null
-                : (this.Line != other.Line) ? this.Line.CompareTo(other.Line) : this.Column.CompareTo(other.Column);
+                : this.Line != other.Line ? this.Line.CompareTo(other.Line) : this.Column.CompareTo(other.Column);
 
         public int CompareTo(TextPosition other)
-            => (this.Line != other.Line) ? this.Line.CompareTo(other.Line) : this.Column.CompareTo(other.Column);
+            => this.Line != other.Line ? this.Line.CompareTo(other.Line) : this.Column.CompareTo(other.Column);
 
         public bool Equals(IPosition? other)
             => other is TextPosition position && this == position;

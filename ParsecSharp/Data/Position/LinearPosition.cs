@@ -21,9 +21,9 @@ namespace ParsecSharp
             => new LinearPosition<TToken>(this.Column + 1);
 
         public int CompareTo(IPosition? other)
-            => (other == null)
+            => other == null
                 ? 1 // always greater than null
-                : (this.Line != other.Line) ? this.Line.CompareTo(other.Line) : this.Column.CompareTo(other.Column);
+                : this.Line != other.Line ? this.Line.CompareTo(other.Line) : this.Column.CompareTo(other.Column);
 
         public int CompareTo(LinearPosition<TToken> other)
             => this.Column.CompareTo(other.Column);
