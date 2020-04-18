@@ -3,7 +3,7 @@ version: 2.1
 executors:
   dotnet:
     parameters: &sdk_version
-      sdk_version: { type: string, default: "3.1" }
+      sdk_version: { type: string, default: "5.0" }
     docker:
       - image: mcr.microsoft.com/dotnet/core/sdk:<< parameters.sdk_version >>-alpine
     working_directory: /project
@@ -93,13 +93,27 @@ workflows:
               only: /^v\d+\.\d+\.\d+(-.+)?$/
 
       - create_testmaterial:
+          name: testmaterial5.0
+          requires:
+            - build
+          filters: *default_filter
+
+      - unittest:
+          name: unittest5.0
+          requires:
+            - testmaterial5.0
+          filters: *default_filter
+
+      - create_testmaterial:
           name: testmaterial3.1
+          sdk_version: "3.1"
           requires:
             - build
           filters: *default_filter
 
       - unittest:
           name: unittest3.1
+          sdk_version: "3.1"
           requires:
             - testmaterial3.1
           filters: *default_filter
@@ -127,8 +141,9 @@ workflows:
           context: nuget-publish
           requires:
             - pack
-            - unittest2.1
+            - unittest5.0
             - unittest3.1
+            - unittest2.1
           filters:
             <<: *default_filter
             branches:
