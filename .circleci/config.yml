@@ -4,6 +4,7 @@ executors:
   dotnet:
     parameters: &sdk_version
       sdk_version: { type: string, default: "5.0" }
+      target_framework: { type: string, default: net5.0 }
     docker:
       - image: mcr.microsoft.com/dotnet/core/sdk:<< parameters.sdk_version >>-alpine
     working_directory: /project
@@ -32,7 +33,7 @@ jobs:
           name: publish
           command: >-
             dotnet publish -c Release --no-build UnitTest.ParsecSharp
-            -f netcoreapp<< parameters.sdk_version >>
+            -f << parameters.target_framework >>
             --output ./testmaterial<< parameters.sdk_version >>
       - persist_to_workspace:
           root: .
@@ -53,7 +54,7 @@ jobs:
             testmaterial<< parameters.sdk_version >>/UnitTest.ParsecSharp.dll
       - store_artifacts:
           path: ./TestResults/TestResult.xml
-          destination: TestResult_netcoreapp<< parameters.sdk_version >>.xml
+          destination: TestResult_<< parameters.target_framework >>.xml
 
   pack:
     executor: dotnet
@@ -107,6 +108,7 @@ workflows:
       - create_testmaterial:
           name: testmaterial3.1
           sdk_version: "3.1"
+          target_framework: "netcoreapp3.1"
           requires:
             - build
           filters: *default_filter
@@ -114,6 +116,7 @@ workflows:
       - unittest:
           name: unittest3.1
           sdk_version: "3.1"
+          target_framework: "netcoreapp3.1"
           requires:
             - testmaterial3.1
           filters: *default_filter
@@ -121,6 +124,7 @@ workflows:
       - create_testmaterial:
           name: testmaterial2.1
           sdk_version: "2.1"
+          target_framework: "netcoreapp2.1"
           requires:
             - build
           filters: *default_filter
@@ -128,6 +132,7 @@ workflows:
       - unittest:
           name: unittest2.1
           sdk_version: "2.1"
+          target_framework: "netcoreapp2.1"
           requires:
             - testmaterial2.1
           filters: *default_filter
