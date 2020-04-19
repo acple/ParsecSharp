@@ -20,7 +20,6 @@
     <PackageProjectUrl>https://github.com/acple/ParsecSharp</PackageProjectUrl>
     <RepositoryUrl>https://github.com/acple/ParsecSharp.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <RepositoryBranch>v$(Version)</RepositoryBranch>
     <PackageTags>parser;combinator;linq;peg;functional</PackageTags>
   </PropertyGroup>
 

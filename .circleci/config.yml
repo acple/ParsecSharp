@@ -63,7 +63,9 @@ jobs:
           at: .
       - run:
           name: pack
-          command: dotnet pack -c Release ParsecSharp --output ./nuget
+          command: >-
+            dotnet pack -c Release ParsecSharp --output ./nuget
+            -p:RepositoryBranch=${CIRCLE_BRANCH},RepositoryCommit=${CIRCLE_SHA1}
       - store_artifacts:
           path: ./nuget
       - persist_to_workspace:
@@ -108,7 +110,7 @@ workflows:
       - create_testmaterial:
           name: testmaterial3.1
           sdk_version: "3.1"
-          target_framework: "netcoreapp3.1"
+          target_framework: netcoreapp3.1
           requires:
             - build
           filters: *default_filter
@@ -116,7 +118,7 @@ workflows:
       - unittest:
           name: unittest3.1
           sdk_version: "3.1"
-          target_framework: "netcoreapp3.1"
+          target_framework: netcoreapp3.1
           requires:
             - testmaterial3.1
           filters: *default_filter
@@ -124,7 +126,7 @@ workflows:
       - create_testmaterial:
           name: testmaterial2.1
           sdk_version: "2.1"
-          target_framework: "netcoreapp2.1"
+          target_framework: netcoreapp2.1
           requires:
             - build
           filters: *default_filter
@@ -132,7 +134,7 @@ workflows:
       - unittest:
           name: unittest2.1
           sdk_version: "2.1"
-          target_framework: "netcoreapp2.1"
+          target_framework: netcoreapp2.1
           requires:
             - testmaterial2.1
           filters: *default_filter
