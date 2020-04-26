@@ -19,11 +19,11 @@ namespace ParsecSharp.Internal.Parsers
 
         internal sealed override Result<TToken, TResult> Run<TState, TResult>(TState state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
         {
-            var _success = this._success;
-            var _failure = this._failure;
+            var success = this._success;
+            var failure = this._failure;
             return this._parser.Run(state, result => result.CaseOf(
-                failure => _failure(failure).Run(state, cont),
-                success => success.Next(_success, cont)));
+                result => failure(result).Run(state, cont),
+                result => result.Next(success, cont)));
         }
     }
 }

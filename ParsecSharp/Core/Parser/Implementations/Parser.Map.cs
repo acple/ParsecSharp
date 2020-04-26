@@ -16,8 +16,8 @@ namespace ParsecSharp.Internal.Parsers
 
         internal sealed override Result<TToken, TResult> Run<TState, TResult>(TState state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
         {
-            var _function = this._function;
-            return this._parser.Run(state, result => cont(result.Map(_function)));
+            var function = this._function;
+            return this._parser.Run(state, result => cont(result.Map(function)));
         }
     }
 }
