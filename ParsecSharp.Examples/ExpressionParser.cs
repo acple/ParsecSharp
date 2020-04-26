@@ -23,7 +23,7 @@ namespace ParsecSharp.Examples
         where TNumber : INumber<TNumber>
     {
         private static Parser<char, Func<TNumber, TNumber, TNumber>> Op(char symbol, Func<TNumber, TNumber, TNumber> function)
-            => Char(symbol).Between(Spaces()).Right(Pure(function));
+            => Char(symbol).Between(Spaces()).MapConst(function);
 
         private static readonly Parser<char, Func<TNumber, TNumber, TNumber>> AddSub =
             Op('+', (x, y) => x.Add(y)) | Op('-', (x, y) => x.Sub(y));

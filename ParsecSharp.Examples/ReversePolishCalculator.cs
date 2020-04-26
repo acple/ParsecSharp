@@ -18,10 +18,10 @@ namespace ParsecSharp.Examples
         // 四則演算子にマッチし、二項演算関数にマップ
         private static readonly Parser<char, Func<double, double, double>> Op =
             Choice(
-                Char('+').Map(_ => (Func<double, double, double>)((x, y) => x + y)),
-                Char('-').Map(_ => (Func<double, double, double>)((x, y) => x - y)),
-                Char('*').Map(_ => (Func<double, double, double>)((x, y) => x * y)),
-                Char('/').Map(_ => (Func<double, double, double>)((x, y) => x / y)));
+                Char('+').MapConst((Func<double, double, double>)((x, y) => x + y)),
+                Char('-').MapConst((Func<double, double, double>)((x, y) => x - y)),
+                Char('*').MapConst((Func<double, double, double>)((x, y) => x * y)),
+                Char('/').MapConst((Func<double, double, double>)((x, y) => x / y)));
 
         // 各要素間のデリミタ、今回は一文字空白にハードコード
         private static readonly Parser<char, Unit> Delimiter =

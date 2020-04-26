@@ -833,8 +833,8 @@ namespace UnitTest.ParsecSharp
             // '+'、または '-' にマッチし、それぞれ (x + y)、(x - y) の二項演算関数を返すパーサ。
             // ( "+" / "-" )
             var op = Choice(
-                Char('+').Map(_ => (Func<int, int, int>)((x, y) => x + y)),
-                Char('-').Map(_ => (Func<int, int, int>)((x, y) => x - y)));
+                Char('+').MapConst((Func<int, int, int>)((x, y) => x + y)),
+                Char('-').MapConst((Func<int, int, int>)((x, y) => x - y)));
 
             // 1文字以上の数字にマッチし、int に変換するパーサ。
             var num = Many1(Digit()).ToInt();
@@ -866,8 +866,8 @@ namespace UnitTest.ParsecSharp
             // '+'、または '-' にマッチし、それぞれ (x + y)、(x - y) の二項演算関数を返すパーサ。
             // ( "+" / "-" )
             var op = Choice(
-                Char('+').Map(_ => (Func<int, int, int>)((x, y) => x + y)),
-                Char('-').Map(_ => (Func<int, int, int>)((x, y) => x - y)));
+                Char('+').MapConst((Func<int, int, int>)((x, y) => x + y)),
+                Char('-').MapConst((Func<int, int, int>)((x, y) => x - y)));
 
             // 1文字以上の数字にマッチし、int に変換するパーサ。
             var num = Many1(Digit()).ToInt();
