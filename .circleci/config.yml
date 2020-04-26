@@ -53,11 +53,11 @@ jobs:
       - run:
           name: run test
           command: >-
-            dotnet vstest --logger:"html;LogFileName=TestResult.html"
+            dotnet vstest --logger:"trx;LogFileName=TestResult.xml"
             testmaterial<< parameters.sdk_version >>/UnitTest.ParsecSharp.dll
       - store_artifacts:
-          path: ./TestResults/TestResult.html
-          destination: TestResult_<< parameters.target_framework >>.html
+          path: ./TestResults/TestResult.xml
+          destination: TestResult_<< parameters.target_framework >>.xml
 
   pack:
     executor: dotnet
