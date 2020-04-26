@@ -17,6 +17,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: print dotnet information
+          command: dotnet --info
+      - run:
           name: build
           command: dotnet build -c Release --no-incremental -v=normal
       - persist_to_workspace:
@@ -30,9 +33,9 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: publish
+          name: create testmaterial
           command: >-
-            dotnet publish -c Release --no-build UnitTest.ParsecSharp
+            dotnet publish -c Release --no-build -v=normal UnitTest.ParsecSharp
             -f << parameters.target_framework >>
             --output ./testmaterial<< parameters.sdk_version >>
       - persist_to_workspace:
@@ -50,11 +53,11 @@ jobs:
       - run:
           name: run test
           command: >-
-            dotnet vstest --logger:"trx;LogFileName=TestResult.xml"
+            dotnet vstest --logger:"html;LogFileName=TestResult.html"
             testmaterial<< parameters.sdk_version >>/UnitTest.ParsecSharp.dll
       - store_artifacts:
-          path: ./TestResults/TestResult.xml
-          destination: TestResult_<< parameters.target_framework >>.xml
+          path: ./TestResults/TestResult.html
+          destination: TestResult_<< parameters.target_framework >>.html
 
   pack:
     executor: dotnet
@@ -62,7 +65,7 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: pack
+          name: create package
           command: >-
             dotnet pack -c Release ParsecSharp --output ./nuget
             -p:RepositoryBranch=${CIRCLE_BRANCH},RepositoryCommit=${CIRCLE_SHA1}
