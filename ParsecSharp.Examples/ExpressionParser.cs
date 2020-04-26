@@ -22,31 +22,29 @@ namespace ParsecSharp.Examples
     public class ExpressionParser<TNumber>
         where TNumber : INumber<TNumber>
     {
+        private static Parser<char, Func<TNumber, TNumber, TNumber>> Op(char symbol, Func<TNumber, TNumber, TNumber> function)
+            => Char(symbol).Between(Spaces()).Right(Pure(function));
+
         private static readonly Parser<char, Func<TNumber, TNumber, TNumber>> AddSub =
-            Choice(
-                Char('+').Between(Spaces()).Map(_ => (Func<TNumber, TNumber, TNumber>)((x, y) => x.Add(y))),
-                Char('-').Between(Spaces()).Map(_ => (Func<TNumber, TNumber, TNumber>)((x, y) => x.Sub(y))));
+            Op('+', (x, y) => x.Add(y)) | Op('-', (x, y) => x.Sub(y));
 
         private static readonly Parser<char, Func<TNumber, TNumber, TNumber>> MulDiv =
-            Choice(
-                Char('*').Between(Spaces()).Map(_ => (Func<TNumber, TNumber, TNumber>)((x, y) => x.Mul(y))),
-                Char('/').Between(Spaces()).Map(_ => (Func<TNumber, TNumber, TNumber>)((x, y) => x.Div(y))));
+            Op('*', (x, y) => x.Mul(y)) | Op('/', (x, y) => x.Div(y));
 
         private readonly Parser<char, TNumber> expr;
 
-        private readonly Parser<char, TNumber> term;
-
-        private readonly Parser<char, TNumber> factor;
-
         public ExpressionParser(Parser<char, TNumber> number)
         {
-            this.expr = Delay(() => this.term).ChainLeft(AddSub);
-            this.term = Delay(() => this.factor).ChainLeft(MulDiv);
-            this.factor = number | this.expr.Between(Char('(').Between(Spaces()), Char(')').Between(Spaces()));
+            var open = Char('(').Between(Spaces());
+            var close = Char(')').Between(Spaces());
+
+            var factor = number | Delay(() => this.expr).Between(open, close);
+            var term = factor.ChainLeft(MulDiv);
+            this.expr = term.ChainLeft(AddSub);
         }
 
         public Result<char, TNumber> Parse(string source)
-            => this.expr.Parse(source);
+            => this.expr.Between(Spaces()).End().Parse(source);
     }
 
     public class Integer : INumber<Integer>

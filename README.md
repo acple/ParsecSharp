@@ -75,6 +75,7 @@ Implementation examples:
 
 * [JsonParser implementation](ParsecSharp.Examples/JsonParser.cs)
 * [CsvParser implementation](ParsecSharp.Examples/CsvParser.cs)
+* [Arithmetic expression parser implementation](ParsecSharp.Examples/ExpressionParser.cs)
 
 Documents are included in [UnitTest code](UnitTest.ParsecSharp/ParserTest.cs) (jp).
 
