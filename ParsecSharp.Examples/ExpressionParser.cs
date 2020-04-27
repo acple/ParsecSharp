@@ -57,7 +57,7 @@ namespace ParsecSharp.Examples
 
         public int Value { get; }
 
-        public Integer(int value)
+        private Integer(int value)
         {
             this.Value = value;
         }
@@ -78,16 +78,15 @@ namespace ParsecSharp.Examples
     public class Double : INumber<Double>
     {
         private static readonly Parser<char, Double> number =
-            from integer in Many1(DecDigit())
-            from fraction in Optional(Char('.').Append(Many1(DecDigit())), ".0")
-            select new Double(double.Parse(new string(integer.Concat(fraction).ToArray())));
+            Many1(DecDigit()).Append(Optional(Char('.').Append(Many1(DecDigit())), ".0"))
+                .ToDouble().Map(x => new Double(x));
 
         public static ExpressionParser<Double> Parser { get; } =
             new ExpressionParser<Double>(number);
 
         public double Value { get; }
 
-        public Double(double value)
+        private Double(double value)
         {
             this.Value = value;
         }
@@ -117,7 +116,7 @@ namespace ParsecSharp.Examples
 
         public Expression<Func<int>> Lambda => Expression.Lambda<Func<int>>(this._value);
 
-        public IntegerExpression(Expression value)
+        private IntegerExpression(Expression value)
         {
             this._value = value;
         }
