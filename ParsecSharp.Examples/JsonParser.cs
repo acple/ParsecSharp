@@ -126,7 +126,7 @@ namespace ParsecSharp.Examples
                select sign * (integer + frac) * Math.Pow(10, exp);
 
         // JSON Boolean にマッチします。
-        // true  = %x74.72.75.65
+        // true = %x74.72.75.65
         // false = %x66.61.6c.73.65
         private static Parser<char, bool> JsonBool()
             => String("false").Map(_ => false) | String("true").Map(_ => true);

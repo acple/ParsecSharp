@@ -38,7 +38,7 @@ namespace ParsecSharp.Internal
 
         public StringStream<TPosition> Next => new StringStream<TPosition>(this._source, this._index + 1, this._position.Next(this.Current));
 
-        public StringStream(string source, TPosition position) : this(source, 0, position)
+        public StringStream(string source, TPosition position) : this(source, index: 0, position)
         { }
 
         private StringStream(string source, int index, TPosition position)

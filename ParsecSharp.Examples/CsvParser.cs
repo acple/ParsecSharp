@@ -17,7 +17,7 @@ namespace ParsecSharp.Examples
         private static Parser<char, char> DoubleQuote()
             => Char('"');
 
-        // TEXTDATA =  %x20-21 / %x23-2B / %x2D-7E ; == CHAR except ( COMMA / DQUOTE / CTL )
+        // TEXTDATA = %x20-21 / %x23-2B / %x2D-7E ; == CHAR except ( COMMA / DQUOTE / CTL )
         // RFC の定義に従うと ASCII 文字しか受け付けないので独自拡張
         // ( コンマ / 二重引用符 / 制御文字(改行含む) ) を除く全ての文字に対応
         private static Parser<char, char> TextChar()

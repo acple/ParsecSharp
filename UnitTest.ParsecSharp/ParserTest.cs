@@ -928,7 +928,7 @@ namespace UnitTest.ParsecSharp
         {
             // parser を count 回繰り返しマッチした結果をシーケンスとして返すパーサを作成します。
 
-            //  2*( 3*Any )
+            // 2*( 3*Any )
             var parser = Any().Repeat(3).AsString().Repeat(2);
 
             var source = _abcdEFGH;
