@@ -67,7 +67,8 @@ jobs:
       - run:
           name: create package
           command: >-
-            dotnet pack -c Release ParsecSharp --output ./nuget
+            dotnet pack -c Release --no-build -v=normal ParsecSharp
+            --output ./nuget
             -p:RepositoryBranch=${CIRCLE_BRANCH},RepositoryCommit=${CIRCLE_SHA1}
       - store_artifacts:
           path: ./nuget
