@@ -24,11 +24,6 @@ namespace ParsecSharp
             => new Map<TToken, T, TResult>(parser, function);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, TResult> MapConst<TToken, T, TResult>(this Parser<TToken, T> parser, TResult value)
-            where TResult : class
-            => parser.Map(value.Const);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, TResult> Next<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, Parser<TToken, TResult>> next, Func<Failure<TToken, T>, Parser<TToken, TResult>> resume)
             => new Next<TToken, T, TResult>(parser, next, resume);
 
