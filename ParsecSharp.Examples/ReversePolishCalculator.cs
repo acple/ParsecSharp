@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using static ParsecSharp.Parser;
 using static ParsecSharp.Text;
 
@@ -12,7 +11,7 @@ namespace ParsecSharp.Examples
         private static readonly Parser<char, double> Num =
             Optional(Char('-') | Char('+'), '+')
                 .Append(Many1(DecDigit()))
-                .Append(Optional(Char('.').Append(Many1(DecDigit())), Enumerable.Empty<char>()))
+                .Append(Optional(Char('.').Append(Many1(DecDigit())), ".0"))
                 .ToDouble();
 
         // 四則演算子にマッチし、二項演算関数にマップ
@@ -25,20 +24,23 @@ namespace ParsecSharp.Examples
 
         // 各要素間のデリミタ、今回は一文字空白にハードコード
         private static readonly Parser<char, Unit> Delimiter =
-            WhiteSpace().Ignore();
+            Char(' ').Ignore();
 
         // 式を表す再帰実行パーサ
         // 左再帰の定義: expr = expr expr op / num
         // 左再帰の除去: expr = num *( expr op )
         private static readonly Parser<char, double> Expr =
-            Num.Chain(x => from _ in Delimiter
-                           from y in Expr
-                           from __ in Delimiter
-                           from func in Op
-                           select func(x, y));
+            Num.Chain(x =>
+                from _ in Delimiter
+                from y in Expr
+                from __ in Delimiter
+                from func in Op
+                select func(x, y));
 
-        // パーサの実行
+        public static Parser<char, double> Parser { get; } =
+            Expr.Between(SkipMany(Delimiter)).End();
+
         public static Result<char, double> Parse(string source)
-            => Expr.End().Parse(source);
+            => Parser.Parse(source);
     }
 }
