@@ -5,6 +5,9 @@
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
     <RootNamespace>ParsecSharp</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <EmbedAllSources>true</EmbedAllSources>
     <IncludeSymbols>true</IncludeSymbols>
   </PropertyGroup>
