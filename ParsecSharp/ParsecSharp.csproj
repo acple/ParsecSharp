@@ -14,7 +14,7 @@
 
   <PropertyGroup>
     <PackageId>ParsecSharp</PackageId>
-    <Version>3.2.1</Version>
+    <Version>3.2.2</Version>
     <Authors>acple</Authors>
     <Description>The faster monadic parser combinator library for C#</Description>
     <Copyright>(c) 2015-2020 acple</Copyright>
