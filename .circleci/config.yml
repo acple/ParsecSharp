@@ -40,6 +40,7 @@ jobs:
             dotnet test -c Release --no-build -v normal
             --framework << parameters.target_framework >>
             --results-directory ./TestResults --logger "trx;LogFileName=TestResult.xml"
+            < /dev/null
       - store_artifacts:
           path: ./TestResults/TestResult.xml
           destination: TestResult_<< parameters.target_framework >>.xml
