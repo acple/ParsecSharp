@@ -3,7 +3,8 @@ version: 2.1
 executors:
   dotnet:
     parameters: &sdk_version
-      sdk_version: { type: string, default: "3.1" }
+      sdk_version: { type: string, default: "5.0" }
+      target_framework: { type: string, default: net5.0 }
     docker:
       - image: mcr.microsoft.com/dotnet/core/sdk:<< parameters.sdk_version >>-alpine
     working_directory: /project
@@ -16,27 +17,14 @@ jobs:
     steps:
       - checkout
       - run:
+          name: print dotnet information
+          command: dotnet --info
+      - run:
           name: build
-          command: dotnet build -c Release --no-incremental -v=normal
+          command: dotnet build -c Release --no-incremental -v normal
       - persist_to_workspace:
           root: .
           paths: ./*
-
-  create_testmaterial:
-    parameters: *sdk_version
-    executor: dotnet
-    steps:
-      - attach_workspace:
-          at: .
-      - run:
-          name: publish
-          command: >-
-            dotnet publish -c Release --no-build UnitTest.ParsecSharp
-            -f netcoreapp<< parameters.sdk_version >>
-            --output ./testmaterial<< parameters.sdk_version >>
-      - persist_to_workspace:
-          root: .
-          paths: ./testmaterial<< parameters.sdk_version >>
 
   unittest:
     parameters: *sdk_version
@@ -49,11 +37,13 @@ jobs:
       - run:
           name: run test
           command: >-
-            dotnet vstest --logger:"trx;LogFileName=TestResult.xml"
-            testmaterial<< parameters.sdk_version >>/UnitTest.ParsecSharp.dll
+            dotnet test -c Release --no-build -v normal
+            --framework << parameters.target_framework >>
+            --results-directory ./TestResults --logger "trx;LogFileName=TestResult.xml"
+            < /dev/null
       - store_artifacts:
           path: ./TestResults/TestResult.xml
-          destination: TestResult_netcoreapp<< parameters.sdk_version >>.xml
+          destination: TestResult_<< parameters.target_framework >>.xml
 
   pack:
     executor: dotnet
@@ -61,8 +51,11 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: pack
-          command: dotnet pack -c Release ParsecSharp --output ./nuget
+          name: create package
+          command: >-
+            dotnet pack -c Release --no-build -v normal ParsecSharp
+            --output ./nuget
+            -p:RepositoryBranch=${CIRCLE_BRANCH},RepositoryCommit=${CIRCLE_SHA1}
       - store_artifacts:
           path: ./nuget
       - persist_to_workspace:
@@ -78,7 +71,7 @@ jobs:
           name: push to NuGet gallery
           command: >-
             dotnet nuget push ./ParsecSharp.*.symbols.nupkg
-            -s https://www.nuget.org -k ${NUGET_APIKEY}
+            --source https://www.nuget.org --api-key ${NUGET_APIKEY}
 
 workflows:
   workflow:
@@ -92,21 +85,16 @@ workflows:
             tags:
               only: /^v\d+\.\d+\.\d+(-.+)?$/
 
-      - create_testmaterial:
-          name: testmaterial3.1
+      - unittest:
+          name: unittest5.0
           requires:
             - build
           filters: *default_filter
 
       - unittest:
           name: unittest3.1
-          requires:
-            - testmaterial3.1
-          filters: *default_filter
-
-      - create_testmaterial:
-          name: testmaterial2.1
-          sdk_version: "2.1"
+          sdk_version: "3.1"
+          target_framework: netcoreapp3.1
           requires:
             - build
           filters: *default_filter
@@ -114,8 +102,9 @@ workflows:
       - unittest:
           name: unittest2.1
           sdk_version: "2.1"
+          target_framework: netcoreapp2.1
           requires:
-            - testmaterial2.1
+            - build
           filters: *default_filter
 
       - pack:
@@ -127,8 +116,9 @@ workflows:
           context: nuget-publish
           requires:
             - pack
-            - unittest2.1
+            - unittest5.0
             - unittest3.1
+            - unittest2.1
           filters:
             <<: *default_filter
             branches:

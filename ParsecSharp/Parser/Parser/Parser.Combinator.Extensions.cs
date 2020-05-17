@@ -183,6 +183,6 @@ namespace ParsecSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> AbortIfEntered<TToken, T>(this Parser<TToken, T> parser, Func<Failure<TToken, T>, string> message)
             => parser.Alternative(failure => GetPosition<TToken>()
-                .Bind(position => (position.Equals(failure.State.Position)) ? Fail<TToken, T>(failure.Message) : Abort<TToken, T>($"At {nameof(AbortIfEntered)} -> {message(failure)}".Const)));
+                .Bind(position => position.Equals(failure.State.Position) ? Fail<TToken, T>(failure.Message) : Abort<TToken, T>($"At {nameof(AbortIfEntered)} -> {message(failure)}".Const)));
     }
 }

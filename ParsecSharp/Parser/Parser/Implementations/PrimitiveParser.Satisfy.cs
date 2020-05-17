@@ -12,7 +12,7 @@ namespace ParsecSharp.Internal.Parsers
         }
 
         protected sealed override Result<TToken, TToken> Run<TState>(TState state)
-            => (state.HasValue && this._predicate(state.Current))
+            => state.HasValue && this._predicate(state.Current)
                 ? Result.Success<TToken, TState, TToken>(state.Current, state.Next)
                 : Result.Failure<TToken, TState, TToken>(state);
     }

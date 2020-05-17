@@ -57,7 +57,7 @@ Download manually:
 ## Supported platform
 * netstandard1.6 (compatible with netcoreapp, net461 or later, uap, xamarin and more)
 * netstandard2.0 (provides same APIs as netstandard1.6, but less dependencies)
-* netstandard2.1 (some performance improvements and some additional APIs that depends new runtime features)
+* netstandard2.1 (some performance improvements and some additional APIs that depend on new runtime features)
 
 **Requires C# 7.3 or later** for generic overloading resolution.
 
@@ -75,6 +75,7 @@ Implementation examples:
 
 * [JsonParser implementation](ParsecSharp.Examples/JsonParser.cs)
 * [CsvParser implementation](ParsecSharp.Examples/CsvParser.cs)
+* [Arithmetic expression parser implementation](ParsecSharp.Examples/ExpressionParser.cs)
 
 Documents are included in [UnitTest code](UnitTest.ParsecSharp/ParserTest.cs) (jp).
 

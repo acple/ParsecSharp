@@ -5,6 +5,9 @@
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
     <RootNamespace>ParsecSharp</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <EmbedAllSources>true</EmbedAllSources>
     <IncludeSymbols>true</IncludeSymbols>
   </PropertyGroup>
@@ -20,7 +23,6 @@
     <PackageProjectUrl>https://github.com/acple/ParsecSharp</PackageProjectUrl>
     <RepositoryUrl>https://github.com/acple/ParsecSharp.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <RepositoryBranch>v$(Version)</RepositoryBranch>
     <PackageTags>parser;combinator;linq;peg;functional</PackageTags>
   </PropertyGroup>
 

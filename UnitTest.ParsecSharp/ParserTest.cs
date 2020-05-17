@@ -271,7 +271,7 @@ namespace UnitTest.ParsecSharp
             parser2.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 1): errormessagetest"));
 
             // パース失敗時の state をハンドル可能。
-            var parser3 = Fail<Unit>(state => $"errormessagetest, current state: '{state.ToString()}'");
+            var parser3 = Fail<Unit>(state => $"errormessagetest, current state: '{state}'");
             parser3.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 1): errormessagetest, current state: 'a<0x61>'"));
         }
 
@@ -806,12 +806,14 @@ namespace UnitTest.ParsecSharp
             // 有名な二項演算の左再帰定義。
             // expr = expr op digit / digit
             var num = Many1(Digit()).ToInt();
+#nullable disable warnings
             Parser<char, int> Expr()
                 => (from x in Expr() // ここで無限再帰
                     from func in Char('+')
                     from y in num
                     select x + y)
                     .Or(num);
+#nullable restore
 
             // この定義を変形して左再帰を除去することが可能。
             // 二項演算の左再帰除去後の定義。
@@ -926,7 +928,7 @@ namespace UnitTest.ParsecSharp
         {
             // parser を count 回繰り返しマッチした結果をシーケンスとして返すパーサを作成します。
 
-            //  2*( 3*Any )
+            // 2*( 3*Any )
             var parser = Any().Repeat(3).AsString().Repeat(2);
 
             var source = _abcdEFGH;
@@ -1111,7 +1113,7 @@ namespace UnitTest.ParsecSharp
             // パース失敗時のエラーメッセージを書き換えます。
 
             var parser = Many1(Digit())
-                .WithMessage(failure => $"MessageTest Current: '{failure.State.Current.ToString()}', original message: {failure.Message}");
+                .WithMessage(failure => $"MessageTest Current: '{failure.State.Current}', original message: {failure.Message}");
 
             var source = _abcdEFGH;
             parser.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 1): MessageTest Current: 'a', original message: Unexpected 'a<0x61>'"));
@@ -1125,7 +1127,7 @@ namespace UnitTest.ParsecSharp
         {
             // パース失敗時にパース処理を中止します。
 
-            var parser = Many(Lower().AbortWhenFail(failure => $"Fatal Error! '{failure.State.Current.ToString()}' is not a lower char!")).AsString()
+            var parser = Many(Lower().AbortWhenFail(failure => $"Fatal Error! '{failure.State.Current}' is not a lower char!")).AsString()
                 .Or(Pure("recovery"));
 
             var source = _abcdEFGH;

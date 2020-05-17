@@ -40,7 +40,7 @@ namespace ParsecSharp.Internal
 
         public IDisposable InnerResource { get; }
 
-        public ByteStream<TPosition> Next => (this._index == MaxBufferSize - 1)
+        public ByteStream<TPosition> Next => this._index == MaxBufferSize - 1
             ? new ByteStream<TPosition>(this.InnerResource, this._buffer.Next, index: 0, this._position.Next(this.Current))
             : new ByteStream<TPosition>(this.InnerResource, this._buffer, this._index + 1, this._position.Next(this.Current));
 
@@ -65,7 +65,7 @@ namespace ParsecSharp.Internal
                     .TakeWhile(x => x != -1)
                     .Select(x => (byte)x)
                     .ToArray();
-                return (buffer.Length == 0) ? Buffer<byte>.Empty : new Buffer<byte>(buffer, () => CreateBuffer(stream));
+                return buffer.Length == 0 ? Buffer<byte>.Empty : new Buffer<byte>(buffer, () => CreateBuffer(stream));
             }
             catch
             {
@@ -80,8 +80,8 @@ namespace ParsecSharp.Internal
         public void Dispose()
             => this.InnerResource.Dispose();
 
-        public bool Equals(ByteStream<TPosition> other)
-            => this._buffer == other._buffer && this._index == other._index;
+        public bool Equals(ByteStream<TPosition>? other)
+            => other != null && this._buffer == other._buffer && this._index == other._index;
 
         public sealed override bool Equals(object? obj)
             => obj is ByteStream<TPosition> state && this._buffer == state._buffer && this._index == state._index;
@@ -90,6 +90,6 @@ namespace ParsecSharp.Internal
             => this._buffer.GetHashCode() ^ this._index;
 
         public sealed override string ToString()
-            => (this.HasValue) ? this.Current.ToString() : "<EndOfStream>";
+            => this.HasValue ? this.Current.ToString() : "<EndOfStream>";
     }
 }

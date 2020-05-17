@@ -95,7 +95,7 @@ namespace UnitTest.ParsecSharp
 
             // 変換対象に数値以外の文字を含ませた場合、変換に失敗する。
             var parser2 = Many1(Any()).ToLong();
-            parser2.Parse(source).WillFail(fail => fail.Message.Is("Expected digits but was '1234abcd'"));
+            parser2.Parse(source).WillFail(failure => failure.Message.Is("Expected digits but was '1234abcd'"));
 
             // 64 bit までの数値を変換できる。
             var source2 = "1234567890123456";
@@ -116,7 +116,7 @@ namespace UnitTest.ParsecSharp
 
             // 変換対象に数値以外の文字を含ませた場合、変換に失敗する。
             var parser2 = Many1(Any()).ToDouble();
-            parser2.Parse(source).WillFail(fail => fail.Message.Is("Expected number but was '1234.5678abcd'"));
+            parser2.Parse(source).WillFail(failure => failure.Message.Is("Expected number but was '1234.5678abcd'"));
 
             // double.Parse(string? s) で変換可能な文字列に対応する。
             var source2 = "1.234567890123456";

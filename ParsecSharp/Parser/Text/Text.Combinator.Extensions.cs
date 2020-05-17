@@ -21,7 +21,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, int> ToInt(this Parser<char, string> parser)
-            => parser.Bind(value => (int.TryParse(value, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out var integer))
+            => parser.Bind(value => int.TryParse(value, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out var integer)
                 ? Pure(integer)
                 : Fail<int>($"Expected digits but was '{value}'"));
 
@@ -31,7 +31,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, long> ToLong(this Parser<char, string> parser)
-            => parser.Bind(value => (long.TryParse(value, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out var integer))
+            => parser.Bind(value => long.TryParse(value, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out var integer)
                 ? Pure(integer)
                 : Fail<long>($"Expected digits but was '{value}'"));
 
@@ -41,7 +41,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, double> ToDouble(this Parser<char, string> parser)
-            => parser.Bind(value => (double.TryParse(value, NumberStyles.Float | NumberStyles.AllowThousands, NumberFormatInfo.InvariantInfo, out var number))
+            => parser.Bind(value => double.TryParse(value, NumberStyles.Float | NumberStyles.AllowThousands, NumberFormatInfo.InvariantInfo, out var number)
                 ? Pure(number)
                 : Fail<double>($"Expected number but was '{value}'"));
 

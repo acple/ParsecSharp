@@ -38,7 +38,7 @@ namespace ParsecSharp.Internal
 
         public StringStream<TPosition> Next => new StringStream<TPosition>(this._source, this._index + 1, this._position.Next(this.Current));
 
-        public StringStream(string source, TPosition position) : this(source, 0, position)
+        public StringStream(string source, TPosition position) : this(source, index: 0, position)
         { }
 
         private StringStream(string source, int index, TPosition position)
@@ -54,8 +54,8 @@ namespace ParsecSharp.Internal
         public void Dispose()
         { }
 
-        public bool Equals(StringStream<TPosition> other)
-            => this._source == other._source && this._index == other._index;
+        public bool Equals(StringStream<TPosition>? other)
+            => other != null && this._source == other._source && this._index == other._index;
 
         public sealed override bool Equals(object? obj)
             => obj is StringStream<TPosition> state && this._source == state._source && this._index == state._index;
@@ -64,6 +64,6 @@ namespace ParsecSharp.Internal
             => this._source.GetHashCode() ^ this._index;
 
         public sealed override string ToString()
-            => (this.HasValue) ? CharConvert.ToReadableStringWithCharCode(this.Current) : "<EndOfStream>";
+            => this.HasValue ? CharConvert.ToReadableStringWithCharCode(this.Current) : "<EndOfStream>";
     }
 }

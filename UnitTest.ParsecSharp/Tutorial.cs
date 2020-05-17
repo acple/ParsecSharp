@@ -158,7 +158,7 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
-        public void JsonParsing()
+        public void JsonParserExample()
         {
             var source = @"{""key1"":123,""key2"":""abc"",""key3"":{""key3_1"":true,""key3_2"":[1,2,3]}}";
             var result = JsonParser.Parse(source)
@@ -178,7 +178,7 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
-        public void CsvParsing()
+        public void CsvParserExample()
         {
             var source = $"{"123,abc,def"}\n{"456,\"escaped\"\"\n\",xyz"}\n{"999,2columns"}\n";
             var result = CsvParser.Parse(source).Value.ToArray();
@@ -190,6 +190,31 @@ namespace UnitTest.ParsecSharp
             result[1].Is(record => record.Length == 3 && record[1] == "escaped\"\n");
 
             result[2].Is(record => record.Length == 2);
+        }
+
+        [TestMethod]
+        public void ExpressionParserExample()
+        {
+            {
+                var parser = Integer.Parser;
+                var source = "(1 + 2 * (3 - 4) + 5 / 6) - 7 + (8 * 9)";
+
+                parser.Parse(source).WillSucceed(result => result.Value.Is((1 + 2 * (3 - 4) + 5 / 6) - 7 + (8 * 9)));
+            }
+
+            {
+                var parser = Double.Parser;
+                var source = "(1 + 2.1 * (3.2 - 4.3) + 5.4 / 6.5) - 7.6 + (8.7 * 9.8)";
+
+                parser.Parse(source).WillSucceed(result => result.Value.Is((1 + 2.1 * (3.2 - 4.3) + 5.4 / 6.5) - 7.6 + (8.7 * 9.8)));
+            }
+
+            {
+                var parser = IntegerExpression.Parser;
+                var source = "(1 + 2 * (3 - 4) + 5 / 6) - 7 + (8 * 9)";
+
+                parser.Parse(source).WillSucceed(result => result.Lambda.ToString().Is("() => ((((1 + (2 * (3 - 4))) + (5 / 6)) - 7) + (8 * 9))"));
+            }
         }
     }
 }

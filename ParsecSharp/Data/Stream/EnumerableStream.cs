@@ -49,7 +49,7 @@ namespace ParsecSharp.Internal
 
         public IDisposable InnerResource { get; }
 
-        public EnumerableStream<TToken, TPosition> Next => (this._index == MaxBufferSize - 1)
+        public EnumerableStream<TToken, TPosition> Next => this._index == MaxBufferSize - 1
             ? new EnumerableStream<TToken, TPosition>(this.InnerResource, this._buffer.Next, index: 0, this._position.Next(this.Current))
             : new EnumerableStream<TToken, TPosition>(this.InnerResource, this._buffer, this._index + 1, this._position.Next(this.Current));
 
@@ -76,7 +76,7 @@ namespace ParsecSharp.Internal
                     .TakeWhile(enumerator => enumerator.MoveNext())
                     .Select(enumerator => enumerator.Current)
                     .ToArray();
-                return (buffer.Length == 0) ? Buffer<TToken>.Empty : new Buffer<TToken>(buffer, () => CreateBuffer(enumerator));
+                return buffer.Length == 0 ? Buffer<TToken>.Empty : new Buffer<TToken>(buffer, () => CreateBuffer(enumerator));
             }
             catch
             {
@@ -91,8 +91,8 @@ namespace ParsecSharp.Internal
         public void Dispose()
             => this.InnerResource.Dispose();
 
-        public bool Equals(EnumerableStream<TToken, TPosition> other)
-            => this._buffer == other._buffer && this._index == other._index;
+        public bool Equals(EnumerableStream<TToken, TPosition>? other)
+            => other != null && this._buffer == other._buffer && this._index == other._index;
 
         public sealed override bool Equals(object? obj)
             => obj is EnumerableStream<TToken, TPosition> state && this._buffer == state._buffer && this._index == state._index;
@@ -101,7 +101,7 @@ namespace ParsecSharp.Internal
             => this._buffer.GetHashCode() ^ this._index;
 
         public sealed override string ToString()
-            => (this.HasValue)
+            => this.HasValue
                 ? this.Current?.ToString() ?? string.Empty
                 : "<EndOfStream>";
     }
