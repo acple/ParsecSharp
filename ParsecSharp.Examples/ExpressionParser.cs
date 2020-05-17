@@ -20,29 +20,30 @@ namespace ParsecSharp.Examples
     public class ExpressionParser<TNumber>
         where TNumber : INumber<TNumber>
     {
-        private static Parser<char, Func<TNumber, TNumber, TNumber>> Op(char symbol, Func<TNumber, TNumber, TNumber> function)
-            => Char(symbol).Between(Spaces()).Map(_ => function);
-
-        private static readonly Parser<char, Func<TNumber, TNumber, TNumber>> AddSub =
-            Op('+', (x, y) => x.Add(y)) | Op('-', (x, y) => x.Sub(y));
-
-        private static readonly Parser<char, Func<TNumber, TNumber, TNumber>> MulDiv =
-            Op('*', (x, y) => x.Mul(y)) | Op('/', (x, y) => x.Div(y));
-
         private readonly Parser<char, TNumber> _expr;
+
+        public Parser<char, TNumber> Parser { get; }
 
         public ExpressionParser(Parser<char, TNumber> number)
         {
+            var addsub = Op('+', (x, y) => x.Add(y)) | Op('-', (x, y) => x.Sub(y));
+            var muldiv = Op('*', (x, y) => x.Mul(y)) | Op('/', (x, y) => x.Div(y));
+
             var open = Char('(').Between(Spaces());
             var close = Char(')').Between(Spaces());
 
             var factor = number | Delay(() => this._expr).Between(open, close);
-            var term = factor.ChainLeft(MulDiv);
-            this._expr = term.ChainLeft(AddSub);
+            var term = factor.ChainLeft(muldiv);
+            this._expr = term.ChainLeft(addsub);
+
+            this.Parser = this._expr.Between(Spaces()).End();
         }
 
+        private static Parser<char, Func<TNumber, TNumber, TNumber>> Op(char symbol, Func<TNumber, TNumber, TNumber> function)
+            => Char(symbol).Between(Spaces()).Map(_ => function);
+
         public Result<char, TNumber> Parse(string source)
-            => this._expr.Between(Spaces()).End().Parse(source);
+            => this.Parser.Parse(source);
     }
 
     public class Integer : INumber<Integer>

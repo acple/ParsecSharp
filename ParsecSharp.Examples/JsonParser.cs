@@ -157,8 +157,11 @@ namespace ParsecSharp.Examples
 
         // JSON ドキュメントにマッチします。
         // JSON-text = ws value ws
+        private static readonly Parser<char, dynamic?> Json =
+            JsonValue.Between(WhiteSpace);
+
         public static Parser<char, dynamic?> Parser { get; } =
-            JsonValue.Between(WhiteSpace).End();
+            Json.End();
 
         // string をパースして dynamic に詰めて返します。
         public static Result<char, dynamic?> Parse(string json)
