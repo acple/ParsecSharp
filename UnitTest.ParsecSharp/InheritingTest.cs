@@ -41,7 +41,7 @@ namespace UnitTest.ParsecSharp
             public override Result<TToken, TResult> Map<TResult>(Func<T, TResult> function)
                 => throw new NotImplementedException();
 
-            public override SuspendedResult<TToken, T> Suspend()
+            protected override SuspendedResult<TToken, T> Suspend()
                 => throw new NotImplementedException();
 
             protected override Result<TToken, TResult> RunNext<TNext, TResult>(Parser<TToken, TNext> parser, Func<Result<TToken, TNext>, Result<TToken, TResult>> cont)
@@ -62,7 +62,7 @@ namespace UnitTest.ParsecSharp
             public override Failure<TToken, TNext> Convert<TNext>()
                 => throw new NotImplementedException();
 
-            public override SuspendedResult<TToken, T> Suspend()
+            protected override SuspendedResult<TToken, T> Suspend()
                 => throw new NotImplementedException();
         }
     }
