@@ -24,17 +24,17 @@ namespace ParsecSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TextStream<TPosition> Create<TPosition>(Stream source, TPosition position)
             where TPosition : IPosition<char, TPosition>, IComparable<TPosition>
-            => new TextStream<TPosition>(source, position);
+            => new(source, position);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TextStream<TPosition> Create<TPosition>(Stream source, Encoding encoding, TPosition position)
             where TPosition : IPosition<char, TPosition>, IComparable<TPosition>
-            => new TextStream<TPosition>(source, encoding, position);
+            => new(source, encoding, position);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TextStream<TPosition> Create<TPosition>(TextReader reader, TPosition position)
             where TPosition : IPosition<char, TPosition>
-            => new TextStream<TPosition>(reader, position);
+            => new(reader, position);
     }
 }
 
@@ -90,7 +90,7 @@ namespace ParsecSharp.Internal
                     .TakeWhile(x => x != -1)
                     .Select(x => (char)x)
                     .ToArray();
-                return buffer.Length == 0 ? Buffer<char>.Empty : new Buffer<char>(buffer, () => CreateBuffer(reader));
+                return buffer.Length == 0 ? Buffer<char>.Empty : new(buffer, () => CreateBuffer(reader));
             }
             catch
             {

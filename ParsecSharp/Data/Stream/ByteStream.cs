@@ -15,7 +15,7 @@ namespace ParsecSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ByteStream<TPosition> Create<TPosition>(Stream source, TPosition position)
             where TPosition : IPosition<byte, TPosition>
-            => new ByteStream<TPosition>(source, position);
+            => new(source, position);
     }
 }
 
@@ -65,7 +65,7 @@ namespace ParsecSharp.Internal
                     .TakeWhile(x => x != -1)
                     .Select(x => (byte)x)
                     .ToArray();
-                return buffer.Length == 0 ? Buffer<byte>.Empty : new Buffer<byte>(buffer, () => CreateBuffer(stream));
+                return buffer.Length == 0 ? Buffer<byte>.Empty : new(buffer, () => CreateBuffer(stream));
             }
             catch
             {

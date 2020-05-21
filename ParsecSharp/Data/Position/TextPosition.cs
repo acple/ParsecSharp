@@ -6,7 +6,7 @@ namespace ParsecSharp
     [StructLayout(LayoutKind.Auto)]
     public readonly struct TextPosition : IPosition<char, TextPosition>, IComparable<TextPosition>, IEquatable<TextPosition>
     {
-        public static TextPosition Initial => new TextPosition(1, 1);
+        public static TextPosition Initial => new(line: 1, column: 1);
 
         public int Line { get; }
 

@@ -7,7 +7,7 @@ namespace ParsecSharp.Internal
 {
     public sealed class Buffer<TToken> : IReadOnlyList<TToken>
     {
-        public static Buffer<TToken> Empty { get; } = new Buffer<TToken>(Array.Empty<TToken>(), () => Empty);
+        public static Buffer<TToken> Empty { get; } = new(Array.Empty<TToken>(), () => Empty);
 
         private readonly TToken[] _buffer;
 
@@ -29,7 +29,7 @@ namespace ParsecSharp.Internal
             this._buffer = buffer;
             this._index = index;
             this.Count = length;
-            this._next = new Lazy<Buffer<TToken>>(next, false);
+            this._next = new(next, false);
         }
 
         IEnumerator<TToken> IEnumerable<TToken>.GetEnumerator()

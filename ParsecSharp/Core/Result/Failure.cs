@@ -8,7 +8,7 @@ namespace ParsecSharp
 
         public abstract IParsecState<TToken> State { get; }
 
-        public virtual ParsecException Exception => new ParsecException(this.ToString());
+        public virtual ParsecException Exception => new(this.ToString());
 
         public abstract string Message { get; }
 

@@ -19,12 +19,12 @@ namespace ParsecSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static EnumerableStream<TToken, TPosition> Create<TToken, TPosition>(IEnumerable<TToken> source, TPosition position)
             where TPosition : IPosition<TToken, TPosition>
-            => new EnumerableStream<TToken, TPosition>(source, position);
+            => new(source, position);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static EnumerableStream<TToken, TPosition> Create<TToken, TPosition>(IEnumerator<TToken> source, TPosition position)
             where TPosition : IPosition<TToken, TPosition>
-            => new EnumerableStream<TToken, TPosition>(source, position);
+            => new(source, position);
     }
 }
 
@@ -76,7 +76,7 @@ namespace ParsecSharp.Internal
                     .TakeWhile(enumerator => enumerator.MoveNext())
                     .Select(enumerator => enumerator.Current)
                     .ToArray();
-                return buffer.Length == 0 ? Buffer<TToken>.Empty : new Buffer<TToken>(buffer, () => CreateBuffer(enumerator));
+                return buffer.Length == 0 ? Buffer<TToken>.Empty : new(buffer, () => CreateBuffer(enumerator));
             }
             catch
             {

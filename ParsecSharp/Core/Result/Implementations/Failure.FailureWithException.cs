@@ -11,7 +11,7 @@ namespace ParsecSharp.Internal.Results
 
         public sealed override IParsecState<TToken> State => this._state.GetState();
 
-        public sealed override ParsecException Exception => new ParsecException(this.ToString(), this._exception);
+        public sealed override ParsecException Exception => new(this.ToString(), this._exception);
 
         public sealed override string Message => $"Exception '{this._exception.GetType().Name}' occurred: {this._exception.ToString()}";
 

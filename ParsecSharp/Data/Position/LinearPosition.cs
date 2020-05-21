@@ -18,7 +18,7 @@ namespace ParsecSharp
         }
 
         public LinearPosition<TToken> Next(TToken token)
-            => new LinearPosition<TToken>(this.Column + 1);
+            => new(this.Column + 1);
 
         public int CompareTo(IPosition? other)
             => other == null

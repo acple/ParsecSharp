@@ -8,7 +8,7 @@ namespace ParsecSharp.Internal.Parsers
 
         public Delay(Func<Parser<TToken, T>> parser)
         {
-            this._parser = new Lazy<Parser<TToken, T>>(parser, false);
+            this._parser = new(parser, false);
         }
 
         internal sealed override Result<TToken, TResult> Run<TState, TResult>(TState state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)

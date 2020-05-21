@@ -51,8 +51,7 @@ namespace ParsecSharp.Examples
         private static readonly Parser<char, Integer> number =
             Many1(DecDigit()).ToInt().Map(x => new Integer(x));
 
-        public static ExpressionParser<Integer> Parser { get; } =
-            new ExpressionParser<Integer>(number);
+        public static ExpressionParser<Integer> Parser { get; } = new(number);
 
         public int Value { get; }
 
@@ -62,16 +61,16 @@ namespace ParsecSharp.Examples
         }
 
         public Integer Add(Integer value)
-            => new Integer(this.Value + value.Value);
+            => new(this.Value + value.Value);
 
         public Integer Sub(Integer value)
-            => new Integer(this.Value - value.Value);
+            => new(this.Value - value.Value);
 
         public Integer Mul(Integer value)
-            => new Integer(this.Value * value.Value);
+            => new(this.Value * value.Value);
 
         public Integer Div(Integer value)
-            => new Integer(this.Value / value.Value);
+            => new(this.Value / value.Value);
     }
 
     public class Double : INumber<Double>
@@ -80,8 +79,7 @@ namespace ParsecSharp.Examples
             Many1(DecDigit()).Append(Optional(Char('.').Append(Many1(DecDigit())), ".0"))
                 .ToDouble().Map(x => new Double(x));
 
-        public static ExpressionParser<Double> Parser { get; } =
-            new ExpressionParser<Double>(number);
+        public static ExpressionParser<Double> Parser { get; } = new(number);
 
         public double Value { get; }
 
@@ -91,16 +89,16 @@ namespace ParsecSharp.Examples
         }
 
         public Double Add(Double value)
-            => new Double(this.Value + value.Value);
+            => new(this.Value + value.Value);
 
         public Double Sub(Double value)
-            => new Double(this.Value - value.Value);
+            => new(this.Value - value.Value);
 
         public Double Mul(Double value)
-            => new Double(this.Value * value.Value);
+            => new(this.Value * value.Value);
 
         public Double Div(Double value)
-            => new Double(this.Value / value.Value);
+            => new(this.Value / value.Value);
     }
 
     public class IntegerExpression : INumber<IntegerExpression>
@@ -108,8 +106,7 @@ namespace ParsecSharp.Examples
         private static readonly Parser<char, IntegerExpression> number =
             Many1(DecDigit()).ToInt().Map(x => new IntegerExpression(Expression.Constant(x)));
 
-        public static ExpressionParser<IntegerExpression> Parser { get; } =
-            new ExpressionParser<IntegerExpression>(number);
+        public static ExpressionParser<IntegerExpression> Parser { get; } = new(number);
 
         private readonly Expression _value;
 
@@ -121,15 +118,15 @@ namespace ParsecSharp.Examples
         }
 
         public IntegerExpression Add(IntegerExpression value)
-            => new IntegerExpression(Expression.Add(this._value, value._value));
+            => new(Expression.Add(this._value, value._value));
 
         public IntegerExpression Sub(IntegerExpression value)
-            => new IntegerExpression(Expression.Subtract(this._value, value._value));
+            => new(Expression.Subtract(this._value, value._value));
 
         public IntegerExpression Mul(IntegerExpression value)
-            => new IntegerExpression(Expression.Multiply(this._value, value._value));
+            => new(Expression.Multiply(this._value, value._value));
 
         public IntegerExpression Div(IntegerExpression value)
-            => new IntegerExpression(Expression.Divide(this._value, value._value));
+            => new(Expression.Divide(this._value, value._value));
     }
 }

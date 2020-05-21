@@ -30,9 +30,7 @@ namespace ParsecSharp.Internal
             var (result, rest) = state;
             this.HasValue = result.CaseOf(_ => false, _ => true);
             var current = this.Current = this.HasValue ? result.Value : default!;
-            this._next = new Lazy<TokenizedStream<TInput, TState, TToken, TPosition>>(
-                () => new TokenizedStream<TInput, TState, TToken, TPosition>(rest.InnerResource, parser.ParsePartially(rest), parser, position.Next(current)),
-                false);
+            this._next = new(() => new(rest.InnerResource, parser.ParsePartially(rest), parser, position.Next(current)), false);
         }
 
         public IParsecState<TToken> GetState()

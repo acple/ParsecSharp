@@ -32,7 +32,7 @@ namespace ParsecSharp
 
         public static SuspendedResult<TToken, T> Create<TState>(Result<TToken, T> result, TState state)
             where TState : IParsecState<TToken, TState>
-            => new SuspendedResult<TToken, T>(result, new StateBox<TState>(state));
+            => new(result, new StateBox<TState>(state));
 
         private sealed class StateBox<TState> : ISuspendedState<TToken>
             where TState : IParsecState<TToken, TState>

@@ -14,7 +14,7 @@ namespace ParsecSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ArrayStream<TToken, TPosition> Create<TToken, TPosition>(IReadOnlyList<TToken> source, TPosition position)
             where TPosition : IPosition<TToken, TPosition>
-            => new ArrayStream<TToken, TPosition>(source, position);
+            => new(source, position);
     }
 }
 
@@ -37,7 +37,7 @@ namespace ParsecSharp.Internal
 
         public IDisposable? InnerResource => default;
 
-        public ArrayStream<TToken, TPosition> Next => new ArrayStream<TToken, TPosition>(this._source, this._index + 1, this._position.Next(this.Current));
+        public ArrayStream<TToken, TPosition> Next => new(this._source, this._index + 1, this._position.Next(this.Current));
 
         public ArrayStream(IReadOnlyList<TToken> source, TPosition position) : this(source, index: 0, position)
         { }

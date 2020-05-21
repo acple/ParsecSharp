@@ -4,7 +4,7 @@ namespace ParsecSharp.Internal
 {
     public sealed class EmptyPosition<TToken> : IPosition<TToken, EmptyPosition<TToken>>, IComparable<EmptyPosition<TToken>>, IEquatable<EmptyPosition<TToken>>
     {
-        public static EmptyPosition<TToken> Initial { get; } = new EmptyPosition<TToken>();
+        public static EmptyPosition<TToken> Initial { get; } = new();
 
         public int Line => 0;
 
