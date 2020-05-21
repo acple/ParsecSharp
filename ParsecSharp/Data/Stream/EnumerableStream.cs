@@ -92,7 +92,7 @@ namespace ParsecSharp.Internal
             => this.InnerResource.Dispose();
 
         public bool Equals(EnumerableStream<TToken, TPosition>? other)
-            => other != null && this._buffer == other._buffer && this._index == other._index;
+            => other is not null && this._buffer == other._buffer && this._index == other._index;
 
         public sealed override bool Equals(object? obj)
             => obj is EnumerableStream<TToken, TPosition> state && this._buffer == state._buffer && this._index == state._index;

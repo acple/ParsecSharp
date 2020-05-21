@@ -56,7 +56,7 @@ namespace ParsecSharp.Internal
         { }
 
         public bool Equals(ArrayStream<TToken, TPosition>? other)
-            => other != null && this._source == other._source && this._index == other._index;
+            => other is not null && this._source == other._source && this._index == other._index;
 
         public sealed override bool Equals(object? obj)
             => obj is ArrayStream<TToken, TPosition> state && this._source == state._source && this._index == state._index;

@@ -26,7 +26,7 @@ namespace ParsecSharp.Internal
         { }
 
         public bool Equals(EmptyStream<TToken>? other)
-            => ReferenceEquals(this, other);
+            => other is not null;
 
         public sealed override bool Equals(object? obj)
             => ReferenceEquals(this, obj);

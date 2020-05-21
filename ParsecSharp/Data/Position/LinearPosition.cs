@@ -21,7 +21,7 @@ namespace ParsecSharp
             => new(this.Column + 1);
 
         public int CompareTo(IPosition? other)
-            => other == null
+            => other is null
                 ? 1 // always greater than null
                 : this.Line != other.Line ? this.Line.CompareTo(other.Line) : this.Column.CompareTo(other.Column);
 
