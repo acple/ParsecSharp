@@ -1,9 +1,11 @@
 using System;
+using System.ComponentModel;
 
 namespace ParsecSharp
 {
     public abstract class Failure<TToken, T> : Result<TToken, T>
     {
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public sealed override T Value => throw this.Exception;
 
         public abstract IParsecState<TToken> State { get; }
