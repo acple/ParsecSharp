@@ -3,7 +3,7 @@ version: 2.1
 executors:
   dotnet:
     parameters:
-      container_image: { type: string, default: "sdk:5.0-alpine" }
+      container_image: { type: string, default: sdk:5.0-alpine }
     docker:
       - image: mcr.microsoft.com/dotnet/<< parameters.container_image >>
     working_directory: /project
@@ -27,7 +27,7 @@ jobs:
 
   unittest:
     parameters:
-      container_image: { type: string, default: "sdk:5.0-alpine" }
+      container_image: { type: string, default: sdk:5.0-alpine }
       target_framework: { type: string, default: net5.0 }
     executor:
       name: dotnet
