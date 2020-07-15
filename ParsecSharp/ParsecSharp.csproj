@@ -28,8 +28,8 @@
 
   <ItemGroup>
     <PackageReference Include="BuildExtensions.DeterministicPdb" Version="0.1.0" PrivateAssets="All" />
-    <PackageReference Include="Fody" Version="6.1.1" PrivateAssets="All" />
-    <PackageReference Include="TailCall.Fody" Version="1.0.3" PrivateAssets="All" />
+    <PackageReference Include="Fody" Version="6.2.0" PrivateAssets="All" />
+    <PackageReference Include="TailCall.Fody" Version="1.1.0" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>
