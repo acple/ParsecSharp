@@ -2,7 +2,7 @@ using System;
 
 namespace ParsecSharp
 {
-    public class ParsecException : Exception
+    public partial class ParsecException : Exception
     {
         public ParsecException(string message) : base(message)
         { }
