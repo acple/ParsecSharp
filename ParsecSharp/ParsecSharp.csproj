@@ -5,6 +5,7 @@
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
     <RootNamespace>ParsecSharp</RootNamespace>
+    <AllowUnsafeBlocks>true<!--for SkipLocalsInit--></AllowUnsafeBlocks>
   </PropertyGroup>
 
   <PropertyGroup>
