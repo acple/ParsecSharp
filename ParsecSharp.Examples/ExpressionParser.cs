@@ -20,8 +20,6 @@ namespace ParsecSharp.Examples
     public class ExpressionParser<TNumber>
         where TNumber : INumber<TNumber>
     {
-        private readonly Parser<char, TNumber> _expr;
-
         public Parser<char, TNumber> Parser { get; }
 
         public ExpressionParser(Parser<char, TNumber> number)
@@ -32,11 +30,14 @@ namespace ParsecSharp.Examples
             var open = Char('(').Between(Spaces());
             var close = Char(')').Between(Spaces());
 
-            var factor = number | Delay(() => this._expr).Between(open, close);
-            var term = factor.ChainLeft(muldiv);
-            this._expr = term.ChainLeft(addsub);
+            var expr = Fix<char, TNumber>(expr =>
+            {
+                var factor = number | expr.Between(open, close);
+                var term = factor.ChainLeft(muldiv);
+                return term.ChainLeft(addsub);
+            });
 
-            this.Parser = this._expr.Between(Spaces()).End();
+            this.Parser = expr.Between(Spaces()).End();
         }
 
         private static Parser<char, Func<TNumber, TNumber, TNumber>> Op(char symbol, Func<TNumber, TNumber, TNumber> function)
