@@ -9,7 +9,7 @@ namespace ParsecSharp.Internal.Results
 
         private readonly Exception _exception;
 
-        public sealed override IParsecState<TToken> State => this._state.GetState();
+        public sealed override IParsecState<TToken> State => this._state;
 
         public sealed override ParsecException Exception => new(this.ToString(), this._exception);
 

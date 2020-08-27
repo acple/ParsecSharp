@@ -19,9 +19,6 @@ namespace ParsecSharp.Internal
         private EmptyStream()
         { }
 
-        public IParsecState<TToken> GetState()
-            => this;
-
         public void Dispose()
         { }
 

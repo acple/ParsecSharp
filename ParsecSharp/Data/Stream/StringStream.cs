@@ -48,9 +48,6 @@ namespace ParsecSharp.Internal
             this._position = position;
         }
 
-        public IParsecState<char> GetState()
-            => this;
-
         public void Dispose()
         { }
 

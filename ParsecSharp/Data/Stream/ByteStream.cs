@@ -74,9 +74,6 @@ namespace ParsecSharp.Internal
             }
         }
 
-        public IParsecState<byte> GetState()
-            => this;
-
         public void Dispose()
             => this.InnerResource.Dispose();
 

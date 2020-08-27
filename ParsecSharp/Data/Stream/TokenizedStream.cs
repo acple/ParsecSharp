@@ -33,9 +33,6 @@ namespace ParsecSharp.Internal
             this._next = new(() => new(rest.InnerResource, parser.ParsePartially(rest), parser, position.Next(current)), false);
         }
 
-        public IParsecState<TToken> GetState()
-            => this;
-
         public void Dispose()
             => this.InnerResource?.Dispose();
 

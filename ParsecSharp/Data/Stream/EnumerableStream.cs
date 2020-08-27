@@ -85,9 +85,6 @@ namespace ParsecSharp.Internal
             }
         }
 
-        public IParsecState<TToken> GetState()
-            => this;
-
         public void Dispose()
             => this.InnerResource.Dispose();
 

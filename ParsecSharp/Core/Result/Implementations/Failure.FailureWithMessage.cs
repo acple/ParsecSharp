@@ -5,7 +5,7 @@ namespace ParsecSharp.Internal.Results
     {
         private readonly TState _state;
 
-        public sealed override IParsecState<TToken> State => this._state.GetState();
+        public sealed override IParsecState<TToken> State => this._state;
 
         public sealed override string Message { get; }
 
