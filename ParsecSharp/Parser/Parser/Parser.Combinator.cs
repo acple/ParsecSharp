@@ -117,6 +117,6 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Func<TParam, Parser<TToken, T>> Fix<TToken, TParam, T>(Func<Func<TParam, Parser<TToken, T>>, TParam, Parser<TToken, T>> function)
-            => parameter => Delay(() => function(Fix(function), parameter));
+            => parameter => new Fix<TToken, TParam, T>(function, parameter);
     }
 }
