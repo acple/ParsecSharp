@@ -160,7 +160,7 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void JsonParserExample()
         {
-            var source = @"{""key1"":123,""key2"":""abc"",""key3"":{""key3_1"":true,""key3_2"":[1,2,3]}}";
+            var source = @"{""key1"":123,""key2"":""abc"",""key3"":{""key3_1"":true,""key3_2"":[1,2,3]},""key4"":-1.234e+2}";
             var result = JsonParser.Parse(source)
                 .CaseOf(failure => default, success => success.Value);
 
@@ -175,6 +175,9 @@ namespace UnitTest.ParsecSharp
 
             var key3_2 = result?["key3"]?["key3_2"] as IEnumerable<dynamic>;
             key3_2.Is(1.0, 2.0, 3.0);
+
+            var key4 = (double)result?["key4"];
+            key4.Is(-123.4);
         }
 
         [TestMethod]

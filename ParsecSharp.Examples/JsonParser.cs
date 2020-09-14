@@ -105,14 +105,13 @@ namespace ParsecSharp.Examples
         // JSON Number の小数部にマッチします。
         // frac = decimal-point 1*DIGIT
         private static readonly Parser<char, double> Frac =
-            Char('.').Right(Many1(DecDigit())).AsString()
-                .Map(x => double.Parse("0." + x, NumberFormatInfo.InvariantInfo));
+            Char('.').Append(Many1(DecDigit())).ToDouble();
 
         // JSON Number の指数部にマッチします。
         // exp = e [ minus / plus ] 1*DIGIT
         private static readonly Parser<char, int> Exp =
             from _ in CharIgnoreCase('e')
-            from sign in Char('-').Or(Optional(Char('+'), '+'))
+            from sign in Optional(OneOf("-+"), '+')
             from num in Many1(DecDigit()).AsString()
             select int.Parse(sign + num);
 
