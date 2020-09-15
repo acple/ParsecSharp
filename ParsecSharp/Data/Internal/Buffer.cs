@@ -7,7 +7,7 @@ namespace ParsecSharp.Internal
 {
     public sealed class Buffer<TToken> : IReadOnlyList<TToken>
     {
-        public static Buffer<TToken> Empty { get; } = new(Array.Empty<TToken>(), () => Empty);
+        public static Buffer<TToken> Empty { get; } = new(Array.Empty<TToken>(), () => Empty!);
 
         private readonly TToken[] _buffer;
 
