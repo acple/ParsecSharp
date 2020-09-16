@@ -9,7 +9,7 @@ namespace ParsecSharp.Examples
     {
         // 整数または小数にマッチし、double にして返す
         private static readonly Parser<char, double> Number =
-            Optional(Char('-') | Char('+'), '+')
+            Optional(OneOf("-+"), '+')
                 .Append(Many1(DecDigit()))
                 .Append(Optional(Char('.').Append(Many1(DecDigit())), ".0"))
                 .ToDouble();
