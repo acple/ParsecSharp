@@ -10,9 +10,9 @@ namespace ParsecSharp.Examples
     // JSON パーサ、RFC8259 に忠実なつくり
     public static class JsonParser
     {
-        public static Parser<char, dynamic?> Parser { get; }
+        public static Parser<char, dynamic?> Parser { get; } = CreateParser();
 
-        static JsonParser()
+        private static Parser<char, dynamic?> CreateParser()
         {
             // JSON Whitespace にマッチし、その値は無視します。
             // ws = *( %x20 / %x09 / %x0A / %x0D ) ; Space / Horizontal tab / Line feed or New line / Carriage return
@@ -139,7 +139,9 @@ namespace ParsecSharp.Examples
             // JSON-text = ws value ws
             var json = jsonValue.Between(whitespace);
 
-            Parser = json.End();
+            var parser = json.End();
+
+            return parser;
         }
 
         // パース結果を dynamic に詰める拡張メソッド。

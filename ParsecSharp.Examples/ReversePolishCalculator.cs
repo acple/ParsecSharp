@@ -33,8 +33,7 @@ namespace ParsecSharp.Examples
                     select func(x, y))
                 .Between(Spaces());
 
-        public static Parser<char, double> Parser { get; } =
-            Expr.End();
+        public static Parser<char, double> Parser { get; } = Expr.End();
 
         public static Result<char, double> Parse(string source)
             => Parser.Parse(source);

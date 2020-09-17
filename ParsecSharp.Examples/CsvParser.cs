@@ -9,9 +9,9 @@ namespace ParsecSharp.Examples
     // CSV パーサ、RFC4180 にそこそこ忠実
     public static class CsvParser
     {
-        public static Parser<char, IEnumerable<string[]>> Parser { get; }
+        public static Parser<char, IEnumerable<string[]>> Parser { get; } = CreateParser();
 
-        static CsvParser()
+        private static Parser<char, IEnumerable<string[]>> CreateParser()
         {
             // COMMA = %x2C ; == ','
             var comma = Char(',');
@@ -47,7 +47,9 @@ namespace ParsecSharp.Examples
             // 定義では改行文字として CRLF のみを受け付けるものを ( LF / CRLF ) に拡張
             var csv = record.EndBy(EndOfLine());
 
-            Parser = csv.End();
+            var parser = csv.End();
+
+            return parser;
         }
 
         public static Result<char, IEnumerable<string[]>> Parse(string csv)
