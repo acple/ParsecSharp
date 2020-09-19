@@ -84,7 +84,7 @@ namespace ParsecSharp.Examples
 
             // JSON Number の指数部にマッチします。
             // exp = e [ minus / plus ] 1*DIGIT
-            var exp = CharIgnoreCase('e').Right(Optional(OneOf("-+"), '+').Append(Many1(DecDigit()))).ToInt();
+            var exp = CharIgnoreCase('e').Right(Optional(OneOf("-+"), '+').Append(Many1(DecDigit())).ToInt());
 
             // JSON Number にマッチします。double を返します。
             // number = [ minus ] int [ frac ] [ exp ]
