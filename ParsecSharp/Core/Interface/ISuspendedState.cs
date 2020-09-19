@@ -2,7 +2,7 @@ using System;
 
 namespace ParsecSharp
 {
-    public interface ISuspendedState<TToken> : IDisposable
+    public partial interface ISuspendedState<TToken> : IDisposable
     {
         IDisposable? InnerResource { get; }
 
