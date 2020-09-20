@@ -77,7 +77,7 @@ namespace ParsecSharp.Examples
     public class Double : INumber<Double>
     {
         private static readonly Parser<char, Double> number =
-            Many1(DecDigit()).Append(Optional(Char('.').Append(Many1(DecDigit())), ".0"))
+            Many1(DecDigit()).AppendOptional(Char('.').Append(Many1(DecDigit())))
                 .ToDouble().Map(x => new Double(x));
 
         public static ExpressionParser<Double> Parser { get; } = new(number);
