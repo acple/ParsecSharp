@@ -31,6 +31,10 @@ trim_trailing_whitespace = false
 [*.{yml,yaml}]
 indent_size = 2
 
+# XML files
+[*.xml]
+indent_size = 2
+
 # Project files
 [*.csproj]
 indent_size = 2
