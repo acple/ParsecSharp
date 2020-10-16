@@ -116,7 +116,7 @@ namespace ParsecSharp
             => new Fix<TToken, T>(function);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Func<TParam, Parser<TToken, T>> Fix<TToken, TParam, T>(Func<Func<TParam, Parser<TToken, T>>, TParam, Parser<TToken, T>> function)
-            => parameter => new Fix<TToken, TParam, T>(function, parameter);
+        public static Func<TParameter, Parser<TToken, T>> Fix<TToken, TParameter, T>(Func<Func<TParameter, Parser<TToken, T>>, TParameter, Parser<TToken, T>> function)
+            => parameter => new Fix<TToken, TParameter, T>(function, parameter);
     }
 }
