@@ -59,9 +59,9 @@ namespace ParsecSharp.Internal
 
         public IDisposable InnerResource { get; }
 
-        public TextStream<TPosition> Next => this._index == MaxBufferSize - 1
-            ? new(this.InnerResource, this._buffer.Next, index: 0, this._position.Next(this.Current))
-            : new(this.InnerResource, this._buffer, this._index + 1, this._position.Next(this.Current));
+        public TextStream<TPosition> Next => this._index < MaxBufferSize - 1
+            ? new(this.InnerResource, this._buffer, this._index + 1, this._position.Next(this.Current))
+            : new(this.InnerResource, this._buffer.Next, index: 0, this._position.Next(this.Current));
 
         public TextStream(Stream source, TPosition position) : this(source, Encoding.UTF8, position)
         { }
