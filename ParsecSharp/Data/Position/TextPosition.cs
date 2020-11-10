@@ -19,7 +19,7 @@ namespace ParsecSharp
         }
 
         public TextPosition Next(char token)
-            => token == '\n' ? new(this.Line + 1, 1) : new(this.Line, this.Column + 1);
+            => token == '\n' ? new(this.Line + 1, column: 1) : new(this.Line, this.Column + 1);
 
         public int CompareTo(IPosition? other)
             => other is null
