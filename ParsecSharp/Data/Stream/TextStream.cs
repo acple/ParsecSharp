@@ -24,17 +24,17 @@ namespace ParsecSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TextStream<TPosition> Create<TPosition>(Stream source, TPosition position)
             where TPosition : IPosition<char, TPosition>, IComparable<TPosition>
-            => new TextStream<TPosition>(source, position);
+            => new(source, position);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TextStream<TPosition> Create<TPosition>(Stream source, Encoding encoding, TPosition position)
             where TPosition : IPosition<char, TPosition>, IComparable<TPosition>
-            => new TextStream<TPosition>(source, encoding, position);
+            => new(source, encoding, position);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TextStream<TPosition> Create<TPosition>(TextReader reader, TPosition position)
             where TPosition : IPosition<char, TPosition>
-            => new TextStream<TPosition>(reader, position);
+            => new(reader, position);
     }
 }
 
@@ -59,9 +59,9 @@ namespace ParsecSharp.Internal
 
         public IDisposable InnerResource { get; }
 
-        public TextStream<TPosition> Next => this._index == MaxBufferSize - 1
-            ? new TextStream<TPosition>(this.InnerResource, this._buffer.Next, index: 0, this._position.Next(this.Current))
-            : new TextStream<TPosition>(this.InnerResource, this._buffer, this._index + 1, this._position.Next(this.Current));
+        public TextStream<TPosition> Next => this._index < MaxBufferSize - 1
+            ? new(this.InnerResource, this._buffer, this._index + 1, this._position.Next(this.Current))
+            : new(this.InnerResource, this._buffer.Next, index: 0, this._position.Next(this.Current));
 
         public TextStream(Stream source, TPosition position) : this(source, Encoding.UTF8, position)
         { }
@@ -90,7 +90,7 @@ namespace ParsecSharp.Internal
                     .TakeWhile(x => x != -1)
                     .Select(x => (char)x)
                     .ToArray();
-                return buffer.Length == 0 ? Buffer<char>.Empty : new Buffer<char>(buffer, () => CreateBuffer(reader));
+                return new(buffer, buffer.Length == MaxBufferSize ? () => CreateBuffer(reader) : () => Buffer<char>.Empty);
             }
             catch
             {
@@ -99,14 +99,11 @@ namespace ParsecSharp.Internal
             }
         }
 
-        public IParsecState<char> GetState()
-            => this;
-
         public void Dispose()
             => this.InnerResource.Dispose();
 
         public bool Equals(TextStream<TPosition>? other)
-            => other != null && this._buffer == other._buffer && this._index == other._index;
+            => other is not null && this._buffer == other._buffer && this._index == other._index;
 
         public sealed override bool Equals(object? obj)
             => obj is TextStream<TPosition> state && this._buffer == state._buffer && this._index == state._index;

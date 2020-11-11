@@ -15,7 +15,7 @@ namespace ParsecSharp
 
         public abstract Result<TToken, TResult> Map<TResult>(Func<T, TResult> function);
 
-        public abstract SuspendedResult<TToken, T> Suspend();
+        protected internal abstract SuspendedResult<TToken, T> Suspend();
 
         public sealed override bool Equals(object? obj)
             => base.Equals(obj);

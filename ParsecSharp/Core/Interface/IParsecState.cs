@@ -17,7 +17,5 @@ namespace ParsecSharp
         IDisposable? InnerResource { get; }
 
         TState Next { get; }
-
-        IParsecState<TToken> GetState();
     }
 }

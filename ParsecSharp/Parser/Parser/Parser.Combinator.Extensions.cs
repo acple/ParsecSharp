@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using ParsecSharp.Internal;
 
 namespace ParsecSharp
 {
@@ -123,6 +122,22 @@ namespace ParsecSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Append<TToken, T>(this Parser<TToken, IEnumerable<T>> left, Parser<TToken, IEnumerable<T>> right)
             => left.Bind(x => right.Map(y => x.Concat(y)));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, IEnumerable<T>> AppendOptional<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, T> optional)
+            => parser.AppendOptional(optional.Singleton());
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, IEnumerable<T>> AppendOptional<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, IEnumerable<T>> optional)
+            => parser.Append(Try(optional, Enumerable.Empty<T>()));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, IEnumerable<T>> AppendOptional<TToken, T>(this Parser<TToken, IEnumerable<T>> parser, Parser<TToken, T> optional)
+            => parser.AppendOptional(optional.Singleton());
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, IEnumerable<T>> AppendOptional<TToken, T>(this Parser<TToken, IEnumerable<T>> parser, Parser<TToken, IEnumerable<T>> optional)
+            => parser.Append(Try(optional, Enumerable.Empty<T>()));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Or<TToken, T>(this Parser<TToken, T> first, Parser<TToken, T> second)

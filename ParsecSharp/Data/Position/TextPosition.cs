@@ -6,7 +6,7 @@ namespace ParsecSharp
     [StructLayout(LayoutKind.Auto)]
     public readonly struct TextPosition : IPosition<char, TextPosition>, IComparable<TextPosition>, IEquatable<TextPosition>
     {
-        public static TextPosition Initial => new TextPosition(1, 1);
+        public static TextPosition Initial => new(line: 1, column: 1);
 
         public int Line { get; }
 
@@ -19,12 +19,10 @@ namespace ParsecSharp
         }
 
         public TextPosition Next(char token)
-            => token == '\n'
-                ? new TextPosition(this.Line + 1, 1)
-                : new TextPosition(this.Line, this.Column + 1);
+            => token == '\n' ? new(this.Line + 1, column: 1) : new(this.Line, this.Column + 1);
 
         public int CompareTo(IPosition? other)
-            => other == null
+            => other is null
                 ? 1 // always greater than null
                 : this.Line != other.Line ? this.Line.CompareTo(other.Line) : this.Column.CompareTo(other.Column);
 

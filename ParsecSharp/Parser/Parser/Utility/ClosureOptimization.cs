@@ -1,4 +1,4 @@
-namespace ParsecSharp.Internal
+namespace ParsecSharp
 {
     internal static class ClosureOptimization
     {

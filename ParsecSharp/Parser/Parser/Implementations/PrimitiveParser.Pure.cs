@@ -25,6 +25,6 @@ namespace ParsecSharp.Internal.Parsers
         }
 
         protected sealed override Result<TToken, T> Run<TState>(TState state)
-            => Result.Success<TToken, TState, T>(this._value(state.GetState()), state);
+            => Result.Success<TToken, TState, T>(this._value(state), state);
     }
 }

@@ -9,7 +9,7 @@ namespace ParsecSharp.Examples
     {
         // 整数または小数にマッチし、double にして返す
         private static readonly Parser<char, double> Number =
-            Optional(Char('-') | Char('+'), '+')
+            Optional(OneOf("-+"), '+')
                 .Append(Many1(DecDigit()))
                 .Append(Optional(Char('.').Append(Many1(DecDigit())), ".0"))
                 .ToDouble();
@@ -33,8 +33,7 @@ namespace ParsecSharp.Examples
                     select func(x, y))
                 .Between(Spaces());
 
-        public static Parser<char, double> Parser { get; } =
-            Expr.End();
+        public static Parser<char, double> Parser { get; } = Expr.End();
 
         public static Result<char, double> Parse(string source)
             => Parser.Parse(source);

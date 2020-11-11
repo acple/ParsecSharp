@@ -2,11 +2,10 @@ version: 2.1
 
 executors:
   dotnet:
-    parameters: &sdk_version
-      sdk_version: { type: string, default: "5.0" }
-      target_framework: { type: string, default: net5.0 }
+    parameters:
+      container_image: { type: string, default: sdk:5.0-alpine }
     docker:
-      - image: mcr.microsoft.com/dotnet/core/sdk:<< parameters.sdk_version >>-alpine
+      - image: mcr.microsoft.com/dotnet/<< parameters.container_image >>
     working_directory: /project
     environment:
       NUGET_PACKAGES: /project/packages
@@ -27,10 +26,12 @@ jobs:
           paths: ./*
 
   unittest:
-    parameters: *sdk_version
+    parameters:
+      container_image: { type: string, default: sdk:5.0-alpine }
+      target_framework: { type: string, default: net5.0 }
     executor:
       name: dotnet
-      sdk_version: << parameters.sdk_version >>
+      container_image: << parameters.container_image >>
     steps:
       - attach_workspace:
           at: .
@@ -93,7 +94,7 @@ workflows:
 
       - unittest:
           name: unittest3.1
-          sdk_version: "3.1"
+          container_image: core/sdk:3.1-alpine
           target_framework: netcoreapp3.1
           requires:
             - build
@@ -101,7 +102,7 @@ workflows:
 
       - unittest:
           name: unittest2.1
-          sdk_version: "2.1"
+          container_image: core/sdk:2.1-alpine
           target_framework: netcoreapp2.1
           requires:
             - build

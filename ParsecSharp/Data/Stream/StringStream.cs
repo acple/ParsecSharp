@@ -13,7 +13,7 @@ namespace ParsecSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static StringStream<TPosition> Create<TPosition>(string source, TPosition position)
             where TPosition : IPosition<char, TPosition>
-            => new StringStream<TPosition>(source, position);
+            => new(source, position);
     }
 }
 
@@ -36,7 +36,7 @@ namespace ParsecSharp.Internal
 
         public IDisposable? InnerResource => default;
 
-        public StringStream<TPosition> Next => new StringStream<TPosition>(this._source, this._index + 1, this._position.Next(this.Current));
+        public StringStream<TPosition> Next => new(this._source, this._index + 1, this._position.Next(this.Current));
 
         public StringStream(string source, TPosition position) : this(source, index: 0, position)
         { }
@@ -48,14 +48,11 @@ namespace ParsecSharp.Internal
             this._position = position;
         }
 
-        public IParsecState<char> GetState()
-            => this;
-
         public void Dispose()
         { }
 
         public bool Equals(StringStream<TPosition>? other)
-            => other != null && this._source == other._source && this._index == other._index;
+            => other is not null && this._source == other._source && this._index == other._index;
 
         public sealed override bool Equals(object? obj)
             => obj is StringStream<TPosition> state && this._source == state._source && this._index == state._index;

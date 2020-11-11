@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using ParsecSharp.Internal;
 using ParsecSharp.Internal.Parsers;
 
 namespace ParsecSharp
@@ -20,7 +19,7 @@ namespace ParsecSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Sequence<TToken, T>(IEnumerable<Parser<TToken, T>> parsers)
             => parsers.Reverse()
-                .Aggregate(Pure<TToken, Stack<T>>(_ => new Stack<T>()),
+                .Aggregate(Pure<TToken, Stack<T>>(_ => new()),
                     (next, parser) => parser.Bind(x => next.Map(stack => { stack.Push(x); return stack; })))
                 .Map(stack => stack.AsEnumerable());
 
@@ -70,7 +69,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> ManyTill<TToken, T, TIgnore>(Parser<TToken, T> parser, Parser<TToken, TIgnore> terminator)
-            => Pure<TToken, List<T>>(_ => new List<T>()).Bind(list => ManyTillRec(parser, terminator, list));
+            => Pure<TToken, List<T>>(_ => new()).Bind(list => ManyTillRec(parser, terminator, list));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Many1Till<TToken, T, TIgnore>(Parser<TToken, T> parser, Parser<TToken, TIgnore> terminator)
@@ -117,7 +116,7 @@ namespace ParsecSharp
             => new Fix<TToken, T>(function);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Func<TParam, Parser<TToken, T>> Fix<TToken, TParam, T>(Func<Func<TParam, Parser<TToken, T>>, TParam, Parser<TToken, T>> function)
-            => parameter => Delay(() => function(Fix(function), parameter));
+        public static Func<TParameter, Parser<TToken, T>> Fix<TToken, TParameter, T>(Func<Func<TParameter, Parser<TToken, T>>, TParameter, Parser<TToken, T>> function)
+            => parameter => new Fix<TToken, TParameter, T>(function, parameter);
     }
 }

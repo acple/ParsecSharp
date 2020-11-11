@@ -15,7 +15,7 @@ namespace ParsecSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ByteStream<TPosition> Create<TPosition>(Stream source, TPosition position)
             where TPosition : IPosition<byte, TPosition>
-            => new ByteStream<TPosition>(source, position);
+            => new(source, position);
     }
 }
 
@@ -40,9 +40,9 @@ namespace ParsecSharp.Internal
 
         public IDisposable InnerResource { get; }
 
-        public ByteStream<TPosition> Next => this._index == MaxBufferSize - 1
-            ? new ByteStream<TPosition>(this.InnerResource, this._buffer.Next, index: 0, this._position.Next(this.Current))
-            : new ByteStream<TPosition>(this.InnerResource, this._buffer, this._index + 1, this._position.Next(this.Current));
+        public ByteStream<TPosition> Next => this._index < MaxBufferSize - 1
+            ? new(this.InnerResource, this._buffer, this._index + 1, this._position.Next(this.Current))
+            : new(this.InnerResource, this._buffer.Next, index: 0, this._position.Next(this.Current));
 
         public ByteStream(Stream source, TPosition position) : this(source, CreateBuffer(source), index: 0, position)
         { }
@@ -65,7 +65,7 @@ namespace ParsecSharp.Internal
                     .TakeWhile(x => x != -1)
                     .Select(x => (byte)x)
                     .ToArray();
-                return buffer.Length == 0 ? Buffer<byte>.Empty : new Buffer<byte>(buffer, () => CreateBuffer(stream));
+                return new(buffer, buffer.Length == MaxBufferSize ? () => CreateBuffer(stream) : () => Buffer<byte>.Empty);
             }
             catch
             {
@@ -74,14 +74,11 @@ namespace ParsecSharp.Internal
             }
         }
 
-        public IParsecState<byte> GetState()
-            => this;
-
         public void Dispose()
             => this.InnerResource.Dispose();
 
         public bool Equals(ByteStream<TPosition>? other)
-            => other != null && this._buffer == other._buffer && this._index == other._index;
+            => other is not null && this._buffer == other._buffer && this._index == other._index;
 
         public sealed override bool Equals(object? obj)
             => obj is ByteStream<TPosition> state && this._buffer == state._buffer && this._index == state._index;

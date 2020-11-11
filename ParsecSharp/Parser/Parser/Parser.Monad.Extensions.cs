@@ -1,6 +1,5 @@
 using System;
 using System.Runtime.CompilerServices;
-using ParsecSharp.Internal;
 using ParsecSharp.Internal.Parsers;
 
 namespace ParsecSharp

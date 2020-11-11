@@ -4,7 +4,7 @@ namespace ParsecSharp.Internal
 {
     public sealed class EmptyStream<TToken> : IParsecState<TToken, EmptyStream<TToken>>
     {
-        public static EmptyStream<TToken> Instance { get; } = new EmptyStream<TToken>();
+        public static EmptyStream<TToken> Instance { get; } = new();
 
         public TToken Current => default!;
 
@@ -19,14 +19,11 @@ namespace ParsecSharp.Internal
         private EmptyStream()
         { }
 
-        public IParsecState<TToken> GetState()
-            => this;
-
         public void Dispose()
         { }
 
         public bool Equals(EmptyStream<TToken>? other)
-            => ReferenceEquals(this, other);
+            => other is not null;
 
         public sealed override bool Equals(object? obj)
             => ReferenceEquals(this, obj);

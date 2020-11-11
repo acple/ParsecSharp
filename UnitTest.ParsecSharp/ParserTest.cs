@@ -222,6 +222,7 @@ namespace UnitTest.ParsecSharp
             parser.Parse(source2).WillFail();
         }
 
+        [TestMethod]
         public void SatisfyTest()
         {
             // 入力を1つ取り、条件を満たす場合に成功するパーサを作成します。
@@ -234,7 +235,7 @@ namespace UnitTest.ParsecSharp
             parser.Parse(source).WillSucceed(value => value.Is('a'));
 
             // 'a', 'b', 'c' のいずれかにマッチするパーサ。
-            var parser2 = Satisfy(x => "abc".Contains(x)); // == Contains("abc");
+            var parser2 = Satisfy(x => "abc".Contains(x)); // == OneOf("abc");
             parser2.Parse(source).WillSucceed(value => value.Is('a'));
         }
 

@@ -5,7 +5,7 @@ namespace ParsecSharp.Internal.Results
     {
         private readonly TState _state;
 
-        public sealed override IParsecState<TToken> State => this._state.GetState();
+        public sealed override IParsecState<TToken> State => this._state;
 
         public sealed override string Message { get; }
 
@@ -15,7 +15,7 @@ namespace ParsecSharp.Internal.Results
             this.Message = message;
         }
 
-        public sealed override SuspendedResult<TToken, T> Suspend()
+        protected internal sealed override SuspendedResult<TToken, T> Suspend()
             => SuspendedResult<TToken, T>.Create(this, this._state);
 
         public sealed override Failure<TToken, TNext> Convert<TNext>()

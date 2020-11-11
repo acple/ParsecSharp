@@ -9,9 +9,9 @@ namespace ParsecSharp.Internal.Results
 
         private readonly Exception _exception;
 
-        public sealed override IParsecState<TToken> State => this._state.GetState();
+        public sealed override IParsecState<TToken> State => this._state;
 
-        public sealed override ParsecException Exception => new ParsecException(this.ToString(), this._exception);
+        public sealed override ParsecException Exception => new(this.ToString(), this._exception);
 
         public sealed override string Message => $"Exception '{this._exception.GetType().Name}' occurred: {this._exception.ToString()}";
 
@@ -21,7 +21,7 @@ namespace ParsecSharp.Internal.Results
             this._exception = exception;
         }
 
-        public sealed override SuspendedResult<TToken, T> Suspend()
+        protected internal sealed override SuspendedResult<TToken, T> Suspend()
             => SuspendedResult<TToken, T>.Create(this, this._state);
 
         public sealed override Failure<TToken, TNext> Convert<TNext>()

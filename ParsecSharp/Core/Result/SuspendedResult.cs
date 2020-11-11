@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace ParsecSharp
 {
     [StructLayout(LayoutKind.Auto)]
-    public readonly struct SuspendedResult<TToken, T> : ISuspendedState<TToken>
+    public readonly struct SuspendedResult<TToken, T> : ISuspendedState<TToken>, IEquatable<SuspendedResult<TToken, T>>
     {
         public Result<TToken, T> Result { get; }
 
@@ -30,9 +30,18 @@ namespace ParsecSharp
         public void Dispose()
             => this.Rest.Dispose();
 
+        public bool Equals(SuspendedResult<TToken, T> other)
+            => this.Rest == other.Result && this.Rest == other.Rest;
+
+        public override bool Equals(object obj)
+            => obj is SuspendedResult<TToken, T> other && this.Rest == other.Result && this.Rest == other.Rest;
+
+        public override int GetHashCode()
+            => this.Result.GetHashCode() ^ this.Rest.GetHashCode();
+
         public static SuspendedResult<TToken, T> Create<TState>(Result<TToken, T> result, TState state)
             where TState : IParsecState<TToken, TState>
-            => new SuspendedResult<TToken, T>(result, new StateBox<TState>(state));
+            => new(result, new StateBox<TState>(state));
 
         private sealed class StateBox<TState> : ISuspendedState<TToken>
             where TState : IParsecState<TToken, TState>
@@ -52,5 +61,11 @@ namespace ParsecSharp
             public void Dispose()
                 => this._state.Dispose();
         }
+
+        public static bool operator ==(SuspendedResult<TToken, T> left, SuspendedResult<TToken, T> right)
+            => left.Result == right.Result && left.Rest == right.Rest;
+
+        public static bool operator !=(SuspendedResult<TToken, T> left, SuspendedResult<TToken, T> right)
+            => !(left == right);
     }
 }

@@ -28,6 +28,7 @@ This project is affected by [parsec](https://hackage.haskell.org/package/parsec)
 * Supports tokenization
 * Supports partial parsing
 * Supports nullable reference types (with C# 8.0 or later)
+* No additional dependencies
 * Faster running
 * Just enough error messages
 * No left-recursion support

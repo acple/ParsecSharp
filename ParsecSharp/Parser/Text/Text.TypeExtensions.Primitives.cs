@@ -20,6 +20,14 @@ namespace ParsecSharp
             => Null<char>();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<char, Unit> Condition(bool success)
+            => Condition<char>(success);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<char, Unit> Condition(bool success, string message)
+            => Condition<char>(success, message);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, IEnumerable<char>> Take(int count)
             => Take<char>(count);
 

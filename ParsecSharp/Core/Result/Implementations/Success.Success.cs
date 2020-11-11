@@ -15,7 +15,7 @@ namespace ParsecSharp.Internal.Results
         protected sealed override Result<TToken, TResult> RunNext<TNext, TResult>(Parser<TToken, TNext> parser, Func<Result<TToken, TNext>, Result<TToken, TResult>> cont)
             => parser.Run(this._state, cont);
 
-        public sealed override SuspendedResult<TToken, T> Suspend()
+        protected internal sealed override SuspendedResult<TToken, T> Suspend()
             => SuspendedResult<TToken, T>.Create(this, this._state);
 
         public sealed override Result<TToken, TResult> Map<TResult>(Func<T, TResult> function)
