@@ -39,6 +39,12 @@ namespace ParsecSharp.Internal
         public bool Equals(TokenizedStream<TInput, TState, TToken, TPosition>? other)
             => ReferenceEquals(this, other);
 
+        public sealed override bool Equals(object? obj)
+            => ReferenceEquals(this, obj);
+
+        public sealed override int GetHashCode()
+            => base.GetHashCode();
+
         public sealed override string ToString()
             => this.HasValue
                 ? this.Current?.ToString() ?? string.Empty
