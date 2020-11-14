@@ -57,7 +57,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Many1<TToken, T>(Parser<TToken, T> parser)
-            => parser.Bind(x => ManyRec(parser, new List<T> { x }));
+            => parser.Bind(x => ManyRec(parser, new() { x }));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> SkipMany<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
@@ -73,7 +73,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Many1Till<TToken, T, TIgnore>(Parser<TToken, T> parser, Parser<TToken, TIgnore> terminator)
-            => parser.Bind(x => ManyTillRec(parser, terminator, new List<T> { x }));
+            => parser.Bind(x => ManyTillRec(parser, terminator, new() { x }));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> SkipTill<TToken, TIgnore, T>(Parser<TToken, TIgnore> parser, Parser<TToken, T> terminator)
