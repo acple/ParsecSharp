@@ -2,7 +2,7 @@ using System;
 
 namespace ParsecSharp
 {
-    public interface IParsecState<TToken>
+    public interface IParsecState<out TToken>
     {
         TToken Current { get; }
 
@@ -11,7 +11,7 @@ namespace ParsecSharp
         IPosition Position { get; }
     }
 
-    public partial interface IParsecState<TToken, TState> : IParsecState<TToken>, IEquatable<TState>, IDisposable
+    public partial interface IParsecState<out TToken, TState> : IParsecState<TToken>, IEquatable<TState>, IDisposable
         where TState : IParsecState<TToken, TState>
     {
         IDisposable? InnerResource { get; }
