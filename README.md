@@ -60,7 +60,7 @@ PackageReference:
 
 Download manually:
 
-> [NuGet Gallery](https://www.nuget.org/packages/ParsecSharp/)
+> [NuGet gallery](https://www.nuget.org/packages/ParsecSharp/)
 
 
 ## Supported platform
