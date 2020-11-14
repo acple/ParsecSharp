@@ -33,7 +33,7 @@ namespace ParsecSharp
         public bool Equals(SuspendedResult<TToken, T> other)
             => this.Rest == other.Result && this.Rest == other.Rest;
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
             => obj is SuspendedResult<TToken, T> other && this.Rest == other.Result && this.Rest == other.Rest;
 
         public override int GetHashCode()

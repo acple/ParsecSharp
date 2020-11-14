@@ -9,7 +9,7 @@ namespace ParsecSharp
         int Column { get; }
     }
 
-    public interface IPosition<TToken, TPosition> : IPosition
+    public interface IPosition<in TToken, TPosition> : IPosition
         where TPosition : IPosition<TToken, TPosition>
     {
         TPosition Next(TToken token);

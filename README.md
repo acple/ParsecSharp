@@ -50,9 +50,17 @@ NuGet Package Manager Console:
 > Install-Package ParsecSharp
 ```
 
+PackageReference:
+
+```csproj
+<ItemGroup>
+  <PackageReference Include="ParsecSharp" Version="*" />
+</ItemGroup>
+```
+
 Download manually:
 
-> [NuGet Gallery](https://www.nuget.org/packages/ParsecSharp/)
+> [NuGet gallery](https://www.nuget.org/packages/ParsecSharp/)
 
 
 ## Supported platform
