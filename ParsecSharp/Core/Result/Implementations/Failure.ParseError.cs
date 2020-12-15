@@ -15,7 +15,7 @@ namespace ParsecSharp.Internal.Results
         }
 
         protected internal sealed override SuspendedResult<TToken, T> Suspend()
-            => SuspendedResult<TToken, T>.Create(this, this._state);
+            => SuspendedResult.Create(this, this._state);
 
         public sealed override Failure<TToken, TNext> Convert<TNext>()
             => new ParseError<TToken, TState, TNext>(this._state);
