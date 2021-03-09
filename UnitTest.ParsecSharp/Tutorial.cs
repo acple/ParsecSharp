@@ -158,6 +158,31 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
+        public void LinqQueryNotationExample()
+        {
+            // using linq query notation for sequential parser composition
+            {
+                var letterParser = Letter().AsString(); // string
+                var separator = Char('-'); // char
+                var intParser = Many1(DecDigit()).ToInt(); // int
+                var booleanParser = CharIgnoreCase('t').Map(_ => true) | CharIgnoreCase('f').Map(_ => false); // bool
+
+                var parser =
+                    from letter in letterParser
+                    from _ in separator
+                    from number in intParser
+                    from flag in booleanParser
+                    select new { letter, number, flag };
+
+                var result = parser.Parse("A-123T").Value;
+
+                result.letter.Is("A");
+                result.number.Is(123);
+                result.flag.IsTrue();
+            }
+        }
+
+        [TestMethod]
         public void JsonParserExample()
         {
             var source = @"{""key1"":123,""key2"":""abc"",""key3"":{""key3_1"":true,""key3_2"":[1,2,3]},""key4"":-1.234e+2}";

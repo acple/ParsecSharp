@@ -1124,7 +1124,7 @@ namespace UnitTest.ParsecSharp
         }
 
         [TestMethod]
-        public void AbortWhenFailureTest()
+        public void AbortWhenFailTest()
         {
             // パース失敗時にパース処理を中止します。
 

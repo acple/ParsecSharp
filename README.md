@@ -91,6 +91,10 @@ Documents are included in [UnitTest code](UnitTest.ParsecSharp/ParserTest.cs) (j
 If you want more information, read [APIs source code](ParsecSharp/Parser), all is there.
 
 
+## Questions?
+Feel free to create an Issue!
+
+
 ## License
 This software is released under the MIT License, see [LICENSE](LICENSE).
 

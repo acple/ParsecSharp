@@ -21,7 +21,7 @@ namespace ParsecSharp.Internal
 
         public Buffer<TToken> Next => this._next.Value;
 
-        public Buffer(TToken[] buffer, Func<Buffer<TToken>> next) : this(buffer, 0, buffer.Length, next)
+        public Buffer(TToken[] buffer, Func<Buffer<TToken>> next) : this(buffer, index: 0, buffer.Length, next)
         { }
 
         public Buffer(TToken[] buffer, int index, int length, Func<Buffer<TToken>> next)

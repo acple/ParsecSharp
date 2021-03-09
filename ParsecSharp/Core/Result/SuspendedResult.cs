@@ -12,7 +12,7 @@ namespace ParsecSharp
 
         IDisposable? ISuspendedState<TToken>.InnerResource => this.Rest.InnerResource;
 
-        private SuspendedResult(Result<TToken, T> result, ISuspendedState<TToken> rest)
+        public SuspendedResult(Result<TToken, T> result, ISuspendedState<TToken> rest)
         {
             this.Result = result;
             this.Rest = rest;
@@ -31,19 +31,31 @@ namespace ParsecSharp
             => this.Rest.Dispose();
 
         public bool Equals(SuspendedResult<TToken, T> other)
-            => this.Rest == other.Result && this.Rest == other.Rest;
+            => this.Result == other.Result && this.Rest == other.Rest;
 
         public override bool Equals(object? obj)
-            => obj is SuspendedResult<TToken, T> other && this.Rest == other.Result && this.Rest == other.Rest;
+            => obj is SuspendedResult<TToken, T> other && this.Result == other.Result && this.Rest == other.Rest;
 
         public override int GetHashCode()
             => this.Result.GetHashCode() ^ this.Rest.GetHashCode();
 
-        public static SuspendedResult<TToken, T> Create<TState>(Result<TToken, T> result, TState state)
-            where TState : IParsecState<TToken, TState>
-            => new(result, new StateBox<TState>(state));
+        public static bool operator ==(SuspendedResult<TToken, T> left, SuspendedResult<TToken, T> right)
+            => left.Result == right.Result && left.Rest == right.Rest;
 
-        private sealed class StateBox<TState> : ISuspendedState<TToken>
+        public static bool operator !=(SuspendedResult<TToken, T> left, SuspendedResult<TToken, T> right)
+            => !(left == right);
+    }
+}
+
+namespace ParsecSharp.Internal
+{
+    public static class SuspendedResult
+    {
+        public static SuspendedResult<TToken, T> Create<TToken, TState, T>(Result<TToken, T> result, TState state)
+            where TState : IParsecState<TToken, TState>
+            => new(result, new StateBox<TToken, TState>(state));
+
+        private sealed class StateBox<TToken, TState> : ISuspendedState<TToken>
             where TState : IParsecState<TToken, TState>
         {
             private readonly TState _state;
@@ -61,11 +73,5 @@ namespace ParsecSharp
             public void Dispose()
                 => this._state.Dispose();
         }
-
-        public static bool operator ==(SuspendedResult<TToken, T> left, SuspendedResult<TToken, T> right)
-            => left.Result == right.Result && left.Rest == right.Rest;
-
-        public static bool operator !=(SuspendedResult<TToken, T> left, SuspendedResult<TToken, T> right)
-            => !(left == right);
     }
 }

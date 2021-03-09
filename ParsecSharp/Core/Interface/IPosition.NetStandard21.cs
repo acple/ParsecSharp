@@ -11,7 +11,7 @@ namespace ParsecSharp
                 : this.Line != other.Line ? this.Line.CompareTo(other.Line) : this.Column.CompareTo(other.Column);
 
         bool IEquatable<IPosition>.Equals(IPosition? other)
-            => other is not null && this.GetType() == other.GetType() && this.Line == other.Line && this.Column == other.Column;
+            => other is not null && this.Line == other.Line && this.Column == other.Column && this.GetType() == other.GetType();
 
         public static bool operator <(IPosition left, IPosition right)
             => left.CompareTo(right) < 0;
