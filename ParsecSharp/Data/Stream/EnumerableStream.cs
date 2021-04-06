@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using ParsecSharp.Data;
 using ParsecSharp.Internal;
 
 namespace ParsecSharp
@@ -28,7 +29,7 @@ namespace ParsecSharp
     }
 }
 
-namespace ParsecSharp.Internal
+namespace ParsecSharp.Data
 {
     public sealed class EnumerableStream<TToken, TPosition> : IParsecState<TToken, EnumerableStream<TToken, TPosition>>
         where TPosition : IPosition<TToken, TPosition>

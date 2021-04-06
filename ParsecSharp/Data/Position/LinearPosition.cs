@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace ParsecSharp
+namespace ParsecSharp.Data
 {
     [StructLayout(LayoutKind.Auto)]
     public readonly struct LinearPosition<TToken> : IPosition<TToken, LinearPosition<TToken>>, IComparable<LinearPosition<TToken>>, IEquatable<LinearPosition<TToken>>

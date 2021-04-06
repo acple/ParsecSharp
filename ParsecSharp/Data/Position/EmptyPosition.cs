@@ -1,6 +1,6 @@
 using System;
 
-namespace ParsecSharp.Internal
+namespace ParsecSharp.Data
 {
     public sealed class EmptyPosition<TToken> : IPosition<TToken, EmptyPosition<TToken>>, IComparable<EmptyPosition<TToken>>, IEquatable<EmptyPosition<TToken>>
     {

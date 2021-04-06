@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using ParsecSharp.Data;
 using ParsecSharp.Internal;
 
 namespace ParsecSharp
@@ -19,7 +20,7 @@ namespace ParsecSharp
     }
 }
 
-namespace ParsecSharp.Internal
+namespace ParsecSharp.Data
 {
     public sealed class ByteStream<TPosition> : IParsecState<byte, ByteStream<TPosition>>
         where TPosition : IPosition<byte, TPosition>

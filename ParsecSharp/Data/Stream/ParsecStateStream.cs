@@ -1,6 +1,6 @@
 using System;
 
-namespace ParsecSharp.Internal
+namespace ParsecSharp.Data
 {
     public sealed class ParsecStateStream<TToken, TPosition> : IParsecState<TToken, ParsecStateStream<TToken, TPosition>>
         where TPosition : IPosition<TToken, TPosition>
