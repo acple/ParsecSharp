@@ -11,7 +11,7 @@ namespace ParsecSharp.Examples
         private static readonly Parser<char, double> Number =
             Optional(OneOf("-+"), '+')
                 .Append(Many1(DecDigit()))
-                .Append(Optional(Char('.').Append(Many1(DecDigit())), ".0"))
+                .AppendOptional(Char('.').Append(Many1(DecDigit())))
                 .ToDouble();
 
         // 四則演算子にマッチし、二項演算関数にマップ
