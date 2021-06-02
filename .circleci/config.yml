@@ -3,7 +3,7 @@ version: 2.1
 executors:
   dotnet:
     parameters:
-      container_image: { type: string, default: sdk:5.0-alpine }
+      container_image: { type: string, default: sdk:6.0-alpine }
     docker:
       - image: mcr.microsoft.com/dotnet/<< parameters.container_image >>
     working_directory: /project
@@ -27,8 +27,8 @@ jobs:
 
   unittest:
     parameters:
-      container_image: { type: string, default: sdk:5.0-alpine }
-      target_framework: { type: string, default: net5.0 }
+      container_image: { type: string }
+      target_framework: { type: string }
     executor:
       name: dotnet
       container_image: << parameters.container_image >>
@@ -87,7 +87,17 @@ workflows:
               only: /^v\d+\.\d+\.\d+(-.+)?$/
 
       - unittest:
+          name: unittest6.0
+          container_image: sdk:6.0-alpine
+          target_framework: net6.0
+          requires:
+            - build
+          filters: *default_filter
+
+      - unittest:
           name: unittest5.0
+          container_image: sdk:5.0-alpine
+          target_framework: net5.0
           requires:
             - build
           filters: *default_filter
@@ -117,6 +127,7 @@ workflows:
           context: nuget-publish
           requires:
             - pack
+            - unittest6.0
             - unittest5.0
             - unittest3.1
             - unittest2.1
