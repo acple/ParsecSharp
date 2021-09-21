@@ -17,10 +17,10 @@ namespace ParsecSharp.Examples
         // 四則演算子にマッチし、二項演算関数にマップ
         private static readonly Parser<char, Func<double, double, double>> Op =
             Choice(
-                Char('+').Map(_ => (Func<double, double, double>)((x, y) => x + y)),
-                Char('-').Map(_ => (Func<double, double, double>)((x, y) => x - y)),
-                Char('*').Map(_ => (Func<double, double, double>)((x, y) => x * y)),
-                Char('/').Map(_ => (Func<double, double, double>)((x, y) => x / y)));
+                Char('+').Map(_ => (double x, double y) => x + y),
+                Char('-').Map(_ => (double x, double y) => x - y),
+                Char('*').Map(_ => (double x, double y) => x * y),
+                Char('/').Map(_ => (double x, double y) => x / y));
 
         // 式を表す再帰実行パーサ
         // 左再帰の定義: expr = expr expr op / num
