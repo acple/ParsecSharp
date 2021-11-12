@@ -58,7 +58,7 @@ namespace UnitTest.ParsecSharp
                     ExceptionAssert.Throws<ParsecException>(() =>
                     {
                         _ = result.Value;
-                        Assert.Fail($"does not reach here");
+                        Assert.Fail("does not reach here");
                     });
                 }
             }
