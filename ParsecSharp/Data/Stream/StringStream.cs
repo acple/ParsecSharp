@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
+using ParsecSharp.Data;
 using ParsecSharp.Internal;
 
 namespace ParsecSharp
@@ -17,7 +18,7 @@ namespace ParsecSharp
     }
 }
 
-namespace ParsecSharp.Internal
+namespace ParsecSharp.Data
 {
     public sealed class StringStream<TPosition> : IParsecState<char, StringStream<TPosition>>
         where TPosition : IPosition<char, TPosition>

@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
+using ParsecSharp.Data;
 using ParsecSharp.Internal;
 using ParsecSharp.Internal.Parsers;
 

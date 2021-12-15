@@ -3,9 +3,9 @@ version: 2.1
 executors:
   dotnet:
     parameters:
-      container_image: { type: string, default: sdk:5.0-alpine }
+      image_tag: { type: string, default: 6.0-alpine }
     docker:
-      - image: mcr.microsoft.com/dotnet/<< parameters.container_image >>
+      - image: mcr.microsoft.com/dotnet/sdk:<< parameters.image_tag >>
     working_directory: /project
     environment:
       NUGET_PACKAGES: /project/packages
@@ -23,15 +23,16 @@ jobs:
           command: dotnet build -c Release --no-incremental -v normal
       - persist_to_workspace:
           root: .
-          paths: ./*
+          paths:
+            - ./*
 
   unittest:
     parameters:
-      container_image: { type: string, default: sdk:5.0-alpine }
-      target_framework: { type: string, default: net5.0 }
+      image_tag: { type: string }
+      target_framework: { type: string }
     executor:
       name: dotnet
-      container_image: << parameters.container_image >>
+      image_tag: << parameters.image_tag >>
     steps:
       - attach_workspace:
           at: .
@@ -40,7 +41,9 @@ jobs:
           command: >-
             dotnet test -c Release --no-build -v normal
             --framework << parameters.target_framework >>
-            --results-directory ./TestResults --logger "trx;LogFileName=TestResult.xml"
+            --results-directory ./TestResults
+            --logger "console;verbosity=detailed"
+            --logger "trx;LogFileName=TestResult.xml"
             < /dev/null
       - store_artifacts:
           path: ./TestResults/TestResult.xml
@@ -61,7 +64,8 @@ jobs:
           path: ./nuget
       - persist_to_workspace:
           root: ./nuget
-          paths: ./ParsecSharp.*.symbols.nupkg
+          paths:
+            - ./ParsecSharp.*.symbols.nupkg
 
   push:
     executor: dotnet
@@ -87,23 +91,25 @@ workflows:
               only: /^v\d+\.\d+\.\d+(-.+)?$/
 
       - unittest:
+          name: unittest6.0
+          image_tag: 6.0-alpine
+          target_framework: net6.0
+          requires:
+            - build
+          filters: *default_filter
+
+      - unittest:
           name: unittest5.0
+          image_tag: 5.0-alpine
+          target_framework: net5.0
           requires:
             - build
           filters: *default_filter
 
       - unittest:
           name: unittest3.1
-          container_image: core/sdk:3.1-alpine
+          image_tag: 3.1-alpine
           target_framework: netcoreapp3.1
-          requires:
-            - build
-          filters: *default_filter
-
-      - unittest:
-          name: unittest2.1
-          container_image: core/sdk:2.1-alpine
-          target_framework: netcoreapp2.1
           requires:
             - build
           filters: *default_filter
@@ -117,9 +123,9 @@ workflows:
           context: nuget-publish
           requires:
             - pack
+            - unittest6.0
             - unittest5.0
             - unittest3.1
-            - unittest2.1
           filters:
             <<: *default_filter
             branches:

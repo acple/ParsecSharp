@@ -1,6 +1,6 @@
 using System;
 
-namespace ParsecSharp.Internal
+namespace ParsecSharp.Data
 {
     public sealed class EmptyStream<TToken> : IParsecState<TToken, EmptyStream<TToken>>
     {

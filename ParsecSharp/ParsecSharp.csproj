@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;netstandard2.0;netstandard1.6</TargetFrameworks>
-    <LangVersion>9.0</LangVersion>
+    <TargetFrameworks>netstandard2.1;netstandard2.0</TargetFrameworks>
+    <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>
     <RootNamespace>ParsecSharp</RootNamespace>
     <AllowUnsafeBlocks>true<!--for SkipLocalsInit--></AllowUnsafeBlocks>
@@ -30,7 +30,7 @@
   <ItemGroup>
     <PackageReference Include="AggressiveOptimization.Fody" Version="0.1.0" PrivateAssets="All" />
     <PackageReference Include="BuildExtensions.DeterministicPdb" Version="0.1.0" PrivateAssets="All" />
-    <PackageReference Include="Fody" Version="6.4.0" PrivateAssets="All" />
+    <PackageReference Include="Fody" Version="6.6.0" PrivateAssets="All" />
     <PackageReference Include="TailCall.Fody" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 

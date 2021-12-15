@@ -64,9 +64,8 @@ Download manually:
 
 
 ## Supported platform
-* netstandard1.6 (compatible with netcoreapp, net461 or later, uap, xamarin and more)
-* netstandard2.0 (provides same APIs as netstandard1.6, but less dependencies)
-* netstandard2.1 (some performance improvements and some additional APIs that depend on new runtime features)
+* netstandard2.0 (compatible with net461 or later, uap, xamarin and more)
+* netstandard2.1 (compatible with netcoreapp, net5.0 or later, some performance improvements and additional APIs that depend on new runtime features)
 
 **Requires C# 7.3 or later** for generic overloading resolution.
 

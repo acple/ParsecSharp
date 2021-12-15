@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace ParsecSharp
+namespace ParsecSharp.Data
 {
     [StructLayout(LayoutKind.Auto)]
     public readonly struct TextPosition : IPosition<char, TextPosition>, IComparable<TextPosition>, IEquatable<TextPosition>

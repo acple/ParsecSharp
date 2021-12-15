@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using ParsecSharp.Data;
 using ParsecSharp.Internal;
 
 namespace ParsecSharp
@@ -38,7 +39,7 @@ namespace ParsecSharp
     }
 }
 
-namespace ParsecSharp.Internal
+namespace ParsecSharp.Data
 {
     public sealed class TextStream<TPosition> : IParsecState<char, TextStream<TPosition>>
         where TPosition : IPosition<char, TPosition>

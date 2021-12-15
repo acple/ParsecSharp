@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using ParsecSharp.Internal;
+using ParsecSharp.Data;
 
 namespace ParsecSharp
 {
@@ -18,7 +18,7 @@ namespace ParsecSharp
     }
 }
 
-namespace ParsecSharp.Internal
+namespace ParsecSharp.Data
 {
     public sealed class ArrayStream<TToken, TPosition> : IParsecState<TToken, ArrayStream<TToken, TPosition>>
         where TPosition : IPosition<TToken, TPosition>

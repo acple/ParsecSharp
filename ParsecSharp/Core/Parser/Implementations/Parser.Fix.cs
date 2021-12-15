@@ -27,10 +27,7 @@ namespace ParsecSharp.Internal.Parsers
             this._parameter = parameter;
         }
 
-        private Parser<TToken, T> Next(TParamater parameter)
-            => new Fix<TToken, TParamater, T>(this._function, parameter);
-
         internal override Result<TToken, TResult> Run<TState, TResult>(TState state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
-            => this._function(this.Next, this._parameter).Run(state, cont);
+            => this._function(parameter => new Fix<TToken, TParamater, T>(this._function, parameter), this._parameter).Run(state, cont);
     }
 }
