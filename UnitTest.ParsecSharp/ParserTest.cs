@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using ChainingAssertion;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
