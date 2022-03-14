@@ -185,6 +185,7 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void JsonParserExample()
         {
+            // language=json, strict
             var source = @"{""key1"":123,""key2"":""abc"",""key3"":{""key3_1"":true,""key3_2"":[1,2,3]},""key4"":-1.234e+2}";
             var result = JsonParser.Parse(source)
                 .CaseOf(failure => default, success => success.Value);

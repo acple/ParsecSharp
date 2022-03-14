@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using ChainingAssertion;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -833,8 +834,8 @@ namespace UnitTest.ParsecSharp
             // '+'、または '-' にマッチし、それぞれ (x + y)、(x - y) の二項演算関数を返すパーサ。
             // ( "+" / "-" )
             var op = Choice(
-                Char('+').Map(_ => (int x, int y) => x + y),
-                Char('-').Map(_ => (int x, int y) => x - y));
+                Char('+').Map(_ => (Func<int, int, int>)((x, y) => x + y)),
+                Char('-').Map(_ => (Func<int, int, int>)((x, y) => x - y)));
 
             // 1文字以上の数字にマッチし、int に変換するパーサ。
             var num = Many1(Digit()).ToInt();
@@ -866,8 +867,8 @@ namespace UnitTest.ParsecSharp
             // '+'、または '-' にマッチし、それぞれ (x + y)、(x - y) の二項演算関数を返すパーサ。
             // ( "+" / "-" )
             var op = Choice(
-                Char('+').Map(_ => (int x, int y) => x + y),
-                Char('-').Map(_ => (int x, int y) => x - y));
+                Char('+').Map(_ => (Func<int, int, int>)((x, y) => x + y)),
+                Char('-').Map(_ => (Func<int, int, int>)((x, y) => x - y)));
 
             // 1文字以上の数字にマッチし、int に変換するパーサ。
             var num = Many1(Digit()).ToInt();
