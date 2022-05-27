@@ -9,6 +9,6 @@ namespace ParsecSharp.Internal.Parsers
             => Result.Success<TToken, TState, Unit>(Unit.Instance, state);
 
         protected sealed override Result<TToken, Unit> Succeed<TState>(TState state, Success<TToken, TIgnore> success)
-            => Result.Failure<TToken, TState, Unit>($"At {nameof(Not<TToken, TIgnore>)} -> Unexpected succeed with value '{success.ToString()}'", state);
+            => Result.Failure<TToken, TState, Unit>($"Unexpected succeed with value '{success.ToString()}'", state);
     }
 }

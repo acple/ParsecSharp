@@ -134,7 +134,7 @@ namespace UnitTest.ParsecSharp
 
             // 残りの入力よりも大きい数値を指定していた場合は失敗します。
             var parser2 = Take(9);
-            parser2.Parse(source).WillFail(failure => failure.Message.Is("At Take -> An input does not have enough length"));
+            parser2.Parse(source).WillFail(failure => failure.Message.Is("An input does not have enough length"));
         }
 
         [TestMethod]
@@ -156,7 +156,7 @@ namespace UnitTest.ParsecSharp
 
             // 指定数スキップできなかった場合は失敗します。
             var parser3 = Skip(9);
-            parser3.Parse(source).WillFail(failure => failure.Message.Is("At Skip -> An input does not have enough length"));
+            parser3.Parse(source).WillFail(failure => failure.Message.Is("An input does not have enough length"));
         }
 
         [TestMethod]
@@ -658,7 +658,7 @@ namespace UnitTest.ParsecSharp
             var parser = Many1(DecDigit()).ToInt().Guard(x => x < 1000);
 
             var source = _123456;
-            parser.Parse(source).WillFail(failure => failure.Message.Is("At Guard -> A value '123456' does not satisfy condition"));
+            parser.Parse(source).WillFail(failure => failure.Message.Is("A value '123456' does not satisfy condition"));
 
             var source2 = "999";
             parser.Parse(source2).WillSucceed(value => value.Is(999));
@@ -1099,13 +1099,13 @@ namespace UnitTest.ParsecSharp
             // Many 等に入力を消費しない可能性のあるパーサを渡す場合に利用できます。
 
             // Letter にマッチしなかった場合に発生する無限ループを回避したパーサ。
-            var parser = Many1(Many(Letter()).WithConsume().AsString());
+            var parser = Many(Letter()).WithConsume().AsString();
 
             var source = _abcdEFGH;
             parser.Parse(source).WillSucceed(value => value.Is(_abcdEFGH));
 
             var source2 = _123456;
-            parser.Parse(source2).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 1): At Guard -> At WithConsume -> A parser did not consume any input"));
+            parser.Parse(source2).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 1): A parser did not consume any input"));
         }
 
         [TestMethod]
@@ -1132,7 +1132,7 @@ namespace UnitTest.ParsecSharp
                 .Or(Pure("recovery"));
 
             var source = _abcdEFGH;
-            parser.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 5): At AbortWhenFail -> Fatal Error! 'E' is not a lower char!"));
+            parser.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 5): Fatal Error! 'E' is not a lower char!"));
         }
 
         [TestMethod]
@@ -1151,7 +1151,7 @@ namespace UnitTest.ParsecSharp
             parser.Parse(source2).WillSucceed(value => value.Is("recovery"));
 
             var source3 = _commanum;
-            parser.Parse(source3).WillFail(failure => failure.Message.Is("At AbortIfEntered -> abort1234")); // 123まで入力を消費して失敗したため復旧が行われない
+            parser.Parse(source3).WillFail(failure => failure.Message.Is("abort1234")); // 123まで入力を消費して失敗したため復旧が行われない
         }
 
         [TestMethod]
