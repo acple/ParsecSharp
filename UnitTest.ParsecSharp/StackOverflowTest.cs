@@ -20,7 +20,7 @@ namespace UnitTest.ParsecSharp
             var parser = SkipMany(Any<int>());
             var source = new int[count];
 
-            parser.Parse(source);
+            _ = parser.Parse(source);
         }
 
         [TestMethod]
