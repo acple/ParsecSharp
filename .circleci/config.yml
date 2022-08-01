@@ -3,7 +3,7 @@ version: 2.1
 executors:
   dotnet:
     parameters:
-      image_tag: { type: string, default: 6.0-alpine }
+      image_tag: { type: string, default: 7.0-alpine }
     docker:
       - image: mcr.microsoft.com/dotnet/sdk:<< parameters.image_tag >>
     working_directory: /project
@@ -91,17 +91,17 @@ workflows:
               only: /^v\d+\.\d+\.\d+(-.+)?$/
 
       - unittest:
-          name: unittest6.0
-          image_tag: 6.0-alpine
-          target_framework: net6.0
+          name: unittest7.0
+          image_tag: 7.0-alpine
+          target_framework: net7.0
           requires:
             - build
           filters: *default_filter
 
       - unittest:
-          name: unittest5.0
-          image_tag: 5.0-alpine
-          target_framework: net5.0
+          name: unittest6.0
+          image_tag: 6.0-alpine
+          target_framework: net6.0
           requires:
             - build
           filters: *default_filter
@@ -123,8 +123,8 @@ workflows:
           context: nuget-publish
           requires:
             - pack
+            - unittest7.0
             - unittest6.0
-            - unittest5.0
             - unittest3.1
           filters:
             <<: *default_filter
