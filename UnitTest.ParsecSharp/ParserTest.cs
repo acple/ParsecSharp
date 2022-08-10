@@ -806,21 +806,21 @@ namespace UnitTest.ParsecSharp
             // 本来、自己を最初に参照するパーサを直接記述することはできない(無限再帰となるため)。
             // 有名な二項演算の左再帰定義。
             // expr = expr op digit / digit
-            var num = Many1(Digit()).ToInt();
-#nullable disable warnings
-            Parser<char, int> Expr()
+            static Parser<char, int> Expr()
                 => (from x in Expr() // ここで無限再帰
                     from func in Char('+')
-                    from y in num
+                    from y in Num()
                     select x + y)
-                    .Or(num);
-#nullable restore
+                    .Or(Num());
+
+            static Parser<char, int> Num()
+                => Many1(Digit()).ToInt();
 
             // この定義を変形して左再帰を除去することが可能。
             // 二項演算の左再帰除去後の定義。
             // expr = digit *( op digit )
-            Parser<char, int> Expr2()
-                => num.Chain(x => Char('+').Right(num).Map(y => x + y));
+            static Parser<char, int> Expr2()
+                => Num().Chain(x => Char('+').Right(Num()).Map(y => x + y));
             // Chain を使うことで左再帰除去後の定義をそのまま記述できる。
 
             Expr2().Parse("1+2+3+4").Value.Is(1 + 2 + 3 + 4);

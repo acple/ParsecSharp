@@ -64,6 +64,7 @@ namespace UnitTest.ParsecSharp
             }
         }
 
+#pragma warning disable SYSLIB1046 // Use 'RegexGeneratorAttribute' to generate the regular expression implementation at compile-time.
         [TestMethod]
         public void RegexMatchingExample()
         {
@@ -156,6 +157,7 @@ namespace UnitTest.ParsecSharp
                 parser.Parse(source).WillSucceed(value => value.Is('a', 'a', 'b'));
             }
         }
+#pragma warning restore SYSLIB1046 // Use 'RegexGeneratorAttribute' to generate the regular expression implementation at compile-time.
 
         [TestMethod]
         public void LinqQueryNotationExample()
