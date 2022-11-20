@@ -1099,7 +1099,7 @@ namespace UnitTest.ParsecSharp
             // Many 等に入力を消費しない可能性のあるパーサを渡す場合に利用できます。
 
             // Letter にマッチしなかった場合に発生する無限ループを回避したパーサ。
-            var parser = Many(Letter()).WithConsume().AsString();
+            var parser = Many1(Many(Letter()).WithConsume().AsString());
 
             var source = _abcdEFGH;
             parser.Parse(source).WillSucceed(value => value.Is(_abcdEFGH));
