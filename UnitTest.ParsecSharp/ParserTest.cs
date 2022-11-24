@@ -134,7 +134,7 @@ namespace UnitTest.ParsecSharp
 
             // 残りの入力よりも大きい数値を指定していた場合は失敗します。
             var parser2 = Take(9);
-            parser2.Parse(source).WillFail(failure => failure.Message.Is("At Take -> An input does not have enough length"));
+            parser2.Parse(source).WillFail(failure => failure.Message.Is("An input does not have enough length"));
         }
 
         [TestMethod]
@@ -156,7 +156,7 @@ namespace UnitTest.ParsecSharp
 
             // 指定数スキップできなかった場合は失敗します。
             var parser3 = Skip(9);
-            parser3.Parse(source).WillFail(failure => failure.Message.Is("At Skip -> An input does not have enough length"));
+            parser3.Parse(source).WillFail(failure => failure.Message.Is("An input does not have enough length"));
         }
 
         [TestMethod]
@@ -165,7 +165,7 @@ namespace UnitTest.ParsecSharp
             // 与えた条件を満たす限り入力を読み続けるパーサを作成します。
 
             // トークンが Lower である限り入力を読み続けるパーサ。
-            var parser = TakeWhile(x => char.IsLower(x));
+            var parser = TakeWhile(char.IsLower);
 
             var source = _abcdEFGH;
             parser.Parse(source).WillSucceed(value => value.Is('a', 'b', 'c', 'd'));
@@ -181,7 +181,7 @@ namespace UnitTest.ParsecSharp
             // 1件もマッチしなかった場合、失敗を返します。
 
             // トークンが Lower である限り入力を読み続けるパーサ。
-            var parser = TakeWhile1(x => char.IsLower(x));
+            var parser = TakeWhile1(char.IsLower);
 
             var source = _abcdEFGH;
             parser.Parse(source).WillSucceed(value => value.Is('a', 'b', 'c', 'd'));
@@ -197,7 +197,7 @@ namespace UnitTest.ParsecSharp
             // TakeWhile と同様に動作しますが、結果を収集しないため高効率で動作します。
 
             // トークンが Lower である限り入力を消費し続けるパーサ。
-            var parser = SkipWhile(x => char.IsLower(x));
+            var parser = SkipWhile(char.IsLower);
 
             var source = _abcdEFGH;
             parser.Parse(source).WillSucceed(value => value.Is(Unit.Instance));
@@ -213,7 +213,7 @@ namespace UnitTest.ParsecSharp
             // 1件以上スキップできない場合、失敗を返します。
 
             // トークンが Lower である限り入力を消費し続けるパーサ。
-            var parser = SkipWhile1(x => char.IsLower(x));
+            var parser = SkipWhile1(char.IsLower);
 
             var source = _abcdEFGH;
             parser.Parse(source).WillSucceed(value => value.Is(Unit.Instance));
@@ -235,7 +235,7 @@ namespace UnitTest.ParsecSharp
             parser.Parse(source).WillSucceed(value => value.Is('a'));
 
             // 'a', 'b', 'c' のいずれかにマッチするパーサ。
-            var parser2 = Satisfy(x => "abc".Contains(x)); // == OneOf("abc");
+            var parser2 = Satisfy("abc".Contains); // == OneOf("abc");
             parser2.Parse(source).WillSucceed(value => value.Is('a'));
         }
 
@@ -658,7 +658,7 @@ namespace UnitTest.ParsecSharp
             var parser = Many1(DecDigit()).ToInt().Guard(x => x < 1000);
 
             var source = _123456;
-            parser.Parse(source).WillFail(failure => failure.Message.Is("At Guard -> A value '123456' does not satisfy condition"));
+            parser.Parse(source).WillFail(failure => failure.Message.Is("A value '123456' does not satisfy condition"));
 
             var source2 = "999";
             parser.Parse(source2).WillSucceed(value => value.Is(999));
@@ -806,21 +806,21 @@ namespace UnitTest.ParsecSharp
             // 本来、自己を最初に参照するパーサを直接記述することはできない(無限再帰となるため)。
             // 有名な二項演算の左再帰定義。
             // expr = expr op digit / digit
-            var num = Many1(Digit()).ToInt();
-#nullable disable warnings
-            Parser<char, int> Expr()
+            static Parser<char, int> Expr()
                 => (from x in Expr() // ここで無限再帰
                     from func in Char('+')
-                    from y in num
+                    from y in Num()
                     select x + y)
-                    .Or(num);
-#nullable restore
+                    .Or(Num());
+
+            static Parser<char, int> Num()
+                => Many1(Digit()).ToInt();
 
             // この定義を変形して左再帰を除去することが可能。
             // 二項演算の左再帰除去後の定義。
             // expr = digit *( op digit )
-            Parser<char, int> Expr2()
-                => num.Chain(x => Char('+').Right(num).Map(y => x + y));
+            static Parser<char, int> Expr2()
+                => Num().Chain(x => Char('+').Right(Num()).Map(y => x + y));
             // Chain を使うことで左再帰除去後の定義をそのまま記述できる。
 
             Expr2().Parse("1+2+3+4").Value.Is(1 + 2 + 3 + 4);
@@ -1105,7 +1105,7 @@ namespace UnitTest.ParsecSharp
             parser.Parse(source).WillSucceed(value => value.Is(_abcdEFGH));
 
             var source2 = _123456;
-            parser.Parse(source2).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 1): At Guard -> At WithConsume -> A parser did not consume any input"));
+            parser.Parse(source2).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 1): A parser did not consume any input"));
         }
 
         [TestMethod]
@@ -1132,7 +1132,7 @@ namespace UnitTest.ParsecSharp
                 .Or(Pure("recovery"));
 
             var source = _abcdEFGH;
-            parser.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 5): At AbortWhenFail -> Fatal Error! 'E' is not a lower char!"));
+            parser.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 5): Fatal Error! 'E' is not a lower char!"));
         }
 
         [TestMethod]
@@ -1151,7 +1151,7 @@ namespace UnitTest.ParsecSharp
             parser.Parse(source2).WillSucceed(value => value.Is("recovery"));
 
             var source3 = _commanum;
-            parser.Parse(source3).WillFail(failure => failure.Message.Is("At AbortIfEntered -> abort1234")); // 123まで入力を消費して失敗したため復旧が行われない
+            parser.Parse(source3).WillFail(failure => failure.Message.Is("abort1234")); // 123まで入力を消費して失敗したため復旧が行われない
         }
 
         [TestMethod]
@@ -1166,9 +1166,9 @@ namespace UnitTest.ParsecSharp
             var count = 0;
             var parser = Many(Lower().Do(_ => count++));
 
-            parser.Parse(source);
+            _ = parser.Parse(source);
             count.Is(4);
-            parser.Parse(source);
+            _ = parser.Parse(source);
             count.Is(8);
 
             // Lower のパース成功時に success の値を1増やし、パース失敗時に failure の値を1増やします。
@@ -1177,7 +1177,7 @@ namespace UnitTest.ParsecSharp
             var failure = 0;
             var parser2 = Many(Lower().Do(_ => success++, _ => failure++).Or(Any()));
 
-            parser2.Parse(source);
+            _ = parser2.Parse(source);
             success.Is(4);
             failure.Is(5);
         }

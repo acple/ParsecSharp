@@ -33,23 +33,23 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> Letter()
-            => Satisfy(x => char.IsLetter(x));
+            => Satisfy(char.IsLetter);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> LetterOrDigit()
-            => Satisfy(x => char.IsLetterOrDigit(x));
+            => Satisfy(char.IsLetterOrDigit);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> Upper()
-            => Satisfy(x => char.IsUpper(x));
+            => Satisfy(char.IsUpper);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> Lower()
-            => Satisfy(x => char.IsLower(x));
+            => Satisfy(char.IsLower);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> Digit()
-            => Satisfy(x => char.IsDigit(x));
+            => Satisfy(char.IsDigit);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> OctDigit()
@@ -65,31 +65,31 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> Symbol()
-            => Satisfy(x => char.IsSymbol(x));
+            => Satisfy(char.IsSymbol);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> Separator()
-            => Satisfy(x => char.IsSeparator(x));
+            => Satisfy(char.IsSeparator);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> Punctuation()
-            => Satisfy(x => char.IsPunctuation(x));
+            => Satisfy(char.IsPunctuation);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> Number()
-            => Satisfy(x => char.IsNumber(x));
+            => Satisfy(char.IsNumber);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> Surrogate()
-            => Satisfy(x => char.IsSurrogate(x));
+            => Satisfy(char.IsSurrogate);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> HighSurrogate()
-            => Satisfy(x => char.IsHighSurrogate(x));
+            => Satisfy(char.IsHighSurrogate);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> LowSurrogate()
-            => Satisfy(x => char.IsLowSurrogate(x));
+            => Satisfy(char.IsLowSurrogate);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, string> SurrogatePair()
@@ -97,11 +97,11 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> ControlChar()
-            => Satisfy(x => char.IsControl(x));
+            => Satisfy(char.IsControl);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> WhiteSpace()
-            => Satisfy(x => char.IsWhiteSpace(x));
+            => Satisfy(char.IsWhiteSpace);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, Unit> Spaces()

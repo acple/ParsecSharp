@@ -26,7 +26,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> Condition<TToken>(bool success)
-            => Condition<TToken>(success, $"At {nameof(Condition)} -> Given condition was false");
+            => Condition<TToken>(success, "Given condition was false");
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> Condition<TToken>(bool success, string message)

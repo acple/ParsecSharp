@@ -55,7 +55,7 @@ namespace UnitTest.ParsecSharp
                 }
 
                 {
-                    ExceptionAssert.Throws<ParsecException>(() =>
+                    _ = ExceptionAssert.Throws<ParsecException>(() =>
                     {
                         _ = result.Value;
                         Assert.Fail("does not reach here");
@@ -64,6 +64,7 @@ namespace UnitTest.ParsecSharp
             }
         }
 
+#pragma warning disable SYSLIB1045 // Convert to 'GeneratedRegexAttribute'.
         [TestMethod]
         public void RegexMatchingExample()
         {
@@ -156,6 +157,7 @@ namespace UnitTest.ParsecSharp
                 parser.Parse(source).WillSucceed(value => value.Is('a', 'a', 'b'));
             }
         }
+#pragma warning restore SYSLIB1045 // Convert to 'GeneratedRegexAttribute'.
 
         [TestMethod]
         public void LinqQueryNotationExample()
@@ -186,7 +188,18 @@ namespace UnitTest.ParsecSharp
         public void JsonParserExample()
         {
             // language=json, strict
-            var source = @"{""key1"":123,""key2"":""abc"",""key3"":{""key3_1"":true,""key3_2"":[1,2,3]},""key4"":-1.234e+2}";
+            var source = """
+                {
+                  "key1": 123,
+                  "key2": "abc",
+                  "key3": {
+                    "key3_1": true,
+                    "key3_2": [1, 2, 3]
+                  },
+                  "key4": -1.234e+2
+                }
+                """;
+
             var result = JsonParser.Parse(source)
                 .CaseOf(failure => default, success => success.Value);
 
@@ -209,7 +222,14 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void CsvParserExample()
         {
-            var source = $"{"123,abc,def"}\n{"456,\"escaped\"\"\n\",xyz"}\n{"999,2columns"}\n";
+            var source = """
+                123,abc,def
+                456,"escaped""
+                ",xyz
+                999,2columns
+
+                """;
+
             var result = CsvParser.Parse(source).Value.ToArray();
 
             result.Length.Is(3);
