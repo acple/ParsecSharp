@@ -1,4 +1,4 @@
-#if NETSTANDARD2_1
+#if NET || NETSTANDARD2_1_OR_GREATER
 using System;
 
 namespace ParsecSharp

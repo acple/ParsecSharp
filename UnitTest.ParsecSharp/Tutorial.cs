@@ -64,7 +64,9 @@ namespace UnitTest.ParsecSharp
             }
         }
 
+#if NET7_0_OR_GREATER
 #pragma warning disable SYSLIB1045 // Convert to 'GeneratedRegexAttribute'.
+#endif
         [TestMethod]
         public void RegexMatchingExample()
         {
@@ -157,7 +159,9 @@ namespace UnitTest.ParsecSharp
                 parser.Parse(source).WillSucceed(value => value.Is('a', 'a', 'b'));
             }
         }
+#if NET7_0_OR_GREATER
 #pragma warning restore SYSLIB1045 // Convert to 'GeneratedRegexAttribute'.
+#endif
 
         [TestMethod]
         public void LinqQueryNotationExample()
