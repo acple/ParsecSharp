@@ -1,9 +1,7 @@
 using System;
-using System.Runtime.InteropServices;
 
 namespace ParsecSharp
 {
-    [StructLayout(LayoutKind.Auto)]
     public readonly struct SuspendedResult<TToken, T> : ISuspendedState<TToken>, IEquatable<SuspendedResult<TToken, T>>
     {
         public Result<TToken, T> Result { get; }

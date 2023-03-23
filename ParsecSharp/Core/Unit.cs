@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace ParsecSharp
 {
-    [StructLayout(LayoutKind.Auto)]
+    [StructLayout(LayoutKind.Sequential, Pack = 0, Size = 1)]
     public readonly struct Unit : IComparable<Unit>, IEquatable<Unit>
     {
         public static Unit Instance => default;

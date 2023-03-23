@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace ParsecSharp.Data
 {
-    [StructLayout(LayoutKind.Auto)]
+    [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 8)]
     public readonly struct TextPosition : IPosition<char, TextPosition>, IComparable<TextPosition>, IEquatable<TextPosition>
     {
         public static TextPosition Initial => new();
