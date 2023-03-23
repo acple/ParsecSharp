@@ -9,51 +9,51 @@ namespace ParsecSharp
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<byte, short> Int16()
-            => Take(sizeof(short)).Map(x => BitConverter.ToInt16(x.ToArray(), 0));
+            => Take(sizeof(short)).Map(bytes => BitConverter.ToInt16(bytes.ToArray(), 0));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<byte, int> Int32()
-            => Take(sizeof(int)).Map(x => BitConverter.ToInt32(x.ToArray(), 0));
+            => Take(sizeof(int)).Map(bytes => BitConverter.ToInt32(bytes.ToArray(), 0));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<byte, long> Int64()
-            => Take(sizeof(long)).Map(x => BitConverter.ToInt64(x.ToArray(), 0));
+            => Take(sizeof(long)).Map(bytes => BitConverter.ToInt64(bytes.ToArray(), 0));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<byte, ushort> UInt16()
-            => Take(sizeof(ushort)).Map(x => BitConverter.ToUInt16(x.ToArray(), 0));
+            => Take(sizeof(ushort)).Map(bytes => BitConverter.ToUInt16(bytes.ToArray(), 0));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<byte, uint> UInt32()
-            => Take(sizeof(uint)).Map(x => BitConverter.ToUInt32(x.ToArray(), 0));
+            => Take(sizeof(uint)).Map(bytes => BitConverter.ToUInt32(bytes.ToArray(), 0));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<byte, ulong> UInt64()
-            => Take(sizeof(ulong)).Map(x => BitConverter.ToUInt64(x.ToArray(), 0));
+            => Take(sizeof(ulong)).Map(bytes => BitConverter.ToUInt64(bytes.ToArray(), 0));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<byte, short> Int16BigEndian()
-            => Take(sizeof(short)).Map(x => BitConverter.ToInt16(x.Reverse().ToArray(), 0));
+            => Take(sizeof(short)).Map(bytes => BitConverter.ToInt16(bytes.Reverse().ToArray(), 0));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<byte, int> Int32BigEndian()
-            => Take(sizeof(int)).Map(x => BitConverter.ToInt32(x.Reverse().ToArray(), 0));
+            => Take(sizeof(int)).Map(bytes => BitConverter.ToInt32(bytes.Reverse().ToArray(), 0));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<byte, long> Int64BigEndian()
-            => Take(sizeof(long)).Map(x => BitConverter.ToInt64(x.Reverse().ToArray(), 0));
+            => Take(sizeof(long)).Map(bytes => BitConverter.ToInt64(bytes.Reverse().ToArray(), 0));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<byte, ushort> UInt16BigEndian()
-            => Take(sizeof(ushort)).Map(x => BitConverter.ToUInt16(x.Reverse().ToArray(), 0));
+            => Take(sizeof(ushort)).Map(bytes => BitConverter.ToUInt16(bytes.Reverse().ToArray(), 0));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<byte, uint> UInt32BigEndian()
-            => Take(sizeof(uint)).Map(x => BitConverter.ToUInt32(x.Reverse().ToArray(), 0));
+            => Take(sizeof(uint)).Map(bytes => BitConverter.ToUInt32(bytes.Reverse().ToArray(), 0));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<byte, ulong> UInt64BigEndian()
-            => Take(sizeof(ulong)).Map(x => BitConverter.ToUInt64(x.Reverse().ToArray(), 0));
+            => Take(sizeof(ulong)).Map(bytes => BitConverter.ToUInt64(bytes.Reverse().ToArray(), 0));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<byte, sbyte> SByte()
@@ -61,6 +61,6 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<byte, string> Utf8String(int count)
-            => Take(count).Map(x => Encoding.UTF8.GetString(x.ToArray()));
+            => Take(count).Map(bytes => Encoding.UTF8.GetString(bytes.ToArray()));
     }
 }

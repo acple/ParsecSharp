@@ -13,7 +13,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static Parser<TToken, TResult> SelectMany<TToken, T, TTemp, TResult>(this Parser<TToken, T> parser, Func<T, Parser<TToken, TTemp>> selector, Func<T, TTemp, TResult> projector)
+        public static Parser<TToken, TResult> SelectMany<TToken, T, TIntermediate, TResult>(this Parser<TToken, T> parser, Func<T, Parser<TToken, TIntermediate>> selector, Func<T, TIntermediate, TResult> projector)
             => parser.Bind(x => selector(x).Map(y => projector(x, y)));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

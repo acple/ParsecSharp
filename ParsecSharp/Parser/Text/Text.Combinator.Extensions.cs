@@ -13,7 +13,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, string> AsString(this Parser<char, IEnumerable<char>> parser)
-            => parser.Map(x => new string(x.ToArray()));
+            => parser.Map(values => new string(values.ToArray()));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, int> ToInt(this Parser<char, IEnumerable<char>> parser)
@@ -51,6 +51,6 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, string> Join(this Parser<char, IEnumerable<string>> parser, string separator)
-            => parser.Map(x => string.Join(separator, x));
+            => parser.Map(values => string.Join(separator, values));
     }
 }

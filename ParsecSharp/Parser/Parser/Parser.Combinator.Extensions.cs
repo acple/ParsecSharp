@@ -65,7 +65,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, TAccumulator> FoldLeft<TToken, T, TAccumulator>(this Parser<TToken, T> parser, Func<IParsecState<TToken>, TAccumulator> seed, Func<TAccumulator, T, TAccumulator> function)
-            => Pure(seed).Bind(x => parser.FoldLeft(x, function));
+            => Pure(seed).Bind(seed => parser.FoldLeft(seed, function));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> FoldRight<TToken, T>(this Parser<TToken, T> parser, Func<T, T, T> function)
@@ -77,7 +77,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, TAccumulator> FoldRight<TToken, T, TAccumulator>(this Parser<TToken, T> parser, Func<IParsecState<TToken>, TAccumulator> seed, Func<T, TAccumulator, TAccumulator> function)
-            => Pure(seed).Bind(x => parser.FoldRight(x, function));
+            => Pure(seed).Bind(seed => parser.FoldRight(seed, function));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Repeat<TToken, T>(this Parser<TToken, T> parser, int count)
@@ -157,11 +157,11 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T[]> ToArray<TToken, T>(this Parser<TToken, IEnumerable<T>> parser)
-            => parser.Map(x => x.ToArray());
+            => parser.Map(values => values.ToArray());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Flatten<TToken, T>(this Parser<TToken, IEnumerable<IEnumerable<T>>> parser)
-            => parser.Map(x => x.Aggregate(Enumerable.Empty<T>(), (accumulator, x) => accumulator.Concat(x)));
+            => parser.Map(values => values.Aggregate(Enumerable.Empty<T>(), (accumulator, x) => accumulator.Concat(x)));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Singleton<TToken, T>(this Parser<TToken, T> parser)
