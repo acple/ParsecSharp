@@ -41,7 +41,7 @@ namespace ParsecSharp.Examples
         }
 
         private static Parser<char, Func<TNumber, TNumber, TNumber>> Op(char symbol, Func<TNumber, TNumber, TNumber> function)
-            => Char(symbol).Between(Spaces()).Map(_ => function);
+            => Char(symbol).Between(Spaces()).MapConst(function);
 
         public Result<char, TNumber> Parse(string source)
             => this.Parser.Parse(source);

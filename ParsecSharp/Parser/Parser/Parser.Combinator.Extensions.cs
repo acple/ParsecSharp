@@ -85,7 +85,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, TLeft> Left<TToken, TLeft, TRight>(this Parser<TToken, TLeft> left, Parser<TToken, TRight> right)
-            => left.Bind(x => right.Map(_ => x));
+            => left.Bind(x => right.MapConst(x));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, TRight> Right<TToken, TLeft, TRight>(this Parser<TToken, TLeft> left, Parser<TToken, TRight> right)

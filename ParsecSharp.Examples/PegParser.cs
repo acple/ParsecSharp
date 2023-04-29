@@ -73,7 +73,7 @@ namespace ParsecSharp.Examples
             var expression = Fix<char, Rule>(expression =>
             {
                 var primary = Choice(
-                    dot.Map(_ => new Rule(Any().AsString().Map(value => new Result(value)))),
+                    dot.MapConst(new Rule(Any().AsString().Map(value => new Result(value)))),
                     charsetExcept.Map(parser => new Rule(parser.AsString().Map(value => new Result(value)))),
                     charset.Map(parser => new Rule(parser.AsString().Map(value => new Result(value)))),
                     literal.Map(value => new Rule(String(value).Map(value => new Result(value)))),
@@ -83,10 +83,10 @@ namespace ParsecSharp.Examples
 
                 var suffixed =
                     primary.Bind(rule => Choice(
-                        question.Map(_ => new Rule(dict => Optional(rule.Resolve(dict), Result.Empty))),
-                        asterisk.Map(_ => new Rule(dict => Many(rule.Resolve(dict)).Map(Result.Concat))),
-                        plus.Map(_ => new Rule(dict => Many1(rule.Resolve(dict)).Map(Result.Concat))),
-                        spacing.Map(_ => rule)));
+                        question.MapConst(new Rule(dict => Optional(rule.Resolve(dict), Result.Empty))),
+                        asterisk.MapConst(new Rule(dict => Many(rule.Resolve(dict)).Map(Result.Concat))),
+                        plus.MapConst(new Rule(dict => Many1(rule.Resolve(dict)).Map(Result.Concat))),
+                        spacing.MapConst(rule)));
 
                 var prefixed = Choice(
                     and.Right(suffixed).Map(rule => new Rule(dict => LookAhead(rule.Resolve(dict)))),
