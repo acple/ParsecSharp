@@ -1005,21 +1005,77 @@ namespace UnitTest.ParsecSharp
 
             var source = _abcdEFGH;
 
-            // 1文字 + 1文字
-            var parser = Any().Append(Any()).AsString();
-            parser.Parse(source).WillSucceed(value => value.Is("ab"));
+            {
+                // 1文字 + 1文字
+                var parser = Any().Append(Any()).AsString();
+                parser.Parse(source).WillSucceed(value => value.Is("ab"));
+                var source2 = "a";
+                parser.Parse(source2).WillFail();
+            }
 
-            // 小文字*n + 1文字
-            var parser2 = Many(Lower()).Append(Any()).AsString();
-            parser2.Parse(source).WillSucceed(value => value.Is("abcdE"));
+            {
+                // 小文字*n + 1文字
+                var parser = Many1(Lower()).Append(Any()).AsString();
+                parser.Parse(source).WillSucceed(value => value.Is("abcdE"));
+                var source2 = "abcd";
+                parser.Parse(source2).WillFail();
+            }
 
-            // 1文字 + 小文字*n
-            var parser3 = Any().Append(Many(Lower())).AsString();
-            parser3.Parse(source).WillSucceed(value => value.Is("abcd"));
+            {
+                // 1文字 + 小文字*n
+                var parser = Any().Append(Many1(Lower())).AsString();
+                parser.Parse(source).WillSucceed(value => value.Is("abcd"));
+                var source2 = "ABCD";
+                parser.Parse(source2).WillFail();
+            }
 
-            // 小文字*n + 大文字*n
-            var parser4 = Many(Lower()).Append(Many(Upper())).AsString();
-            parser4.Parse(source).WillSucceed(value => value.Is("abcdEFGH"));
+            {
+                // 小文字*n + 大文字*n
+                var parser = Many1(Lower()).Append(Many1(Upper())).AsString();
+                parser.Parse(source).WillSucceed(value => value.Is("abcdEFGH"));
+                var source2 = "abcd";
+                parser.Parse(source2).WillFail();
+            }
+        }
+
+        [TestMethod]
+        public void AppendOptionalTest()
+        {
+            // Append と同様に振る舞いますが、右のパーサが失敗した場合でもその結果を空のシーケンスとして扱い合成します。
+
+            var source = _abcdEFGH;
+
+            {
+                // 1文字 + 1文字
+                var parser = Any().AppendOptional(Any()).AsString();
+                parser.Parse(source).WillSucceed(value => value.Is("ab"));
+                var source2 = "a";
+                parser.Parse(source2).WillSucceed(value => value.Is("a"));
+            }
+
+            {
+                // 小文字*n + 1文字
+                var parser = Many1(Lower()).AppendOptional(Any()).AsString();
+                parser.Parse(source).WillSucceed(value => value.Is("abcdE"));
+                var source2 = "abcd";
+                parser.Parse(source2).WillSucceed(value => value.Is("abcd"));
+            }
+
+            {
+                // 1文字 + 小文字*n
+                var parser = Any().AppendOptional(Many1(Lower())).AsString();
+                parser.Parse(source).WillSucceed(value => value.Is("abcd"));
+                var source2 = "ABCD";
+                parser.Parse(source2).WillSucceed(value => value.Is("A"));
+            }
+
+            {
+                // 小文字*n + 大文字*n
+                var parser = Many1(Lower()).AppendOptional(Many1(Upper())).AsString();
+                parser.Parse(source).WillSucceed(value => value.Is("abcdEFGH"));
+                var source2 = "abcd";
+                parser.Parse(source2).WillSucceed(value => value.Is("abcd"));
+            }
         }
 
         [TestMethod]
