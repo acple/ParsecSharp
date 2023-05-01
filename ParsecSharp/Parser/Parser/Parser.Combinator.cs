@@ -43,8 +43,12 @@ namespace ParsecSharp
             => parser.Next(_ => true, false);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, T> Not<TToken, TIgnore, T>(Parser<TToken, TIgnore> parser, T result)
+            => new Not<TToken, TIgnore, T>(parser, result);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, Unit> Not<TToken, TIgnore>(Parser<TToken, TIgnore> parser)
-            => new Not<TToken, TIgnore>(parser);
+            => Not(parser, Unit.Instance);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> LookAhead<TToken, T>(Parser<TToken, T> parser)

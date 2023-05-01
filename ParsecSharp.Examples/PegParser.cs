@@ -90,7 +90,7 @@ namespace ParsecSharp.Examples
 
                 var prefixed = Choice(
                     and.Right(suffixed).Map(rule => new Rule(dict => LookAhead(rule.Resolve(dict)))),
-                    not.Right(suffixed).Map(rule => new Rule(dict => Not(rule.Resolve(dict)).Map(_ => Result.Empty))),
+                    not.Right(suffixed).Map(rule => new Rule(dict => Not(rule.Resolve(dict), Result.Empty))),
                     suffixed);
 
                 var seq = Many1(prefixed)

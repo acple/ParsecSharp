@@ -1,14 +1,18 @@
 namespace ParsecSharp.Internal.Parsers
 {
-    internal sealed class Not<TToken, TIgnore> : ModifyResult<TToken, TIgnore, Unit>
+    internal sealed class Not<TToken, TIgnore, T> : ModifyResult<TToken, TIgnore, T>
     {
-        public Not(Parser<TToken, TIgnore> parser) : base(parser)
-        { }
+        private readonly T _result;
 
-        protected sealed override Result<TToken, Unit> Fail<TState>(TState state, Failure<TToken, TIgnore> failure)
-            => Result.Success<TToken, TState, Unit>(Unit.Instance, state);
+        public Not(Parser<TToken, TIgnore> parser, T result) : base(parser)
+        {
+            this._result = result;
+        }
 
-        protected sealed override Result<TToken, Unit> Succeed<TState>(TState state, Success<TToken, TIgnore> success)
-            => Result.Failure<TToken, TState, Unit>($"Unexpected succeed with value '{success.ToString()}'", state);
+        protected sealed override Result<TToken, T> Fail<TState>(TState state, Failure<TToken, TIgnore> failure)
+            => Result.Success<TToken, TState, T>(this._result, state);
+
+        protected sealed override Result<TToken, T> Succeed<TState>(TState state, Success<TToken, TIgnore> success)
+            => Result.Failure<TToken, TState, T>($"Unexpected succeed with value '{success.ToString()}'", state);
     }
 }
