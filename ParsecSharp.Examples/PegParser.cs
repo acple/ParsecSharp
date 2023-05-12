@@ -19,23 +19,23 @@ namespace ParsecSharp.Examples
             var comment = Char('#').Right(Match(EndOfLine().Ignore() | EndOfInput()));
             var spacing = SkipMany(whitespace | comment);
 
-            var arrow = String("<-").Left(spacing);
+            var arrow = String("<-").Right(spacing);
 
-            var slash = Char('/').Left(spacing);
+            var slash = Char('/').Right(spacing);
 
-            var dot = Char('.').Left(spacing);
+            var dot = Char('.').Right(spacing);
 
-            var question = Char('?').Left(spacing);
-            var asterisk = Char('*').Left(spacing);
-            var plus = Char('+').Left(spacing);
+            var question = Char('?').Right(spacing);
+            var asterisk = Char('*').Right(spacing);
+            var plus = Char('+').Right(spacing);
 
-            var and = Char('&').Left(spacing);
-            var not = Char('!').Left(spacing);
+            var and = Char('&').Right(spacing);
+            var not = Char('!').Right(spacing);
 
-            var open = Char('(').Left(spacing);
-            var close = Char(')').Left(spacing);
-            var captureOpen = Char('{').Left(spacing);
-            var captureClose = Char('}').Left(spacing);
+            var open = Char('(').Right(spacing);
+            var close = Char(')').Right(spacing);
+            var captureOpen = Char('{').Right(spacing);
+            var captureClose = Char('}').Right(spacing);
 
             var word = Satisfy(x => 'A' <= x && x <= 'Z' || 'a' <= x && x <= 'z');
             var digit = DecDigit();
