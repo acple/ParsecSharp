@@ -37,7 +37,7 @@ namespace ParsecSharp.Examples
             var captureOpen = Char('{').Right(spacing);
             var captureClose = Char('}').Right(spacing);
 
-            var word = Satisfy(x => 'A' <= x && x <= 'Z' || 'a' <= x && x <= 'z');
+            var word = AsciiLetter();
             var digit = DecDigit();
             var underscore = Char('_');
 
