@@ -23,7 +23,7 @@ namespace ParsecSharp.Data
         public int CompareTo(IPosition? other)
             => other is null
                 ? 1 // always greater than null
-                : this.Line != other.Line ? this.Line.CompareTo(other.Line) : this.Column.CompareTo(other.Column);
+                : other.Line != 0 ? -other.Line : this.Column.CompareTo(other.Column);
 
         public int CompareTo(LinearPosition<TToken> other)
             => this.Column.CompareTo(other.Column);
