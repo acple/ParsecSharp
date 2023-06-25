@@ -1,10 +1,7 @@
 namespace ParsecSharp.Internal.Parsers
 {
-    internal sealed class LookAhead<TToken, T> : ModifyResult<TToken, T, T>
+    internal sealed class LookAhead<TToken, T>(Parser<TToken, T> parser) : ModifyResult<TToken, T, T>(parser)
     {
-        public LookAhead(Parser<TToken, T> parser) : base(parser)
-        { }
-
         protected sealed override Result<TToken, T> Fail<TState>(TState state, Failure<TToken, T> failure)
             => Result.Failure<TToken, TState, T>($"At {nameof(LookAhead<TToken, T>)} -> {failure.ToString()}", state);
 

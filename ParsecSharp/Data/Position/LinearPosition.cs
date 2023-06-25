@@ -4,29 +4,24 @@ using System.Runtime.InteropServices;
 namespace ParsecSharp.Data
 {
     [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 4)]
-    public readonly struct LinearPosition<TToken> : IPosition<TToken, LinearPosition<TToken>>, IComparable<LinearPosition<TToken>>, IEquatable<LinearPosition<TToken>>
+    public readonly struct LinearPosition<TToken>(int index) : IPosition<TToken, LinearPosition<TToken>>, IComparable<LinearPosition<TToken>>, IEquatable<LinearPosition<TToken>>
     {
         public static LinearPosition<TToken> Initial => default;
 
         public int Line => 0;
 
-        public int Column { get; }
-
-        public LinearPosition(int index)
-        {
-            this.Column = index;
-        }
+        public int Column => index;
 
         public LinearPosition<TToken> Next(TToken token)
-            => new(this.Column + 1);
+            => new(index + 1);
 
         public int CompareTo(IPosition? other)
             => other is null
                 ? 1 // always greater than null
-                : other.Line != 0 ? -other.Line : this.Column.CompareTo(other.Column);
+                : other.Line != 0 ? -other.Line : index.CompareTo(other.Column);
 
         public int CompareTo(LinearPosition<TToken> other)
-            => this.Column.CompareTo(other.Column);
+            => index.CompareTo(other.Column);
 
         public bool Equals(IPosition? other)
             => other is LinearPosition<TToken> position && this == position;
@@ -38,10 +33,10 @@ namespace ParsecSharp.Data
             => obj is LinearPosition<TToken> position && this == position;
 
         public override int GetHashCode()
-            => this.Column;
+            => index;
 
         public override string ToString()
-            => $"Index: {this.Column.ToString()}";
+            => $"Index: {index.ToString()}";
 
         public static bool operator ==(LinearPosition<TToken> left, LinearPosition<TToken> right)
             => left.Column == right.Column;

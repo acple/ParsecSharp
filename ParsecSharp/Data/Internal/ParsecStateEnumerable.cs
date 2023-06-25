@@ -3,18 +3,11 @@ using System.Collections.Generic;
 
 namespace ParsecSharp.Internal
 {
-    public sealed class ParsecStateEnumerable<TToken, TState> : IEnumerable<TState>
+    public sealed class ParsecStateEnumerable<TToken, TState>(TState source) : IEnumerable<TState>
         where TState : IParsecState<TToken, TState>
     {
-        private readonly TState _source;
-
-        public ParsecStateEnumerable(TState source)
-        {
-            this._source = source;
-        }
-
         public IEnumerator<TState> GetEnumerator()
-            => new ParsecStateEnumerator<TToken, TState>(this._source);
+            => new ParsecStateEnumerator<TToken, TState>(source);
 
         IEnumerator IEnumerable.GetEnumerator()
             => this.GetEnumerator();

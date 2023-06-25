@@ -8,29 +8,15 @@ namespace ParsecSharp.Internal.Parsers
             => Result.Failure<TToken, TState, T>(state);
     }
 
-    internal sealed class FailWithMessage<TToken, T> : PrimitiveParser<TToken, T>
+    internal sealed class FailWithMessage<TToken, T>(string message) : PrimitiveParser<TToken, T>
     {
-        private readonly string _message;
-
-        public FailWithMessage(string message)
-        {
-            this._message = message;
-        }
-
         protected sealed override Result<TToken, T> Run<TState>(TState state)
-            => Result.Failure<TToken, TState, T>(this._message, state);
+            => Result.Failure<TToken, TState, T>(message, state);
     }
 
-    internal sealed class FailWithMessageDelayed<TToken, T> : PrimitiveParser<TToken, T>
+    internal sealed class FailWithMessageDelayed<TToken, T>(Func<IParsecState<TToken>, string> message) : PrimitiveParser<TToken, T>
     {
-        private readonly Func<IParsecState<TToken>, string> _message;
-
-        public FailWithMessageDelayed(Func<IParsecState<TToken>, string> message)
-        {
-            this._message = message;
-        }
-
         protected sealed override Result<TToken, T> Run<TState>(TState state)
-            => Result.Failure<TToken, TState, T>(this._message(state), state);
+            => Result.Failure<TToken, TState, T>(message(state), state);
     }
 }
