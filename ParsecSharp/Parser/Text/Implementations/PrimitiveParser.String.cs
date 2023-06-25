@@ -17,11 +17,11 @@ namespace ParsecSharp.Internal.Parsers
 
         protected sealed override Result<char, string> Run<TState>(TState state)
         {
-            var result = ParsecState.AsEnumerable<char, TState>(state).Take(this._text.Length).ToArray();
-            var text = new string(result.Select(x => x.Current).ToArray());
-            return string.Equals(text, this._text, this._comparison)
-                ? Result.Success<char, TState, string>(text, result.Length == 0 ? state : result.Last().Next)
-                : Result.Failure<char, TState, string>($"Expected '{this._text}' but was '{text}'", state);
+            var states = ParsecState.AsEnumerable<char, TState>(state).Take(this._text.Length).ToArray();
+            var result = new string(states.Select(x => x.Current).ToArray());
+            return string.Equals(result, this._text, this._comparison)
+                ? Result.Success<char, TState, string>(result, states.Length == 0 ? state : states.Last().Next)
+                : Result.Failure<char, TState, string>($"Expected '{this._text}' but was '{result}'", state);
         }
     }
 }
