@@ -13,7 +13,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> SeparatedBy1<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> separator)
-            => parser.Bind(x => ManyRec(separator.Right(parser), new[] { x }));
+            => parser.Bind(x => ManyRec(separator.Right(parser), [x]));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> EndBy<TToken, T, TIgnore>(this Parser<TToken, T> parser, Parser<TToken, TIgnore> separator)
@@ -109,7 +109,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Append<TToken, T>(this Parser<TToken, T> left, Parser<TToken, T> right)
-            => left.Bind(x => right.Map(y => new[] { x, y }.AsEnumerable()));
+            => left.Bind(x => right.Map(y => (IEnumerable<T>)[x, y]));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Append<TToken, T>(this Parser<TToken, T> left, Parser<TToken, IEnumerable<T>> right)
@@ -125,11 +125,11 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> AppendOptional<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, T> optional)
-            => parser.Bind(x => optional.Next(y => new[] { x, y }.AsEnumerable(), new[] { x }));
+            => parser.Bind(x => optional.Next(y => (IEnumerable<T>)[x, y], [x]));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> AppendOptional<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, IEnumerable<T>> optional)
-            => parser.Bind(x => optional.Next(y => y.Prepend(x), new[] { x }));
+            => parser.Bind(x => optional.Next(y => y.Prepend(x), [x]));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> AppendOptional<TToken, T>(this Parser<TToken, IEnumerable<T>> parser, Parser<TToken, T> optional)
@@ -165,7 +165,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Singleton<TToken, T>(this Parser<TToken, T> parser)
-            => parser.Map(x => new[] { x }.AsEnumerable());
+            => parser.Map(x => (IEnumerable<T>)[x]);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> WithConsume<TToken, T>(this Parser<TToken, T> parser)
