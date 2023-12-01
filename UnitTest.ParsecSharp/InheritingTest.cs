@@ -16,11 +16,8 @@ namespace UnitTest.ParsecSharp
                 => base.ToString();
         }
 
-        private class ModifyResultInheritingTest<TToken, T> : ModifyResult<TToken, T, T>
+        private class ModifyResultInheritingTest<TToken, T>(Parser<TToken, T> parser) : ModifyResult<TToken, T, T>(parser)
         {
-            public ModifyResultInheritingTest(Parser<TToken, T> parser) : base(parser)
-            { }
-
             protected override Result<TToken, T> Fail<TState>(TState state, Failure<TToken, T> failure)
                 => throw new NotImplementedException();
 
@@ -31,12 +28,9 @@ namespace UnitTest.ParsecSharp
                 => base.ToString();
         }
 
-        private class SuccessInheritingTest<TToken, T> : Success<TToken, T>
+        private class SuccessInheritingTest<TToken, T>(T result) : Success<TToken, T>(result)
         {
             public override T Value => base.Value;
-
-            public SuccessInheritingTest(T result) : base(result)
-            { }
 
             public override Result<TToken, TResult> Map<TResult>(Func<T, TResult> function)
                 => throw new NotImplementedException();

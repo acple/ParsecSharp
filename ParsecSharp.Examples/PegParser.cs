@@ -122,38 +122,25 @@ namespace ParsecSharp.Examples
     }
 
     // recursive type alias: Rule = IReadOnlyDictionary<string, Rule> -> Parser<char, Result>
-    file readonly struct Rule
+    file readonly struct Rule(Func<IReadOnlyDictionary<string, Rule>, Parser<char, Result>> resolver)
     {
-        private readonly Func<IReadOnlyDictionary<string, Rule>, Parser<char, Result>> _resolver;
-
         public Rule(Parser<char, Result> parser) : this(_ => parser)
         { }
 
-        public Rule(Func<IReadOnlyDictionary<string, Rule>, Parser<char, Result>> resolver)
-        {
-            this._resolver = resolver;
-        }
-
         public Parser<char, Result> Resolve(IReadOnlyDictionary<string, Rule> dict)
-            => this._resolver(dict);
+            => resolver(dict);
     }
 
-    file class Result
+    file class Result(string value, IEnumerable<string> matches)
     {
         public static Result Empty { get; } = new(string.Empty);
 
-        public string Value { get; }
+        public string Value { get; } = value;
 
-        public IEnumerable<string> Matches { get; }
+        public IEnumerable<string> Matches { get; } = matches;
 
         public Result(string value) : this(value, Enumerable.Empty<string>())
         { }
-
-        public Result(string value, IEnumerable<string> matches)
-        {
-            this.Value = value;
-            this.Matches = matches;
-        }
 
         public Result Capture()
             => new(this.Value, this.Matches.Prepend(this.Value));
