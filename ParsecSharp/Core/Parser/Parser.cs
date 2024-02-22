@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.CompilerServices;
 using ParsecSharp.Data;
 using ParsecSharp.Internal;
 using ParsecSharp.Internal.Parsers;
@@ -18,7 +17,7 @@ namespace ParsecSharp
             where TState : IParsecState<TToken, TState>
         {
             using (source.InnerResource)
-                return this.Run(ref source); // move parameter ownership here
+                return this.Run(source);
         }
 
         public Result<TToken, T> Parse(ISuspendedState<TToken> suspended)
@@ -29,35 +28,22 @@ namespace ParsecSharp
 
         public SuspendedResult<TToken, T> ParsePartially<TState>(TState source)
             where TState : IParsecState<TToken, TState>
-            => this.Run(ref source).Suspend();
+            => this.Run(source).Suspend();
 
         public SuspendedResult<TToken, T> ParsePartially(ISuspendedState<TToken> suspended)
             => suspended.Continue(this);
 
-        private Result<TToken, T> Run<TState>(ref TState source)
+        private Result<TToken, T> Run<TState>(TState source)
             where TState : IParsecState<TToken, TState>
         {
             try
             {
-                return this.RunCore(ref source);
+                return this.Run(source, result => result);
             }
             catch (Exception exception)
             {
                 return Result.Failure<TToken, EmptyStream<TToken>, T>(exception, EmptyStream<TToken>.Instance);
             }
-        }
-
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        private Result<TToken, T> RunCore<TState>(ref TState source)
-            where TState : IParsecState<TToken, TState>
-            => this.Run(Move(ref source), result => result); // consume source here
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static TReference Move<TReference>(ref TReference value)
-        {
-            var result = value;
-            value = default!;
-            return result;
         }
 
         public sealed override bool Equals(object? obj)

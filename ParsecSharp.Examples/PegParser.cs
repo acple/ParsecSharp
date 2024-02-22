@@ -139,7 +139,7 @@ namespace ParsecSharp.Examples
 
         public IEnumerable<string> Matches { get; } = matches;
 
-        public Result(string value) : this(value, Enumerable.Empty<string>())
+        public Result(string value) : this(value, [])
         { }
 
         public Result Capture()
