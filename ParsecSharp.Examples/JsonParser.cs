@@ -105,7 +105,7 @@ namespace ParsecSharp.Examples
             var jsonNull = String("null").Map(_ => null as object);
 
             // JSON の値にマッチします。
-            var jsonValue = Fix<char, dynamic?>(jsonValue =>
+            var jsonValue = Fix<dynamic?>(jsonValue =>
             {
                 // name : value ペアにマッチします。
                 // member = string name-separator value

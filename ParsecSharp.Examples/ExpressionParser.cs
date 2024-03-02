@@ -30,7 +30,7 @@ namespace ParsecSharp.Examples
             var open = Char('(').Between(Spaces());
             var close = Char(')').Between(Spaces());
 
-            var expr = Fix<char, TNumber>(expr =>
+            var expr = Fix<TNumber>(expr =>
             {
                 var factor = number | expr.Between(open, close);
                 var term = factor.ChainLeft(muldiv);

@@ -70,7 +70,7 @@ namespace ParsecSharp.Examples
             var charsetExcept = charsetElement.Quote(String("[^"), Char(']')).Map(Any().Except);
             var charset = charsetElement.Quote(Char('['), Char(']')).Map(Choice);
 
-            var expression = Fix<char, Rule>(expression =>
+            var expression = Fix<Rule>(expression =>
             {
                 var primary = Choice(
                     dot.MapConst(new Rule(Any().AsString().Map(value => new Result(value)))),

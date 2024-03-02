@@ -615,14 +615,14 @@ namespace UnitTest.ParsecSharp
             // C# の仕様上、単体で使用する場合は型情報が不足するため、型引数を与える必要があります。
 
             // 任意の回数の "{}" に挟まれた一文字にマッチするパーサ。
-            var parser = Fix<char, char>(self => self.Or(Any()).Between(Char('{'), Char('}')));
+            var parser = Fix<char>(self => self.Or(Any()).Between(Char('{'), Char('}')));
 
             var source = "{{{{{*}}}}}";
             parser.Parse(source).WillSucceed(value => value.Is('*'));
 
             // パラメータを取るオーバーロード。柔軟に再帰パーサを記述できます。
             // 有名な回文パーサ。 S ::= "a" S "a" | "b" S "b" | ""
-            var parser2 = Fix<char, Parser<char, Unit>, Unit>((self, rest) =>
+            var parser2 = Fix<Parser<char, Unit>, Unit>((self, rest) =>
                 Char('a').Right(self(Char('a').Right(rest))) | Char('b').Right(self(Char('b').Right(rest))) | rest);
 
             var source2 = "abbaabba";
