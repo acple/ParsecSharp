@@ -8,7 +8,7 @@ using static ParsecSharp.Text;
 namespace ParsecSharp.Examples
 {
     // JSON パーサ、RFC8259 に忠実なつくり
-    public static class JsonParser
+    public class JsonParser
     {
         public static Parser<char, dynamic?> Parser { get; } = CreateParser();
 
@@ -144,16 +144,19 @@ namespace ParsecSharp.Examples
             return parser;
         }
 
-        // パース結果を dynamic に詰める拡張メソッド。
-        private static Parser<TToken, dynamic?> AsDynamic<TToken, T>(this Parser<TToken, T> parser)
-            => parser.Map(x => x as dynamic);
-
         // string をパースして dynamic に詰めて返します。
-        public static Result<char, dynamic?> Parse(string json)
+        public Result<char, dynamic?> Parse(string json)
             => Parser.Parse(json);
 
         // Stream をパースして dynamic に詰めて返します。テキストは UTF-8 でエンコードされている必要があります。
-        public static Result<char, dynamic?> Parse(Stream json)
+        public Result<char, dynamic?> Parse(Stream json)
             => Parser.Parse(json);
+    }
+
+    file static class Extensions
+    {
+        // パース結果を dynamic に詰める拡張メソッド。
+        public static Parser<TToken, dynamic?> AsDynamic<TToken, T>(this Parser<TToken, T> parser)
+            => parser.Map(x => x as dynamic);
     }
 }

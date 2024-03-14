@@ -7,7 +7,7 @@ using static ParsecSharp.Text;
 namespace ParsecSharp.Examples
 {
     // CSV パーサ、RFC4180 にそこそこ忠実
-    public static class CsvParser
+    public class CsvParser
     {
         public static Parser<char, IEnumerable<string[]>> Parser { get; } = CreateParser();
 
@@ -52,13 +52,13 @@ namespace ParsecSharp.Examples
             return parser;
         }
 
-        public static Result<char, IEnumerable<string[]>> Parse(string csv)
+        public Result<char, IEnumerable<string[]>> Parse(string csv)
             => Parser.Parse(csv);
 
-        public static Result<char, IEnumerable<string[]>> Parse(Stream csv)
+        public Result<char, IEnumerable<string[]>> Parse(Stream csv)
             => Parser.Parse(csv);
 
-        public static Result<char, IEnumerable<string[]>> Parse(Stream csv, Encoding encoding)
+        public Result<char, IEnumerable<string[]>> Parse(Stream csv, Encoding encoding)
             => Parser.Parse(csv, encoding);
     }
 }

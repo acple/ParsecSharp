@@ -191,6 +191,8 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void JsonParserExample()
         {
+            var parser = new JsonParser();
+
             // language=json, strict
             var source = """
                 {
@@ -204,7 +206,7 @@ namespace UnitTest.ParsecSharp
                 }
                 """;
 
-            var result = JsonParser.Parse(source)
+            var result = parser.Parse(source)
                 .CaseOf(failure => default, success => success.Value);
 
             var key1 = (double)result?["key1"];
@@ -226,6 +228,8 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void CsvParserExample()
         {
+            var parser = new CsvParser();
+
             var source = """
                 123,abc,def
                 456,"escaped""
@@ -234,7 +238,7 @@ namespace UnitTest.ParsecSharp
 
                 """;
 
-            var result = CsvParser.Parse(source).Value.ToArray();
+            var result = parser.Parse(source).Value.ToArray();
 
             result.Length.Is(3);
 

@@ -47,14 +47,9 @@ namespace ParsecSharp.Examples
                 Char('n').Map(_ => '\n'),
                 Char('r').Map(_ => '\r'),
                 Char('t').Map(_ => '\t'),
-                Char('\''),
-                Char('"'),
-                Char('['),
-                Char(']'),
-                Char('\\'),
                 Char('u').Right(HexDigit().Repeat(4).AsString())
                     .Map(hex => (char)int.Parse(hex, NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo)), // JSON-style unicode escape
-                Any()));
+                Any().Except(Char('u'))));
 
             var character = escapedChar | Any();
 
@@ -64,11 +59,11 @@ namespace ParsecSharp.Examples
                 from end in character
                 select Satisfy(x => start <= x && x <= end);
 
-            var literal = (character.Quote(Char('\'')).AsString() | character.Quote(Char('"')).AsString()).Left(spacing);
+            var literal = (character.Quote(Char('\'')) | character.Quote(Char('"'))).AsString().Left(spacing);
 
             var charsetElement = range | character.Map(Char);
-            var charsetExcept = charsetElement.Quote(String("[^"), Char(']')).Map(Any().Except);
-            var charset = charsetElement.Quote(Char('['), Char(']')).Map(Choice);
+            var charsetExcept = charsetElement.Quote(String("[^"), Char(']')).Map(Any().Except).Left(spacing);
+            var charset = charsetElement.Quote(Char('['), Char(']')).Map(Choice).Left(spacing);
 
             var expression = Fix<Rule>(expression =>
             {
@@ -81,23 +76,23 @@ namespace ParsecSharp.Examples
                     expression.Between(open, close),
                     expression.Between(captureOpen, captureClose).Map(rule => new Rule(dict => rule.Resolve(dict).Map(result => result.Capture()))));
 
-                var suffixed =
-                    primary.Bind(rule => Choice(
+                var suffixed = primary
+                    .Bind(rule => Choice(
                         question.MapConst(new Rule(dict => Optional(rule.Resolve(dict), Result.Empty))),
                         asterisk.MapConst(new Rule(dict => Many(rule.Resolve(dict)).Map(Result.Concat))),
                         plus.MapConst(new Rule(dict => Many1(rule.Resolve(dict)).Map(Result.Concat))),
-                        spacing.MapConst(rule)));
+                        Pure(rule)));
 
                 var prefixed = Choice(
                     and.Right(suffixed).Map(rule => new Rule(dict => LookAhead(rule.Resolve(dict)))),
                     not.Right(suffixed).Map(rule => new Rule(dict => Not(rule.Resolve(dict), Result.Empty))),
                     suffixed);
 
-                var seq = Many1(prefixed)
-                    .Map(rules => new Rule(dict => Sequence(rules.Select(rule => rule.Resolve(dict))).Map(Result.Concat)));
+                var sequence = Many1(prefixed)
+                    .Map(rules => rules.Count() == 1 ? rules.First() : new Rule(dict => Sequence(rules.Select(rule => rule.Resolve(dict))).Map(Result.Concat)));
 
-                return seq.SeparatedBy1(slash)
-                    .Map(rules => new Rule(dict => Choice(rules.Select(rule => rule.Resolve(dict)))))
+                return sequence.SeparatedBy1(slash)
+                    .Map(rules => rules.Count() == 1 ? rules.First() : new Rule(dict => Choice(rules.Select(rule => rule.Resolve(dict)))))
                     .AbortIfEntered();
             });
 
@@ -107,7 +102,7 @@ namespace ParsecSharp.Examples
                 from rule in expression
                 select (name, rule);
 
-            return spacing.Right(Many1(definition)).End().Map(definitions =>
+            var grammar = spacing.Right(Many1(definition)).End().Map(definitions =>
             {
                 var dict = definitions.ToDictionary(x => x.name, x => x.rule);
                 var parsers = definitions
@@ -115,6 +110,8 @@ namespace ParsecSharp.Examples
                     .ToDictionary(x => x.name, x => x.rule.Resolve(dict).Map(result => result.Matches.Prepend(result.Value).ToArray()));
                 return parsers as IReadOnlyDictionary<string, Parser<char, string[]>>;
             });
+
+            return grammar;
         }
 
         public Result<char, IReadOnlyDictionary<string, Parser<char, string[]>>> Parse(string peg)
