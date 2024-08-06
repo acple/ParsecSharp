@@ -1,22 +1,14 @@
 using System;
-using System.Runtime.InteropServices;
 
 namespace ParsecSharp
 {
-    [StructLayout(LayoutKind.Auto)]
-    public readonly struct SuspendedResult<TToken, T> : ISuspendedState<TToken>, IEquatable<SuspendedResult<TToken, T>>
+    public readonly struct SuspendedResult<TToken, T>(Result<TToken, T> result, ISuspendedState<TToken> rest) : ISuspendedState<TToken>, IEquatable<SuspendedResult<TToken, T>>
     {
-        public Result<TToken, T> Result { get; }
+        public Result<TToken, T> Result => result;
 
-        public ISuspendedState<TToken> Rest { get; }
+        public ISuspendedState<TToken> Rest => rest;
 
-        IDisposable? ISuspendedState<TToken>.InnerResource => this.Rest.InnerResource;
-
-        public SuspendedResult(Result<TToken, T> result, ISuspendedState<TToken> rest)
-        {
-            this.Result = result;
-            this.Rest = rest;
-        }
+        IDisposable? ISuspendedState<TToken>.InnerResource => rest.InnerResource;
 
         public void Deconstruct(out Result<TToken, T> result, out ISuspendedState<TToken> rest)
         {
@@ -25,19 +17,19 @@ namespace ParsecSharp
         }
 
         SuspendedResult<TToken, TResult> ISuspendedState<TToken>.Continue<TResult>(Parser<TToken, TResult> parser)
-            => this.Rest.Continue(parser);
+            => rest.Continue(parser);
 
         public void Dispose()
-            => this.Rest.Dispose();
+            => rest.Dispose();
 
         public bool Equals(SuspendedResult<TToken, T> other)
-            => this.Result == other.Result && this.Rest == other.Rest;
+            => result == other.Result && rest == other.Rest;
 
         public override bool Equals(object? obj)
-            => obj is SuspendedResult<TToken, T> other && this.Result == other.Result && this.Rest == other.Rest;
+            => obj is SuspendedResult<TToken, T> other && result == other.Result && rest == other.Rest;
 
         public override int GetHashCode()
-            => this.Result.GetHashCode() ^ this.Rest.GetHashCode();
+            => result.GetHashCode() ^ rest.GetHashCode();
 
         public static bool operator ==(SuspendedResult<TToken, T> left, SuspendedResult<TToken, T> right)
             => left.Result == right.Result && left.Rest == right.Rest;
@@ -55,23 +47,16 @@ namespace ParsecSharp.Internal
             where TState : IParsecState<TToken, TState>
             => new(result, new StateBox<TToken, TState>(state));
 
-        private sealed class StateBox<TToken, TState> : ISuspendedState<TToken>
+        private sealed class StateBox<TToken, TState>(TState state) : ISuspendedState<TToken>
             where TState : IParsecState<TToken, TState>
         {
-            private readonly TState _state;
-
-            public IDisposable? InnerResource => this._state.InnerResource;
-
-            public StateBox(TState state)
-            {
-                this._state = state;
-            }
+            public IDisposable? InnerResource => state.InnerResource;
 
             public SuspendedResult<TToken, TResult> Continue<TResult>(Parser<TToken, TResult> parser)
-                => parser.ParsePartially(this._state);
+                => parser.ParsePartially(state);
 
             public void Dispose()
-                => this._state.Dispose();
+                => state.Dispose();
         }
     }
 }

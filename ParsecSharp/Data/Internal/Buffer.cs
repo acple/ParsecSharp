@@ -5,35 +5,23 @@ using System.Linq;
 
 namespace ParsecSharp.Internal
 {
-    public sealed class Buffer<TToken> : IReadOnlyList<TToken>
+    public sealed class Buffer<TToken>(TToken[] buffer, int offset, int length, Func<Buffer<TToken>> next) : IReadOnlyList<TToken>
     {
-        public static Buffer<TToken> Empty { get; } = new(Array.Empty<TToken>(), () => Empty!);
+        public static Buffer<TToken> Empty { get; } = new([], () => Empty!);
 
-        private readonly TToken[] _buffer;
+        private readonly Lazy<Buffer<TToken>> next = new(next, false);
 
-        private readonly int _offset;
+        public TToken this[int index] => buffer[offset + index];
 
-        private readonly Lazy<Buffer<TToken>> _next;
+        public int Count => length;
 
-        public TToken this[int index] => this._buffer[this._offset + index];
-
-        public int Count { get; }
-
-        public Buffer<TToken> Next => this._next.Value;
+        public Buffer<TToken> Next => this.next.Value;
 
         public Buffer(TToken[] buffer, Func<Buffer<TToken>> next) : this(buffer, offset: 0, buffer.Length, next)
         { }
 
-        public Buffer(TToken[] buffer, int offset, int length, Func<Buffer<TToken>> next)
-        {
-            this._buffer = buffer;
-            this._offset = offset;
-            this.Count = length;
-            this._next = new(next, false);
-        }
-
         IEnumerator<TToken> IEnumerable<TToken>.GetEnumerator()
-            => new ArraySegment<TToken>(this._buffer, this._offset, this.Count).AsEnumerable().GetEnumerator();
+            => new ArraySegment<TToken>(buffer, offset, length).AsEnumerable().GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator()
             => this.AsEnumerable().GetEnumerator();

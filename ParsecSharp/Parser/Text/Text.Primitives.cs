@@ -53,15 +53,23 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> OctDigit()
-            => Satisfy(x => '0' <= x && x <= '7');
+            => Satisfy(x => (uint)x - '0' <= '7' - '0');
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> DecDigit()
-            => Satisfy(x => '0' <= x && x <= '9');
+            => AsciiDigit();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> HexDigit()
-            => Satisfy(x => '0' <= x && x <= '9' || 'A' <= x && x <= 'F' || 'a' <= x && x <= 'f');
+            => Satisfy(x => (uint)x - '0' <= '9' - '0' || (uint)(x | 0x20) - 'a' <= 'f' - 'a');
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<char, char> HexUpperDigit()
+            => Satisfy(x => (uint)x - '0' <= '9' - '0' || (uint)x - 'A' <= 'F' - 'A');
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<char, char> HexLowerDigit()
+            => Satisfy(x => (uint)x - '0' <= '9' - '0' || (uint)x - 'a' <= 'f' - 'a');
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> Symbol()
@@ -130,6 +138,22 @@ namespace ParsecSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, char> Ascii()
             => Satisfy(x => x <= 0x7F);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<char, char> AsciiLetter()
+            => Satisfy(x => (uint)(x | 0x20) - 'a' <= 'z' - 'a');
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<char, char> AsciiUpperLetter()
+            => Satisfy(x => (uint)x - 'A' <= 'Z' - 'A');
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<char, char> AsciiLowerLetter()
+            => Satisfy(x => (uint)x - 'a' <= 'z' - 'a');
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<char, char> AsciiDigit()
+            => Satisfy(x => (uint)x - '0' <= '9' - '0');
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<char, string> String(string text)

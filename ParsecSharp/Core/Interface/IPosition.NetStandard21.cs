@@ -1,4 +1,4 @@
-#if NETSTANDARD2_1
+#if NET || NETSTANDARD2_1_OR_GREATER
 using System;
 
 namespace ParsecSharp
@@ -14,16 +14,16 @@ namespace ParsecSharp
             => other is not null && this.Line == other.Line && this.Column == other.Column && this.GetType() == other.GetType();
 
         public static bool operator <(IPosition left, IPosition right)
-            => left.CompareTo(right) < 0;
+            => left is null ? right is not null : left.CompareTo(right) < 0;
 
         public static bool operator >(IPosition left, IPosition right)
-            => left.CompareTo(right) > 0;
+            => left is not null && left.CompareTo(right) > 0;
 
         public static bool operator <=(IPosition left, IPosition right)
-            => left.CompareTo(right) <= 0;
+            => left is null || left.CompareTo(right) <= 0;
 
         public static bool operator >=(IPosition left, IPosition right)
-            => left.CompareTo(right) >= 0;
+            => left is null ? right is null : left.CompareTo(right) >= 0;
     }
 }
 #endif

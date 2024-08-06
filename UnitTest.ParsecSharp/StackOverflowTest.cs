@@ -51,7 +51,7 @@ namespace UnitTest.ParsecSharp
             // 極端に深い構造を辿る場合
             const int depth = 10_000;
             var source = Enumerable.Repeat('[', depth).Concat(Enumerable.Repeat(']', depth)).ToArray();
-            var parser = Fix<char, int>(self => self.Or(Pure(1234)).Between(Char('['), Char(']'))).End();
+            var parser = Fix<int>(self => self.Or(Pure(1234)).Between(Char('['), Char(']'))).End();
 
             parser.Parse(source).WillSucceed(value => value.Is(1234));
         }

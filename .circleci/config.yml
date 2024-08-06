@@ -3,7 +3,7 @@ version: 2.1
 executors:
   dotnet:
     parameters:
-      image_tag: { type: string, default: 7.0-alpine }
+      image_tag: { type: string, default: 8.0-alpine }
     docker:
       - image: mcr.microsoft.com/dotnet/sdk:<< parameters.image_tag >>
     working_directory: /ParsecSharp
@@ -91,6 +91,14 @@ workflows:
               only: /^v\d+\.\d+\.\d+(-.+)?$/
 
       - unittest:
+          name: unittest8.0
+          image_tag: 8.0-alpine
+          target_framework: net8.0
+          requires:
+            - build
+          filters: *default_filter
+
+      - unittest:
           name: unittest7.0
           image_tag: 7.0-alpine
           target_framework: net7.0
@@ -106,14 +114,6 @@ workflows:
             - build
           filters: *default_filter
 
-      - unittest:
-          name: unittest3.1
-          image_tag: 3.1-alpine
-          target_framework: netcoreapp3.1
-          requires:
-            - build
-          filters: *default_filter
-
       - pack:
           requires:
             - build
@@ -123,9 +123,9 @@ workflows:
           context: nuget-publish
           requires:
             - pack
+            - unittest8.0
             - unittest7.0
             - unittest6.0
-            - unittest3.1
           filters:
             <<: *default_filter
             branches:
