@@ -44,8 +44,8 @@ namespace ParsecSharp
             => parser.Except(exceptions.AsEnumerable());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Parser<TToken, T> Chain<TToken, T>(this Parser<TToken, T> parser, Func<T, Parser<TToken, T>> rest)
-            => parser.Bind(x => ChainRec(rest, x));
+        public static Parser<TToken, T> Chain<TToken, T>(this Parser<TToken, T> parser, Func<T, Parser<TToken, T>> chain)
+            => parser.Bind(x => ChainRec(chain, x));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> ChainLeft<TToken, T>(this Parser<TToken, T> parser, Parser<TToken, Func<T, T, T>> function)
@@ -85,7 +85,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, TLeft> Left<TToken, TLeft, TRight>(this Parser<TToken, TLeft> left, Parser<TToken, TRight> right)
-            => left.Bind(x => right.MapConst(x));
+            => left.Bind(right.MapConst);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, TRight> Right<TToken, TLeft, TRight>(this Parser<TToken, TLeft> left, Parser<TToken, TRight> right)
@@ -161,7 +161,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Flatten<TToken, T>(this Parser<TToken, IEnumerable<IEnumerable<T>>> parser)
-            => parser.Map(values => values.Aggregate(Enumerable.Empty<T>(), (accumulator, x) => accumulator.Concat(x)));
+            => parser.Map(values => values.SelectMany(x => x));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, IEnumerable<T>> Singleton<TToken, T>(this Parser<TToken, T> parser)

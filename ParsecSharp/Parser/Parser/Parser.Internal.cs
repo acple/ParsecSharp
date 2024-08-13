@@ -16,7 +16,7 @@ namespace ParsecSharp
             => terminator.Next(result.Const, parser.Bind(x => ManyTillRec(parser, terminator, result.Append(x))).Const);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Parser<TToken, T> ChainRec<TToken, T>(Func<T, Parser<TToken, T>> rest, T value)
-            => rest(value).Next(x => ChainRec(rest, x), value);
+        private static Parser<TToken, T> ChainRec<TToken, T>(Func<T, Parser<TToken, T>> chain, T value)
+            => chain(value).Next(x => ChainRec(chain, x), value);
     }
 }

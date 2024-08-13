@@ -9,13 +9,13 @@ namespace ParsecSharp.Internal
     {
         public static Buffer<TToken> Empty { get; } = new([], () => Empty!);
 
-        private readonly Lazy<Buffer<TToken>> next = new(next, false);
+        private readonly Lazy<Buffer<TToken>> _next = new(next, false);
 
         public TToken this[int index] => buffer[offset + index];
 
         public int Count => length;
 
-        public Buffer<TToken> Next => this.next.Value;
+        public Buffer<TToken> Next => this._next.Value;
 
         public Buffer(TToken[] buffer, Func<Buffer<TToken>> next) : this(buffer, offset: 0, buffer.Length, next)
         { }
