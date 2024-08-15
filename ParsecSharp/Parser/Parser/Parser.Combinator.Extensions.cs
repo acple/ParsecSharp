@@ -44,6 +44,34 @@ namespace ParsecSharp
             => parser.Except(exceptions.AsEnumerable());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, T> Except<TToken, T, TIgnore1, TIgnore2>(this Parser<TToken, T> parser, Parser<TToken, TIgnore1> exception1, Parser<TToken, TIgnore2> exception2)
+            => Not(exception1).Right(Not(exception2).Right(parser));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, T> Except<TToken, T, TIgnore1, TIgnore2, TIgnore3>(this Parser<TToken, T> parser, Parser<TToken, TIgnore1> exception1, Parser<TToken, TIgnore2> exception2, Parser<TToken, TIgnore3> exception3)
+            => Not(exception1).Right(Not(exception2).Right(Not(exception3).Right(parser)));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, T> Except<TToken, T, TIgnore1, TIgnore2, TIgnore3, TIgnore4>(this Parser<TToken, T> parser, Parser<TToken, TIgnore1> exception1, Parser<TToken, TIgnore2> exception2, Parser<TToken, TIgnore3> exception3, Parser<TToken, TIgnore4> exception4)
+            => Not(exception1).Right(Not(exception2).Right(Not(exception3).Right(Not(exception4).Right(parser))));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, T> Except<TToken, T, TIgnore1, TIgnore2, TIgnore3, TIgnore4, TIgnore5>(this Parser<TToken, T> parser, Parser<TToken, TIgnore1> exception1, Parser<TToken, TIgnore2> exception2, Parser<TToken, TIgnore3> exception3, Parser<TToken, TIgnore4> exception4, Parser<TToken, TIgnore5> exception5)
+            => Not(exception1).Right(Not(exception2).Right(Not(exception3).Right(Not(exception4).Right(Not(exception5).Right(parser)))));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, T> Except<TToken, T, TIgnore1, TIgnore2, TIgnore3, TIgnore4, TIgnore5, TIgnore6>(this Parser<TToken, T> parser, Parser<TToken, TIgnore1> exception1, Parser<TToken, TIgnore2> exception2, Parser<TToken, TIgnore3> exception3, Parser<TToken, TIgnore4> exception4, Parser<TToken, TIgnore5> exception5, Parser<TToken, TIgnore6> exception6)
+            => Not(exception1).Right(Not(exception2).Right(Not(exception3).Right(Not(exception4).Right(Not(exception5).Right(Not(exception6).Right(parser))))));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, T> Except<TToken, T, TIgnore1, TIgnore2, TIgnore3, TIgnore4, TIgnore5, TIgnore6, TIgnore7>(this Parser<TToken, T> parser, Parser<TToken, TIgnore1> exception1, Parser<TToken, TIgnore2> exception2, Parser<TToken, TIgnore3> exception3, Parser<TToken, TIgnore4> exception4, Parser<TToken, TIgnore5> exception5, Parser<TToken, TIgnore6> exception6, Parser<TToken, TIgnore7> exception7)
+            => Not(exception1).Right(Not(exception2).Right(Not(exception3).Right(Not(exception4).Right(Not(exception5).Right(Not(exception6).Right(Not(exception7).Right(parser)))))));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parser<TToken, T> Except<TToken, T, TIgnore1, TIgnore2, TIgnore3, TIgnore4, TIgnore5, TIgnore6, TIgnore7, TIgnore8>(this Parser<TToken, T> parser, Parser<TToken, TIgnore1> exception1, Parser<TToken, TIgnore2> exception2, Parser<TToken, TIgnore3> exception3, Parser<TToken, TIgnore4> exception4, Parser<TToken, TIgnore5> exception5, Parser<TToken, TIgnore6> exception6, Parser<TToken, TIgnore7> exception7, Parser<TToken, TIgnore8> exception8)
+            => Not(exception1).Right(Not(exception2).Right(Not(exception3).Right(Not(exception4).Right(Not(exception5).Right(Not(exception6).Right(Not(exception7).Right(Not(exception8).Right(parser))))))));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Parser<TToken, T> Chain<TToken, T>(this Parser<TToken, T> parser, Func<T, Parser<TToken, T>> chain)
             => parser.Bind(x => ChainRec(chain, x));
 
