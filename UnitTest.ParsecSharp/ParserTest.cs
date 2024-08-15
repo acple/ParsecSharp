@@ -857,6 +857,7 @@ namespace UnitTest.ParsecSharp
 
             var source5 = "1-2+3+ABCD";
             parser.Parse(source5).WillSucceed(value => value.Is((1 - 2) + 3));
+            parser.Right(Any()).Parse(source5).WillSucceed(value => value.Is('+'));
         }
 
         [TestMethod]
@@ -890,6 +891,7 @@ namespace UnitTest.ParsecSharp
 
             var source5 = "1-2+3+ABCD";
             parser.Parse(source5).WillSucceed(value => value.Is(1 - (2 + 3)));
+            parser.Right(Any()).Parse(source5).WillSucceed(value => value.Is('+'));
         }
 
         [TestMethod]
