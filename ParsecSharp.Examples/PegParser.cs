@@ -11,9 +11,18 @@ namespace ParsecSharp.Examples
     // PEG parser implementation with capturing extension
     public class PegParser
     {
-        public static Parser<char, IReadOnlyDictionary<string, Parser<char, string[]>>> Parser { get; } = CreateParser();
+        public interface IMatchResult
+        {
+            string Match { get; }
 
-        private static Parser<char, IReadOnlyDictionary<string, Parser<char, string[]>>> CreateParser()
+            IReadOnlyList<IMatchResult> Captures { get; }
+
+            IReadOnlyList<string> AllMatches { get; }
+        }
+
+        public static Parser<char, IReadOnlyDictionary<string, Parser<char, IMatchResult>>> Parser { get; } = CreateParser();
+
+        private static Parser<char, IReadOnlyDictionary<string, Parser<char, IMatchResult>>> CreateParser()
         {
             var whitespace = OneOf(" \t").Or(EndOfLine()).Ignore();
             var comment = Char('#').Right(Match(EndOfLine().Ignore() | EndOfInput()));
@@ -43,6 +52,7 @@ namespace ParsecSharp.Examples
 
             var identifier = (word | underscore).Append(Many(word | digit | underscore)).AsString().Left(spacing);
 
+            var unescapedChar = Any().Except(Char('\\'));
             var escapedChar = Char('\\').Right(Choice(
                 Char('n').Map(_ => '\n'),
                 Char('r').Map(_ => '\r'),
@@ -51,7 +61,7 @@ namespace ParsecSharp.Examples
                     .Map(hex => (char)int.Parse(hex, NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo)), // JSON-style unicode escape
                 Any().Except(Char('u'))));
 
-            var character = escapedChar | Any();
+            var character = unescapedChar | escapedChar;
 
             var range =
                 from start in character
@@ -107,14 +117,14 @@ namespace ParsecSharp.Examples
                 var dict = definitions.ToDictionary(x => x.name, x => x.rule);
                 var parsers = definitions
                     .Where(x => !x.name.StartsWith("_"))
-                    .ToDictionary(x => x.name, x => x.rule.Resolve(dict).Map(result => result.Matches.Prepend(result.Value).ToArray()));
-                return parsers as IReadOnlyDictionary<string, Parser<char, string[]>>;
+                    .ToDictionary(x => x.name, x => x.rule.Resolve(dict).Map(result => result as IMatchResult));
+                return parsers as IReadOnlyDictionary<string, Parser<char, IMatchResult>>;
             });
 
             return grammar;
         }
 
-        public Result<char, IReadOnlyDictionary<string, Parser<char, string[]>>> Parse(string peg)
+        public Result<char, IReadOnlyDictionary<string, Parser<char, IMatchResult>>> Parse(string peg)
             => Parser.Parse(peg);
     }
 
@@ -128,24 +138,31 @@ namespace ParsecSharp.Examples
             => resolver(dict);
     }
 
-    file class Result(string value, IEnumerable<string> matches)
+    file class Result(string value, IReadOnlyList<Result> captures) : PegParser.IMatchResult
     {
         public static Result Empty { get; } = new(string.Empty);
 
-        public string Value { get; } = value;
+        private readonly IReadOnlyList<Result> _captures = captures;
 
-        public IEnumerable<string> Matches { get; } = matches;
+        public string Match { get; } = value;
+
+        public IReadOnlyList<PegParser.IMatchResult> Captures => this._captures;
+
+        public IReadOnlyList<string> AllMatches => this.Flatten().ToArray();
 
         public Result(string value) : this(value, [])
         { }
 
         public Result Capture()
-            => new(this.Value, this.Matches.Prepend(this.Value));
+            => new(this.Match, [this]);
+
+        private IEnumerable<string> Flatten()
+            => this._captures.SelectMany(result => result.Flatten()).Prepend(this.Match);
 
         public static Result Concat(IEnumerable<Result> results)
-            => results.Aggregate(Empty, (left, right) => new(left.Value + right.Value, ConcatCaptures(left.Matches, right.Matches)));
+            => results.Aggregate(Empty, (left, right) => new(left.Match + right.Match, ConcatCaptures(left._captures, right._captures)));
 
-        private static IEnumerable<string> ConcatCaptures(IEnumerable<string> left, IEnumerable<string> right)
-            => Empty.Matches is var empty && left == empty ? right : right == empty ? left : left.Concat(right);
+        private static IReadOnlyList<Result> ConcatCaptures(IReadOnlyList<Result> left, IReadOnlyList<Result> right)
+            => left.Count == 0 ? right : right.Count == 0 ? left : [.. left, .. right];
     }
 }

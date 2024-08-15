@@ -281,8 +281,8 @@ namespace UnitTest.ParsecSharp
 
             {
                 var abcxefg = parser.Parse("Parser <- 'abc' . 'efg'").Value["Parser"];
-                abcxefg.Parse("abcdefg").WillSucceed(value => value[0].Is("abcdefg"));
-                abcxefg.Parse("abc_efg_ijk").WillSucceed(value => value[0].Is("abc_efg"));
+                abcxefg.Parse("abcdefg").WillSucceed(value => value.Match.Is("abcdefg"));
+                abcxefg.Parse("abc_efg_ijk").WillSucceed(value => value.Match.Is("abc_efg"));
                 abcxefg.Parse("abcdeff").WillFail();
             }
 
@@ -297,10 +297,10 @@ namespace UnitTest.ParsecSharp
 
                 var parsers = parser.Parse(peg).Value;
 
-                parsers["Parser1"].Parse("abcdefg").WillSucceed(value => value.Is("abcdefg", "a", "b", "c", "d", "e", "f", "g"));
-                parsers["Parser2"].Parse("abcdefg").WillSucceed(value => value.Is("abcdefg", "abcdefg"));
-                parsers["Parser3"].Parse("abcdefg").WillSucceed(value => value.Is("abcdef", "cd", "ef"));
-                parsers["Parser4"].Parse("abcdefg").WillSucceed(value => value.Is("abcdef", "abc", "a", "c", "def", "d", "f"));
+                parsers["Parser1"].Parse("abcdefg").WillSucceed(value => value.AllMatches.Is("abcdefg", "a", "b", "c", "d", "e", "f", "g"));
+                parsers["Parser2"].Parse("abcdefg").WillSucceed(value => value.AllMatches.Is("abcdefg", "abcdefg"));
+                parsers["Parser3"].Parse("abcdefg").WillSucceed(value => value.AllMatches.Is("abcdef", "cd", "ef"));
+                parsers["Parser4"].Parse("abcdefg").WillSucceed(value => value.AllMatches.Is("abcdef", "abc", "a", "c", "def", "d", "f"));
             }
 
 #if !DEBUG
@@ -310,7 +310,7 @@ namespace UnitTest.ParsecSharp
                 var peg = parser.Parse(PegDefinition).Value;
                 var pegParser = peg["Grammar"];
 
-                pegParser.Parse(PegDefinition).WillSucceed(value => value[0].Is(PegDefinition));
+                pegParser.Parse(PegDefinition).WillSucceed(value => value.Match.Is(PegDefinition));
             }
 #endif
         }
