@@ -6,9 +6,9 @@ executors:
       image_tag: { type: string, default: 9.0-alpine }
     docker:
       - image: mcr.microsoft.com/dotnet/nightly/sdk:<< parameters.image_tag >>
-    working_directory: /ParsecSharp
+    working_directory: /_
     environment:
-      NUGET_PACKAGES: /ParsecSharp/packages
+      NUGET_PACKAGES: /_/packages
 
 jobs:
   build:
