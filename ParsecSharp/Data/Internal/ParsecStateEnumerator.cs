@@ -7,17 +7,19 @@ namespace ParsecSharp.Internal
     public sealed class ParsecStateEnumerator<TToken, TState>(TState source) : IEnumerator<TState>
         where TState : IParsecState<TToken, TState>
     {
-        public TState Current { get; private set; } = default!;
+        private TState? current;
 
-        object? IEnumerator.Current => this.Current;
+        public TState Current => this.current!;
+
+        object? IEnumerator.Current => this.current;
 
         public bool MoveNext()
-            => (this.Current = this.Current?.HasValue == true ? this.Current.Next : source).HasValue; // this definition violates IEnumerator implementation guidelines deliberately
+            => (this.current = this.current is { HasValue: true } current ? current.Next : source).HasValue; // this definition violates IEnumerator implementation guidelines deliberately
 
         void IEnumerator.Reset()
             => throw new NotSupportedException();
 
         public void Dispose()
-            => this.Current = default!;
+            => this.current = default;
     }
 }
