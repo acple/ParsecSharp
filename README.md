@@ -65,8 +65,8 @@ Download manually:
 
 
 ## Supported platform
+* netstandard2.1 (compatible with net5.0 or later, netcoreapp, with some performance improvements and additional implementations that depend on new runtime features)
 * netstandard2.0 (compatible with net461 or later, uap, xamarin, and more)
-* netstandard2.1 (compatible with netcoreapp, net5.0 or later, with some performance improvements and additional implementations that depend on new runtime features)
 
 **Requires C# 7.3 or later** for generic overloading resolution.
 
@@ -80,14 +80,13 @@ Download manually:
 ## How to use
 * [Starter's tutorial](UnitTest.ParsecSharp/Tutorial.cs)
 
-Implementation examples:
-
+#### Implementation examples
 * [JsonParser implementation](ParsecSharp.Examples/JsonParser.cs)
 * [CsvParser implementation](ParsecSharp.Examples/CsvParser.cs)
 * [Arithmetic expression parser implementation](ParsecSharp.Examples/ExpressionParser.cs)
 * [PEG parser generator implementation](ParsecSharp.Examples/PegParser.cs)
 
-Documentation is included in [UnitTest code](UnitTest.ParsecSharp/ParserTest.cs) (jp).
+Documentation is included in the [UnitTest code](UnitTest.ParsecSharp/ParserTest.cs) (jp).
 
 If you want more information, read the [API source code](ParsecSharp/Parser), all is there.
 
