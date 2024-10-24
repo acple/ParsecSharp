@@ -17,5 +17,9 @@ namespace ParsecSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Result<char, T> Parse<T>(this Parser<char, T> parser, Stream source, Encoding encoding)
             => parser.Parse(TextStream.Create(source, encoding));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Result<char, T> Parse<T>(this Parser<char, T> parser, TextReader source)
+            => parser.Parse(TextStream.Create(source));
     }
 }
