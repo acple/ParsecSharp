@@ -3,9 +3,9 @@ version: 2.1
 executors:
   dotnet:
     parameters:
-      image_tag: { type: string, default: 9.0-alpine }
+      sdk_version: { type: string, default: "9.0" }
     docker:
-      - image: mcr.microsoft.com/dotnet/nightly/sdk:<< parameters.image_tag >>
+      - image: mcr.microsoft.com/dotnet/nightly/sdk:<< parameters.sdk_version >>-alpine
     working_directory: /_
     environment:
       NUGET_PACKAGES: /_/packages
@@ -28,11 +28,11 @@ jobs:
 
   unittest:
     parameters:
-      image_tag: { type: string }
+      sdk_version: { type: string }
       target_framework: { type: string }
     executor:
       name: dotnet
-      image_tag: << parameters.image_tag >>
+      sdk_version: << parameters.sdk_version >>
     steps:
       - attach_workspace:
           at: .
@@ -92,7 +92,7 @@ workflows:
 
       - unittest:
           name: unittest9.0
-          image_tag: 9.0-alpine
+          sdk_version: "9.0"
           target_framework: net9.0
           requires:
             - build
@@ -100,7 +100,7 @@ workflows:
 
       - unittest:
           name: unittest8.0
-          image_tag: 8.0-alpine
+          sdk_version: "8.0"
           target_framework: net8.0
           requires:
             - build
@@ -108,7 +108,7 @@ workflows:
 
       - unittest:
           name: unittest6.0
-          image_tag: 6.0-alpine
+          sdk_version: "6.0"
           target_framework: net6.0
           requires:
             - build
