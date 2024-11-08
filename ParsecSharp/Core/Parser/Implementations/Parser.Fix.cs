@@ -4,20 +4,20 @@ namespace ParsecSharp.Internal.Parsers
 {
     internal sealed class Fix<TToken, T> : Parser<TToken, T>
     {
-        private readonly Parser<TToken, T> _parser;
+        private readonly IParser<TToken, T> _parser;
 
-        public Fix(Func<Parser<TToken, T>, Parser<TToken, T>> function)
+        public Fix(Func<IParser<TToken, T>, IParser<TToken, T>> function)
         {
             this._parser = function(this);
         }
 
-        internal sealed override Result<TToken, TResult> Run<TState, TResult>(TState state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
+        public sealed override IResult<TToken, TResult> Run<TState, TResult>(TState state, Func<IResult<TToken, T>, IResult<TToken, TResult>> cont)
             => this._parser.Run(state, cont);
     }
 
-    internal sealed class Fix<TToken, TParamater, T>(Func<Func<TParamater, Parser<TToken, T>>, TParamater, Parser<TToken, T>> function, TParamater parameter) : Parser<TToken, T>
+    internal sealed class Fix<TToken, TParamater, T>(Func<Func<TParamater, IParser<TToken, T>>, TParamater, IParser<TToken, T>> function, TParamater parameter) : Parser<TToken, T>
     {
-        internal sealed override Result<TToken, TResult> Run<TState, TResult>(TState state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
+        public sealed override IResult<TToken, TResult> Run<TState, TResult>(TState state, Func<IResult<TToken, T>, IResult<TToken, TResult>> cont)
             => function(parameter => new Fix<TToken, TParamater, T>(function, parameter), parameter).Run(state, cont);
     }
 }

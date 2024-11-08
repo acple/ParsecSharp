@@ -20,9 +20,9 @@ namespace ParsecSharp.Examples
             IReadOnlyList<string> AllMatches { get; }
         }
 
-        public static Parser<char, IReadOnlyDictionary<string, Parser<char, IMatchResult>>> Parser { get; } = CreateParser();
+        public static IParser<char, IReadOnlyDictionary<string, IParser<char, IMatchResult>>> Parser { get; } = CreateParser();
 
-        private static Parser<char, IReadOnlyDictionary<string, Parser<char, IMatchResult>>> CreateParser()
+        private static IParser<char, IReadOnlyDictionary<string, IParser<char, IMatchResult>>> CreateParser()
         {
             var whitespace = OneOf(" \t").Or(EndOfLine()).Ignore();
             var comment = Char('#').Right(Match(EndOfLine().Ignore() | EndOfInput()));
@@ -112,29 +112,26 @@ namespace ParsecSharp.Examples
                 from rule in expression
                 select (name, rule);
 
-            var grammar = spacing.Right(Many1(definition)).End().Map(definitions =>
-            {
-                var dict = definitions.ToDictionary(x => x.name, x => x.rule);
-                var parsers = definitions
-                    .Where(x => !x.name.StartsWith("_"))
-                    .ToDictionary(x => x.name, x => x.rule.Resolve(dict).Map(result => result as IMatchResult));
-                return parsers as IReadOnlyDictionary<string, Parser<char, IMatchResult>>;
-            });
+            var grammar = spacing.Right(Many1(definition)).End()
+                .Map(definitions => definitions.ToDictionary(x => x.name, x => x.rule))
+                .Map(dict => dict
+                    .Where(x => !x.Key.StartsWith("_"))
+                    .ToDictionary(x => x.Key, x => x.Value.Resolve(dict) as IParser<char, IMatchResult>));
 
             return grammar;
         }
 
-        public Result<char, IReadOnlyDictionary<string, Parser<char, IMatchResult>>> Parse(string peg)
+        public IResult<char, IReadOnlyDictionary<string, IParser<char, IMatchResult>>> Parse(string peg)
             => Parser.Parse(peg);
     }
 
     // recursive type alias: Rule = IReadOnlyDictionary<string, Rule> -> Parser<char, Result>
-    file readonly struct Rule(Func<IReadOnlyDictionary<string, Rule>, Parser<char, Result>> resolver)
+    file readonly struct Rule(Func<IReadOnlyDictionary<string, Rule>, IParser<char, Result>> resolver)
     {
-        public Rule(Parser<char, Result> parser) : this(_ => parser)
+        public Rule(IParser<char, Result> parser) : this(_ => parser)
         { }
 
-        public Parser<char, Result> Resolve(IReadOnlyDictionary<string, Rule> dict)
+        public IParser<char, Result> Resolve(IReadOnlyDictionary<string, Rule> dict)
             => resolver(dict);
     }
 

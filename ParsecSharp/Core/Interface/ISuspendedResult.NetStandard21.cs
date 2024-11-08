@@ -3,6 +3,12 @@ using System;
 
 namespace ParsecSharp
 {
+    public partial interface ISuspendedResult<TToken, out T>
+    {
+        void IDisposable.Dispose()
+            => this.Rest?.Dispose();
+    }
+
     public partial interface ISuspendedState<TToken>
     {
         void IDisposable.Dispose()

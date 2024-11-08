@@ -20,9 +20,9 @@ namespace ParsecSharp.Examples
     public class ExpressionParser<TNumber>
         where TNumber : INumber<TNumber>
     {
-        public Parser<char, TNumber> Parser { get; }
+        public IParser<char, TNumber> Parser { get; }
 
-        public ExpressionParser(Parser<char, TNumber> number)
+        public ExpressionParser(IParser<char, TNumber> number)
         {
             var addsub = Op('+', (x, y) => x.Add(y)) | Op('-', (x, y) => x.Sub(y));
             var muldiv = Op('*', (x, y) => x.Mul(y)) | Op('/', (x, y) => x.Div(y));
@@ -40,16 +40,16 @@ namespace ParsecSharp.Examples
             this.Parser = expr.Between(Spaces()).End();
         }
 
-        private static Parser<char, Func<TNumber, TNumber, TNumber>> Op(char symbol, Func<TNumber, TNumber, TNumber> function)
+        private static IParser<char, Func<TNumber, TNumber, TNumber>> Op(char symbol, Func<TNumber, TNumber, TNumber> function)
             => Char(symbol).Between(Spaces()).MapConst(function);
 
-        public Result<char, TNumber> Parse(string source)
+        public IResult<char, TNumber> Parse(string source)
             => this.Parser.Parse(source);
     }
 
     public class Integer : INumber<Integer>
     {
-        private static readonly Parser<char, Integer> number =
+        private static readonly IParser<char, Integer> number =
             Many1(DecDigit()).ToInt().Map(x => new Integer(x));
 
         public static ExpressionParser<Integer> Parser { get; } = new(number);
@@ -76,7 +76,7 @@ namespace ParsecSharp.Examples
 
     public class Double : INumber<Double>
     {
-        private static readonly Parser<char, Double> number =
+        private static readonly IParser<char, Double> number =
             Many1(DecDigit()).AppendOptional(Char('.').Append(Many1(DecDigit())))
                 .ToDouble().Map(x => new Double(x));
 
@@ -104,7 +104,7 @@ namespace ParsecSharp.Examples
 
     public class IntegerExpression : INumber<IntegerExpression>
     {
-        private static readonly Parser<char, IntegerExpression> number =
+        private static readonly IParser<char, IntegerExpression> number =
             Many1(DecDigit()).ToInt().Map(x => new IntegerExpression(Expression.Constant(x)));
 
         public static ExpressionParser<IntegerExpression> Parser { get; } = new(number);

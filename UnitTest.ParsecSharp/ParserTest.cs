@@ -622,7 +622,7 @@ namespace UnitTest.ParsecSharp
 
             // パラメータを取るオーバーロード。柔軟に再帰パーサを記述できます。
             // 有名な回文パーサ。 S ::= "a" S "a" | "b" S "b" | ""
-            var parser2 = Fix<Parser<char, Unit>, Unit>((self, rest) =>
+            var parser2 = Fix<IParser<char, Unit>, Unit>((self, rest) =>
                 Char('a').Right(self(Char('a').Right(rest))) | Char('b').Right(self(Char('b').Right(rest))) | rest);
 
             var source2 = "abbaabba";
@@ -806,20 +806,20 @@ namespace UnitTest.ParsecSharp
             // 本来、自己を最初に参照するパーサを直接記述することはできない(無限再帰となるため)。
             // 有名な二項演算の左再帰定義。
             // expr = expr op digit / digit
-            static Parser<char, int> Expr()
+            static IParser<char, int> Expr()
                 => (from x in Expr() // ここで無限再帰
                     from func in Char('+')
                     from y in Num()
                     select x + y)
                     .Or(Num());
 
-            static Parser<char, int> Num()
+            static IParser<char, int> Num()
                 => Many1(Digit()).ToInt();
 
             // この定義を変形して左再帰を除去することが可能。
             // 二項演算の左再帰除去後の定義。
             // expr = digit *( op digit )
-            static Parser<char, int> Expr2()
+            static IParser<char, int> Expr2()
                 => Num().Chain(x => Char('+').Right(Num()).Map(y => x + y));
             // Chain を使うことで左再帰除去後の定義をそのまま記述できる。
 

@@ -4,10 +4,10 @@ namespace ParsecSharp.Internal
 {
     public abstract class PrimitiveParser<TToken, T> : Parser<TToken, T>
     {
-        protected abstract Result<TToken, T> Run<TState>(TState state)
+        protected abstract IResult<TToken, T> Run<TState>(TState state)
             where TState : IParsecState<TToken, TState>;
 
-        internal sealed override Result<TToken, TResult> Run<TState, TResult>(TState state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
+        public sealed override IResult<TToken, TResult> Run<TState, TResult>(TState state, Func<IResult<TToken, T>, IResult<TToken, TResult>> cont)
             => cont(this.Run(state));
     }
 }

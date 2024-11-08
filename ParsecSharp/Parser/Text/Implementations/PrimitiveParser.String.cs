@@ -5,7 +5,7 @@ namespace ParsecSharp.Internal.Parsers
 {
     internal sealed class StringParser(string text, StringComparison comparison) : PrimitiveParser<char, string>
     {
-        protected sealed override Result<char, string> Run<TState>(TState state)
+        protected sealed override IResult<char, string> Run<TState>(TState state)
         {
             var states = ParsecState.AsEnumerable<char, TState>(state).Take(text.Length).ToArray();
             var result = new string(states.Select(x => x.Current).ToArray());

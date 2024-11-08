@@ -2,15 +2,15 @@ using System;
 
 namespace ParsecSharp.Internal
 {
-    public abstract class ModifyResult<TToken, TIntermediate, T>(Parser<TToken, TIntermediate> parser) : Parser<TToken, T>
+    public abstract class ModifyResult<TToken, TIntermediate, T>(IParser<TToken, TIntermediate> parser) : Parser<TToken, T>
     {
-        protected abstract Result<TToken, T> Fail<TState>(TState state, Failure<TToken, TIntermediate> failure)
+        protected abstract IResult<TToken, T> Fail<TState>(TState state, IFailure<TToken, TIntermediate> failure)
             where TState : IParsecState<TToken, TState>;
 
-        protected abstract Result<TToken, T> Succeed<TState>(TState state, Success<TToken, TIntermediate> success)
+        protected abstract IResult<TToken, T> Succeed<TState>(TState state, ISuccess<TToken, TIntermediate> success)
             where TState : IParsecState<TToken, TState>;
 
-        internal sealed override Result<TToken, TResult> Run<TState, TResult>(TState state, Func<Result<TToken, T>, Result<TToken, TResult>> cont)
+        public sealed override IResult<TToken, TResult> Run<TState, TResult>(TState state, Func<IResult<TToken, T>, IResult<TToken, TResult>> cont)
             => parser.Run(state, result => result.CaseOf(
                 failure => cont(this.Fail(state, failure)),
                 success => cont(this.Succeed(state, success))));

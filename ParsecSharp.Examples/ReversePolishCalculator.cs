@@ -8,14 +8,14 @@ namespace ParsecSharp.Examples
     public class ReversePolishCalculator
     {
         // 整数または小数にマッチし、double にして返す
-        private static readonly Parser<char, double> Number =
+        private static readonly IParser<char, double> Number =
             Optional(OneOf("-+"), '+')
                 .Append(Many1(DecDigit()))
                 .AppendOptional(Char('.').Append(Many1(DecDigit())))
                 .ToDouble();
 
         // 四則演算子にマッチし、二項演算関数にマップ
-        private static readonly Parser<char, Func<double, double, double>> Op =
+        private static readonly IParser<char, Func<double, double, double>> Op =
             Choice(
                 Char('+').Map(_ => (Func<double, double, double>)((x, y) => x + y)),
                 Char('-').Map(_ => (Func<double, double, double>)((x, y) => x - y)),
@@ -25,7 +25,7 @@ namespace ParsecSharp.Examples
         // 式を表す再帰実行パーサ
         // 左再帰の定義: expr = expr expr op / num
         // 左再帰の除去: expr = num *( expr op )
-        private static readonly Parser<char, double> Expr =
+        private static readonly IParser<char, double> Expr =
             Number
                 .Chain(x =>
                     from y in Expr
@@ -33,9 +33,9 @@ namespace ParsecSharp.Examples
                     select func(x, y))
                 .Between(Spaces());
 
-        public static Parser<char, double> Parser { get; } = Expr.End();
+        public static IParser<char, double> Parser { get; } = Expr.End();
 
-        public Result<char, double> Parse(string source)
+        public IResult<char, double> Parse(string source)
             => Parser.Parse(source);
     }
 }

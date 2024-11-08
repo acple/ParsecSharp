@@ -8,17 +8,17 @@ namespace ParsecSharp
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static Parser<TToken, TResult> Select<TToken, T, TResult>(this Parser<TToken, T> parser, Func<T, TResult> selector)
+        public static IParser<TToken, TResult> Select<TToken, T, TResult>(this IParser<TToken, T> parser, Func<T, TResult> selector)
             => parser.Map(selector);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static Parser<TToken, TResult> SelectMany<TToken, T, TIntermediate, TResult>(this Parser<TToken, T> parser, Func<T, Parser<TToken, TIntermediate>> selector, Func<T, TIntermediate, TResult> projector)
+        public static IParser<TToken, TResult> SelectMany<TToken, T, TIntermediate, TResult>(this IParser<TToken, T> parser, Func<T, IParser<TToken, TIntermediate>> selector, Func<T, TIntermediate, TResult> projector)
             => parser.Bind(x => selector(x).Map(y => projector(x, y)));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static Parser<TToken, T> Where<TToken, T>(this Parser<TToken, T> parser, Func<T, bool> predicate)
+        public static IParser<TToken, T> Where<TToken, T>(this IParser<TToken, T> parser, Func<T, bool> predicate)
             => parser.Guard(predicate);
     }
 }

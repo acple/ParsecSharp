@@ -10,9 +10,9 @@ namespace ParsecSharp.Examples
     // JSON パーサ、RFC8259 に忠実なつくり
     public class JsonParser
     {
-        public static Parser<char, dynamic?> Parser { get; } = CreateParser();
+        public static IParser<char, dynamic?> Parser { get; } = CreateParser();
 
-        private static Parser<char, dynamic?> CreateParser()
+        private static IParser<char, dynamic?> CreateParser()
         {
             // JSON Whitespace にマッチし、その値は無視します。
             // ws = *( %x20 / %x09 / %x0A / %x0D ) ; Space / Horizontal tab / Line feed or New line / Carriage return
@@ -98,7 +98,7 @@ namespace ParsecSharp.Examples
             // JSON Boolean にマッチします。
             // true = %x74.72.75.65
             // false = %x66.61.6c.73.65
-            var jsonBool = String("false").Map(_ => false) | String("true").Map(_ => true);
+            var jsonBool = String("false").Map(_ => false).Or(String("true").Map(_ => true));
 
             // JSON Null にマッチします。
             // null = %x6e.75.6c.6c
@@ -145,18 +145,18 @@ namespace ParsecSharp.Examples
         }
 
         // string をパースして dynamic に詰めて返します。
-        public Result<char, dynamic?> Parse(string json)
+        public IResult<char, dynamic?> Parse(string json)
             => Parser.Parse(json);
 
         // Stream をパースして dynamic に詰めて返します。テキストは UTF-8 でエンコードされている必要があります。
-        public Result<char, dynamic?> Parse(Stream json)
+        public IResult<char, dynamic?> Parse(Stream json)
             => Parser.Parse(json);
     }
 
     file static class Extensions
     {
         // パース結果を dynamic に詰める拡張メソッド。
-        public static Parser<TToken, dynamic?> AsDynamic<TToken, T>(this Parser<TToken, T> parser)
+        public static IParser<TToken, dynamic?> AsDynamic<TToken, T>(this IParser<TToken, T> parser)
             => parser.Map(x => x as dynamic);
     }
 }

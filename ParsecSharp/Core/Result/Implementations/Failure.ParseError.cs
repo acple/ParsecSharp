@@ -7,10 +7,10 @@ namespace ParsecSharp.Internal.Results
 
         public sealed override string Message => $"Unexpected '{state.ToString()}'";
 
-        protected internal sealed override SuspendedResult<TToken, T> Suspend()
+        public sealed override ISuspendedResult<TToken, T> Suspend()
             => SuspendedResult.Create(this, state);
 
-        public sealed override Failure<TToken, TNext> Convert<TNext>()
-            => new ParseError<TToken, TState, TNext>(state);
+        public sealed override IResult<TToken, TResult> Convert<TResult>()
+            => new ParseError<TToken, TState, TResult>(state);
     }
 }
