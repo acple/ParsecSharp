@@ -5,7 +5,7 @@ executors:
     parameters:
       sdk_version: { type: string, default: "9.0" }
     docker:
-      - image: mcr.microsoft.com/dotnet/nightly/sdk:<< parameters.sdk_version >>-alpine
+      - image: mcr.microsoft.com/dotnet/sdk:<< parameters.sdk_version >>-alpine
     working_directory: /_
     environment:
       NUGET_PACKAGES: /_/packages
