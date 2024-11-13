@@ -28,7 +28,7 @@ namespace ParsecSharp
             => Condition<char>(success, message);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IParser<char, IEnumerable<char>> Take(int count)
+        public static IParser<char, IReadOnlyList<char>> Take(int count)
             => Take<char>(count);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

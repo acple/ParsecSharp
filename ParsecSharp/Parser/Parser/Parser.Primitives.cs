@@ -49,7 +49,7 @@ namespace ParsecSharp
             => NoneOf(candidates.AsEnumerable());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IParser<TToken, IEnumerable<TToken>> Take<TToken>(int count)
+        public static IParser<TToken, IReadOnlyList<TToken>> Take<TToken>(int count)
             => new Take<TToken>(count);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

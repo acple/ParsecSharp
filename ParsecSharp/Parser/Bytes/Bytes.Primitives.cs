@@ -9,27 +9,27 @@ namespace ParsecSharp
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IParser<byte, short> Int16()
-            => Take(sizeof(short)).Map(bytes => BitConverter.ToInt16(bytes.ToArray(), 0));
+            => Take(sizeof(short)).Map(bytes => BitConverter.ToInt16([.. bytes], 0));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IParser<byte, int> Int32()
-            => Take(sizeof(int)).Map(bytes => BitConverter.ToInt32(bytes.ToArray(), 0));
+            => Take(sizeof(int)).Map(bytes => BitConverter.ToInt32([.. bytes], 0));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IParser<byte, long> Int64()
-            => Take(sizeof(long)).Map(bytes => BitConverter.ToInt64(bytes.ToArray(), 0));
+            => Take(sizeof(long)).Map(bytes => BitConverter.ToInt64([.. bytes], 0));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IParser<byte, ushort> UInt16()
-            => Take(sizeof(ushort)).Map(bytes => BitConverter.ToUInt16(bytes.ToArray(), 0));
+            => Take(sizeof(ushort)).Map(bytes => BitConverter.ToUInt16([.. bytes], 0));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IParser<byte, uint> UInt32()
-            => Take(sizeof(uint)).Map(bytes => BitConverter.ToUInt32(bytes.ToArray(), 0));
+            => Take(sizeof(uint)).Map(bytes => BitConverter.ToUInt32([.. bytes], 0));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IParser<byte, ulong> UInt64()
-            => Take(sizeof(ulong)).Map(bytes => BitConverter.ToUInt64(bytes.ToArray(), 0));
+            => Take(sizeof(ulong)).Map(bytes => BitConverter.ToUInt64([.. bytes], 0));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IParser<byte, short> Int16BigEndian()
@@ -61,6 +61,6 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IParser<byte, string> Utf8String(int count)
-            => Take(count).Map(bytes => Encoding.UTF8.GetString(bytes.ToArray()));
+            => Take(count).Map(bytes => Encoding.UTF8.GetString([.. bytes]));
     }
 }

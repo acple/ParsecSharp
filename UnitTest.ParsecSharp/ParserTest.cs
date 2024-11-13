@@ -1134,7 +1134,7 @@ namespace UnitTest.ParsecSharp
             parser2.Parse(source).WillSucceed(value => value.Is('a', 'b', 'c', 'd', 'E', 'F', 'G', 'H'));
 
             // Many1 を用いたために二重になってしまうような状況では、代わりに FoldLeft の利用が検討できます。
-            var parser3 = token.FoldLeft((x, y) => x.Concat(y));
+            var parser3 = token.FoldLeft((x, y) => [.. x, .. y]);
             parser3.Parse(source).WillSucceed(value => value.Is('a', 'b', 'c', 'd', 'E', 'F', 'G', 'H'));
         }
 
@@ -1147,7 +1147,7 @@ namespace UnitTest.ParsecSharp
             var parser = Char('a').Singleton();
 
             var source = _abcdEFGH;
-            parser.Parse(source).WillSucceed(value => value.Count().Is(1));
+            parser.Parse(source).WillSucceed(value => value.Count.Is(1));
         }
 
         [TestMethod]

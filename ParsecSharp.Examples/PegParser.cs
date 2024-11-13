@@ -125,7 +125,7 @@ namespace ParsecSharp.Examples
             => Parser.Parse(peg);
     }
 
-    // recursive type alias: Rule = IReadOnlyDictionary<string, Rule> -> Parser<char, Result>
+    // recursive type alias: Rule = IReadOnlyDictionary<string, Rule> -> IParser<char, Result>
     file readonly struct Rule(Func<IReadOnlyDictionary<string, Rule>, IParser<char, Result>> resolver)
     {
         public Rule(IParser<char, Result> parser) : this(_ => parser)

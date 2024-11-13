@@ -136,8 +136,8 @@ namespace ParsecSharp
             => open.Right(ManyTill(parser, close));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IParser<TToken, IEnumerable<T>> Append<TToken, T>(this IParser<TToken, T> left, IParser<TToken, T> right)
-            => left.Bind(x => right.Map(y => (IEnumerable<T>)[x, y]));
+        public static IParser<TToken, IReadOnlyList<T>> Append<TToken, T>(this IParser<TToken, T> left, IParser<TToken, T> right)
+            => left.Bind(x => right.Map(y => (IReadOnlyList<T>)[x, y]));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IParser<TToken, IEnumerable<T>> Append<TToken, T>(this IParser<TToken, T> left, IParser<TToken, IEnumerable<T>> right)
@@ -152,8 +152,8 @@ namespace ParsecSharp
             => left.Bind(x => right.Map(y => x.Concat(y)));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IParser<TToken, IEnumerable<T>> AppendOptional<TToken, T>(this IParser<TToken, T> parser, IParser<TToken, T> optional)
-            => parser.Bind(x => optional.Next(y => (IEnumerable<T>)[x, y], [x]));
+        public static IParser<TToken, IReadOnlyList<T>> AppendOptional<TToken, T>(this IParser<TToken, T> parser, IParser<TToken, T> optional)
+            => parser.Bind(x => optional.Next(y => (IReadOnlyList<T>)[x, y], [x]));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IParser<TToken, IEnumerable<T>> AppendOptional<TToken, T>(this IParser<TToken, T> parser, IParser<TToken, IEnumerable<T>> optional)
@@ -192,8 +192,8 @@ namespace ParsecSharp
             => parser.Map(values => values.SelectMany(x => x));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IParser<TToken, IEnumerable<T>> Singleton<TToken, T>(this IParser<TToken, T> parser)
-            => parser.Map(x => (IEnumerable<T>)[x]);
+        public static IParser<TToken, IReadOnlyList<T>> Singleton<TToken, T>(this IParser<TToken, T> parser)
+            => parser.Map(x => (IReadOnlyList<T>)[x]);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IParser<TToken, T> WithConsume<TToken, T>(this IParser<TToken, T> parser)

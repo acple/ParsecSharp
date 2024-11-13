@@ -16,7 +16,7 @@ namespace UnitTest.ParsecSharp
                 => base.ToString();
         }
 
-        private class ModifyResultInheritingTest<TToken, T>(Parser<TToken, T> parser) : ModifyResult<TToken, T, T>(parser)
+        private class ModifyResultInheritingTest<TToken, T>(IParser<TToken, T> parser) : ModifyResult<TToken, T, T>(parser)
         {
             protected override IResult<TToken, T> Fail<TState>(TState state, IFailure<TToken, T> failure)
                 => throw new NotImplementedException();
