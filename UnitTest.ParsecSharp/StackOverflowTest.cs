@@ -31,7 +31,7 @@ namespace UnitTest.ParsecSharp
             var parser = Many(Any<(int, int, int)>());
             var source = Enumerable.Range(0, count).Select(x => (x, x, x));
 
-            parser.Parse(source).WillSucceed(value => value.Count().Is(count));
+            parser.Parse(source).WillSucceed(value => value.Count.Is(count));
         }
 
         [TestMethod]
@@ -42,7 +42,7 @@ namespace UnitTest.ParsecSharp
             var parser = Many(Any<Tuple<int, int, int>>());
             var source = Enumerable.Range(0, count).Select(x => Tuple.Create(x, x, x));
 
-            parser.Parse(source).WillSucceed(value => value.Count().Is(count));
+            parser.Parse(source).WillSucceed(value => value.Count.Is(count));
         }
 
         [TestMethod]

@@ -53,11 +53,11 @@ namespace ParsecSharp
             => new Take<TToken>(count);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IParser<TToken, IEnumerable<TToken>> TakeWhile<TToken>(Func<TToken, bool> predicate)
+        public static IParser<TToken, IReadOnlyCollection<TToken>> TakeWhile<TToken>(Func<TToken, bool> predicate)
             => Many(Satisfy(predicate));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IParser<TToken, IEnumerable<TToken>> TakeWhile1<TToken>(Func<TToken, bool> predicate)
+        public static IParser<TToken, IReadOnlyCollection<TToken>> TakeWhile1<TToken>(Func<TToken, bool> predicate)
             => Many1(Satisfy(predicate));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

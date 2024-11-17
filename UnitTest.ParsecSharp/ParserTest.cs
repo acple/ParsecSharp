@@ -1129,7 +1129,7 @@ namespace UnitTest.ParsecSharp
             // parser の結果を潰したパーサ。
             var parser2 = parser.Flatten();
 
-            parser.Parse(source).WillSucceed(value => value.Is(value => value.Count() == 4 && value.All(x => x.Count() == 2)));
+            parser.Parse(source).WillSucceed(value => value.Is(value => value.Count == 4 && value.All(x => x.Count == 2)));
 
             parser2.Parse(source).WillSucceed(value => value.Is('a', 'b', 'c', 'd', 'E', 'F', 'G', 'H'));
 

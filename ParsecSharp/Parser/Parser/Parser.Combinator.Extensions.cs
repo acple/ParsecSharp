@@ -8,27 +8,27 @@ namespace ParsecSharp
     public static partial class Parser
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IParser<TToken, IEnumerable<T>> SeparatedBy<TToken, T, TIgnore>(this IParser<TToken, T> parser, IParser<TToken, TIgnore> separator)
+        public static IParser<TToken, IReadOnlyCollection<T>> SeparatedBy<TToken, T, TIgnore>(this IParser<TToken, T> parser, IParser<TToken, TIgnore> separator)
             => Try(parser.SeparatedBy1(separator), []);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IParser<TToken, IEnumerable<T>> SeparatedBy1<TToken, T, TIgnore>(this IParser<TToken, T> parser, IParser<TToken, TIgnore> separator)
+        public static IParser<TToken, IReadOnlyCollection<T>> SeparatedBy1<TToken, T, TIgnore>(this IParser<TToken, T> parser, IParser<TToken, TIgnore> separator)
             => parser.Bind(x => ManyRec(separator.Right(parser), [x]));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IParser<TToken, IEnumerable<T>> EndBy<TToken, T, TIgnore>(this IParser<TToken, T> parser, IParser<TToken, TIgnore> separator)
+        public static IParser<TToken, IReadOnlyCollection<T>> EndBy<TToken, T, TIgnore>(this IParser<TToken, T> parser, IParser<TToken, TIgnore> separator)
             => Many(parser.Left(separator));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IParser<TToken, IEnumerable<T>> EndBy1<TToken, T, TIgnore>(this IParser<TToken, T> parser, IParser<TToken, TIgnore> separator)
+        public static IParser<TToken, IReadOnlyCollection<T>> EndBy1<TToken, T, TIgnore>(this IParser<TToken, T> parser, IParser<TToken, TIgnore> separator)
             => Many1(parser.Left(separator));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IParser<TToken, IEnumerable<T>> SeparatedOrEndBy<TToken, T, TIgnore>(this IParser<TToken, T> parser, IParser<TToken, TIgnore> separator)
+        public static IParser<TToken, IReadOnlyCollection<T>> SeparatedOrEndBy<TToken, T, TIgnore>(this IParser<TToken, T> parser, IParser<TToken, TIgnore> separator)
             => Try(parser.SeparatedOrEndBy1(separator), []);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IParser<TToken, IEnumerable<T>> SeparatedOrEndBy1<TToken, T, TIgnore>(this IParser<TToken, T> parser, IParser<TToken, TIgnore> separator)
+        public static IParser<TToken, IReadOnlyCollection<T>> SeparatedOrEndBy1<TToken, T, TIgnore>(this IParser<TToken, T> parser, IParser<TToken, TIgnore> separator)
             => parser.SeparatedBy1(separator).Left(Optional(separator));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -108,7 +108,7 @@ namespace ParsecSharp
             => Pure(seed).Bind(seed => parser.FoldRight(seed, function));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IParser<TToken, IEnumerable<T>> Repeat<TToken, T>(this IParser<TToken, T> parser, int count)
+        public static IParser<TToken, IReadOnlyCollection<T>> Repeat<TToken, T>(this IParser<TToken, T> parser, int count)
             => Sequence(Enumerable.Repeat(parser, count));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -128,11 +128,11 @@ namespace ParsecSharp
             => open.Right(parser.Left(close));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IParser<TToken, IEnumerable<T>> Quote<TToken, T, TIgnore>(this IParser<TToken, T> parser, IParser<TToken, TIgnore> quote)
+        public static IParser<TToken, IReadOnlyCollection<T>> Quote<TToken, T, TIgnore>(this IParser<TToken, T> parser, IParser<TToken, TIgnore> quote)
             => parser.Quote(quote, quote);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IParser<TToken, IEnumerable<T>> Quote<TToken, T, TOpen, TClose>(this IParser<TToken, T> parser, IParser<TToken, TOpen> open, IParser<TToken, TClose> close)
+        public static IParser<TToken, IReadOnlyCollection<T>> Quote<TToken, T, TOpen, TClose>(this IParser<TToken, T> parser, IParser<TToken, TOpen> open, IParser<TToken, TClose> close)
             => open.Right(ManyTill(parser, close));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -144,11 +144,23 @@ namespace ParsecSharp
             => left.Bind(x => right.Map(y => y.Prepend(x)));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IParser<TToken, IReadOnlyCollection<T>> Append<TToken, T>(this IParser<TToken, T> left, IParser<TToken, IReadOnlyCollection<T>> right)
+            => left.Bind(x => right.Map(y => y.Prepend(x)));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IParser<TToken, IEnumerable<T>> Append<TToken, T>(this IParser<TToken, IEnumerable<T>> left, IParser<TToken, T> right)
             => left.Bind(x => right.Map(y => x.Append(y)));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IParser<TToken, IReadOnlyCollection<T>> Append<TToken, T>(this IParser<TToken, IReadOnlyCollection<T>> left, IParser<TToken, T> right)
+            => left.Bind(x => right.Map(y => x.Append(y)));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IParser<TToken, IEnumerable<T>> Append<TToken, T>(this IParser<TToken, IEnumerable<T>> left, IParser<TToken, IEnumerable<T>> right)
+            => left.Bind(x => right.Map(y => x.Concat(y)));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IParser<TToken, IReadOnlyCollection<T>> Append<TToken, T>(this IParser<TToken, IReadOnlyCollection<T>> left, IParser<TToken, IReadOnlyCollection<T>> right)
             => left.Bind(x => right.Map(y => x.Concat(y)));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -160,11 +172,23 @@ namespace ParsecSharp
             => parser.Bind(x => optional.Next(y => y.Prepend(x), [x]));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IParser<TToken, IReadOnlyCollection<T>> AppendOptional<TToken, T>(this IParser<TToken, T> parser, IParser<TToken, IReadOnlyCollection<T>> optional)
+            => parser.Bind(x => optional.Next(y => y.Prepend(x), [x]));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IParser<TToken, IEnumerable<T>> AppendOptional<TToken, T>(this IParser<TToken, IEnumerable<T>> parser, IParser<TToken, T> optional)
             => parser.Bind(x => optional.Next(y => x.Append(y), x));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IParser<TToken, IReadOnlyCollection<T>> AppendOptional<TToken, T>(this IParser<TToken, IReadOnlyCollection<T>> parser, IParser<TToken, T> optional)
+            => parser.Bind(x => optional.Next(y => x.Append(y), x));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IParser<TToken, IEnumerable<T>> AppendOptional<TToken, T>(this IParser<TToken, IEnumerable<T>> parser, IParser<TToken, IEnumerable<T>> optional)
+            => parser.Bind(x => optional.Next(y => x.Concat(y), x));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IParser<TToken, IReadOnlyCollection<T>> AppendOptional<TToken, T>(this IParser<TToken, IReadOnlyCollection<T>> parser, IParser<TToken, IReadOnlyCollection<T>> optional)
             => parser.Bind(x => optional.Next(y => x.Concat(y), x));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

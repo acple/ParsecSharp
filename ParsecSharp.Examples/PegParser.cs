@@ -99,10 +99,10 @@ namespace ParsecSharp.Examples
                     suffixed);
 
                 var sequence = Many1(prefixed)
-                    .Map(rules => rules.Count() == 1 ? rules.First() : new Rule(dict => Sequence(rules.Select(rule => rule.Resolve(dict))).Map(Result.Concat)));
+                    .Map(rules => rules.Count == 1 ? rules.First() : new Rule(dict => Sequence(rules.Select(rule => rule.Resolve(dict))).Map(Result.Concat)));
 
                 return sequence.SeparatedBy1(slash)
-                    .Map(rules => rules.Count() == 1 ? rules.First() : new Rule(dict => Choice(rules.Select(rule => rule.Resolve(dict)))))
+                    .Map(rules => rules.Count == 1 ? rules.First() : new Rule(dict => Choice(rules.Select(rule => rule.Resolve(dict)))))
                     .AbortIfEntered();
             });
 

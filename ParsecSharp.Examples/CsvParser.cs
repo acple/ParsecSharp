@@ -9,9 +9,9 @@ namespace ParsecSharp.Examples
     // CSV パーサ、RFC4180 にそこそこ忠実
     public class CsvParser
     {
-        public static IParser<char, IEnumerable<string[]>> Parser { get; } = CreateParser();
+        public static IParser<char, IReadOnlyCollection<string[]>> Parser { get; } = CreateParser();
 
-        private static IParser<char, IEnumerable<string[]>> CreateParser()
+        private static IParser<char, IReadOnlyCollection<string[]>> CreateParser()
         {
             // COMMA = %x2C ; == ','
             var comma = Char(',');
@@ -52,13 +52,13 @@ namespace ParsecSharp.Examples
             return parser;
         }
 
-        public IResult<char, IEnumerable<string[]>> Parse(string csv)
+        public IResult<char, IReadOnlyCollection<string[]>> Parse(string csv)
             => Parser.Parse(csv);
 
-        public IResult<char, IEnumerable<string[]>> Parse(Stream csv)
+        public IResult<char, IReadOnlyCollection<string[]>> Parse(Stream csv)
             => Parser.Parse(csv);
 
-        public IResult<char, IEnumerable<string[]>> Parse(Stream csv, Encoding encoding)
+        public IResult<char, IReadOnlyCollection<string[]>> Parse(Stream csv, Encoding encoding)
             => Parser.Parse(csv, encoding);
     }
 }

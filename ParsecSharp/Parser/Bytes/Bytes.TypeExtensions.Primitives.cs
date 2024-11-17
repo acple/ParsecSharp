@@ -32,11 +32,11 @@ namespace ParsecSharp
             => Take<byte>(count);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IParser<byte, IEnumerable<byte>> TakeWhile(Func<byte, bool> predicate)
+        public static IParser<byte, IReadOnlyCollection<byte>> TakeWhile(Func<byte, bool> predicate)
             => TakeWhile<byte>(predicate);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IParser<byte, IEnumerable<byte>> TakeWhile1(Func<byte, bool> predicate)
+        public static IParser<byte, IReadOnlyCollection<byte>> TakeWhile1(Func<byte, bool> predicate)
             => TakeWhile1<byte>(predicate);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
