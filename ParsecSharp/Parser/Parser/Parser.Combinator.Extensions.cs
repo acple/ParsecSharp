@@ -156,12 +156,19 @@ namespace ParsecSharp
             => left.Bind(x => right.Map(y => x.Append(y)));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [OverloadResolutionPriority(1)]
         public static IParser<TToken, IEnumerable<T>> Append<TToken, T>(this IParser<TToken, IEnumerable<T>> left, IParser<TToken, IEnumerable<T>> right)
             => left.Bind(x => right.Map(y => x.Concat(y)));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [OverloadResolutionPriority(1)]
         public static IParser<TToken, IReadOnlyCollection<T>> Append<TToken, T>(this IParser<TToken, IReadOnlyCollection<T>> left, IParser<TToken, IReadOnlyCollection<T>> right)
             => left.Bind(x => right.Map(y => x.Concat(y)));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [OverloadResolutionPriority(1)]
+        public static IParser<TToken, string> Append<TToken>(this IParser<TToken, string> left, IParser<TToken, string> right)
+            => left.Bind(x => right.Map(y => x + y));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IParser<TToken, IReadOnlyList<T>> AppendOptional<TToken, T>(this IParser<TToken, T> parser, IParser<TToken, T> optional)
@@ -184,12 +191,19 @@ namespace ParsecSharp
             => parser.Bind(x => optional.Next(y => x.Append(y), x));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [OverloadResolutionPriority(1)]
         public static IParser<TToken, IEnumerable<T>> AppendOptional<TToken, T>(this IParser<TToken, IEnumerable<T>> parser, IParser<TToken, IEnumerable<T>> optional)
             => parser.Bind(x => optional.Next(y => x.Concat(y), x));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [OverloadResolutionPriority(1)]
         public static IParser<TToken, IReadOnlyCollection<T>> AppendOptional<TToken, T>(this IParser<TToken, IReadOnlyCollection<T>> parser, IParser<TToken, IReadOnlyCollection<T>> optional)
             => parser.Bind(x => optional.Next(y => x.Concat(y), x));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [OverloadResolutionPriority(1)]
+        public static IParser<TToken, string> AppendOptional<TToken>(this IParser<TToken, string> parser, IParser<TToken, string> optional)
+            => parser.Bind(x => optional.Next(y => x + y, x));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IParser<TToken, T> Or<TToken, T>(this IParser<TToken, T> first, IParser<TToken, T> second)
