@@ -230,6 +230,10 @@ namespace ParsecSharp
             => parser.Map(values => values.SelectMany(x => x));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IParser<TToken, IReadOnlyCollection<T>> Flatten<TToken, T>(this IParser<TToken, IEnumerable<IReadOnlyCollection<T>>> parser)
+            => parser.Map(values => values.Aggregate((IReadOnlyCollection<T>)[], (accumulator, x) => accumulator.Concat(x)));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IParser<TToken, IReadOnlyList<T>> Singleton<TToken, T>(this IParser<TToken, T> parser)
             => parser.Map(x => (IReadOnlyList<T>)[x]);
 
