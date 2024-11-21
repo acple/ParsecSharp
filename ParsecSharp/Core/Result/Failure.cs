@@ -12,7 +12,7 @@ namespace ParsecSharp.Internal
 
         public abstract string Message { get; }
 
-        public abstract IResult<TToken, TResult> Convert<TResult>();
+        public abstract IFailure<TToken, TResult> Convert<TResult>();
 
         public abstract ISuspendedResult<TToken, T> Suspend();
 

@@ -13,7 +13,7 @@ namespace UnitTest.ParsecSharp
                 => throw new NotImplementedException();
 
             public override string? ToString()
-                => base.ToString();
+                => throw new NotImplementedException();
         }
 
         private class ModifyResultInheritingTest<TToken, T>(IParser<TToken, T> parser) : ModifyResult<TToken, T, T>(parser)
@@ -25,7 +25,7 @@ namespace UnitTest.ParsecSharp
                 => throw new NotImplementedException();
 
             public override string? ToString()
-                => base.ToString();
+                => throw new NotImplementedException();
         }
 
         private class SuccessInheritingTest<TToken, T>(T result) : Success<TToken, T>(result)
@@ -36,7 +36,7 @@ namespace UnitTest.ParsecSharp
             public override IResult<TToken, TResult> Next<TNext, TResult>(Func<T, IParser<TToken, TNext>> next, Func<IResult<TToken, TNext>, IResult<TToken, TResult>> cont)
                 => throw new NotImplementedException();
 
-            public override SuspendedResult<TToken, T> Suspend()
+            public override ISuspendedResult<TToken, T> Suspend()
                 => throw new NotImplementedException();
         }
 
@@ -44,14 +44,14 @@ namespace UnitTest.ParsecSharp
         {
             public override IParsecState<TToken> State => throw new NotImplementedException();
 
-            public override ParsecException Exception => base.Exception;
+            public override ParsecException Exception => throw new NotImplementedException();
 
             public override string Message => throw new NotImplementedException();
 
-            public override Failure<TToken, TNext> Convert<TNext>()
+            public override IFailure<TToken, TNext> Convert<TNext>()
                 => throw new NotImplementedException();
 
-            public override SuspendedResult<TToken, T> Suspend()
+            public override ISuspendedResult<TToken, T> Suspend()
                 => throw new NotImplementedException();
         }
     }

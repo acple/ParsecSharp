@@ -24,7 +24,7 @@ namespace ParsecSharp
 
         string Message { get; }
 
-        IResult<TToken, TResult> Convert<TResult>();
+        IFailure<TToken, TResult> Convert<TResult>();
     }
 
     public interface ISuccess<TToken, out T> : IResult<TToken, T>
