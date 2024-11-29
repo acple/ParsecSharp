@@ -8,16 +8,16 @@ namespace ParsecSharp
     internal static class EnumerableExtensions
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IReadOnlyCollection<T> Append<T>(this IReadOnlyCollection<T> source, T value)
+        public static IReadOnlyCollection<T> Append<T>(this IReadOnlyCollection<T> source, T element)
             => source is CountableEnumerable<T> countable
-                ? countable.Append(value)
-                : new CountableEnumerable<T>(source.AsEnumerable().Append(value), source.Count + 1);
+                ? countable.Append(element)
+                : new CountableEnumerable<T>(source.AsEnumerable().Append(element), source.Count + 1);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IReadOnlyCollection<T> Prepend<T>(this IReadOnlyCollection<T> source, T value)
+        public static IReadOnlyCollection<T> Prepend<T>(this IReadOnlyCollection<T> source, T element)
             => source is CountableEnumerable<T> countable
-                ? countable.Prepend(value)
-                : new CountableEnumerable<T>(source.AsEnumerable().Prepend(value), source.Count + 1);
+                ? countable.Prepend(element)
+                : new CountableEnumerable<T>(source.AsEnumerable().Prepend(element), source.Count + 1);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IReadOnlyCollection<T> Concat<T>(this IReadOnlyCollection<T> first, IReadOnlyCollection<T> second)
@@ -35,14 +35,14 @@ namespace ParsecSharp
             IEnumerator IEnumerable.GetEnumerator()
                 => this.GetEnumerator();
 
-            public CountableEnumerable<T> Append(T value)
-                => new(items.Append(value), count + 1);
+            public CountableEnumerable<T> Append(T element)
+                => new(items.Append(element), count + 1);
 
-            public CountableEnumerable<T> Prepend(T value)
-                => new(items.Prepend(value), count + 1);
+            public CountableEnumerable<T> Prepend(T element)
+                => new(items.Prepend(element), count + 1);
 
-            public CountableEnumerable<T> Concat(IReadOnlyCollection<T> values)
-                => new(items.Concat(values), count + values.Count);
+            public CountableEnumerable<T> Concat(IReadOnlyCollection<T> elements)
+                => new(items.Concat(elements), count + elements.Count);
         }
     }
 }
