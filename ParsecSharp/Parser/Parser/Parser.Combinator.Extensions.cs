@@ -36,10 +36,11 @@ namespace ParsecSharp
             => Not(exception).Right(parser);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IParser<TToken, T> Except<TToken, T, TIgnore>(this IParser<TToken, T> parser, IEnumerable<IParser<TToken, TIgnore>> exceptions)
+        public static IParser<TToken, T> Except<TToken, T, TIgnore>(this IParser<TToken, T> parser, params IEnumerable<IParser<TToken, TIgnore>> exceptions)
             => parser.Except(Choice(exceptions));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [OverloadResolutionPriority(-1)]
         public static IParser<TToken, T> Except<TToken, T, TIgnore>(this IParser<TToken, T> parser, params IParser<TToken, TIgnore>[] exceptions)
             => parser.Except(exceptions.AsEnumerable());
 

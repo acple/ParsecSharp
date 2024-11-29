@@ -33,18 +33,20 @@ namespace ParsecSharp
             => success ? Null<TToken>() : Fail<TToken, Unit>(message);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IParser<TToken, TToken> OneOf<TToken>(IEnumerable<TToken> candidates)
+        public static IParser<TToken, TToken> OneOf<TToken>(params IEnumerable<TToken> candidates)
             => Satisfy<TToken>(candidates.Contains);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [OverloadResolutionPriority(-1)]
         public static IParser<TToken, TToken> OneOf<TToken>(params TToken[] candidates)
             => OneOf(candidates.AsEnumerable());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IParser<TToken, TToken> NoneOf<TToken>(IEnumerable<TToken> candidates)
+        public static IParser<TToken, TToken> NoneOf<TToken>(params IEnumerable<TToken> candidates)
             => Satisfy<TToken>(x => !candidates.Contains(x));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [OverloadResolutionPriority(-1)]
         public static IParser<TToken, TToken> NoneOf<TToken>(params TToken[] candidates)
             => NoneOf(candidates.AsEnumerable());
 

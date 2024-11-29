@@ -9,20 +9,22 @@ namespace ParsecSharp
     public static partial class Parser
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IParser<TToken, T> Choice<TToken, T>(IEnumerable<IParser<TToken, T>> parsers)
+        public static IParser<TToken, T> Choice<TToken, T>(params IEnumerable<IParser<TToken, T>> parsers)
             => parsers.Reverse().Aggregate((next, parser) => parser.Alternative(next));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [OverloadResolutionPriority(-1)]
         public static IParser<TToken, T> Choice<TToken, T>(params IParser<TToken, T>[] parsers)
             => Choice(parsers.AsEnumerable());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IParser<TToken, IReadOnlyCollection<T>> Sequence<TToken, T>(IEnumerable<IParser<TToken, T>> parsers)
+        public static IParser<TToken, IReadOnlyCollection<T>> Sequence<TToken, T>(params IEnumerable<IParser<TToken, T>> parsers)
             => parsers.Reverse()
                 .Aggregate(Pure<TToken, IReadOnlyCollection<T>>([]),
                     (next, parser) => parser.Bind(x => next.Map(result => result.Prepend(x))));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [OverloadResolutionPriority(-1)]
         public static IParser<TToken, IReadOnlyCollection<T>> Sequence<TToken, T>(params IParser<TToken, T>[] parsers)
             => Sequence(parsers.AsEnumerable());
 
