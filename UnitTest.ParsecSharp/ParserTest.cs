@@ -1038,6 +1038,22 @@ namespace UnitTest.ParsecSharp
                 var source2 = "abcd";
                 parser.Parse(source2).WillFail();
             }
+
+            {
+                // array + array
+                var parser = Many1(Lower()).ToArray().Append(Many1(Upper()).ToArray()).AsString();
+                parser.Parse(source).WillSucceed(value => value.Is("abcdEFGH"));
+                var source2 = "abcd";
+                parser.Parse(source2).WillFail();
+            }
+
+            {
+                // string + string
+                var parser = Many1(Lower()).AsString().Append(Many1(Upper()).AsString());
+                parser.Parse(source).WillSucceed(value => value.Is("abcdEFGH"));
+                var source2 = "abcd";
+                parser.Parse(source2).WillFail();
+            }
         }
 
         [TestMethod]
@@ -1074,6 +1090,22 @@ namespace UnitTest.ParsecSharp
             {
                 // 小文字*n + 大文字*n
                 var parser = Many1(Lower()).AppendOptional(Many1(Upper())).AsString();
+                parser.Parse(source).WillSucceed(value => value.Is("abcdEFGH"));
+                var source2 = "abcd";
+                parser.Parse(source2).WillSucceed(value => value.Is("abcd"));
+            }
+
+            {
+                // array + array
+                var parser = Many1(Lower()).ToArray().AppendOptional(Many1(Upper()).ToArray()).AsString();
+                parser.Parse(source).WillSucceed(value => value.Is("abcdEFGH"));
+                var source2 = "abcd";
+                parser.Parse(source2).WillSucceed(value => value.Is("abcd"));
+            }
+
+            {
+                // string + string
+                var parser = Many1(Lower()).AsString().AppendOptional(Many1(Upper()).AsString());
                 parser.Parse(source).WillSucceed(value => value.Is("abcdEFGH"));
                 var source2 = "abcd";
                 parser.Parse(source2).WillSucceed(value => value.Is("abcd"));
