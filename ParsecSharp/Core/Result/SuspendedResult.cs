@@ -2,7 +2,7 @@ using System;
 
 namespace ParsecSharp.Internal
 {
-    public sealed class SuspendedResult<TToken, T>(IResult<TToken, T> result, ISuspendedState<TToken> rest) : ISuspendedResult<TToken, T>
+    public sealed class SuspendedResult<TToken, T>(IResult<TToken, T> result, ISuspendedState<TToken> rest) : ISuspendedResult<TToken, T>, IEquatable<SuspendedResult<TToken, T>>
     {
         public IResult<TToken, T> Result { get; } = result;
 
@@ -14,14 +14,11 @@ namespace ParsecSharp.Internal
             rest = this.Rest;
         }
 
-        public ISuspendedResult<TToken, TResult> Continue<TResult>(IParser<TToken, TResult> parser)
-            => this.Rest.Continue(parser);
-
         public void Dispose()
             => this.Rest.Dispose();
 
-        public bool Equals(SuspendedResult<TToken, T> other)
-            => this.Result == other.Result && this.Rest == other.Rest;
+        public bool Equals(SuspendedResult<TToken, T>? other)
+            => other is not null && this.Result == other.Result && this.Rest == other.Rest;
 
         public sealed override bool Equals(object? obj)
             => obj is SuspendedResult<TToken, T> other && this.Result == other.Result && this.Rest == other.Rest;
