@@ -8,10 +8,6 @@ namespace UnitTest.ParsecSharp
     [TestClass]
     public class TextTest
     {
-        private const string _abcdEFGH = "abcdEFGH";
-
-        private const string _123456 = "123456";
-
         [TestMethod]
         public void CharTest()
         {
@@ -20,10 +16,10 @@ namespace UnitTest.ParsecSharp
 
             var parser = Char('a');
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is('a'));
 
-            var source2 = _123456;
+            var source2 = "123456";
             parser.Parse(source2).WillFail();
         }
 
@@ -34,7 +30,7 @@ namespace UnitTest.ParsecSharp
 
             var parser = CharIgnoreCase('A');
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is('a'));
         }
 
@@ -45,7 +41,7 @@ namespace UnitTest.ParsecSharp
 
             var parser = String("abc");
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is("abc"));
         }
 
@@ -56,7 +52,7 @@ namespace UnitTest.ParsecSharp
 
             var parser = StringIgnoreCase("abcde");
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is("abcdE"));
         }
 

@@ -11,12 +11,6 @@ namespace UnitTest.ParsecSharp
     [TestClass]
     public class ParserTest
     {
-        private const string _abcdEFGH = "abcdEFGH";
-
-        private const string _123456 = "123456";
-
-        private const string _commanum = "123,456,789";
-
         [TestMethod]
         public void AnyTest()
         {
@@ -25,7 +19,7 @@ namespace UnitTest.ParsecSharp
 
             var parser = Any();
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is('a'));
         }
 
@@ -35,8 +29,8 @@ namespace UnitTest.ParsecSharp
             // Creates a parser that matches a specified token.
             // Uses `EqualityComparer<T>.Default` for equality comparison.
 
-            var source = _abcdEFGH;
-            var source2 = _123456;
+            var source = "abcdEFGH";
+            var source2 = "123456";
 
             // Parser that matches the token 'a'.
             var parser = Token('a');
@@ -65,7 +59,7 @@ namespace UnitTest.ParsecSharp
 
             var parser = Null();
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is(Unit.Instance));
 
             var source2 = string.Empty;
@@ -80,10 +74,10 @@ namespace UnitTest.ParsecSharp
             // Parser that succeeds if the token is one of '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e'.
             var parser = OneOf("6789abcde");
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is('a'));
 
-            var source2 = _123456;
+            var source2 = "123456";
             parser.Parse(source2).WillFail();
 
             // Overload that takes `params IEnumerable<char>`.
@@ -98,8 +92,8 @@ namespace UnitTest.ParsecSharp
         {
             // Creates a parser that succeeds if the token is not included in the specified sequence.
 
-            var source = _abcdEFGH;
-            var source2 = _123456;
+            var source = "abcdEFGH";
+            var source2 = "123456";
 
             // Parser that succeeds if the token is not one of 'd', 'c', 'b', 'a', '9', '8', '7'.
             var parser = NoneOf("dcba987");
@@ -124,10 +118,10 @@ namespace UnitTest.ParsecSharp
             // Parser that reads 3 tokens.
             var parser = Take(3);
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is('a', 'b', 'c'));
 
-            var source2 = _123456;
+            var source2 = "123456";
             parser.Parse(source2).WillSucceed(value => value.Is('1', '2', '3'));
 
             // If the specified number of tokens exceeds the remaining input, the parser fails.
@@ -148,7 +142,7 @@ namespace UnitTest.ParsecSharp
         {
             // Creates a parser that skips the specified number of tokens.
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
 
             // Parser that skips 3 tokens and then returns the next token.
             var parser = Skip(3).Right(Any());
@@ -179,10 +173,10 @@ namespace UnitTest.ParsecSharp
             // Parser that continues to read input as long as the token is lowercase letter.
             var parser = TakeWhile(char.IsLower);
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is('a', 'b', 'c', 'd'));
 
-            var source2 = _123456;
+            var source2 = "123456";
             parser.Parse(source2).WillSucceed(value => value.Is(Enumerable.Empty<char>()));
         }
 
@@ -195,10 +189,10 @@ namespace UnitTest.ParsecSharp
             // Parser that continues to read input as long as the token is lowercase letter.
             var parser = TakeWhile1(char.IsLower);
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is('a', 'b', 'c', 'd'));
 
-            var source2 = _123456;
+            var source2 = "123456";
             parser.Parse(source2).WillFail();
         }
 
@@ -211,10 +205,10 @@ namespace UnitTest.ParsecSharp
             // Parser that continues to consume input as long as the token is lowercase letter.
             var parser = SkipWhile(char.IsLower);
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is(Unit.Instance));
 
-            var source2 = _123456;
+            var source2 = "123456";
             parser.Parse(source2).WillSucceed(value => value.Is(Unit.Instance));
         }
 
@@ -227,10 +221,10 @@ namespace UnitTest.ParsecSharp
             // Parser that continues to consume input as long as the token is lowercase letter.
             var parser = SkipWhile1(char.IsLower);
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is(Unit.Instance));
 
-            var source2 = _123456;
+            var source2 = "123456";
             parser.Parse(source2).WillFail();
         }
 
@@ -240,7 +234,7 @@ namespace UnitTest.ParsecSharp
             // Creates a parser that takes one input and succeeds if the condition is met.
             // Can be used to construct all parsers that consume input.
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
 
             // Parser that matches 'a'.
             var parser = Satisfy(x => x == 'a'); // == Char('a');
@@ -260,7 +254,7 @@ namespace UnitTest.ParsecSharp
 
             var parser = Pure("success!");
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is("success!"));
 
             // Delays the generation of the value until the parser is executed.
@@ -274,7 +268,7 @@ namespace UnitTest.ParsecSharp
             // Creates a parser that returns a failure result.
             // This parser does not consume input.
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
 
             var parser = Fail<Unit>();
             parser.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 1): Unexpected 'a<0x61>'"));
@@ -297,7 +291,7 @@ namespace UnitTest.ParsecSharp
             // Matches `Abort` or `Any`, but the parsing process ends when `Abort` is evaluated.
             var parser = Abort<char>(_ => "aborted").Or(Any());
 
-            var source = _123456;
+            var source = "123456";
             parser.Parse(source).WillFail(failure => failure.Message.Is("aborted"));
         }
 
@@ -310,7 +304,7 @@ namespace UnitTest.ParsecSharp
             // Parser that matches `Any` 3 times and then returns the position at that point.
             var parser = Any().Repeat(3).Right(GetPosition());
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Column.Is(4));
         }
 
@@ -323,10 +317,10 @@ namespace UnitTest.ParsecSharp
             // Parser that matches 'c', 'b', or 'a'.
             var parser = Choice(Char('c'), Char('b'), Char('a'));
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is('a'));
 
-            var source2 = _123456;
+            var source2 = "123456";
             parser.Parse(source2).WillFail();
         }
 
@@ -338,11 +332,23 @@ namespace UnitTest.ParsecSharp
             // Parser that matches 'a' + 'b' + 'c' + 'd' and converts to "abcd".
             var parser = Sequence(Char('a'), Char('b'), Char('c'), Char('d')).AsString();
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is("abcd"));
 
             var source2 = "abCDEF";
             parser.Parse(source2).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 3): Unexpected 'C<0x43>'"));
+
+            // You can pass an arbitrary number of parsers using the `params IEnumerable<T>` overload.
+            var parser2 = Sequence(Char('a'), Char('b'), Char('c'), Char('d'), Char('E'), Char('F'), Char('G'), Char('H'), Pure('_')).AsString();
+
+            parser2.Parse(source).WillSucceed(value => value.Is("abcdEFGH_"));
+
+            parser2.Parse(source2).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 3): Unexpected 'C<0x43>'"));
+
+            // `Sequence` has overloads to handle parsers with different types, supporting up to 8 parsers.
+            var parser3 = Sequence(Char('a'), String("bc"), HexDigit(), SkipMany(Upper()), Pure(999), (a, bc, d, _, i) => new { a, bc, d, i });
+
+            parser3.Parse(source).WillSucceed(value => value.Is(x => x.a == 'a' && x.bc == "bc" && x.d == 'd' && x.i == 999));
         }
 
         [TestMethod]
@@ -354,10 +360,10 @@ namespace UnitTest.ParsecSharp
             // Parser that matches 'a' and returns 'a' if successful, 'x' if it fails.
             var parser = Try(Char('a'), 'x');
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is('a'));
 
-            var source2 = _123456;
+            var source2 = "123456";
             parser.Parse(source2).WillSucceed(value => value.Is('x'));
 
             // Overload that delays the evaluation of resume.
@@ -371,8 +377,8 @@ namespace UnitTest.ParsecSharp
             // Creates a parser that executes the parse with parser and returns a bool indicating whether it matched, always succeeding.
             // If the parser fails to match, it does not consume input.
 
-            var source = _abcdEFGH;
-            var source2 = _123456;
+            var source = "abcdEFGH";
+            var source2 = "123456";
 
             // Parser that matches `Digit`, returns boolean value that matches or not, then matches `Any`.
             var parser = Optional(Digit()).Right(Any());
@@ -398,10 +404,10 @@ namespace UnitTest.ParsecSharp
             // Parser that succeeds if the token is not `Lower`.
             var parser = Not(Lower());
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillFail();
 
-            var source2 = _123456;
+            var source2 = "123456";
             parser.Parse(source2).WillSucceed(value => value.Is(Unit.Instance));
         }
 
@@ -413,10 +419,10 @@ namespace UnitTest.ParsecSharp
             // Parser that matches `Any` then `Letter` without consuming input, then matches `Any` and concatenates the results.
             var parser = LookAhead(Any().Right(Letter())).Append(Any());
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is('b', 'a'));
 
-            var source2 = _123456;
+            var source2 = "123456";
             parser.Parse(source2).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 1): At LookAhead -> Parser Failure (Line: 1, Column: 2): Unexpected '2<0x32>'"));
         }
 
@@ -429,10 +435,10 @@ namespace UnitTest.ParsecSharp
             // Parser that matches `Lower` 0 or more times.
             var parser = Many(Lower());
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is('a', 'b', 'c', 'd'));
 
-            var source2 = _123456;
+            var source2 = "123456";
             parser.Parse(source2).WillSucceed(value => value.IsEmpty());
         }
 
@@ -445,10 +451,10 @@ namespace UnitTest.ParsecSharp
             // Parser that matches `Lower` 1 or more times.
             var parser = Many1(Lower());
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is('a', 'b', 'c', 'd'));
 
-            var source2 = _123456;
+            var source2 = "123456";
             parser.Parse(source2).WillFail();
         }
 
@@ -461,10 +467,10 @@ namespace UnitTest.ParsecSharp
             // Parser that matches `Lower` 0 or more times, discards the result, then matches `Any`.
             var parser = SkipMany(Lower()).Right(Any());
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is('E'));
 
-            var source2 = _123456;
+            var source2 = "123456";
             parser.Parse(source2).WillSucceed(value => value.Is('1'));
         }
 
@@ -476,10 +482,10 @@ namespace UnitTest.ParsecSharp
             // Parser that matches `Lower` 1 or more times, discards the result, then matches `Any`.
             var parser = SkipMany1(Lower()).Right(Any());
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is('E'));
 
-            var source2 = _123456;
+            var source2 = "123456";
             parser.Parse(source2).WillFail();
         }
 
@@ -489,8 +495,8 @@ namespace UnitTest.ParsecSharp
             // Creates a parser that matches parser repeatedly until terminator is matched and returns the result as a sequence.
             // The result of matching terminator is discarded.
 
-            var source = _abcdEFGH;
-            var source2 = _123456;
+            var source = "abcdEFGH";
+            var source2 = "123456";
 
             // Parser that matches `Any` repeatedly until 'F' is matched.
             var parser = ManyTill(Any(), Char('F'));
@@ -517,7 +523,7 @@ namespace UnitTest.ParsecSharp
             // Parser that skips `Lower` until it matches "cd".
             var parser = SkipTill(Lower(), String("cd"));
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is("cd"));
 
             // Fails because an uppercase letter exists before "cd".
@@ -538,12 +544,12 @@ namespace UnitTest.ParsecSharp
             // Parser that reads input until it matches 'E'.
             var parser = TakeTill(Char('E'));
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is('a', 'b', 'c', 'd'));
 
             // If a terminator that does not match until the end is given, the parser will read the stream to the end,
             // which may affect performance.
-            var source2 = _123456;
+            var source2 = "123456";
             parser.Parse(source2).WillFail();
         }
 
@@ -555,10 +561,10 @@ namespace UnitTest.ParsecSharp
             // Parser that skips until it matches "FG".
             var parser = Match(String("FG"));
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is("FG"));
 
-            var source2 = _123456;
+            var source2 = "123456";
             parser.Parse(source2).WillFail();
 
             // Parser that skips until it matches `Lower` + `Upper`.
@@ -597,7 +603,7 @@ namespace UnitTest.ParsecSharp
             var abCD = Sequence(Char('a'), Char('b'), Char('C'), Char('D'));
             var parser = Atom(abCD);
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             abCD.Parse(source).WillFail(failure => failure.State.Position.Is(position => position.Line == 1 && position.Column == 3));
             parser.Parse(source).WillFail(failure => failure.State.Position.Is(position => position.Line == 1 && position.Column == 1));
         }
@@ -611,7 +617,7 @@ namespace UnitTest.ParsecSharp
             // Parser that matches 'a'. However, it is constructed at the time of parsing execution.
             var parser = Delay(() => Char('a'));
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is('a'));
 
             // The `Func<T>` passed to `Delay` is executed only once at the time of parsing execution.
@@ -649,10 +655,10 @@ namespace UnitTest.ParsecSharp
             // Parser that matches `Letter`, returns the result of matching the next `Letter` if successful, and returns '\n' if it fails.
             var parser = Letter().Next(_ => Letter(), '\n');
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is('b'));
 
-            var source2 = _123456;
+            var source2 = "123456";
             parser.Parse(source2).WillSucceed(value => value.Is('\n'));
 
             // The overall result is failure because the first `Letter` succeeded but the next `Letter` failed.
@@ -668,14 +674,14 @@ namespace UnitTest.ParsecSharp
             // Parser that matches a number and succeeds only if it is less than 1000.
             var parser = Many1(DecDigit()).ToInt().Guard(x => x < 1000);
 
-            var source = _123456;
+            var source = "123456";
             parser.Parse(source).WillFail(failure => failure.Message.Is("A value '123456' does not satisfy condition"));
 
             var source2 = "999";
             parser.Parse(source2).WillSucceed(value => value.Is(999));
 
             // If the parser does not match, the validation itself is not performed.
-            var source3 = _abcdEFGH;
+            var source3 = "abcdEFGH";
             parser.Parse(source3).WillFail();
         }
 
@@ -688,13 +694,13 @@ namespace UnitTest.ParsecSharp
             // [ 1*Number *( "," 1*Number ) ]
             var parser = Many1(Number()).AsString().SeparatedBy(Char(','));
 
-            var source = _commanum;
+            var source = "123,456,789";
             parser.Parse(source).WillSucceed(value => value.Is("123", "456", "789"));
 
-            var source2 = _123456;
+            var source2 = "123456";
             parser.Parse(source2).WillSucceed(value => value.Is("123456"));
 
-            var source3 = _abcdEFGH;
+            var source3 = "abcdEFGH";
             parser.Parse(source3).WillSucceed(value => value.IsEmpty());
         }
 
@@ -706,13 +712,13 @@ namespace UnitTest.ParsecSharp
             // 1*Number *( "," 1*Number )
             var parser = Many1(Number()).AsString().SeparatedBy1(Char(','));
 
-            var source = _commanum;
+            var source = "123,456,789";
             parser.Parse(source).WillSucceed(value => value.Is("123", "456", "789"));
 
-            var source2 = _123456;
+            var source2 = "123456";
             parser.Parse(source2).WillSucceed(value => value.Is("123456"));
 
-            var source3 = _abcdEFGH;
+            var source3 = "abcdEFGH";
             parser.Parse(source3).WillFail();
         }
 
@@ -724,10 +730,10 @@ namespace UnitTest.ParsecSharp
             // *( 1*Number "," )
             var parser = Many1(Number()).AsString().EndBy(Char(','));
 
-            var source = _commanum;
+            var source = "123,456,789";
             parser.Parse(source).WillSucceed(value => value.Is("123", "456"));
 
-            var source2 = _123456;
+            var source2 = "123456";
             parser.Parse(source2).WillSucceed(value => value.IsEmpty());
         }
 
@@ -739,10 +745,10 @@ namespace UnitTest.ParsecSharp
             // 1*( 1*Number "," )
             var parser = Many1(Number()).AsString().EndBy1(Char(','));
 
-            var source = _commanum;
+            var source = "123,456,789";
             parser.Parse(source).WillSucceed(value => value.Is("123", "456"));
 
-            var source2 = _123456;
+            var source2 = "123456";
             parser.Parse(source2).WillFail();
         }
 
@@ -754,13 +760,13 @@ namespace UnitTest.ParsecSharp
             // [ 1*Number *( "," 1*Number ) [ "," ] ]
             var parser = Many1(Number()).AsString().SeparatedOrEndBy(Char(','));
 
-            var source = _commanum;
+            var source = "123,456,789";
             parser.Parse(source).WillSucceed(value => value.Is("123", "456", "789"));
 
-            var source2 = _123456;
+            var source2 = "123456";
             parser.Parse(source2).WillSucceed(value => value.Is("123456"));
 
-            var source3 = _commanum + ",";
+            var source3 = "123,456,789" + ",";
             parser.Parse(source3).WillSucceed(value => value.Is("123", "456", "789"));
         }
 
@@ -772,13 +778,13 @@ namespace UnitTest.ParsecSharp
             // 1*Number *( "," 1*Number ) [ "," ]
             var parser = Many1(Number()).AsString().SeparatedOrEndBy1(Char(','));
 
-            var source = _commanum;
+            var source = "123,456,789";
             parser.Parse(source).WillSucceed(value => value.Is("123", "456", "789"));
 
-            var source2 = _123456;
+            var source2 = "123456";
             parser.Parse(source2).WillSucceed(value => value.Is("123456"));
 
-            var source3 = _commanum + ",";
+            var source3 = "123,456,789" + ",";
             parser.Parse(source3).WillSucceed(value => value.Is("123", "456", "789"));
         }
 
@@ -787,7 +793,7 @@ namespace UnitTest.ParsecSharp
         {
             // Creates a parser with exclusion conditions for the specified parser.
 
-            var source = _123456;
+            var source = "123456";
 
             // Parser that matches digits except '5'.
             var parser = Digit().Except(Char('5'));
@@ -865,7 +871,7 @@ namespace UnitTest.ParsecSharp
             var source3 = "123";
             parser.Parse(source3).WillSucceed(value => value.Is(123));
 
-            var source4 = _abcdEFGH;
+            var source4 = "abcdEFGH";
             parser.Parse(source4).WillFail();
 
             var source5 = "1-2+3+ABCD";
@@ -899,7 +905,7 @@ namespace UnitTest.ParsecSharp
             var source3 = "123";
             parser.Parse(source3).WillSucceed(value => value.Is(123));
 
-            var source4 = _abcdEFGH;
+            var source4 = "abcdEFGH";
             parser.Parse(source4).WillFail();
 
             var source5 = "1-2+3+ABCD";
@@ -947,7 +953,7 @@ namespace UnitTest.ParsecSharp
             // 2*( 3*Any )
             var parser = Any().Repeat(3).AsString().Repeat(2);
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is("abc", "dEF"));
         }
 
@@ -959,7 +965,7 @@ namespace UnitTest.ParsecSharp
             // Parser that matches ( "a" "b" ) and returns 'a'.
             var parser = Char('a').Left(Char('b'));
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is('a'));
 
             var source2 = "a";
@@ -974,7 +980,7 @@ namespace UnitTest.ParsecSharp
             // Parser that matches ( "a" "b" ) and returns 'b'.
             var parser = Char('a').Right(Char('b'));
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is('b'));
 
             var source2 = "b";
@@ -991,8 +997,8 @@ namespace UnitTest.ParsecSharp
             // ( "[" 1*Letter "]" )
             var parser = Many1(Letter()).Between(Char('['), Char(']'));
 
-            var source = $"[{_abcdEFGH}]";
-            parser.Parse(source).WillSucceed(value => value.Is(_abcdEFGH));
+            var source = $"[{"abcdEFGH"}]";
+            parser.Parse(source).WillSucceed(value => value.Is("abcdEFGH"));
 
             // If you pass `Many(Any())` to the parser, it will match any input until the end, so `close` will match the end of input.
             var parser2 = Many(Any()).Between(Char('"'), Char('"')); // It does not match ( dquote *Any dquote )
@@ -1018,7 +1024,7 @@ namespace UnitTest.ParsecSharp
         {
             // Matches two parsers in sequence and returns the concatenated result as a sequence.
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
 
             {
                 // 1 character + 1 character
@@ -1074,7 +1080,7 @@ namespace UnitTest.ParsecSharp
         {
             // Behaves like Append, but if the right parser fails, it treats the result as an empty sequence and combines them.
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
 
             {
                 // 1 character + 1 character
@@ -1134,12 +1140,12 @@ namespace UnitTest.ParsecSharp
             // Parser that matches 1 or more lowercase letters and discards the result.
             var parser = Many1(Lower()).Ignore();
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Is(Unit.Instance));
 
             parser.Right(Any()).Parse(source).WillSucceed(value => value.Is('E'));
 
-            var source2 = _123456;
+            var source2 = "123456";
             parser.Parse(source2).WillFail();
         }
 
@@ -1149,7 +1155,7 @@ namespace UnitTest.ParsecSharp
             // A combinator that ensures that parser consumes the input until the end.
             // Fails if it has not reached the end.
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
 
             // Parser that matches 1 or more lowercase letters and must consume all input at that point.
             var parser = Many1(Lower()).End();
@@ -1165,7 +1171,7 @@ namespace UnitTest.ParsecSharp
         {
             // A combinator that flattens a parser that results in a nested `IEnumerable<T>`.
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
 
             // Parser that takes 2 tokens.
             var token = Any().Repeat(2);
@@ -1191,7 +1197,7 @@ namespace UnitTest.ParsecSharp
             // Parser that matches 'a' and returns [ 'a' ].
             var parser = Char('a').Singleton();
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillSucceed(value => value.Count.Is(1));
         }
 
@@ -1204,10 +1210,10 @@ namespace UnitTest.ParsecSharp
             // Parser that avoids infinite loops that occur when `Letter` does not match.
             var parser = Many1(Many(Letter()).WithConsume().AsString());
 
-            var source = _abcdEFGH;
-            parser.Parse(source).WillSucceed(value => value.Is(_abcdEFGH));
+            var source = "abcdEFGH";
+            parser.Parse(source).WillSucceed(value => value.Is("abcdEFGH"));
 
-            var source2 = _123456;
+            var source2 = "123456";
             parser.Parse(source2).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 1): A parser did not consume any input"));
         }
 
@@ -1219,10 +1225,10 @@ namespace UnitTest.ParsecSharp
             var parser = Many1(Digit())
                 .WithMessage(failure => $"MessageTest Current: '{failure.State.Current}', original message: {failure.Message}");
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 1): MessageTest Current: 'a', original message: Unexpected 'a<0x61>'"));
 
-            var source2 = _123456;
+            var source2 = "123456";
             parser.Parse(source2).WillSucceed(value => value.Is('1', '2', '3', '4', '5', '6'));
         }
 
@@ -1234,7 +1240,7 @@ namespace UnitTest.ParsecSharp
             var parser = Many(Lower().AbortWhenFail(failure => $"Fatal Error! '{failure.State.Current}' is not a lower char!")).AsString()
                 .Or(Pure("recovery"));
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 5): Fatal Error! 'E' is not a lower char!"));
         }
 
@@ -1247,13 +1253,13 @@ namespace UnitTest.ParsecSharp
             var parser = Sequence(Char('1'), Char('2'), Char('3'), Char('4')).AsString().AbortIfEntered(_ => "abort1234")
                 .Or(Pure("recovery"));
 
-            var source = _123456;
+            var source = "123456";
             parser.Parse(source).WillSucceed(value => value.Is("1234"));
 
-            var source2 = _abcdEFGH;
+            var source2 = "abcdEFGH";
             parser.Parse(source2).WillSucceed(value => value.Is("recovery"));
 
-            var source3 = _commanum;
+            var source3 = "123,456,789";
             parser.Parse(source3).WillFail(failure => failure.Message.Is("abort1234")); // Fails because it consumed input up to 123 and failed, so recovery is not performed
         }
 
@@ -1263,7 +1269,7 @@ namespace UnitTest.ParsecSharp
             // Executes the defined action when parsing executes.
             // Can specify actions to be executed on success, or on both success and failure.
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
 
             // Increases the value of count by 1 when parsing `Lower` succeeds.
             var count = 0;
@@ -1294,7 +1300,7 @@ namespace UnitTest.ParsecSharp
             // Parser that attempts to return the result of `ToString` on null, and returns "success" if it fails.
             var parser = Pure(null as object).Map(x => x!.ToString()!).Or(Pure("success"));
 
-            var source = _abcdEFGH;
+            var source = "abcdEFGH";
             parser.Parse(source).WillFail(failure => failure.Exception.InnerException!.GetType().Name.Is(nameof(NullReferenceException)));
         }
 
@@ -1306,7 +1312,7 @@ namespace UnitTest.ParsecSharp
             // Parser that consumes 3 characters.
             var parser = Any().Repeat(3).AsString();
 
-            using var source = StringStream.Create(_abcdEFGH);
+            using var source = StringStream.Create("abcdEFGH");
 
             var (result, rest) = parser.ParsePartially(source);
             result.WillSucceed(value => value.Is("abc"));
