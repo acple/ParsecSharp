@@ -16,7 +16,7 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void ArrayStreamTest()
         {
-            // 任意の型の配列、あるいは IReadOnlyList<T> をソースにする場合
+            // When using an array or `IReadOnlyList<T>` as the source
             var source = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
             var parser = Any<int>().FoldLeft(0, (x, y) => x + y);
 
@@ -26,8 +26,8 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void ByteStreamTest()
         {
-            // System.IO.Stream をバイト列としてソースにする場合
-            var source = Enumerable.Repeat(new Random("seed".GetHashCode()), 999).Select(random => (byte)random.Next(256)).ToArray();
+            // When using `System.IO.Stream` as a byte sequence source
+            var source = Enumerable.Repeat(new Random(999), 999).Select(random => (byte)random.Next(256)).ToArray();
             using var stream = new MemoryStream(source);
             var parser = Many1(Any<byte>());
 
@@ -37,7 +37,7 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void EnumerableStreamTest()
         {
-            // 任意の型の IEnumerable<T> をソースにする場合
+            // When using an `IEnumerable<T>` as the source
             var source = Enumerable.Range(1, 10);
             var parser = Any<int>().FoldRight(0, (x, y) => x + y);
 
@@ -47,7 +47,7 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void StringStreamTest()
         {
-            // 文字列をソースにする場合
+            // When using a string as the source
             var source = "The quick brown fox jumps over the lazy dog";
             var parser = Many(Many1(Letter()).Between(Spaces()).AsString()).ToArray();
 
@@ -57,7 +57,7 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void TextStreamTest()
         {
-            // System.IO.Stream をソースにする場合
+            // When using `System.IO.Stream` as the source
             var source = "The quick brown fox jumps over the lazy dog";
             using var stream = new MemoryStream(new UTF8Encoding(false).GetBytes(source));
             var parser = Many(Many1(Letter()).Between(Spaces()).AsString()).ToArray();
@@ -68,17 +68,17 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void TokenizedStreamTest()
         {
-            // 任意のパーサを繰り返し適用した結果をソースストリームとして利用可能にします。
-            // 字句解析等の前段処理を可能にします。
+            // Allows using the result of repeatedly applying any parser as a source stream.
+            // Enables preprocessing like lexical analysis.
 
-            // 空白に挟まれた文字列を1要素として返すパーサ。
+            // Parser that matches a string element surrounded by spaces.
             var token = Many1(LetterOrDigit()).Between(Spaces()).AsString();
 
             var source = "The quick brown fox jumps over the lazy dog";
             using var stream = StringStream.Create(source);
             using var tokenized = ParsecState.Tokenize(stream, token);
 
-            // 任意のトークンにマッチし、その長さを返すパーサ。
+            // Parser that matches any token and returns its length.
             var parser = Many(Any<string>().Map(x => x.Length));
 
             parser.Parse(tokenized).WillSucceed(value => value.Is(source.Split(' ').Select(x => x.Length)));

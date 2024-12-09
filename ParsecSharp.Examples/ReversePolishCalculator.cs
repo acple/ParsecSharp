@@ -4,17 +4,17 @@ using static ParsecSharp.Text;
 
 namespace ParsecSharp.Examples
 {
-    // 逆ポーランド記法の式をパーサで計算してみるネタ
+    // Calculate expressions in Reverse Polish Notation using a parser
     public class ReversePolishCalculator
     {
-        // 整数または小数にマッチし、double にして返す
+        // Matches integers or decimals and returns them as double
         private static readonly IParser<char, double> Number =
             Optional(OneOf("-+"), '+')
                 .Append(Many1(DecDigit()))
                 .AppendOptional(Char('.').Append(Many1(DecDigit())))
                 .ToDouble();
 
-        // 四則演算子にマッチし、二項演算関数にマップ
+        // Matches arithmetic operators and maps them to binary functions
         private static readonly IParser<char, Func<double, double, double>> Op =
             Choice(
                 Char('+').Map(_ => (Func<double, double, double>)((x, y) => x + y)),
@@ -22,9 +22,9 @@ namespace ParsecSharp.Examples
                 Char('*').Map(_ => (Func<double, double, double>)((x, y) => x * y)),
                 Char('/').Map(_ => (Func<double, double, double>)((x, y) => x / y)));
 
-        // 式を表す再帰実行パーサ
-        // 左再帰の定義: expr = expr expr op / num
-        // 左再帰の除去: expr = num *( expr op )
+        // Recursive parser for expressions
+        // Removing left recursion: expr = num *( expr op )
+        // Original left-recursive definition: expr = expr expr op / num
         private static readonly IParser<char, double> Expr =
             Number
                 .Chain(x =>

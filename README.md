@@ -86,7 +86,7 @@ Download manually:
 * [Arithmetic expression parser implementation](ParsecSharp.Examples/ExpressionParser.cs)
 * [PEG parser generator implementation](ParsecSharp.Examples/PegParser.cs)
 
-Documentation is included in the [UnitTest code](UnitTest.ParsecSharp/ParserTest.cs) (jp).
+Documentation is included in the [UnitTest code](UnitTest.ParsecSharp/ParserTest.cs).
 
 If you want more information, read the [API source code](ParsecSharp/Parser), all is there.
 

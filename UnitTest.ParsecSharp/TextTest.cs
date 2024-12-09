@@ -15,8 +15,8 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void CharTest()
         {
-            // 指定した一文字にマッチするパーサを作成します。
-            // 汎用の Token パーサと同様の結果を得られます。char 特化のためパフォーマンス面でやや有利です。
+            // Creates a parser that matches a specified character.
+            // Similar to the generic `Token` parser but optimized for char, offering better performance.
 
             var parser = Char('a');
 
@@ -30,7 +30,7 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void CharIgnoreCaseTest()
         {
-            // 指定した一文字に大文字小文字を区別せずマッチするパーサを作成します。
+            // Creates a parser that matches a specified character, ignoring case.
 
             var parser = CharIgnoreCase('A');
 
@@ -41,7 +41,7 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void StringTest()
         {
-            // 指定した文字列にマッチするパーサを作成します。
+            // Creates a parser that matches a specified string.
 
             var parser = String("abc");
 
@@ -52,7 +52,7 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void StringIgnoreCaseTest()
         {
-            // 指定した文字列に大文字小文字を区別せずマッチするパーサを作成します。
+            // Creates a parser that matches a specified string, ignoring case.
 
             var parser = StringIgnoreCase("abcde");
 
@@ -63,20 +63,20 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void ToIntTest()
         {
-            // 結果の文字列を数値に変換するコンビネータです。
+            // A combinator that converts the result string to an integer.
 
             var source = "1234abcd";
 
-            // [0 - 9] にマッチし int に変換したものを返すパーサ。
+            // Parser that matches [0 - 9] and converts to int.
             var parser = Many1(DecDigit()).ToInt();
 
             parser.Parse(source).WillSucceed(value => value.Is(1234));
 
-            // 変換対象に数値以外の文字を含ませた場合、変換に失敗する。
+            // Fails if the value is non-numeric.
             var parser2 = Many1(Any()).ToInt();
             parser2.Parse(source).WillFail(failure => failure.Message.Is("Expected digits but was '1234abcd'"));
 
-            // 32 bit を超えた範囲の数値を与えると失敗となる。
+            // Fails if the value exceeds 32-bit range.
             var source2 = "1234567890123456";
             parser.Parse(source2).WillFail(failure => failure.Message.Is("Expected digits but was '1234567890123456'"));
         }
@@ -84,20 +84,20 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void ToLongTest()
         {
-            // 結果の文字列を数値に変換するコンビネータです。
+            // A combinator that converts the result string to a long integer.
 
             var source = "1234abcd";
 
-            // [0 - 9] にマッチし long に変換したものを返すパーサ。
+            // Parser that matches [0 - 9] and converts to long.
             var parser = Many1(DecDigit()).ToLong();
 
             parser.Parse(source).WillSucceed(value => value.Is(1234L));
 
-            // 変換対象に数値以外の文字を含ませた場合、変換に失敗する。
+            // Fails if the value is non-numeric.
             var parser2 = Many1(Any()).ToLong();
             parser2.Parse(source).WillFail(failure => failure.Message.Is("Expected digits but was '1234abcd'"));
 
-            // 64 bit までの数値を変換できる。
+            // Can convert values up to 64-bit range.
             var source2 = "1234567890123456";
             parser.Parse(source2).WillSucceed(value => value.Is(1234567890123456L));
         }
@@ -105,20 +105,20 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void ToDoubleTest()
         {
-            // 結果の文字列を数値に変換するコンビネータです。
+            // A combinator that converts the result string to a double.
 
             var source = "1234.5678abcd";
 
-            // [0 - 9] / '.' にマッチし double に変換したものを返すパーサ。
+            // Parser that matches [0 - 9] / '.' and converts to double.
             var parser = Many1(DecDigit() | Char('.')).ToDouble();
 
             parser.Parse(source).WillSucceed(value => value.Is(1234.5678));
 
-            // 変換対象に数値以外の文字を含ませた場合、変換に失敗する。
+            // Fails if the value is non-numeric.
             var parser2 = Many1(Any()).ToDouble();
             parser2.Parse(source).WillFail(failure => failure.Message.Is("Expected number but was '1234.5678abcd'"));
 
-            // double.Parse(string? s) で変換可能な文字列に対応する。
+            // Supports strings that can be converted using `double.Parse`.
             var source2 = "1.234567890123456";
             parser.Parse(source2).WillSucceed(value => value.Is(1.234567890123456));
         }
@@ -126,9 +126,9 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void OneOfIgnoreCaseTest()
         {
-            // 大文字小文字の違いを無視した上で、トークンが候補に含まれる場合に成功するパーサを作成します。
+            // Creates a parser that succeeds if the token is in the specified string, ignoring case.
 
-            // 大文字小文字を無視して [x-z] にマッチするパーサ。
+            // Parser that matches [x-z], ignoring case.
             var parser = OneOfIgnoreCase("xyz");
 
             var source = "ZZZ";
@@ -141,9 +141,9 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void NoneOfIgnoreCaseTest()
         {
-            // 大文字小文字の違いを無視した上で、トークンが候補に含まれない場合に成功するパーサを作成します。
+            // Creates a parser that succeeds if the token is not in the specified string, ignoring case.
 
-            // 大文字小文字を無視して [x-z] 以外にマッチするパーサ。
+            // Parser that matches anything except [x-z], ignoring case.
             var parser = NoneOfIgnoreCase("xyz");
 
             var source = "ZZZ";

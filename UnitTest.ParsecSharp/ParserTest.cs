@@ -20,8 +20,8 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void AnyTest()
         {
-            // 任意のトークンにマッチするパーサを作成します。
-            // このパーサは入力が終端の場合にのみ失敗します。
+            // Creates a parser that matches any token.
+            // This parser only fails if the input is at the end.
 
             var parser = Any();
 
@@ -32,13 +32,13 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void TokenTest()
         {
-            // 指定したトークンにマッチするパーサを作成します。
-            // EqualityComparer<T>.Default を利用して一致判定を行います。
+            // Creates a parser that matches a specified token.
+            // Uses `EqualityComparer<T>.Default` for equality comparison.
 
             var source = _abcdEFGH;
             var source2 = _123456;
 
-            // トークン 'a' にマッチするパーサ。
+            // Parser that matches the token 'a'.
             var parser = Token('a');
 
             parser.Parse(source).WillSucceed(value => value.Is('a'));
@@ -49,7 +49,7 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void EndOfInputTest()
         {
-            // 入力の終端にマッチするパーサを作成します。
+            // Creates a parser that matches the end of the input.
 
             var parser = EndOfInput();
 
@@ -60,8 +60,8 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void NullTest()
         {
-            // 空文字にマッチし、任意の状態において常に成功するパーサを作成します。
-            // このパーサは入力を消費しません。
+            // Creates a parser that matches an empty string and always succeeds in any state.
+            // This parser does not consume input.
 
             var parser = Null();
 
@@ -75,9 +75,9 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void OneOfTest()
         {
-            // トークンが指定したシーケンスに含まれている場合に成功するパーサを作成します。
+            // Creates a parser that succeeds if the token is included in the specified sequence.
 
-            // トークンが '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e' のいずれかに該当した場合に成功するパーサ。
+            // Parser that succeeds if the token is one of '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e'.
             var parser = OneOf("6789abcde");
 
             var source = _abcdEFGH;
@@ -86,7 +86,7 @@ namespace UnitTest.ParsecSharp
             var source2 = _123456;
             parser.Parse(source2).WillFail();
 
-            // params char[] を取るオーバーロード。IEnumerable<char> も受け取れる。
+            // Overload that takes `params IEnumerable<char>`.
             var parser2 = OneOf('6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e');
             parser2.Parse(source).WillSucceed(value => value.Is('a'));
 
@@ -96,19 +96,19 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void NoneOfTest()
         {
-            // トークンが指定したシーケンスに含まれていない場合に成功するパーサを作成します。
+            // Creates a parser that succeeds if the token is not included in the specified sequence.
 
             var source = _abcdEFGH;
             var source2 = _123456;
 
-            // トークンが 'd', 'c', 'b', 'a', '9', '8', '7' のいずれにも該当しない場合に成功するパーサ。
+            // Parser that succeeds if the token is not one of 'd', 'c', 'b', 'a', '9', '8', '7'.
             var parser = NoneOf("dcba987");
 
             parser.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 1): Unexpected 'a<0x61>'"));
 
             parser.Parse(source2).WillSucceed(value => value.Is('1'));
 
-            // params char[] を取るオーバーロード。IEnumerable<char> も受け取れる。
+            // Overload that takes `params IEnumerable<char>`.
             var parser2 = NoneOf('d', 'c', 'b', 'a', '9', '8', '7');
 
             parser2.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 1): Unexpected 'a<0x61>'"));
@@ -119,11 +119,9 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void TakeTest()
         {
-            // 指定した数だけ入力を読み進め、その結果をシーケンスとして返すパーサを作成します。
-            // 0を指定した場合は入力を消費せずに成功します。
-            // 0未満の値を指定した場合は常に失敗します。
+            // Creates a parser that reads the specified number of tokens and returns the result as a sequence.
 
-            // 3トークン読み進めるパーサ。
+            // Parser that reads 3 tokens.
             var parser = Take(3);
 
             var source = _abcdEFGH;
@@ -132,21 +130,27 @@ namespace UnitTest.ParsecSharp
             var source2 = _123456;
             parser.Parse(source2).WillSucceed(value => value.Is('1', '2', '3'));
 
-            // 残りの入力よりも大きい数値を指定していた場合は失敗します。
+            // If the specified number of tokens exceeds the remaining input, the parser fails.
             var parser2 = Take(9);
             parser2.Parse(source).WillFail(failure => failure.Message.Is("An input does not have enough length"));
+
+            // If 0 is specified, the parser succeeds without consuming input.
+            var parser3 = Take(0);
+            parser3.Parse(source).WillSucceed(value => value.Is([]));
+
+            // If a value less than 0 is specified, the parser always fails.
+            var parser4 = Take(-1);
+            parser4.Parse(source).WillFail(failure => failure.Message.Is("An input does not have enough length"));
         }
 
         [TestMethod]
         public void SkipTest()
         {
-            // 数を指定してスキップするパーサを作成します。
-            // 0を指定した場合は入力を消費せずに成功します。
-            // 0未満の値を指定した場合は常に失敗します。
+            // Creates a parser that skips the specified number of tokens.
 
             var source = _abcdEFGH;
 
-            // 3トークンスキップした後次のトークンを返すパーサ。
+            // Parser that skips 3 tokens and then returns the next token.
             var parser = Skip(3).Right(Any());
 
             parser.Parse(source).WillSucceed(value => value.Is('d'));
@@ -154,17 +158,25 @@ namespace UnitTest.ParsecSharp
             var parser2 = Skip(8).Right(EndOfInput());
             parser2.Parse(source).WillSucceed(value => value.Is(Unit.Instance));
 
-            // 指定数スキップできなかった場合は失敗します。
+            // If the specified number of tokens cannot be skipped, the parser fails.
             var parser3 = Skip(9);
             parser3.Parse(source).WillFail(failure => failure.Message.Is("An input does not have enough length"));
+
+            // If 0 is specified, the parser succeeds without consuming input.
+            var parser4 = Skip(0);
+            parser4.Parse(source).WillSucceed(value => value.Is(Unit.Instance));
+
+            // If a value less than 0 is specified, the parser always fails.
+            var parser5 = Skip(-1);
+            parser5.Parse(source).WillFail(failure => failure.Message.Is("An input does not have enough length"));
         }
 
         [TestMethod]
         public void TakeWhileTest()
         {
-            // 与えた条件を満たす限り入力を読み続けるパーサを作成します。
+            // Creates a parser that continues to read input as long as the given condition is met.
 
-            // トークンが Lower である限り入力を読み続けるパーサ。
+            // Parser that continues to read input as long as the token is lowercase letter.
             var parser = TakeWhile(char.IsLower);
 
             var source = _abcdEFGH;
@@ -177,10 +189,10 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void TakeWhile1Test()
         {
-            // 与えた条件を満たす限り入力を読み続けるパーサを作成します。
-            // 1件もマッチしなかった場合、失敗を返します。
+            // Creates a parser that continues to read input as long as the given condition is met.
+            // If no match is found, the parser fails.
 
-            // トークンが Lower である限り入力を読み続けるパーサ。
+            // Parser that continues to read input as long as the token is lowercase letter.
             var parser = TakeWhile1(char.IsLower);
 
             var source = _abcdEFGH;
@@ -193,10 +205,10 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void SkipWhileTest()
         {
-            // 与えた条件を満たす限り入力を消費し続け、その結果を破棄するパーサを作成します。
-            // TakeWhile と同様に動作しますが、結果を収集しないため高効率で動作します。
+            // Creates a parser that continues to consume input as long as the given condition is met and discards the result.
+            // Works the same as `TakeWhile` but does not collect the result, making it more efficient.
 
-            // トークンが Lower である限り入力を消費し続けるパーサ。
+            // Parser that continues to consume input as long as the token is lowercase letter.
             var parser = SkipWhile(char.IsLower);
 
             var source = _abcdEFGH;
@@ -209,10 +221,10 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void SkipWhile1Test()
         {
-            // 与えた条件を満たす限り入力を消費し続け、その結果を破棄するパーサを作成します。
-            // 1件以上スキップできない場合、失敗を返します。
+            // Creates a parser that continues to consume input as long as the given condition is met and discards the result.
+            // If it cannot skip at least one token, it fails.
 
-            // トークンが Lower である限り入力を消費し続けるパーサ。
+            // Parser that continues to consume input as long as the token is lowercase letter.
             var parser = SkipWhile1(char.IsLower);
 
             var source = _abcdEFGH;
@@ -225,16 +237,16 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void SatisfyTest()
         {
-            // 入力を1つ取り、条件を満たす場合に成功するパーサを作成します。
-            // 入力消費を伴う全てのパーサを構成可能です。
+            // Creates a parser that takes one input and succeeds if the condition is met.
+            // Can be used to construct all parsers that consume input.
 
             var source = _abcdEFGH;
 
-            // 'a' にマッチするパーサ。
+            // Parser that matches 'a'.
             var parser = Satisfy(x => x == 'a'); // == Char('a');
             parser.Parse(source).WillSucceed(value => value.Is('a'));
 
-            // 'a', 'b', 'c' のいずれかにマッチするパーサ。
+            // Parser that matches any of 'a', 'b', 'c'.
             var parser2 = Satisfy("abc".Contains); // == OneOf("abc");
             parser2.Parse(source).WillSucceed(value => value.Is('a'));
         }
@@ -242,16 +254,16 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void PureTest()
         {
-            // 成功したという結果を返すパーサを作成します。
-            // パーサに任意の値を投入する場合に使用します。
-            // このパーサは入力を消費しません。
+            // Creates a parser that returns a success result.
+            // Used to inject arbitrary values into the parser.
+            // This parser does not consume input.
 
             var parser = Pure("success!");
 
             var source = _abcdEFGH;
             parser.Parse(source).WillSucceed(value => value.Is("success!"));
 
-            // 値の生成をパーサ実行時まで遅延させる。
+            // Delays the generation of the value until the parser is executed.
             var parser2 = Pure(_ => Unit.Instance);
             parser2.Parse(source).WillSucceed(value => value.Is(Unit.Instance));
         }
@@ -259,19 +271,19 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void FailTest()
         {
-            // 失敗したという結果を返すパーサを作成します。
-            // このパーサは入力を消費しません。
+            // Creates a parser that returns a failure result.
+            // This parser does not consume input.
 
             var source = _abcdEFGH;
 
             var parser = Fail<Unit>();
             parser.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 1): Unexpected 'a<0x61>'"));
 
-            // エラーメッセージを記述することができるオーバーロード。
+            // Overload that allows specifying an error message.
             var parser2 = Fail<Unit>("errormessagetest");
             parser2.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 1): errormessagetest"));
 
-            // パース失敗時の state をハンドル可能。
+            // Can handle the state at the time of parse failure.
             var parser3 = Fail<Unit>(state => $"errormessagetest, current state: '{state}'");
             parser3.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 1): errormessagetest, current state: 'a<0x61>'"));
         }
@@ -279,10 +291,10 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void AbortTest()
         {
-            // 実行した時点でパース処理を中止するパーサを作成します。
-            // 通常これを直接利用することはありません。AbortIfEntered コンビネータか AbortWhenFail コンビネータを利用します。
+            // Creates a parser that aborts the parsing process when executed.
+            // Usually not used directly. Use the `AbortIfEntered` or `AbortWhenFail` combinator.
 
-            // Abort または Any にマッチするが、Abort を評価した時点でパース処理が終了する。
+            // Matches `Abort` or `Any`, but the parsing process ends when `Abort` is evaluated.
             var parser = Abort<char>(_ => "aborted").Or(Any());
 
             var source = _123456;
@@ -292,10 +304,10 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void GetPositionTest()
         {
-            // パース位置の Position を取り出すパーサを作成します。
-            // このパーサは入力を消費しません。
+            // Creates a parser that retrieves the position of the parse location.
+            // This parser does not consume input.
 
-            // Anyに3回マッチした後、その時点の Position を返すパーサ。
+            // Parser that matches `Any` 3 times and then returns the position at that point.
             var parser = Any().Repeat(3).Right(GetPosition());
 
             var source = _abcdEFGH;
@@ -305,10 +317,10 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void ChoiceTest()
         {
-            // parsers を前から1つずつ適用し、最初に成功したものを結果として返すパーサを作成します。
-            // 全て失敗した場合、最後の失敗を全体の失敗として返します。
+            // Creates a parser that applies parsers from the beginning and returns the result of the first one that succeeds.
+            // If all fail, the last failure is returned as the overall failure.
 
-            // 'c'、'b'、または 'a' のどれかにマッチするパーサ。
+            // Parser that matches 'c', 'b', or 'a'.
             var parser = Choice(Char('c'), Char('b'), Char('a'));
 
             var source = _abcdEFGH;
@@ -321,9 +333,9 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void SequenceTest()
         {
-            // parsers に順にマッチングし、その結果を連結したシーケンスを返すパーサを作成します。
+            // Creates a parser that matches parsers in sequence and returns the concatenated result as a sequence.
 
-            // 'a' + 'b' + 'c' + 'd' にマッチし、['a', 'b', 'c', 'd'] を "abcd" に変換して返すパーサ。
+            // Parser that matches 'a' + 'b' + 'c' + 'd' and converts to "abcd".
             var parser = Sequence(Char('a'), Char('b'), Char('c'), Char('d')).AsString();
 
             var source = _abcdEFGH;
@@ -336,10 +348,10 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void TryTest()
         {
-            // parser によるパースを実行し、それが失敗した場合は resume の値を結果として返す、常に成功するパーサを作成します。
-            // parser のマッチング失敗時は入力を消費しません。
+            // Creates a parser that executes the parse with parser and returns the value of resume if it fails, always succeeding.
+            // If parser fails to match, it does not consume input.
 
-            // 'a' にマッチし、成功した場合は 'a'、失敗した場合は 'x' を返すパーサ。
+            // Parser that matches 'a' and returns 'a' if successful, 'x' if it fails.
             var parser = Try(Char('a'), 'x');
 
             var source = _abcdEFGH;
@@ -348,7 +360,7 @@ namespace UnitTest.ParsecSharp
             var source2 = _123456;
             parser.Parse(source2).WillSucceed(value => value.Is('x'));
 
-            // resume の評価を遅延させるオーバーロード。
+            // Overload that delays the evaluation of resume.
             var parser2 = Try(Char('a'), _ => 'x');
             parser2.Parse(source).WillSucceed(value => value.Is('a'));
         }
@@ -356,20 +368,20 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void OptionalTest()
         {
-            // parser によるパースを実行し、マッチしたかどうかの bool 値を返す、常に成功するパーサを作成します。
-            // parser のマッチング失敗時は入力を消費しません。
+            // Creates a parser that executes the parse with parser and returns a bool indicating whether it matched, always succeeding.
+            // If the parser fails to match, it does not consume input.
 
             var source = _abcdEFGH;
             var source2 = _123456;
 
-            // Digit へのマッチングを行い、その値を破棄し、Any にマッチするパーサ。
+            // Parser that matches `Digit`, returns boolean value that matches or not, then matches `Any`.
             var parser = Optional(Digit()).Right(Any());
 
             parser.Parse(source).WillSucceed(value => value.Is('a'));
 
             parser.Parse(source2).WillSucceed(value => value.Is('2'));
 
-            // 成功時には値を取り出し、失敗時には default value を結果とするオーバーロード。
+            // Overload that returns a specified default value if it fails.
             var parser2 = Optional(Lower(), '\n');
 
             parser2.Parse(source).WillSucceed(value => value.Is('a'));
@@ -380,10 +392,10 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void NotTest()
         {
-            // parser が失敗した場合に成功するパーサを作成します。
-            // このパーサは入力を消費しません。
+            // Creates a parser that succeeds if parser fails.
+            // This parser does not consume input.
 
-            // トークンが Lower でない場合に成功するパーサ。
+            // Parser that succeeds if the token is not `Lower`.
             var parser = Not(Lower());
 
             var source = _abcdEFGH;
@@ -396,9 +408,9 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void LookAheadTest()
         {
-            // 入力を消費せずに parser によるパースを行うパーサを作成します。
+            // Creates a parser that performs a parse with parser without consuming input.
 
-            // 入力を消費せずに Any *> Letter にマッチし、その後 Any とマッチしその結果を連結するパーサ。
+            // Parser that matches `Any` then `Letter` without consuming input, then matches `Any` and concatenates the results.
             var parser = LookAhead(Any().Right(Letter())).Append(Any());
 
             var source = _abcdEFGH;
@@ -411,10 +423,10 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void ManyTest()
         {
-            // parser に0回以上繰り返しマッチし、その結果をシーケンスとして返すパーサを作成します。
-            // 1回もマッチしなかった場合、パーサは空のシーケンスを結果として返します。その場合は入力を消費しません。
+            // Creates a parser that matches parser 0 or more times and returns the result as a sequence.
+            // If it does not match even once, the parser returns an empty sequence. In this case, it does not consume input.
 
-            // Lower に0回以上繰り返しマッチするパーサ。
+            // Parser that matches `Lower` 0 or more times.
             var parser = Many(Lower());
 
             var source = _abcdEFGH;
@@ -427,10 +439,10 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void Many1Test()
         {
-            // parser に1回以上繰り返しマッチし、その結果をシーケンスとして返すパーサを作成します。
-            // 1回もマッチしなかった場合、パーサは失敗を返します。
+            // Creates a parser that matches parser 1 or more times and returns the result as a sequence.
+            // If it does not match even once, the parser returns a failure.
 
-            // Lower に1回以上繰り返しマッチするパーサ。
+            // Parser that matches `Lower` 1 or more times.
             var parser = Many1(Lower());
 
             var source = _abcdEFGH;
@@ -443,10 +455,10 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void SkipManyTest()
         {
-            // parser に0回以上繰り返しマッチし、その結果を破棄するパーサを作成します。
-            // 1回もマッチしなかった場合は入力を消費しません。
+            // Creates a parser that matches parser 0 or more times and discards the result.
+            // If it does not match even once, it does not consume input.
 
-            // Lower に0回以上繰り返しマッチし、その結果を破棄し、Any にマッチした結果を返すパーサ。
+            // Parser that matches `Lower` 0 or more times, discards the result, then matches `Any`.
             var parser = SkipMany(Lower()).Right(Any());
 
             var source = _abcdEFGH;
@@ -459,9 +471,9 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void SkipMany1Test()
         {
-            // parser に1回以上繰り返しマッチし、その結果を破棄するパーサを作成します。
+            // Creates a parser that matches parser 1 or more times and discards the result.
 
-            // Lower に1回以上繰り返しマッチし、その結果を破棄し、Any にマッチした結果を返すパーサ。
+            // Parser that matches `Lower` 1 or more times, discards the result, then matches `Any`.
             var parser = SkipMany1(Lower()).Right(Any());
 
             var source = _abcdEFGH;
@@ -474,45 +486,45 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void ManyTillTest()
         {
-            // terminator にマッチするまでの間 parser に繰り返しマッチし、その結果をシーケンスとして返すパーサを作成します。
-            // terminator にマッチした結果は破棄されます。
+            // Creates a parser that matches parser repeatedly until terminator is matched and returns the result as a sequence.
+            // The result of matching terminator is discarded.
 
             var source = _abcdEFGH;
             var source2 = _123456;
 
-            // 'F' にマッチするまでの間 Any に繰り返しマッチするパーサ。
+            // Parser that matches `Any` repeatedly until 'F' is matched.
             var parser = ManyTill(Any(), Char('F'));
 
             parser.Parse(source).WillSucceed(value => value.Is('a', 'b', 'c', 'd', 'E'));
 
-            // terminator にマッチしなかった場合、失敗を返します。
+            // If terminator is not matched, the parser fails.
             parser.Parse(source2).WillFail();
 
-            // 最低1回以上 parser にマッチすることを保証する場合は Many1Till を利用する。
+            // Use `Many1Till` to ensure that parser matches at least once.
             var parser2 = Many1Till(Letter(), EndOfInput());
 
             parser2.Parse(source).WillSucceed(value => value.Is('a', 'b', 'c', 'd', 'E', 'F', 'G', 'H'));
 
-            // Letter にマッチしないため失敗。
+            // Since it does not match `Letter`, the parser fails.
             parser2.Parse(source2).WillFail();
         }
 
         [TestMethod]
         public void SkipTillTest()
         {
-            // terminator にマッチするまで parser に繰り返しマッチし、terminator にマッチした結果を返すパーサを作成します。
+            // Creates a parser that repeatedly matches parser until it matches terminator and returns the result of matching terminator.
 
-            // "cd" にマッチするまでの間 Lower をスキップするパーサ。
+            // Parser that skips `Lower` until it matches "cd".
             var parser = SkipTill(Lower(), String("cd"));
 
             var source = _abcdEFGH;
             parser.Parse(source).WillSucceed(value => value.Is("cd"));
 
-            // "cd" の前に Upper が存在するため失敗する。
+            // Fails because an uppercase letter exists before "cd".
             var source2 = "xyzABcdef";
             parser.Parse(source2).WillFail();
 
-            // 最低1回以上 parser にマッチすることを保証する場合は Skip1Till を利用する。
+            // Use `Skip1Till` to ensure that parser matches at least once.
             var parser2 = Skip1Till(Letter(), EndOfInput());
             parser2.Parse(source).WillSucceed(value => value.Is(Unit.Instance));
         }
@@ -520,17 +532,17 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void TakeTillTest()
         {
-            // terminator にマッチするまで入力を読み、その結果をシーケンスとして返すパーサを作成します。
-            // terminator にマッチした結果は破棄されます。消費したくない場合は LookAhead コンビネータを併用してください。
+            // Creates a parser that reads input until it matches terminator and returns the result as a sequence.
+            // The result of matching terminator is discarded. Use `LookAhead` combinator if you do not want to consume it.
 
-            // 'E' にマッチするまで入力を読むパーサ。
+            // Parser that reads input until it matches 'E'.
             var parser = TakeTill(Char('E'));
 
             var source = _abcdEFGH;
             parser.Parse(source).WillSucceed(value => value.Is('a', 'b', 'c', 'd'));
 
-            // 最後までマッチしない terminator を与えた場合、ストリームを最後まで読むことになるため、
-            // パフォーマンスに影響を与える場合があります。
+            // If a terminator that does not match until the end is given, the parser will read the stream to the end,
+            // which may affect performance.
             var source2 = _123456;
             parser.Parse(source2).WillFail();
         }
@@ -538,9 +550,9 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void MatchTest()
         {
-            // parser にマッチするまでスキップし、parser にマッチした結果を返すパーサを作成します。
+            // Creates a parser that skips until it matches parser and returns the result of matching parser.
 
-            // "FG" にマッチするまでスキップするパーサ。
+            // Parser that skips until it matches "FG".
             var parser = Match(String("FG"));
 
             var source = _abcdEFGH;
@@ -549,7 +561,7 @@ namespace UnitTest.ParsecSharp
             var source2 = _123456;
             parser.Parse(source2).WillFail();
 
-            // ( Lower Upper ) にマッチするまでスキップするパーサ。
+            // Parser that skips until it matches `Lower` + `Upper`.
             var parser2 = Match(Sequence(Lower(), Upper())).AsString();
 
             parser2.Parse(source).WillSucceed(value => value.Is("dE"));
@@ -558,17 +570,17 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void QuotedTest()
         {
-            // 前後のパーサにマッチする間のトークン列を取得するパーサを作成します。
-            // 文字列のようなトークンを取得する際に利用できます。
-            // トークン列のマッチに条件を付ける場合は Quote 拡張メソッドが利用できます。
+            // Creates a parser that retrieves the sequence of tokens between the parsers that match before and after.
+            // Can be used to retrieve tokens like strings.
+            // Use the `Quote` extension method if you want to add conditions to the match of the token sequence.
 
-            // '<' と '>' に挟まれた文字列を取得するパーサ。
+            // Parser that retrieves the string between '<' and '>'.
             var parser = Quoted(Char('<'), Char('>')).AsString();
 
             var source = "<abcd>";
             parser.Parse(source).WillSucceed(value => value.Is("abcd"));
 
-            // '<' と '>' に挟まれた文字列、に挟まれた文字列を返すパーサ。
+            // Parser that retrieves the string between '<' and '>', and then retrieves the string between them.
             var parser2 = Quoted(parser).AsString();
 
             var source2 = "<span>test</span>";
@@ -578,9 +590,9 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void AtomTest()
         {
-            // 指定したパーサをパーサの最小単位として扱います。
-            // パース処理が途中で失敗した場合であっても、起点までバックトラックを行います。
-            // WithConsume / AbortIfEntered と組み合わせて使用します。
+            // Treats the specified parser as the smallest unit of the parser.
+            // Even if the parsing process fails halfway, it backtracks to the starting point.
+            // Use in combination with `WithConsume` / `AbortIfEntered`.
 
             var abCD = Sequence(Char('a'), Char('b'), Char('C'), Char('D'));
             var parser = Atom(abCD);
@@ -593,35 +605,34 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void DelayTest()
         {
-            // 指定したパーサの組み立てをパース実行時まで遅延します。
-            // 参照保持としても使えるため、前方参照や再帰等を行う場合に必須となります。
+            // Delays the construction of the specified parser until the parsing execution.
+            // Can also be used as a reference holder, essential for forward references and recursion.
 
-            // 'a' にマッチするパーサ。ただしパース実行時に組み立てられる。
+            // Parser that matches 'a'. However, it is constructed at the time of parsing execution.
             var parser = Delay(() => Char('a'));
 
             var source = _abcdEFGH;
             parser.Parse(source).WillSucceed(value => value.Is('a'));
 
-            // Delay に渡す Func<T> はパース実行時に一度だけ実行されます。
-            // そのため、処理が副作用を含む場合に意図しない動作となるため注意が必要です。
-            // このパーサオブジェクトを再利用することでパフォーマンスを向上できます。
-            // 利用例の詳細については Examples を参照。
+            // The `Func<T>` passed to `Delay` is executed only once at the time of parsing execution.
+            // Therefore, be careful as it may behave unexpectedly if the process contains side effects.
+            // Reusing this parser object can improve performance.
         }
 
         [TestMethod]
         public void FixTest()
         {
-            // ローカル変数上やパーサ定義式内に自己再帰パーサを構築する際のヘルパコンビネータです。
-            // C# の仕様上、単体で使用する場合は型情報が不足するため、型引数を与える必要があります。
+            // A helper combinator for constructing self-recursive parsers in local variables or parser definition expressions.
+            // Due to the specifications of C#, it is necessary to provide type arguments when used alone due to lack of type information.
 
-            // 任意の回数の "{}" に挟まれた一文字にマッチするパーサ。
+            // Parser that matches a character enclosed in any number of "{}".
             var parser = Fix<char>(self => self.Or(Any()).Between(Char('{'), Char('}')));
 
             var source = "{{{{{*}}}}}";
             parser.Parse(source).WillSucceed(value => value.Is('*'));
 
-            // パラメータを取るオーバーロード。柔軟に再帰パーサを記述できます。
-            // 有名な回文パーサ。 S ::= "a" S "a" | "b" S "b" | ""
+            // Overload that takes parameters. Allows flexible description of recursive parsers.
+            // Famous palindrome parser. S ::= "a" S "a" | "b" S "b" | ""
             var parser2 = Fix<IParser<char, Unit>, Unit>((self, rest) =>
                 Char('a').Right(self(Char('a').Right(rest))) | Char('b').Right(self(Char('b').Right(rest))) | rest);
 
@@ -632,10 +643,10 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void NextTest()
         {
-            // parser に対する継続処理を直接記述可能なコンビネータです。
-            // 継続として処理されるため、自己再帰型のパーサ定義に利用することでパフォーマンスの低下を回避できます。
+            // A combinator that allows direct description of continuation processing for parser.
+            // Since it is processed as a continuation, it can be used to avoid performance degradation by defining self-recursive parsers.
 
-            // Letter にマッチした場合、次の Letter にマッチした結果を返し、失敗した場合は '\n' を返すパーサ。
+            // Parser that matches `Letter`, returns the result of matching the next `Letter` if successful, and returns '\n' if it fails.
             var parser = Letter().Next(_ => Letter(), '\n');
 
             var source = _abcdEFGH;
@@ -644,7 +655,7 @@ namespace UnitTest.ParsecSharp
             var source2 = _123456;
             parser.Parse(source2).WillSucceed(value => value.Is('\n'));
 
-            // parser が成功し、next が失敗したため全体の結果は失敗となる。
+            // The overall result is failure because the first `Letter` succeeded but the next `Letter` failed.
             var source3 = "a123";
             parser.Parse(source3).WillFail();
         }
@@ -652,9 +663,9 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void GuardTest()
         {
-            // parser がマッチした結果に対して条件式で成功と失敗を分岐します。
+            // Branches success and failure based on a condition for the result matched by parser.
 
-            // 数値にマッチし、1000 未満の場合のみ成功とするパーサ。
+            // Parser that matches a number and succeeds only if it is less than 1000.
             var parser = Many1(DecDigit()).ToInt().Guard(x => x < 1000);
 
             var source = _123456;
@@ -663,7 +674,7 @@ namespace UnitTest.ParsecSharp
             var source2 = "999";
             parser.Parse(source2).WillSucceed(value => value.Is(999));
 
-            // parser がマッチしない場合は検証自体が行われない。
+            // If the parser does not match, the validation itself is not performed.
             var source3 = _abcdEFGH;
             parser.Parse(source3).WillFail();
         }
@@ -671,8 +682,8 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void SeparatedByTest()
         {
-            // separator によって区切られた形の parser が0回以上繰り返す入力にマッチするパーサを作成します。
-            // separator にマッチした結果は破棄されます。
+            // Creates a parser that matches parser repeated 0 or more times separated by separator.
+            // The result of matching separator is discarded.
 
             // [ 1*Number *( "," 1*Number ) ]
             var parser = Many1(Number()).AsString().SeparatedBy(Char(','));
@@ -690,7 +701,7 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void SeparatedBy1Test()
         {
-            // separator によって区切られた形の parser が1回以上繰り返す入力にマッチするパーサを作成します。
+            // Creates a parser that matches parser repeated 1 or more times separated by separator.
 
             // 1*Number *( "," 1*Number )
             var parser = Many1(Number()).AsString().SeparatedBy1(Char(','));
@@ -708,7 +719,7 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void EndByTest()
         {
-            // 末尾に separator が付いた形の parser が0回以上繰り返すものにマッチするパーサを作成します。
+            // Creates a parser that matches parser repeated 0 or more times with separator at the end.
 
             // *( 1*Number "," )
             var parser = Many1(Number()).AsString().EndBy(Char(','));
@@ -723,7 +734,7 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void EndBy1Test()
         {
-            // 末尾に separator が付いた形の parser が1回以上繰り返すものにマッチするパーサを作成します。
+            // Creates a parser that matches parser repeated 1 or more times with separator at the end.
 
             // 1*( 1*Number "," )
             var parser = Many1(Number()).AsString().EndBy1(Char(','));
@@ -738,7 +749,7 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void SeparatedOrEndByTest()
         {
-            // SeparatedBy、または Endby のどちらかとして振る舞うパーサを作成します。
+            // Creates a parser that behaves as either `SeparatedBy` or `EndBy`.
 
             // [ 1*Number *( "," 1*Number ) [ "," ] ]
             var parser = Many1(Number()).AsString().SeparatedOrEndBy(Char(','));
@@ -756,7 +767,7 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void SeparatedOrEndBy1Test()
         {
-            // SeparatedBy1、または Endby1 のどちらかとして振る舞うパーサを作成します。
+            // Creates a parser that behaves as either `SeparatedBy1` or `EndBy1`.
 
             // 1*Number *( "," 1*Number ) [ "," ]
             var parser = Many1(Number()).AsString().SeparatedOrEndBy1(Char(','));
@@ -774,15 +785,15 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void ExceptTest()
         {
-            // 指定したパーサに対して除外条件を設定したパーサを作成します。
+            // Creates a parser with exclusion conditions for the specified parser.
 
             var source = _123456;
 
-            // '5' 以外の数字にマッチするパーサ。
+            // Parser that matches digits except '5'.
             var parser = Digit().Except(Char('5'));
             parser.Parse(source).WillSucceed(value => value.Is('1'));
 
-            // '5' 以外の数字に連続でマッチし、文字列に変換したものを返すパーサ。
+            // Parser that matches digits except '5' consecutively and returns the result as a string.
             var parser2 = Many(parser).AsString();
             parser2.Parse(source).WillSucceed(value => value.Is("1234"));
         }
@@ -790,9 +801,9 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void ChainTest()
         {
-            // 単一パーサから開始し、その結果を元に次のパーサを作成し、失敗するまで繰り返す再帰パーサを作成します。
+            // Creates a recursive parser that starts with a single parser, creates the next parser based on the result, and repeats until it fails.
 
-            // 任意の一文字に連続でマッチし、マッチした文字とその回数を結果として返すパーサ。
+            // Parser that matches any character consecutively, and returns the matched character and its count as a result.
             var parser = Any().Map(x => (x, count: 1))
                 .Chain(match => Char(match.x).Map(_ => (match.x, match.count + 1)))
                 .Map(match => match.x.ToString() + match.count.ToString());
@@ -803,11 +814,13 @@ namespace UnitTest.ParsecSharp
             var source2 = "aaabbbbcccccdddddd";
             Many(parser).Join().Parse(source2).WillSucceed(value => value.Is("a3b4c5d6"));
 
-            // 本来、自己を最初に参照するパーサを直接記述することはできない(無限再帰となるため)。
-            // 有名な二項演算の左再帰定義。
+            // Originally, it is not possible to directly describe a parser that references itself first
+            // (because it would result in infinite recursion).
+
+            // A famous left-recursive definition of binary operations.
             // expr = expr op digit / digit
             static IParser<char, int> Expr()
-                => (from x in Expr() // ここで無限再帰
+                => (from x in Expr() // Infinite recursion here
                     from func in Char('+')
                     from y in Num()
                     select x + y)
@@ -816,12 +829,12 @@ namespace UnitTest.ParsecSharp
             static IParser<char, int> Num()
                 => Many1(Digit()).ToInt();
 
-            // この定義を変形して左再帰を除去することが可能。
-            // 二項演算の左再帰除去後の定義。
+            // It is possible to transform this definition to remove left recursion.
+            // Definition of binary operations after removing left recursion.
             // expr = digit *( op digit )
             static IParser<char, int> Expr2()
                 => Num().Chain(x => Char('+').Right(Num()).Map(y => x + y));
-            // Chain を使うことで左再帰除去後の定義をそのまま記述できる。
+            // By using `Chain`, you can directly describe the definition after removing left recursion.
 
             Expr2().Parse("1+2+3+4").Value.Is(1 + 2 + 3 + 4);
         }
@@ -829,15 +842,15 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void ChainLeftTest()
         {
-            // 1個以上の値と演算子に交互にマッチし、指定した演算を左から順に適用するパーサを作成します。
+            // Creates a parser that matches 1 or more values and operators alternately, and applies the specified operation from left to right.
 
-            // '+'、または '-' にマッチし、それぞれ (x + y)、(x - y) の二項演算関数を返すパーサ。
+            // Parser that matches '+' or '-', and returns a binary operation function (x + y) or (x - y).
             // ( "+" / "-" )
             var op = Choice(
                 Char('+').Map(_ => (Func<int, int, int>)((x, y) => x + y)),
                 Char('-').Map(_ => (Func<int, int, int>)((x, y) => x - y)));
 
-            // 1文字以上の数字にマッチし、int に変換するパーサ。
+            // Parser that matches 1 or more digits and converts them to int.
             var num = Many1(Digit()).ToInt();
 
             // num *( op num )
@@ -863,15 +876,15 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void ChainRightTest()
         {
-            // 1個以上の値と演算子に交互にマッチし、指定した演算を右から順に適用するパーサを作成します
+            // Creates a parser that matches 1 or more values and operators alternately, and applies the specified operation from right to left.
 
-            // '+'、または '-' にマッチし、それぞれ (x + y)、(x - y) の二項演算関数を返すパーサ。
+            // Parser that matches '+' or '-', and returns a binary operation function (x + y) or (x - y).
             // ( "+" / "-" )
             var op = Choice(
                 Char('+').Map(_ => (Func<int, int, int>)((x, y) => x + y)),
                 Char('-').Map(_ => (Func<int, int, int>)((x, y) => x - y)));
 
-            // 1文字以上の数字にマッチし、int に変換するパーサ。
+            // Parser that matches 1 or more digits and converts them to int.
             var num = Many1(Digit()).ToInt();
 
             // num *( op num )
@@ -897,15 +910,15 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void FoldLeftTest()
         {
-            // 初期値と集計関数を引数にとり、パースした結果を左から集計するパーサを作成します。
+            // Takes an initial value and an aggregation function as arguments, and creates a parser that aggregates the parsed results from left to right.
 
-            // 0個以上の Digit にマッチし、初期値10に対して左から (x => accumulator - x) を繰り返し適用するパーサ。
+            // Parser that matches 0 or more digits, and repeatedly applies (x => accumulator - x) to the initial value 10 from the left.
             var parser = Digit().AsString().ToInt().FoldLeft(10, (x, y) => x - y);
 
             var source = "12345";
             parser.Parse(source).WillSucceed(value => value.Is(((((10 - 1) - 2) - 3) - 4) - 5));
 
-            // 初期値を用いないオーバーロード。
+            // Overload that does not use an initial value.
             var parser2 = Digit().AsString().ToInt().FoldLeft((x, y) => x - y);
             parser2.Parse(source).WillSucceed(value => value.Is((((1 - 2) - 3) - 4) - 5));
         }
@@ -913,15 +926,15 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void FoldRightTest()
         {
-            // 初期値と集計関数を引数にとり、パース結果を右から集計するパーサを作成します。
+            // Takes an initial value and an aggregation function as arguments, and creates a parser that aggregates the parsed results from right to left.
 
-            // 0個以上の Digit にマッチし、初期値10に対して右から (x => x - accumulator) を繰り返し適用するパーサ。
+            // Parser that matches 0 or more digits, and repeatedly applies (x => x - accumulator) to the initial value 10 from the right.
             var parser = Digit().AsString().ToInt().FoldRight(10, (x, y) => x - y);
 
             var source = "12345";
             parser.Parse(source).WillSucceed(value => value.Is(1 - (2 - (3 - (4 - (5 - 10))))));
 
-            // 初期値を用いないオーバーロード。
+            // Overload that does not use an initial value.
             var parser2 = Digit().AsString().ToInt().FoldRight((x, y) => x - y);
             parser2.Parse(source).WillSucceed(value => value.Is(1 - (2 - (3 - (4 - 5)))));
         }
@@ -929,7 +942,7 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void RepeatTest()
         {
-            // parser を count 回繰り返しマッチした結果をシーケンスとして返すパーサを作成します。
+            // Creates a parser that matches parser count times and returns the result as a sequence.
 
             // 2*( 3*Any )
             var parser = Any().Repeat(3).AsString().Repeat(2);
@@ -941,9 +954,9 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void LeftTest()
         {
-            // 二つのパーサに順にマッチングし、right の結果を破棄して left の結果を返すパーサを作成します。
+            // Creates a parser that matches two parsers in sequence and returns the result of left, discarding the result of right.
 
-            // ( "a" "b" )にマッチし、'a'を返すパーサ。
+            // Parser that matches ( "a" "b" ) and returns 'a'.
             var parser = Char('a').Left(Char('b'));
 
             var source = _abcdEFGH;
@@ -956,9 +969,9 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void RightTest()
         {
-            // 二つのパーサに順にマッチングし、left の結果を破棄して right の結果を返すパーサを作成します。
+            // Creates a parser that matches two parsers in sequence and returns the result of right, discarding the result of left.
 
-            // ( "a" "b" )にマッチし、'b'を返すパーサ。
+            // Parser that matches ( "a" "b" ) and returns 'b'.
             var parser = Char('a').Right(Char('b'));
 
             var source = _abcdEFGH;
@@ -971,28 +984,28 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void BetweenTest()
         {
-            // parser を open と close で挟み込んだ形の規則にマッチするパーサを作成します。
-            // open と close の結果は破棄され、中央の結果のみを返します。
+            // Creates a parser that matches parser enclosed by open and close.
+            // The results of open and close are discarded, and only the result of the middle parser is returned.
 
-            // 1文字以上の Letter を "[]" で包んだものにマッチするパーサ。
+            // Parser that matches 1 or more letters enclosed in "[]".
             // ( "[" 1*Letter "]" )
             var parser = Many1(Letter()).Between(Char('['), Char(']'));
 
             var source = $"[{_abcdEFGH}]";
             parser.Parse(source).WillSucceed(value => value.Is(_abcdEFGH));
 
-            // Many(Any()) などを parser に渡した場合、終端まで Any にマッチするため、 close は EndOfInput にマッチします。
-            var parser2 = Many(Any()).Between(Char('"'), Char('"')); // ( dquote *Any dquote ) とはならない
-            parser2.Parse(@"""abCD1234""").WillFail(); // Many(Any()) が abCD1234" までマッチしてしまうため、close の " がマッチせず失敗する
-            // この形にマッチするパーサを作成したいときは、Quoted や ManyTill の使用を検討してください。
+            // If you pass `Many(Any())` to the parser, it will match any input until the end, so `close` will match the end of input.
+            var parser2 = Many(Any()).Between(Char('"'), Char('"')); // It does not match ( dquote *Any dquote )
+            parser2.Parse(@"""abCD1234""").WillFail(); // `Many(Any())` matches until abCD1234", so `close` does not match " and fails
+            // If you want to create a parser that matches this form, consider using `Quoted` or `ManyTill`.
         }
 
         [TestMethod]
         public void QuoteTest()
         {
-            // 前後のパーサにマッチするまで parser に連続でマッチするパーサを作成します。
+            // Creates a parser that matches parser repeatedly until it matches the parsers before and after.
 
-            // '"' をエスケープ可能な文字列表現にマッチするパーサ。
+            // Parser that matches a string representation that can escape '"' characters.
             var dquoteOrAny = String("\\\"").Map(_ => '\"') | Any();
             var parser = dquoteOrAny.Quote(Char('"')).AsString();
 
@@ -1003,12 +1016,12 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void AppendTest()
         {
-            // 2つのパーサに順にマッチングし、その結果を結合したシーケンスを返します。
+            // Matches two parsers in sequence and returns the concatenated result as a sequence.
 
             var source = _abcdEFGH;
 
             {
-                // 1文字 + 1文字
+                // 1 character + 1 character
                 var parser = Any().Append(Any()).AsString();
                 parser.Parse(source).WillSucceed(value => value.Is("ab"));
                 var source2 = "a";
@@ -1016,7 +1029,7 @@ namespace UnitTest.ParsecSharp
             }
 
             {
-                // 小文字*n + 1文字
+                // Lowercase*n + 1 character
                 var parser = Many1(Lower()).Append(Any()).AsString();
                 parser.Parse(source).WillSucceed(value => value.Is("abcdE"));
                 var source2 = "abcd";
@@ -1024,7 +1037,7 @@ namespace UnitTest.ParsecSharp
             }
 
             {
-                // 1文字 + 小文字*n
+                // 1 character + Lowercase*n
                 var parser = Any().Append(Many1(Lower())).AsString();
                 parser.Parse(source).WillSucceed(value => value.Is("abcd"));
                 var source2 = "ABCD";
@@ -1032,7 +1045,7 @@ namespace UnitTest.ParsecSharp
             }
 
             {
-                // 小文字*n + 大文字*n
+                // Lowercase*n + Uppercase*n
                 var parser = Many1(Lower()).Append(Many1(Upper())).AsString();
                 parser.Parse(source).WillSucceed(value => value.Is("abcdEFGH"));
                 var source2 = "abcd";
@@ -1059,12 +1072,12 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void AppendOptionalTest()
         {
-            // Append と同様に振る舞いますが、右のパーサが失敗した場合でもその結果を空のシーケンスとして扱い合成します。
+            // Behaves like Append, but if the right parser fails, it treats the result as an empty sequence and combines them.
 
             var source = _abcdEFGH;
 
             {
-                // 1文字 + 1文字
+                // 1 character + 1 character
                 var parser = Any().AppendOptional(Any()).AsString();
                 parser.Parse(source).WillSucceed(value => value.Is("ab"));
                 var source2 = "a";
@@ -1072,7 +1085,7 @@ namespace UnitTest.ParsecSharp
             }
 
             {
-                // 小文字*n + 1文字
+                // Lowercase*n + 1 character
                 var parser = Many1(Lower()).AppendOptional(Any()).AsString();
                 parser.Parse(source).WillSucceed(value => value.Is("abcdE"));
                 var source2 = "abcd";
@@ -1080,7 +1093,7 @@ namespace UnitTest.ParsecSharp
             }
 
             {
-                // 1文字 + 小文字*n
+                // 1 character + Lowercase*n
                 var parser = Any().AppendOptional(Many1(Lower())).AsString();
                 parser.Parse(source).WillSucceed(value => value.Is("abcd"));
                 var source2 = "ABCD";
@@ -1088,7 +1101,7 @@ namespace UnitTest.ParsecSharp
             }
 
             {
-                // 小文字*n + 大文字*n
+                // Lowercase*n + Uppercase*n
                 var parser = Many1(Lower()).AppendOptional(Many1(Upper())).AsString();
                 parser.Parse(source).WillSucceed(value => value.Is("abcdEFGH"));
                 var source2 = "abcd";
@@ -1115,10 +1128,10 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void IgnoreTest()
         {
-            // パースした結果を破棄します。
-            // 型合わせや、値を捨てることを明示したい場合に使用します。
+            // Discards the parsed result.
+            // Used when you want to match the type or explicitly discard the value.
 
-            // 1文字以上の小文字にマッチし、その結果を破棄するパーサ。
+            // Parser that matches 1 or more lowercase letters and discards the result.
             var parser = Many1(Lower()).Ignore();
 
             var source = _abcdEFGH;
@@ -1133,16 +1146,16 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void EndTest()
         {
-            // parser が入力を終端まで消費しきったことを保証するコンビネータです。
-            // 終端に到達していなかった場合に失敗となります。
+            // A combinator that ensures that parser consumes the input until the end.
+            // Fails if it has not reached the end.
 
             var source = _abcdEFGH;
 
-            // 1文字以上の小文字にマッチし、その時点で全ての入力を消費していなければならないパーサ。
+            // Parser that matches 1 or more lowercase letters and must consume all input at that point.
             var parser = Many1(Lower()).End();
             parser.Parse(source).WillFail(failure => failure.Message.Is("Expected '<EndOfStream>' but was 'E<0x45>'"));
 
-            // 1文字以上の小文字または大文字にマッチし、その時点ですべての入力を消費していなければならないパーサ。
+            // Parser that matches 1 or more lowercase or uppercase letters and must consume all input at that point.
             var parser2 = Many1(Lower() | Upper()).End();
             parser2.Parse(source).WillSucceed(value => value.Is('a', 'b', 'c', 'd', 'E', 'F', 'G', 'H'));
         }
@@ -1150,22 +1163,22 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void FlattenTest()
         {
-            // 二重の IEnumerable を結果に持つパーサに対して、一つに潰すコンビネータです。
+            // A combinator that flattens a parser that results in a nested `IEnumerable<T>`.
 
             var source = _abcdEFGH;
 
-            // 2つのトークンを取るパーサ。
+            // Parser that takes 2 tokens.
             var token = Any().Repeat(2);
-            // 2つのトークンを取るパーサに1回以上繰り返しマッチするパーサ。
+            // Parser that matches the parser that takes 2 tokens 1 or more times.
             var parser = Many1(token);
-            // parser の結果を潰したパーサ。
+            // Parser that flattens the result of parser.
             var parser2 = parser.Flatten();
 
             parser.Parse(source).WillSucceed(value => value.Is(value => value.Count == 4 && value.All(x => x.Count == 2)));
 
             parser2.Parse(source).WillSucceed(value => value.Is('a', 'b', 'c', 'd', 'E', 'F', 'G', 'H'));
 
-            // Many1 を用いたために二重になってしまうような状況では、代わりに FoldLeft の利用が検討できます。
+            // In situations where it becomes nested due to using `Many1`, consider using `FoldLeft` instead.
             var parser3 = token.FoldLeft((x, y) => [.. x, .. y]);
             parser3.Parse(source).WillSucceed(value => value.Is('a', 'b', 'c', 'd', 'E', 'F', 'G', 'H'));
         }
@@ -1173,9 +1186,9 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void SingletonTest()
         {
-            // parser にマッチした結果を1要素のシーケンスとして返すコンビネータです。
+            // A combinator that returns the result matched by parser as a single-element sequence.
 
-            // 'a' にマッチし、[ 'a' ] を返すパーサ。
+            // Parser that matches 'a' and returns [ 'a' ].
             var parser = Char('a').Singleton();
 
             var source = _abcdEFGH;
@@ -1185,10 +1198,10 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void WithConsumeTest()
         {
-            // parser が入力を消費せずに成功した場合、それを失敗として扱うパーサを作成します。
-            // Many 等に入力を消費しない可能性のあるパーサを渡す場合に利用できます。
+            // Creates a parser that treats it as a failure if parser succeeds without consuming input.
+            // Used when passing a parser that may not consume input, such as `Many`.
 
-            // Letter にマッチしなかった場合に発生する無限ループを回避したパーサ。
+            // Parser that avoids infinite loops that occur when `Letter` does not match.
             var parser = Many1(Many(Letter()).WithConsume().AsString());
 
             var source = _abcdEFGH;
@@ -1201,7 +1214,7 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void WithMessageTest()
         {
-            // パース失敗時のエラーメッセージを書き換えます。
+            // Rewrites the error message when parsing fails.
 
             var parser = Many1(Digit())
                 .WithMessage(failure => $"MessageTest Current: '{failure.State.Current}', original message: {failure.Message}");
@@ -1216,7 +1229,7 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void AbortWhenFailTest()
         {
-            // パース失敗時にパース処理を中止します。
+            // Aborts the parsing process when parsing fails.
 
             var parser = Many(Lower().AbortWhenFail(failure => $"Fatal Error! '{failure.State.Current}' is not a lower char!")).AsString()
                 .Or(Pure("recovery"));
@@ -1228,8 +1241,8 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void AbortIfEnteredTest()
         {
-            // パーサが入力を消費した状態で失敗した場合にパース処理を中止します。
-            // LL(k) パーサのような失敗時の早期脱出を実現します。
+            // Aborts the parsing process if the parser fails after consuming input.
+            // Achieves early exit on failure like LL(k) parsers.
 
             var parser = Sequence(Char('1'), Char('2'), Char('3'), Char('4')).AsString().AbortIfEntered(_ => "abort1234")
                 .Or(Pure("recovery"));
@@ -1241,18 +1254,18 @@ namespace UnitTest.ParsecSharp
             parser.Parse(source2).WillSucceed(value => value.Is("recovery"));
 
             var source3 = _commanum;
-            parser.Parse(source3).WillFail(failure => failure.Message.Is("abort1234")); // 123まで入力を消費して失敗したため復旧が行われない
+            parser.Parse(source3).WillFail(failure => failure.Message.Is("abort1234")); // Fails because it consumed input up to 123 and failed, so recovery is not performed
         }
 
         [TestMethod]
         public void DoTest()
         {
-            // パース実行時に定義したアクションを実行します。
-            // 成功時、または 成功時と失敗時にそれぞれ指定したアクションを動作させることができます。
+            // Executes the defined action when parsing executes.
+            // Can specify actions to be executed on success, or on both success and failure.
 
             var source = _abcdEFGH;
 
-            // Lower のパース成功時に count の値を1増やします。
+            // Increases the value of count by 1 when parsing `Lower` succeeds.
             var count = 0;
             var parser = Many(Lower().Do(_ => count++));
 
@@ -1261,8 +1274,8 @@ namespace UnitTest.ParsecSharp
             _ = parser.Parse(source);
             count.Is(8);
 
-            // Lower のパース成功時に success の値を1増やし、パース失敗時に failure の値を1増やします。
-            // Any を接続しているので、source を最後までパースします。
+            // Increases the value of success by 1 when parsing `Lower` succeeds, and increases the value of failure by 1 when parsing fails.
+            // Connects `Any`, so it parses the source to the end.
             var success = 0;
             var failure = 0;
             var parser2 = Many(Lower().Do(_ => success++, _ => failure++).Or(Any()));
@@ -1275,22 +1288,22 @@ namespace UnitTest.ParsecSharp
         [TestMethod]
         public void ExceptionTest()
         {
-            // 処理中に例外が発生した場合は即座にパース処理を中止し、例外の Name をメッセージに含む Failure を返します。
-            // 例外による失敗に対して復旧は行われません。復旧を行う手段はありません。
+            // If an exception occurs during processing, the parser immediately stops and returns a `Failure` containing the exception.
+            // Recovery is not performed for failures due to exceptions. There is no means of recovery.
 
-            // null に対して ToString した結果を返し、失敗した場合に "success" を返すことを試みるパーサ。
+            // Parser that attempts to return the result of `ToString` on null, and returns "success" if it fails.
             var parser = Pure(null as object).Map(x => x!.ToString()!).Or(Pure("success"));
 
             var source = _abcdEFGH;
-            parser.Parse(source).WillFail(failure => failure.ToString().Is(message => message.Contains("Exception 'NullReferenceException' occurred:")));
+            parser.Parse(source).WillFail(failure => failure.Exception.InnerException!.GetType().Name.Is(nameof(NullReferenceException)));
         }
 
         [TestMethod]
         public void ParsePartiallyTest()
         {
-            // パース完了後にストリームを破棄せず、続きの処理を行うことができる実行プランを提供します。
+            // Provides an execution plan that allows you to continue processing without discarding the stream after parsing is complete.
 
-            // 3文字消費するパーサ。
+            // Parser that consumes 3 characters.
             var parser = Any().Repeat(3).AsString();
 
             using var source = StringStream.Create(_abcdEFGH);
@@ -1302,9 +1315,9 @@ namespace UnitTest.ParsecSharp
             result2.WillSucceed(value => value.Is("dEF"));
 
             var (result3, rest3) = parser.ParsePartially(rest2);
-            result3.WillFail(failure => failure.Message.Is("Unexpected '<EndOfStream>'")); // 終端に到達したため失敗
+            result3.WillFail(failure => failure.Message.Is("Unexpected '<EndOfStream>'")); // Fails because it reached the end
 
-            // 失敗時点の state が返されることに注意する。
+            // Note that the state at the point of failure is returned.
             EndOfInput().Parse(rest3).WillSucceed(value => value.Is(Unit.Instance));
         }
     }

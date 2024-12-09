@@ -7,47 +7,47 @@ using static ParsecSharp.Text;
 
 namespace ParsecSharp.Examples
 {
-    // JSON パーサ、RFC8259 に忠実なつくり
+    // JSON parser, compliant with RFC8259
     public class JsonParser
     {
         public static IParser<char, dynamic?> Parser { get; } = CreateParser();
 
         private static IParser<char, dynamic?> CreateParser()
         {
-            // JSON Whitespace にマッチし、その値は無視します。
+            // Matches JSON Whitespace and ignores its value.
             // ws = *( %x20 / %x09 / %x0A / %x0D ) ; Space / Horizontal tab / Line feed or New line / Carriage return
             var whitespace = SkipMany(OneOf(" \t\n\r"));
 
-            // JSON Object の開始を表す開き波括弧にマッチします。
+            // Matches the opening curly brace for the start of a JSON Object.
             // begin-object = ws %x7B ws ; == '{'
             var openBrace = Char('{').Between(whitespace);
 
-            // JSON Object の終了を表す閉じ波括弧にマッチします。
+            // Matches the closing curly brace for the end of a JSON Object.
             // end-object = ws %x7D ws ; == '}'
             var closeBrace = Char('}').Between(whitespace);
 
-            // JSON Array の開始を表す開き角括弧にマッチします。
+            // Matches the opening square bracket for the start of a JSON Array.
             // begin-array = ws %x5B ws ; == '['
             var openBracket = Char('[').Between(whitespace);
 
-            // JSON Array の終了を表す閉じ角括弧にマッチします。
+            // Matches the closing square bracket for the end of a JSON Array.
             // end-array = ws %x5D ws ; == ']'
             var closeBracket = Char(']').Between(whitespace);
 
-            // JSON Object / JSON Array の要素区切りを表すコンマにマッチします。
+            // Matches the comma that separates elements in a JSON Object or JSON Array.
             // value-separator = ws %x2C ws ; == ','
             var comma = Char(',').Between(whitespace);
 
-            // JSON Object の Key : Value の区切りを表すコロンにマッチします。
+            // Matches the colon that separates keys and values in a JSON Object.
             // name-separator = ws %x3A ws ; == ':'
             var colon = Char(':').Between(whitespace);
 
-            // エスケープ不要な文字にマッチします。
+            // Matches characters that do not need to be escaped.
             // unescaped = %x20-21 / %x23-5B / %x5D-10FFFF ; %x22 == '"', %x5C == '\'
             var jsonUnescapedChar = Any().Except(Char('"'), Char('\\'), Satisfy(x => x <= 0x1F));
 
-            // エスケープされた文字にマッチします。
-            // 詳細は RFC8259 をみてください。
+            // Matches escaped characters.
+            // See RFC8259 for details.
             var jsonEscapedChar =
                 Char('\\').Right(
                     Choice(
@@ -62,31 +62,31 @@ namespace ParsecSharp.Examples
                         Char('u').Right(HexDigit().Repeat(4).AsString())
                             .Map(hex => (char)int.Parse(hex, NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo))));
 
-            // JSON String の一文字にマッチします。
+            // Matches a single character in a JSON String.
             // char = unescaped / escaped
             var jsonChar = jsonUnescapedChar | jsonEscapedChar;
 
-            // JSON String にマッチします。
+            // Matches a JSON String.
             // string = quotation-mark *char quotation-mark
             var jsonString = Many(jsonChar).Between(Char('"')).AsString();
 
-            // JSON Number の符号にマッチします。
+            // Matches the sign of a JSON Number.
             // minus = %x2D ; == '-'
             var sign = Optional(Char('-').Map(_ => -1), 1);
 
-            // JSON Number の整数部にマッチします。
+            // Matches the integer part of a JSON Number.
             // int = zero / ( digit1-9 *DIGIT )
             var integer = Char('0').Map(_ => 0) | OneOf("123456789").Append(Many(DecDigit())).ToInt();
 
-            // JSON Number の小数部にマッチします。
+            // Matches the fractional part of a JSON Number.
             // frac = decimal-point 1*DIGIT
             var frac = Char('.').Append(Many1(DecDigit())).ToDouble();
 
-            // JSON Number の指数部にマッチします。
+            // Matches the exponent part of a JSON Number.
             // exp = e [ minus / plus ] 1*DIGIT
             var exp = CharIgnoreCase('e').Right(Optional(OneOf("-+"), '+').Append(Many1(DecDigit())).ToInt());
 
-            // JSON Number にマッチします。double を返します。
+            // Matches a JSON Number and returns a double.
             // number = [ minus ] int [ frac ] [ exp ]
             var jsonNumber =
                 from s in sign
@@ -95,19 +95,19 @@ namespace ParsecSharp.Examples
                 from e in Optional(exp, 0)
                 select s * (i + f) * Math.Pow(10, e);
 
-            // JSON Boolean にマッチします。
+            // Matches a JSON Boolean.
             // true = %x74.72.75.65
             // false = %x66.61.6c.73.65
             var jsonBool = String("false").Map(_ => false).Or(String("true").Map(_ => true));
 
-            // JSON Null にマッチします。
+            // Matches JSON Null.
             // null = %x6e.75.6c.6c
             var jsonNull = String("null").Map(_ => null as object);
 
-            // JSON の値にマッチします。
+            // Matches a JSON value.
             var jsonValue = Fix<dynamic?>(jsonValue =>
             {
-                // name : value ペアにマッチします。
+                // Matches a name : value pair.
                 // member = string name-separator value
                 var jsonMember =
                     from name in jsonString
@@ -115,12 +115,12 @@ namespace ParsecSharp.Examples
                     from value in jsonValue
                     select (name, value);
 
-                // JSON Object にマッチします。
+                // Matches a JSON Object.
                 // object = begin-object [ member *( value-separator member ) ] end-object
                 var jsonObject = jsonMember.SeparatedBy(comma).Between(openBrace, closeBrace)
                     .Map(members => members.ToDictionary(x => x.name, x => x.value));
 
-                // JSON Array にマッチします。
+                // Matches a JSON Array.
                 // array = begin-array [ value *( value-separator value ) ] end-array
                 var jsonArray = jsonValue.SeparatedBy(comma).Between(openBracket, closeBracket)
                     .ToArray();
@@ -135,7 +135,7 @@ namespace ParsecSharp.Examples
                     jsonNull.AsDynamic().AbortIfEntered());
             });
 
-            // JSON Text にマッチします。
+            // Matches JSON Text.
             // JSON-text = ws value ws
             var json = jsonValue.Between(whitespace);
 
@@ -144,18 +144,18 @@ namespace ParsecSharp.Examples
             return parser;
         }
 
-        // string をパースして dynamic に詰めて返します。
+        // Parses a string and returns it as dynamic.
         public IResult<char, dynamic?> Parse(string json)
             => Parser.Parse(json);
 
-        // Stream をパースして dynamic に詰めて返します。テキストは UTF-8 でエンコードされている必要があります。
+        // Parses a Stream and returns it as dynamic. The text must be encoded in UTF-8.
         public IResult<char, dynamic?> Parse(Stream json)
             => Parser.Parse(json);
     }
 
     file static class Extensions
     {
-        // パース結果を dynamic に詰める拡張メソッド。
+        // Extension method to wrap the parse result as dynamic.
         public static IParser<TToken, dynamic?> AsDynamic<TToken, T>(this IParser<TToken, T> parser)
             => parser.Map(x => x as dynamic);
     }
