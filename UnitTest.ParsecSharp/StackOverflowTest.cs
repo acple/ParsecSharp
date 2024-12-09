@@ -1,4 +1,3 @@
-#if !DEBUG
 using System;
 using System.Linq;
 using ChainingAssertion;
@@ -9,7 +8,6 @@ using static ParsecSharp.Text;
 namespace UnitTest.ParsecSharp
 {
     [TestClass]
-    [TestCategory("SkipWhenLiveUnitTesting")]
     public class StackOverflowTest
     {
         [TestMethod]
@@ -57,4 +55,3 @@ namespace UnitTest.ParsecSharp
         }
     }
 }
-#endif
