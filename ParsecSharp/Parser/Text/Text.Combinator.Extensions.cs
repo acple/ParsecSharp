@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace ParsecSharp
@@ -13,7 +12,7 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IParser<char, string> AsString(this IParser<char, IEnumerable<char>> parser)
-            => parser.Map(values => new string(values.ToArray()));
+            => parser.Map(values => new string([.. values]));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IParser<char, int> ToInt(this IParser<char, IEnumerable<char>> parser)

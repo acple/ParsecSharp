@@ -145,7 +145,7 @@ namespace ParsecSharp.Examples
 
         public IReadOnlyList<PegParser.IMatchResult> Captures => this._captures;
 
-        public IReadOnlyList<string> AllMatches => this.Flatten().ToArray();
+        public IReadOnlyList<string> AllMatches => [.. this.Flatten()];
 
         public Result(string value) : this(value, [])
         { }
