@@ -15,6 +15,10 @@ namespace ParsecSharp.Internal
 
         public abstract ISuspendedResult<TToken, T> Suspend();
 
+        protected IResult<TToken, TResult> RunNext<TNext, TState, TResult>(Func<T, IParser<TToken, TNext>> next, TState state, Func<IResult<TToken, TNext>, IResult<TToken, TResult>> cont)
+            where TState : IParsecState<TToken, TState>
+            => next(value).Run(state, cont);
+
         public sealed override string ToString()
             => value?.ToString() ?? string.Empty;
     }
