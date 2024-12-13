@@ -86,10 +86,10 @@ namespace ParsecSharp
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IParser<byte, string> Utf8String(int count)
-            => Take(count).Map(BinaryConvert.ToUtf8String);
+            => Take(count).MapWithExceptionHandling(BinaryConvert.ToUtf8String);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IParser<byte, string> Utf8StringBigEndian(int count)
-            => Take(count).Map(BinaryConvert.ToUtf8StringBigEndian);
+            => Take(count).MapWithExceptionHandling(BinaryConvert.ToUtf8StringBigEndian);
     }
 }

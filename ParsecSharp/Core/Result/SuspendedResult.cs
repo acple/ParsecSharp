@@ -1,7 +1,28 @@
 using System;
+using System.Runtime.CompilerServices;
 
 namespace ParsecSharp.Internal
 {
+    public static class SuspendedResult
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ISuspendedResult<TToken, T> Create<TToken, TState, T>(IResult<TToken, T> result, TState state)
+            where TState : IParsecState<TToken, TState>
+            => new SuspendedResult<TToken, T>(result, new StateBox<TToken, TState>(state));
+
+        private sealed class StateBox<TToken, TState>(TState state) : ISuspendedState<TToken>
+            where TState : IParsecState<TToken, TState>
+        {
+            public IDisposable? InnerResource => state.InnerResource;
+
+            public ISuspendedResult<TToken, TResult> Continue<TResult>(IParser<TToken, TResult> parser)
+                => parser.ParsePartially(state);
+
+            public void Dispose()
+                => state.Dispose();
+        }
+    }
+
     public sealed class SuspendedResult<TToken, T>(IResult<TToken, T> result, ISuspendedState<TToken> rest) : ISuspendedResult<TToken, T>, IEquatable<SuspendedResult<TToken, T>>
     {
         public IResult<TToken, T> Result { get; } = result;
@@ -31,24 +52,5 @@ namespace ParsecSharp.Internal
 
         public static bool operator !=(SuspendedResult<TToken, T> left, SuspendedResult<TToken, T> right)
             => !(left == right);
-    }
-
-    public static class SuspendedResult
-    {
-        public static ISuspendedResult<TToken, T> Create<TToken, TState, T>(IResult<TToken, T> result, TState state)
-            where TState : IParsecState<TToken, TState>
-            => new SuspendedResult<TToken, T>(result, new StateBox<TToken, TState>(state));
-
-        private sealed class StateBox<TToken, TState>(TState state) : ISuspendedState<TToken>
-            where TState : IParsecState<TToken, TState>
-        {
-            public IDisposable? InnerResource => state.InnerResource;
-
-            public ISuspendedResult<TToken, TResult> Continue<TResult>(IParser<TToken, TResult> parser)
-                => parser.ParsePartially(state);
-
-            public void Dispose()
-                => state.Dispose();
-        }
     }
 }

@@ -27,6 +27,10 @@ namespace ParsecSharp
             => parser.Map(_ => result);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IParser<TToken, TResult> MapWithExceptionHandling<TToken, T, TResult>(this IParser<TToken, T> parser, Func<T, TResult> function)
+            => new MapWithExceptionHandling<TToken, T, TResult>(parser, function);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IParser<TToken, TResult> Next<TToken, T, TResult>(this IParser<TToken, T> parser, Func<T, IParser<TToken, TResult>> next, Func<IFailure<TToken, T>, IParser<TToken, TResult>> resume)
             => new Next<TToken, T, TResult>(parser, next, resume);
 
