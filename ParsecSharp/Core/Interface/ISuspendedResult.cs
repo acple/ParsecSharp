@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.CompilerServices;
 
 namespace ParsecSharp
 {
@@ -15,15 +14,5 @@ namespace ParsecSharp
         IDisposable? InnerResource { get; }
 
         ISuspendedResult<TToken, T> Continue<T>(IParser<TToken, T> parser);
-    }
-
-    public static class SuspendedResultExtensions
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Deconstruct<TToken, T>(this ISuspendedResult<TToken, T> source, out IResult<TToken, T> result, out ISuspendedState<TToken> rest)
-        {
-            result = source.Result;
-            rest = source.Rest;
-        }
     }
 }

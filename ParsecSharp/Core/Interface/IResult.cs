@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.CompilerServices;
 
 namespace ParsecSharp
 {
@@ -30,14 +29,5 @@ namespace ParsecSharp
     public interface ISuccess<TToken, out T> : IResult<TToken, T>
     {
         internal IResult<TToken, TResult> Next<TNext, TResult>(Func<T, IParser<TToken, TNext>> next, Func<IResult<TToken, TNext>, IResult<TToken, TResult>> cont);
-    }
-
-    public static class ResultExtensions
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CaseOf<TToken, T>(this IResult<TToken, T> result, Action<IFailure<TToken, T>> failure, Action<ISuccess<TToken, T>> success)
-            => result.CaseOf<object?>(
-                result => { failure(result); return default; },
-                result => { success(result); return default; });
     }
 }
