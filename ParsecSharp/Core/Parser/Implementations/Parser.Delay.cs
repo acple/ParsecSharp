@@ -1,12 +1,11 @@
 using System;
 
-namespace ParsecSharp.Internal.Parsers
-{
-    internal sealed class Delay<TToken, T>(Func<IParser<TToken, T>> parser) : IParser<TToken, T>
-    {
-        private readonly Lazy<IParser<TToken, T>> _parser = new(parser, false);
+namespace ParsecSharp.Internal.Parsers;
 
-        IResult<TToken, TResult> IParser<TToken, T>.Run<TState, TResult>(TState state, Func<IResult<TToken, T>, IResult<TToken, TResult>> cont)
-            => this._parser.Value.Run(state, cont);
-    }
+internal sealed class Delay<TToken, T>(Func<IParser<TToken, T>> parser) : IParser<TToken, T>
+{
+    private readonly Lazy<IParser<TToken, T>> _parser = new(parser, false);
+
+    IResult<TToken, TResult> IParser<TToken, T>.Run<TState, TResult>(TState state, Func<IResult<TToken, T>, IResult<TToken, TResult>> cont)
+        => this._parser.Value.Run(state, cont);
 }

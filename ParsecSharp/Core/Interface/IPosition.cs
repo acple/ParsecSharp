@@ -1,17 +1,16 @@
 using System;
 
-namespace ParsecSharp
+namespace ParsecSharp;
+
+public partial interface IPosition : IComparable<IPosition>, IEquatable<IPosition>
 {
-    public partial interface IPosition : IComparable<IPosition>, IEquatable<IPosition>
-    {
-        int Line { get; }
+    int Line { get; }
 
-        int Column { get; }
-    }
+    int Column { get; }
+}
 
-    public interface IPosition<in TToken, TPosition> : IPosition
-        where TPosition : IPosition<TToken, TPosition>
-    {
-        TPosition Next(TToken token);
-    }
+public interface IPosition<in TToken, TPosition> : IPosition
+    where TPosition : IPosition<TToken, TPosition>
+{
+    TPosition Next(TToken token);
 }

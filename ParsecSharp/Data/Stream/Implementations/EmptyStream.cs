@@ -1,37 +1,36 @@
 using System;
 
-namespace ParsecSharp.Data
+namespace ParsecSharp.Data;
+
+public sealed class EmptyStream<TToken> : IParsecState<TToken, EmptyStream<TToken>>
 {
-    public sealed class EmptyStream<TToken> : IParsecState<TToken, EmptyStream<TToken>>
-    {
-        public static EmptyStream<TToken> Instance { get; } = new();
+    public static EmptyStream<TToken> Instance { get; } = new();
 
-        public TToken Current => default!;
+    public TToken Current => default!;
 
-        public bool HasValue => false;
+    public bool HasValue => false;
 
-        public IPosition Position => EmptyPosition<TToken>.Initial;
+    public IPosition Position => EmptyPosition<TToken>.Initial;
 
-        public IDisposable? InnerResource => default;
+    public IDisposable? InnerResource => default;
 
-        public EmptyStream<TToken> Next => this;
+    public EmptyStream<TToken> Next => this;
 
-        private EmptyStream()
-        { }
+    private EmptyStream()
+    { }
 
-        public void Dispose()
-        { }
+    public void Dispose()
+    { }
 
-        public bool Equals(EmptyStream<TToken>? other)
-            => other is not null;
+    public bool Equals(EmptyStream<TToken>? other)
+        => other is not null;
 
-        public sealed override bool Equals(object? obj)
-            => ReferenceEquals(this, obj);
+    public sealed override bool Equals(object? obj)
+        => ReferenceEquals(this, obj);
 
-        public sealed override int GetHashCode()
-            => 0;
+    public sealed override int GetHashCode()
+        => 0;
 
-        public sealed override string ToString()
-            => "<EndOfStream>";
-    }
+    public sealed override string ToString()
+        => "<EndOfStream>";
 }
