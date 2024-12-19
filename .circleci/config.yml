@@ -83,10 +83,6 @@ workflows:
     jobs:
       - build:
           filters: &default_filter
-            branches:
-              only:
-                - master
-                - dev
             tags:
               only: /^v\d+\.\d+\.\d+(-.+)?$/
 
