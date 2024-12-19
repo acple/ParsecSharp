@@ -6,6 +6,9 @@ namespace ParsecSharp;
 public partial interface IParsecState<out TToken, TState>
 {
     void IDisposable.Dispose()
-        => this.InnerResource?.Dispose();
+    {
+        this.InnerResource?.Dispose();
+        GC.SuppressFinalize(this);
+    }
 }
 #endif
