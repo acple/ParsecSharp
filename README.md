@@ -1,9 +1,10 @@
 # ParsecSharp
-[![Nuget](https://img.shields.io/nuget/v/ParsecSharp)](https://www.nuget.org/packages/ParsecSharp/)
+[![NuGet](https://img.shields.io/nuget/v/ParsecSharp)](https://www.nuget.org/packages/ParsecSharp/)
 
 The faster monadic parser combinator library for C#
 
 > [!Important]
+>
 > ParsecSharp v4 has some major breaking-changes from v3. Please check the following notes.
 >
 > #### The basic parser type is now an interface `IParser<TToken, T>`, instead of a class `Parser<TToken, T>`
@@ -47,6 +48,7 @@ This project is inspired by [parsec](https://hackage.haskell.org/package/parsec)
 * Supports parsing streams with any token type (e.g., string, char stream, byte array, binary stream)
 * Supports tokenization
 * Supports partial parsing
+* Supports custom deriviation for core types
 * Supports nullable reference types (with C# 8.0 or later)
 * Supports Source Link (that allows to refer every parser implementation source codes)
 * No additional dependencies
