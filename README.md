@@ -1,7 +1,28 @@
 # ParsecSharp
-[![Nuget](https://img.shields.io/nuget/v/ParsecSharp)](https://www.nuget.org/packages/ParsecSharp/)
+[![NuGet](https://img.shields.io/nuget/v/ParsecSharp)](https://www.nuget.org/packages/ParsecSharp/)
 
 The faster monadic parser combinator library for C#
+
+> [!Important]
+>
+> ParsecSharp v4 has some major breaking-changes from v3. Please check the following notes.
+>
+> #### The basic parser type is now an interface `IParser<TToken, T>`, instead of a class `Parser<TToken, T>`
+> The main data types like Parser, Result, Success and Failure have been changed to interfaces to enable covariant result types.
+> To follow this change, you can simply rename it, and it should work.
+> ```diff
+> - private static readonly Parser<char, int> integer = Many1(DecDigit()).ToInt();
+> + private static readonly IParser<char, int> integer = Many1(DecDigit()).ToInt();
+> ```
+>
+> #### The operator `|` for Choice composition is no longer available in netstandard2.0
+> Unfortunately, netstandard2.0 doesn't support binary operator overloading for interfaces.
+> Please use netstandard2.1 compatibles, or rewrite it with other combinators that have the same semantics.
+> ```csharp
+> var textChar = unescapedChar | escapedChar; // no longer available in netstandard2.0
+> var textChar = unescapedChar.Or(escapedChar); // use Or combinator
+> var textChar = Choice(unescapedChar, escapedChar); // use Choice combinator
+> ```
 
 
 ## What's this
@@ -27,8 +48,9 @@ This project is inspired by [parsec](https://hackage.haskell.org/package/parsec)
 * Supports parsing streams with any token type (e.g., string, char stream, byte array, binary stream)
 * Supports tokenization
 * Supports partial parsing
+* Supports custom deriviation for core types
 * Supports nullable reference types (with C# 8.0 or later)
-* Supports Source Link
+* Supports Source Link (that allows to refer every parser implementation source codes)
 * No additional dependencies
 * Faster running
 * Just enough error messages
@@ -69,6 +91,7 @@ Download manually:
 * netstandard2.0 (compatible with net461 or later, uap, xamarin, and more)
 
 **Requires C# 7.3 or later** for generic overloading resolution.
+Recommends C# 13.0 or later for better overloading resolution via OverloadResolutionPriority.
 
 
 ## Get started
@@ -86,7 +109,7 @@ Download manually:
 * [Arithmetic expression parser implementation](ParsecSharp.Examples/ExpressionParser.cs)
 * [PEG parser generator implementation](ParsecSharp.Examples/PegParser.cs)
 
-Documentation is included in the [UnitTest code](UnitTest.ParsecSharp/ParserTest.cs) (jp).
+Documentation is included in the [UnitTest code](UnitTest.ParsecSharp/ParserTest.cs).
 
 If you want more information, read the [API source code](ParsecSharp/Parser), all is there.
 

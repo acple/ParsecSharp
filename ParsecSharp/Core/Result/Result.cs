@@ -1,26 +1,28 @@
 using System;
+using System.Runtime.CompilerServices;
+using ParsecSharp.Internal.Results;
 
-namespace ParsecSharp
+namespace ParsecSharp.Internal;
+
+public static class Result
 {
-    public abstract class Result<TToken, T>
-    {
-        public abstract T Value { get; }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IResult<TToken, T> Failure<TToken, TState, T>(TState state)
+        where TState : IParsecState<TToken, TState>
+        => new ParseError<TToken, TState, T>(state);
 
-        private protected Result()
-        { }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IResult<TToken, T> Failure<TToken, TState, T>(Exception exception, TState state)
+        where TState : IParsecState<TToken, TState>
+        => new FailureWithException<TToken, TState, T>(exception, state);
 
-        internal abstract Result<TToken, TResult> Next<TNext, TResult>(Func<T, Parser<TToken, TNext>> next, Func<Result<TToken, TNext>, Result<TToken, TResult>> cont);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IResult<TToken, T> Failure<TToken, TState, T>(string message, TState state)
+        where TState : IParsecState<TToken, TState>
+        => new FailureWithMessage<TToken, TState, T>(message, state);
 
-        public abstract TResult CaseOf<TResult>(Func<Failure<TToken, T>, TResult> failure, Func<Success<TToken, T>, TResult> success);
-
-        public abstract Result<TToken, TResult> Map<TResult>(Func<T, TResult> function);
-
-        protected internal abstract SuspendedResult<TToken, T> Suspend();
-
-        public sealed override bool Equals(object? obj)
-            => base.Equals(obj);
-
-        public sealed override int GetHashCode()
-            => base.GetHashCode();
-    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IResult<TToken, T> Success<TToken, TState, T>(T value, TState state)
+        where TState : IParsecState<TToken, TState>
+        => new Success<TToken, TState, T>(value, state);
 }

@@ -2,11 +2,10 @@ using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Style", "IDE0047:Remove unnecessary parentheses")]
 
-namespace UnitTest.ParsecSharp
+namespace UnitTest.ParsecSharp;
+
+internal static class Program
 {
-    internal static class Program
-    {
-        private static void Main()
-        { }
-    }
+    private static void Main()
+    { }
 }

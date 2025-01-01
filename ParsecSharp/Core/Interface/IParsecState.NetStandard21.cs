@@ -1,12 +1,14 @@
 #if NET || NETSTANDARD2_1_OR_GREATER
 using System;
 
-namespace ParsecSharp
+namespace ParsecSharp;
+
+public partial interface IParsecState<out TToken, TState>
 {
-    public partial interface IParsecState<out TToken, TState>
+    void IDisposable.Dispose()
     {
-        void IDisposable.Dispose()
-            => this.InnerResource?.Dispose();
+        this.InnerResource?.Dispose();
+        GC.SuppressFinalize(this);
     }
 }
 #endif

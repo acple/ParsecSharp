@@ -3,154 +3,149 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static ParsecSharp.Parser;
 using static ParsecSharp.Text;
 
-namespace UnitTest.ParsecSharp
+namespace UnitTest.ParsecSharp;
+
+[TestClass]
+public class TextTest
 {
-    [TestClass]
-    public class TextTest
+    [TestMethod]
+    public void CharTest()
     {
-        private const string _abcdEFGH = "abcdEFGH";
+        // Creates a parser that matches a specified character.
+        // Similar to the generic `Token` parser but optimized for char, offering better performance.
 
-        private const string _123456 = "123456";
+        var parser = Char('a');
 
-        [TestMethod]
-        public void CharTest()
-        {
-            // 指定した一文字にマッチするパーサを作成します。
-            // 汎用の Token パーサと同様の結果を得られます。char 特化のためパフォーマンス面でやや有利です。
+        var source = "abcdEFGH";
+        parser.Parse(source).WillSucceed(value => value.Is('a'));
 
-            var parser = Char('a');
+        var source2 = "123456";
+        parser.Parse(source2).WillFail();
+    }
 
-            var source = _abcdEFGH;
-            parser.Parse(source).WillSucceed(value => value.Is('a'));
+    [TestMethod]
+    public void CharIgnoreCaseTest()
+    {
+        // Creates a parser that matches a specified character, ignoring case.
 
-            var source2 = _123456;
-            parser.Parse(source2).WillFail();
-        }
+        var parser = CharIgnoreCase('A');
 
-        [TestMethod]
-        public void CharIgnoreCaseTest()
-        {
-            // 指定した一文字に大文字小文字を区別せずマッチするパーサを作成します。
+        var source = "abcdEFGH";
+        parser.Parse(source).WillSucceed(value => value.Is('a'));
+    }
 
-            var parser = CharIgnoreCase('A');
+    [TestMethod]
+    public void StringTest()
+    {
+        // Creates a parser that matches a specified string.
 
-            var source = _abcdEFGH;
-            parser.Parse(source).WillSucceed(value => value.Is('a'));
-        }
+        var parser = String("abc");
 
-        [TestMethod]
-        public void StringTest()
-        {
-            // 指定した文字列にマッチするパーサを作成します。
+        var source = "abcdEFGH";
+        parser.Parse(source).WillSucceed(value => value.Is("abc"));
+    }
 
-            var parser = String("abc");
+    [TestMethod]
+    public void StringIgnoreCaseTest()
+    {
+        // Creates a parser that matches a specified string, ignoring case.
 
-            var source = _abcdEFGH;
-            parser.Parse(source).WillSucceed(value => value.Is("abc"));
-        }
+        var parser = StringIgnoreCase("abcde");
 
-        [TestMethod]
-        public void StringIgnoreCaseTest()
-        {
-            // 指定した文字列に大文字小文字を区別せずマッチするパーサを作成します。
+        var source = "abcdEFGH";
+        parser.Parse(source).WillSucceed(value => value.Is("abcdE"));
+    }
 
-            var parser = StringIgnoreCase("abcde");
+    [TestMethod]
+    public void ToIntTest()
+    {
+        // A combinator that converts the result string to an integer.
 
-            var source = _abcdEFGH;
-            parser.Parse(source).WillSucceed(value => value.Is("abcdE"));
-        }
+        var source = "1234abcd";
 
-        [TestMethod]
-        public void ToIntTest()
-        {
-            // 結果の文字列を数値に変換するコンビネータです。
+        // Parser that matches [0 - 9] and converts to int.
+        var parser = Many1(DecDigit()).ToInt();
 
-            var source = "1234abcd";
+        parser.Parse(source).WillSucceed(value => value.Is(1234));
 
-            // [0 - 9] にマッチし int に変換したものを返すパーサ。
-            var parser = Many1(DecDigit()).ToInt();
+        // Fails if the value is non-numeric.
+        var parser2 = Many1(Any()).ToInt();
+        parser2.Parse(source).WillFail(failure => failure.Message.Is("Expected digits but was '1234abcd'"));
 
-            parser.Parse(source).WillSucceed(value => value.Is(1234));
+        // Fails if the value exceeds 32-bit range.
+        var source2 = "1234567890123456";
+        parser.Parse(source2).WillFail(failure => failure.Message.Is("Expected digits but was '1234567890123456'"));
+    }
 
-            // 変換対象に数値以外の文字を含ませた場合、変換に失敗する。
-            var parser2 = Many1(Any()).ToInt();
-            parser2.Parse(source).WillFail(failure => failure.Message.Is("Expected digits but was '1234abcd'"));
+    [TestMethod]
+    public void ToLongTest()
+    {
+        // A combinator that converts the result string to a long integer.
 
-            // 32 bit を超えた範囲の数値を与えると失敗となる。
-            var source2 = "1234567890123456";
-            parser.Parse(source2).WillFail(failure => failure.Message.Is("Expected digits but was '1234567890123456'"));
-        }
+        var source = "1234abcd";
 
-        [TestMethod]
-        public void ToLongTest()
-        {
-            // 結果の文字列を数値に変換するコンビネータです。
+        // Parser that matches [0 - 9] and converts to long.
+        var parser = Many1(DecDigit()).ToLong();
 
-            var source = "1234abcd";
+        parser.Parse(source).WillSucceed(value => value.Is(1234L));
 
-            // [0 - 9] にマッチし long に変換したものを返すパーサ。
-            var parser = Many1(DecDigit()).ToLong();
+        // Fails if the value is non-numeric.
+        var parser2 = Many1(Any()).ToLong();
+        parser2.Parse(source).WillFail(failure => failure.Message.Is("Expected digits but was '1234abcd'"));
 
-            parser.Parse(source).WillSucceed(value => value.Is(1234L));
+        // Can convert values up to 64-bit range.
+        var source2 = "1234567890123456";
+        parser.Parse(source2).WillSucceed(value => value.Is(1234567890123456L));
+    }
 
-            // 変換対象に数値以外の文字を含ませた場合、変換に失敗する。
-            var parser2 = Many1(Any()).ToLong();
-            parser2.Parse(source).WillFail(failure => failure.Message.Is("Expected digits but was '1234abcd'"));
+    [TestMethod]
+    public void ToDoubleTest()
+    {
+        // A combinator that converts the result string to a double.
 
-            // 64 bit までの数値を変換できる。
-            var source2 = "1234567890123456";
-            parser.Parse(source2).WillSucceed(value => value.Is(1234567890123456L));
-        }
+        var source = "1234.5678abcd";
 
-        [TestMethod]
-        public void ToDoubleTest()
-        {
-            // 結果の文字列を数値に変換するコンビネータです。
+        // Parser that matches [0 - 9] / '.' and converts to double.
+        var parser = Many1(DecDigit() | Char('.')).ToDouble();
 
-            var source = "1234.5678abcd";
+        parser.Parse(source).WillSucceed(value => value.Is(1234.5678));
 
-            // [0 - 9] / '.' にマッチし double に変換したものを返すパーサ。
-            var parser = Many1(DecDigit() | Char('.')).ToDouble();
+        // Fails if the value is non-numeric.
+        var parser2 = Many1(Any()).ToDouble();
+        parser2.Parse(source).WillFail(failure => failure.Message.Is("Expected number but was '1234.5678abcd'"));
 
-            parser.Parse(source).WillSucceed(value => value.Is(1234.5678));
+        // Supports strings that can be converted using `double.Parse`.
+        var source2 = "1.234567890123456";
+        parser.Parse(source2).WillSucceed(value => value.Is(1.234567890123456));
+    }
 
-            // 変換対象に数値以外の文字を含ませた場合、変換に失敗する。
-            var parser2 = Many1(Any()).ToDouble();
-            parser2.Parse(source).WillFail(failure => failure.Message.Is("Expected number but was '1234.5678abcd'"));
+    [TestMethod]
+    public void OneOfIgnoreCaseTest()
+    {
+        // Creates a parser that succeeds if the token is in the specified string, ignoring case.
 
-            // double.Parse(string? s) で変換可能な文字列に対応する。
-            var source2 = "1.234567890123456";
-            parser.Parse(source2).WillSucceed(value => value.Is(1.234567890123456));
-        }
+        // Parser that matches [x-z], ignoring case.
+        var parser = OneOfIgnoreCase("xyz");
 
-        [TestMethod]
-        public void OneOfIgnoreCaseTest()
-        {
-            // 大文字小文字の違いを無視した上で、トークンが候補に含まれる場合に成功するパーサを作成します。
+        var source = "ZZZ";
+        parser.Parse(source).WillSucceed(value => value.Is('Z'));
 
-            // 大文字小文字を無視して [x-z] にマッチするパーサ。
-            var parser = OneOfIgnoreCase("xyz");
+        var source2 = "ABC";
+        parser.Parse(source2).WillFail();
+    }
 
-            var source = "ZZZ";
-            parser.Parse(source).WillSucceed(value => value.Is('Z'));
+    [TestMethod]
+    public void NoneOfIgnoreCaseTest()
+    {
+        // Creates a parser that succeeds if the token is not in the specified string, ignoring case.
 
-            var source2 = "ABC";
-            parser.Parse(source2).WillFail();
-        }
+        // Parser that matches anything except [x-z], ignoring case.
+        var parser = NoneOfIgnoreCase("xyz");
 
-        [TestMethod]
-        public void NoneOfIgnoreCaseTest()
-        {
-            // 大文字小文字の違いを無視した上で、トークンが候補に含まれない場合に成功するパーサを作成します。
+        var source = "ZZZ";
+        parser.Parse(source).WillFail();
 
-            // 大文字小文字を無視して [x-z] 以外にマッチするパーサ。
-            var parser = NoneOfIgnoreCase("xyz");
-
-            var source = "ZZZ";
-            parser.Parse(source).WillFail();
-
-            var source2 = "ABC";
-            parser.Parse(source2).WillSucceed(value => value.Is('A'));
-        }
+        var source2 = "ABC";
+        parser.Parse(source2).WillSucceed(value => value.Is('A'));
     }
 }

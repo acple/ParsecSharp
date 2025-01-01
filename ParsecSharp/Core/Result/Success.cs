@@ -1,20 +1,24 @@
 using System;
 
-namespace ParsecSharp
+namespace ParsecSharp.Internal;
+
+public abstract class Success<TToken, T>(T value) : ISuccess<TToken, T>
 {
-    public abstract class Success<TToken, T>(T value) : Result<TToken, T>
-    {
-        public override T Value => value;
+    public T Value => value;
 
-        protected abstract Result<TToken, TResult> RunNext<TNext, TResult>(Parser<TToken, TNext> parser, Func<Result<TToken, TNext>, Result<TToken, TResult>> cont);
+    public TResult CaseOf<TResult>(Func<IFailure<TToken, T>, TResult> failure, Func<ISuccess<TToken, T>, TResult> success)
+        => success(this);
 
-        internal sealed override Result<TToken, TResult> Next<TNext, TResult>(Func<T, Parser<TToken, TNext>> next, Func<Result<TToken, TNext>, Result<TToken, TResult>> cont)
-            => this.RunNext(next(value), cont);
+    public abstract IResult<TToken, TResult> Map<TResult>(Func<T, TResult> function);
 
-        public sealed override TResult CaseOf<TResult>(Func<Failure<TToken, T>, TResult> failure, Func<Success<TToken, T>, TResult> success)
-            => success(this);
+    public abstract IResult<TToken, TResult> Next<TNext, TResult>(Func<T, IParser<TToken, TNext>> next, Func<IResult<TToken, TNext>, IResult<TToken, TResult>> cont);
 
-        public override string ToString()
-            => value?.ToString() ?? string.Empty;
-    }
+    public abstract ISuspendedResult<TToken, T> Suspend();
+
+    protected IResult<TToken, TResult> RunNext<TNext, TState, TResult>(Func<T, IParser<TToken, TNext>> next, TState state, Func<IResult<TToken, TNext>, IResult<TToken, TResult>> cont)
+        where TState : IParsecState<TToken, TState>
+        => next(value).Run(state, cont);
+
+    public sealed override string ToString()
+        => value?.ToString() ?? string.Empty;
 }
