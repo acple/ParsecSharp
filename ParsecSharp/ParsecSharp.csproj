@@ -2,13 +2,16 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1;netstandard2.0</TargetFrameworks>
-    <LangVersion>12.0</LangVersion>
+    <LangVersion>13.0</LangVersion>
     <Nullable>enable</Nullable>
     <RootNamespace>ParsecSharp</RootNamespace>
     <AllowUnsafeBlocks>true<!--for SkipLocalsInit--></AllowUnsafeBlocks>
   </PropertyGroup>
 
   <PropertyGroup>
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <DebugType>portable</DebugType>
     <EmbedAllSources>true</EmbedAllSources>
     <IncludeSymbols>true</IncludeSymbols>
   </PropertyGroup>
@@ -25,12 +28,16 @@
     <RepositoryUrl>https://github.com/acple/ParsecSharp.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>parser;combinator;linq;peg;functional</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="../README.md" Pack="true" PackagePath="/" Visible="false" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AggressiveOptimization.Fody" Version="0.1.0" PrivateAssets="All" />
-    <PackageReference Include="BuildExtensions.DeterministicPdb" Version="0.1.0" PrivateAssets="All" />
-    <PackageReference Include="Fody" Version="6.8.1" PrivateAssets="All" />
+    <PackageReference Include="Fody" Version="6.9.1" PrivateAssets="All" />
     <PackageReference Include="TailCall.Fody" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 
