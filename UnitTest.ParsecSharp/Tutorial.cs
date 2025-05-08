@@ -98,7 +98,7 @@ public class Tutorial
 
             {
                 var regex = new Regex("^b+");
-                regex.Match(source).Success.IsFalse();
+                regex.IsMatch(source).IsFalse();
 
                 var parser = Many1(Char('b'));
                 parser.Parse(source).WillFail(failure => failure.Message.Is("Unexpected 'a<0x61>'"));
@@ -107,7 +107,7 @@ public class Tutorial
 
         {
             var regex = new Regex("^a*$");
-            regex.Match(source).Success.IsFalse();
+            regex.IsMatch(source).IsFalse();
 
             var parser = Many(Char('a')).End();
             parser.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 3): Expected '<EndOfStream>' but was 'b<0x62>'"));
@@ -116,7 +116,7 @@ public class Tutorial
         {
             {
                 var regex = new Regex("^ab");
-                regex.Match(source).Success.IsFalse();
+                regex.IsMatch(source).IsFalse();
 
                 var parser = Sequence(Char('a'), Char('b'));
                 parser.Parse(source).WillFail(failure => failure.ToString().Is("Parser Failure (Line: 1, Column: 2): Unexpected 'a<0x61>'"));

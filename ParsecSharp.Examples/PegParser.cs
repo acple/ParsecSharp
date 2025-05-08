@@ -115,7 +115,7 @@ public class PegParser
         var grammar = spacing.Right(Many1(definition)).End()
             .Map(definitions => definitions.ToDictionary(x => x.name, x => x.rule))
             .Map(dict => dict
-                .Where(x => !x.Key.StartsWith("_"))
+                .Where(x => !x.Key.StartsWith('_'))
                 .ToDictionary(x => x.Key, x => x.Value.Resolve(dict) as IParser<char, IMatchResult>));
 
         return grammar;
