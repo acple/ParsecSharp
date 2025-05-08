@@ -13,11 +13,11 @@ public class PegParser
 {
     public interface IMatchResult
     {
-        string Match { get; }
+        public string Match { get; }
 
-        IReadOnlyList<IMatchResult> Captures { get; }
+        public IReadOnlyList<IMatchResult> Captures { get; }
 
-        IReadOnlyList<string> AllMatches { get; }
+        public IReadOnlyList<string> AllMatches { get; }
     }
 
     public static IParser<char, IReadOnlyDictionary<string, IParser<char, IMatchResult>>> Parser { get; } = CreateParser();

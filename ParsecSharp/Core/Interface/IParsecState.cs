@@ -4,17 +4,17 @@ namespace ParsecSharp;
 
 public interface IParsecState<out TToken>
 {
-    TToken Current { get; }
+    public TToken Current { get; }
 
-    bool HasValue { get; }
+    public bool HasValue { get; }
 
-    IPosition Position { get; }
+    public IPosition Position { get; }
 }
 
 public partial interface IParsecState<out TToken, TState> : IParsecState<TToken>, IEquatable<TState>, IDisposable
     where TState : IParsecState<TToken, TState>
 {
-    IDisposable? InnerResource { get; }
+    public IDisposable? InnerResource { get; }
 
-    TState Next { get; }
+    public TState Next { get; }
 }

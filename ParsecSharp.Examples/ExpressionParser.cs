@@ -8,13 +8,13 @@ namespace ParsecSharp.Examples;
 public interface INumber<TNumber>
     where TNumber : INumber<TNumber>
 {
-    TNumber Add(TNumber value);
+    public TNumber Add(TNumber value);
 
-    TNumber Sub(TNumber value);
+    public TNumber Sub(TNumber value);
 
-    TNumber Mul(TNumber value);
+    public TNumber Mul(TNumber value);
 
-    TNumber Div(TNumber value);
+    public TNumber Div(TNumber value);
 }
 
 public class ExpressionParser<TNumber>

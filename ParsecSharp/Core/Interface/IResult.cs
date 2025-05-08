@@ -4,26 +4,26 @@ namespace ParsecSharp;
 
 public interface IResult<TToken, out T>
 {
-    T Value { get; }
+    public T Value { get; }
 
-    TResult CaseOf<TResult>(Func<IFailure<TToken, T>, TResult> failure, Func<ISuccess<TToken, T>, TResult> success);
+    public TResult CaseOf<TResult>(Func<IFailure<TToken, T>, TResult> failure, Func<ISuccess<TToken, T>, TResult> success);
 
-    IResult<TToken, TResult> Map<TResult>(Func<T, TResult> function);
+    public IResult<TToken, TResult> Map<TResult>(Func<T, TResult> function);
 
-    string ToString();
+    public string ToString();
 
     internal ISuspendedResult<TToken, T> Suspend();
 }
 
 public interface IFailure<TToken, out T> : IResult<TToken, T>
 {
-    IParsecState<TToken> State { get; }
+    public IParsecState<TToken> State { get; }
 
-    ParsecException Exception { get; }
+    public ParsecException Exception { get; }
 
-    string Message { get; }
+    public string Message { get; }
 
-    IFailure<TToken, TResult> Convert<TResult>();
+    public IFailure<TToken, TResult> Convert<TResult>();
 }
 
 public interface ISuccess<TToken, out T> : IResult<TToken, T>
