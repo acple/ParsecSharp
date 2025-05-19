@@ -7,41 +7,44 @@ namespace ParsecSharp;
 
 public static class ParserExtensions
 {
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IResult<TToken, T> Parse<TToken, T, TState>(this IParser<TToken, T> parser, TState source)
-        where TState : IParsecState<TToken, TState>
+    extension<TToken, T>(IParser<TToken, T> parser)
     {
-        using (source.InnerResource)
-            return parser.Run(source);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IResult<TToken, T> Parse<TToken, T>(this IParser<TToken, T> parser, ISuspendedState<TToken> suspended)
-    {
-        using (suspended.InnerResource)
-            return suspended.Continue(parser).Result;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ISuspendedResult<TToken, T> ParsePartially<TToken, T, TState>(this IParser<TToken, T> parser, TState source)
-        where TState : IParsecState<TToken, TState>
-        => parser.Run(source).Suspend();
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ISuspendedResult<TToken, T> ParsePartially<TToken, T>(this IParser<TToken, T> parser, ISuspendedState<TToken> suspended)
-        => suspended.Continue(parser);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static IResult<TToken, T> Run<TToken, T, TState>(this IParser<TToken, T> parser, TState source)
-        where TState : IParsecState<TToken, TState>
-    {
-        try
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IResult<TToken, T> Parse<TState>(TState source)
+            where TState : IParsecState<TToken, TState>
         {
-            return parser.Run(source, result => result);
+            using (source.InnerResource)
+                return parser.Run(source);
         }
-        catch (Exception exception)
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IResult<TToken, T> Parse(ISuspendedState<TToken> suspended)
         {
-            return Result.Failure<TToken, EmptyStream<TToken>, T>(exception, EmptyStream<TToken>.Instance);
+            using (suspended.InnerResource)
+                return suspended.Continue(parser).Result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ISuspendedResult<TToken, T> ParsePartially<TState>(TState source)
+            where TState : IParsecState<TToken, TState>
+            => parser.Run(source).Suspend();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ISuspendedResult<TToken, T> ParsePartially(ISuspendedState<TToken> suspended)
+            => suspended.Continue(parser);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private IResult<TToken, T> Run<TState>(TState source)
+            where TState : IParsecState<TToken, TState>
+        {
+            try
+            {
+                return parser.Run(source, result => result);
+            }
+            catch (Exception exception)
+            {
+                return Result.Failure<TToken, EmptyStream<TToken>, T>(exception, EmptyStream<TToken>.Instance);
+            }
         }
     }
 }
