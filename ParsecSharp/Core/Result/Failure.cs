@@ -8,7 +8,7 @@ public abstract class Failure<TToken, T> : IFailure<TToken, T>
 
     public abstract IParsecState<TToken> State { get; }
 
-    public virtual ParsecException Exception => new(this.ToString());
+    public virtual ParsecSharpException Exception => new(this.ToString());
 
     public abstract string Message { get; }
 

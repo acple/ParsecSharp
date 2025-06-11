@@ -55,7 +55,7 @@ public class Tutorial
             }
 
             {
-                _ = ExceptionAssert.Throws<ParsecException>(() =>
+                _ = ExceptionAssert.Throws<ParsecSharpException>(() =>
                 {
                     _ = result.Value;
                     Assert.Fail("does not reach here");

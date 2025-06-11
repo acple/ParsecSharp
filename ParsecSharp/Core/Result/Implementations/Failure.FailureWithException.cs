@@ -7,7 +7,7 @@ internal sealed class FailureWithException<TToken, TState, T>(Exception exceptio
 {
     public sealed override IParsecState<TToken> State => state;
 
-    public sealed override ParsecException Exception => new(this.ToString(), exception);
+    public sealed override ParsecSharpException Exception => new(this.ToString(), exception);
 
     public sealed override string Message => $"Exception '{exception.GetType().Name}' occurred: {exception.ToString()}";
 

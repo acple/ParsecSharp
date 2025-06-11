@@ -19,7 +19,7 @@ public interface IFailure<TToken, out T> : IResult<TToken, T>
 {
     public IParsecState<TToken> State { get; }
 
-    public ParsecException Exception { get; }
+    public ParsecSharpException Exception { get; }
 
     public string Message { get; }
 
