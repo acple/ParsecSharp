@@ -39,7 +39,8 @@ jobs:
       - run:
           name: run test
           command: >-
-            dotnet test -c Release --no-build -v normal
+            dotnet test UnitTest.ParsecSharp
+            -c Release --no-build -v normal
             --framework << parameters.target_framework >>
             --results-directory ./TestResults
             --logger "console;verbosity=detailed"
