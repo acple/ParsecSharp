@@ -44,7 +44,7 @@ internal class InheritingTest
     {
         public override IParsecState<TToken> State => throw new NotImplementedException();
 
-        public override ParsecException Exception => throw new NotImplementedException();
+        public override ParsecSharpException Exception => throw new NotImplementedException();
 
         public override string Message => throw new NotImplementedException();
 

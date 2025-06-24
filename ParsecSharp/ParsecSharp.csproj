@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1;netstandard2.0</TargetFrameworks>
-    <LangVersion>13.0</LangVersion>
+    <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
     <RootNamespace>ParsecSharp</RootNamespace>
     <AllowUnsafeBlocks>true<!--for SkipLocalsInit--></AllowUnsafeBlocks>
@@ -37,8 +37,8 @@
 
   <ItemGroup>
     <PackageReference Include="AggressiveOptimization.Fody" Version="0.1.0" PrivateAssets="All" />
-    <PackageReference Include="Fody" Version="6.9.1" PrivateAssets="All" />
-    <PackageReference Include="TailCall.Fody" Version="1.1.1" PrivateAssets="All" />
+    <PackageReference Include="Fody" Version="6.9.2" PrivateAssets="All" />
+    <PackageReference Include="TailCall.Fody" Version="1.2.0" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>

@@ -4,13 +4,13 @@ namespace ParsecSharp;
 
 public partial interface IPosition : IComparable<IPosition>, IEquatable<IPosition>
 {
-    int Line { get; }
+    public int Line { get; }
 
-    int Column { get; }
+    public int Column { get; }
 }
 
 public interface IPosition<in TToken, TPosition> : IPosition
     where TPosition : IPosition<TToken, TPosition>
 {
-    TPosition Next(TToken token);
+    public TPosition Next(TToken token);
 }
