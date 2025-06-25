@@ -11,9 +11,8 @@
   <PropertyGroup>
     <Deterministic>true</Deterministic>
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
-    <DebugType>portable</DebugType>
+    <DebugType>embedded</DebugType>
     <EmbedAllSources>true</EmbedAllSources>
-    <IncludeSymbols>true</IncludeSymbols>
   </PropertyGroup>
 
   <PropertyGroup>

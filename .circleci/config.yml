@@ -66,7 +66,7 @@ jobs:
       - persist_to_workspace:
           root: ./nuget
           paths:
-            - ./ParsecSharp.*.symbols.nupkg
+            - ./ParsecSharp.*.nupkg
 
   push:
     executor: dotnet
@@ -76,7 +76,7 @@ jobs:
       - run:
           name: push to NuGet gallery
           command: >-
-            dotnet nuget push ./ParsecSharp.*.symbols.nupkg
+            dotnet nuget push ./ParsecSharp.*.nupkg
             --source https://www.nuget.org --api-key ${NUGET_APIKEY}
 
 workflows:
