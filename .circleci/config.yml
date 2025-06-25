@@ -3,9 +3,9 @@ version: 2.1
 executors:
   dotnet:
     parameters:
-      sdk_version: { type: string, default: "9.0" }
+      sdk_version: { type: string, default: "10.0-preview" }
     docker:
-      - image: mcr.microsoft.com/dotnet/sdk:<< parameters.sdk_version >>-alpine
+      - image: mcr.microsoft.com/dotnet/nightly/sdk:<< parameters.sdk_version >>-alpine
     working_directory: /_
     environment:
       NUGET_PACKAGES: /_/packages
@@ -66,7 +66,7 @@ jobs:
       - persist_to_workspace:
           root: ./nuget
           paths:
-            - ./ParsecSharp.*.symbols.nupkg
+            - ./ParsecSharp.*.nupkg
 
   push:
     executor: dotnet
@@ -76,7 +76,7 @@ jobs:
       - run:
           name: push to NuGet gallery
           command: >-
-            dotnet nuget push ./ParsecSharp.*.symbols.nupkg
+            dotnet nuget push ./ParsecSharp.*.nupkg
             --source https://www.nuget.org --api-key ${NUGET_APIKEY}
 
 workflows:
@@ -86,6 +86,14 @@ workflows:
           filters: &default_filter
             tags:
               only: /^v\d+\.\d+\.\d+(-.+)?$/
+
+      - unittest:
+          name: unittest10.0
+          sdk_version: "10.0-preview"
+          target_framework: net10.0
+          requires:
+            - build
+          filters: *default_filter
 
       - unittest:
           name: unittest9.0
@@ -120,6 +128,7 @@ workflows:
           context: nuget-publish
           requires:
             - pack
+            - unittest10.0
             - unittest9.0
             - unittest8.0
             - unittest6.0
