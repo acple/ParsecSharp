@@ -5,7 +5,10 @@ namespace ParsecSharp;
 
 public static partial class Bytes
 {
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IResult<byte, T> Parse<T>(this IParser<byte, T> parser, Stream source)
-        => parser.Parse(ByteStream.Create(source));
+    extension<T>(IParser<byte, T> parser)
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IResult<byte, T> Parse(Stream source)
+            => parser.Parse(ByteStream.Create(source));
+    }
 }
