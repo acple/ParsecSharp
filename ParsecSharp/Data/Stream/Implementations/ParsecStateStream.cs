@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 
 namespace ParsecSharp.Data;
 
@@ -25,7 +26,7 @@ public sealed class ParsecStateStream<TToken, TPosition> : IParsecState<TToken, 
         this.HasValue = true;
         this._position = position;
         this.InnerResource = resource;
-        this._next = new(next, false);
+        this._next = new(next, LazyThreadSafetyMode.None);
     }
 
     public ParsecStateStream(TPosition position, IDisposable? resource)
@@ -34,7 +35,7 @@ public sealed class ParsecStateStream<TToken, TPosition> : IParsecState<TToken, 
         this.HasValue = false;
         this._position = position;
         this.InnerResource = resource;
-        this._next = new(() => this, false);
+        this._next = new(() => this, LazyThreadSafetyMode.None);
     }
 
     public void Dispose()
