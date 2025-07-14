@@ -28,18 +28,6 @@ internal class InheritingTest
             => throw new NotImplementedException();
     }
 
-    private class SuccessInheritingTest<TToken, T>(T result) : Success<TToken, T>(result)
-    {
-        public override IResult<TToken, TResult> Map<TResult>(Func<T, TResult> function)
-            => throw new NotImplementedException();
-
-        public override IResult<TToken, TResult> Next<TNext, TResult>(Func<T, IParser<TToken, TNext>> next, Func<IResult<TToken, TNext>, IResult<TToken, TResult>> cont)
-            => throw new NotImplementedException();
-
-        public override ISuspendedResult<TToken, T> Suspend()
-            => throw new NotImplementedException();
-    }
-
     private class FailureInheritingTest<TToken, T> : Failure<TToken, T>
     {
         public override IParsecState<TToken> State => throw new NotImplementedException();
