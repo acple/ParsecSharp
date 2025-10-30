@@ -48,9 +48,9 @@ This project is inspired by [parsec](https://hackage.haskell.org/package/parsec)
 * Supports parsing streams with any token type (e.g., string, char stream, byte array, binary stream)
 * Supports tokenization
 * Supports partial parsing
-* Supports custom deriviation for core types
+* Supports custom derivation for core types
 * Supports nullable reference types (with C# 8.0 or later)
-* Supports Source Link (that allows to refer every parser implementation source codes)
+* Supports Source Link (that allows to refer to every parser implementation source code)
 * No additional dependencies
 * Faster running
 * Just enough error messages
@@ -60,7 +60,7 @@ This project is inspired by [parsec](https://hackage.haskell.org/package/parsec)
 
 ## How to install
 
-### from NuGet
+### From NuGet
 dotnet-cli:
 
 ```sh
@@ -86,7 +86,7 @@ Download manually:
 > [NuGet gallery](https://www.nuget.org/packages/ParsecSharp/)
 
 
-## Supported platform
+## Supported platforms
 * netstandard2.1 (compatible with net5.0 or later, netcoreapp, with some performance improvements and additional implementations that depend on new runtime features)
 * netstandard2.0 (compatible with net461 or later, uap, xamarin, and more)
 
@@ -101,11 +101,11 @@ Recommends C# 13.0 or later for better overloading resolution via OverloadResolu
 
 
 ## How to use
-* [Starter's tutorial](UnitTest.ParsecSharp/Tutorial.cs)
+* [Starter tutorial](UnitTest.ParsecSharp/Tutorial.cs)
 
 #### Implementation examples
-* [JsonParser implementation](ParsecSharp.Examples/JsonParser.cs)
-* [CsvParser implementation](ParsecSharp.Examples/CsvParser.cs)
+* [JSON parser implementation](ParsecSharp.Examples/JsonParser.cs)
+* [CSV parser implementation](ParsecSharp.Examples/CsvParser.cs)
 * [Arithmetic expression parser implementation](ParsecSharp.Examples/ExpressionParser.cs)
 * [PEG parser generator implementation](ParsecSharp.Examples/PegParser.cs)
 
