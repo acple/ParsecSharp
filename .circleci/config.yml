@@ -111,14 +111,6 @@ workflows:
             - build
           filters: *default_filter
 
-      - unittest:
-          name: unittest6.0
-          sdk_version: "6.0"
-          target_framework: net6.0
-          requires:
-            - build
-          filters: *default_filter
-
       - pack:
           requires:
             - build
@@ -131,7 +123,6 @@ workflows:
             - unittest10.0
             - unittest9.0
             - unittest8.0
-            - unittest6.0
           filters:
             <<: *default_filter
             branches:
