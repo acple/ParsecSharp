@@ -36,7 +36,7 @@
 
   <ItemGroup>
     <PackageReference Include="AggressiveOptimization.Fody" Version="0.1.0" PrivateAssets="All" />
-    <PackageReference Include="Fody" Version="6.9.2" PrivateAssets="All" />
+    <PackageReference Include="Fody" Version="6.9.3" PrivateAssets="All" />
     <PackageReference Include="TailCall.Fody" Version="1.2.0" PrivateAssets="All" />
   </ItemGroup>
 
