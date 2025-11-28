@@ -98,7 +98,7 @@ public class JsonParser
         // Matches a JSON Boolean.
         // true = %x74.72.75.65
         // false = %x66.61.6c.73.65
-        var jsonBool = String("false").Map(_ => false).Or(String("true").Map(_ => true));
+        var jsonBool = String("false").Map(_ => false) | String("true").Map(_ => true);
 
         // Matches JSON Null.
         // null = %x6e.75.6c.6c

@@ -69,11 +69,11 @@ public class PegParser
             from end in character
             select Satisfy(x => start <= x && x <= end);
 
-        var literal = (character.Quote(Char('\'')) | character.Quote(Char('"'))).AsString().Left(spacing);
-
         var charsetElement = range | character.Map(Char);
         var charsetExcept = charsetElement.Quote(String("[^"), Char(']')).Map(Any().Except).Left(spacing);
         var charset = charsetElement.Quote(Char('['), Char(']')).Map(Choice).Left(spacing);
+
+        var literal = (character.Quote(Char('\'')) | character.Quote(Char('"'))).AsString().Left(spacing);
 
         var expression = Fix<Rule>(expression =>
         {
