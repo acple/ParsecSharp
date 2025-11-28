@@ -4,6 +4,7 @@ namespace ParsecSharp.Internal;
 
 public abstract class Failure<TToken, T> : IFailure<TToken, T>
 {
+    [Obsolete("Failure result never has value.", error: true)]
     public T Value => throw this.Exception;
 
     public abstract IParsecState<TToken> State { get; }
