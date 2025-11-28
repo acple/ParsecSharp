@@ -2,6 +2,7 @@ using System;
 using System.Runtime.CompilerServices;
 using ParsecSharp.Data;
 using ParsecSharp.Internal;
+using ParsecSharp.Internal.Parsers;
 
 namespace ParsecSharp;
 
@@ -46,5 +47,9 @@ public static class ParserExtensions
                 return Result.Failure<TToken, EmptyStream<TToken>, T>(exception, EmptyStream<TToken>.Instance);
             }
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IParser<TToken, T> operator |(IParser<TToken, T> first, IParser<TToken, T> second)
+            => new Alternative<TToken, T>(first, second);
     }
 }

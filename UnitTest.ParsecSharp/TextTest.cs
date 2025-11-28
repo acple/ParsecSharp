@@ -1,5 +1,6 @@
 using ChainingAssertion;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ParsecSharp;
 using static ParsecSharp.Parser;
 using static ParsecSharp.Text;
 
