@@ -267,6 +267,3 @@ dotnet_naming_style.begins_with_i.capitalization = pascal_case
 
 # CS9236: Compiling requires binding the lambda expression many times. Consider declaring the lambda expression with explicit parameter types, or if the containing method call is generic, consider using explicit type arguments.
 dotnet_diagnostic.CS9236.severity = none
-
-# SYSLIB1045: Convert to 'GeneratedRegexAttribute'.
-dotnet_diagnostic.SYSLIB1045.severity = none
