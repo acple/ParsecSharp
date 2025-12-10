@@ -7,23 +7,26 @@ namespace ParsecSharp;
 
 internal static class EnumerableExtensions
 {
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IReadOnlyCollection<T> Append<T>(this IReadOnlyCollection<T> source, T element)
-        => source is CountableEnumerable<T> countable
-            ? countable.Append(element)
-            : new CountableEnumerable<T>(source.AsEnumerable().Append(element), source.Count + 1);
+    extension<T>(IReadOnlyCollection<T> source)
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IReadOnlyCollection<T> Append(T element)
+            => source is CountableEnumerable<T> countable
+                ? countable.Append(element)
+                : new CountableEnumerable<T>(source.AsEnumerable().Append(element), source.Count + 1);
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IReadOnlyCollection<T> Prepend<T>(this IReadOnlyCollection<T> source, T element)
-        => source is CountableEnumerable<T> countable
-            ? countable.Prepend(element)
-            : new CountableEnumerable<T>(source.AsEnumerable().Prepend(element), source.Count + 1);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IReadOnlyCollection<T> Prepend(T element)
+            => source is CountableEnumerable<T> countable
+                ? countable.Prepend(element)
+                : new CountableEnumerable<T>(source.AsEnumerable().Prepend(element), source.Count + 1);
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IReadOnlyCollection<T> Concat<T>(this IReadOnlyCollection<T> first, IReadOnlyCollection<T> second)
-        => first is CountableEnumerable<T> countable
-            ? countable.Concat(second)
-            : new CountableEnumerable<T>(first.AsEnumerable().Concat(second), first.Count + second.Count);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IReadOnlyCollection<T> Concat(IReadOnlyCollection<T> elements)
+            => source is CountableEnumerable<T> countable
+                ? countable.Concat(elements)
+                : new CountableEnumerable<T>(source.AsEnumerable().Concat(elements), source.Count + elements.Count);
+    }
 
     private sealed class CountableEnumerable<T>(IEnumerable<T> items, int count) : IReadOnlyCollection<T>
     {

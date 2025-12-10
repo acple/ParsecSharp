@@ -155,7 +155,10 @@ public class JsonParser
 
 file static class Extensions
 {
-    // Extension method to wrap the parse result as dynamic.
-    public static IParser<TToken, dynamic?> AsDynamic<TToken, T>(this IParser<TToken, T> parser)
-        => parser.Map(x => x as dynamic);
+    extension<TToken, T>(IParser<TToken, T> parser)
+    {
+        // Extension method to wrap the parse result as dynamic.
+        public IParser<TToken, dynamic?> AsDynamic()
+            => parser.Map(x => x as dynamic);
+    }
 }
