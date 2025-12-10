@@ -227,6 +227,18 @@ public static partial class Parser
         => parser.Map(values => values.ToArray());
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<TToken, IEnumerable<T>> AsEnumerable<TToken, T>(this IParser<TToken, IEnumerable<T>> parser)
+        => parser;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<TToken, IReadOnlyCollection<T>> AsReadOnlyCollection<TToken, T>(this IParser<TToken, IReadOnlyCollection<T>> parser)
+        => parser;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<TToken, IReadOnlyList<T>> AsReadOnlyList<TToken, T>(this IParser<TToken, IReadOnlyList<T>> parser)
+        => parser;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, IEnumerable<T>> Flatten<TToken, T>(this IParser<TToken, IEnumerable<IEnumerable<T>>> parser)
         => parser.Map(values => values.SelectMany(x => x));
 
