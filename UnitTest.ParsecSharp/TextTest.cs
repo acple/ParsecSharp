@@ -1,16 +1,14 @@
-using ChainingAssertion;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading.Tasks;
 using ParsecSharp;
 using static ParsecSharp.Parser;
 using static ParsecSharp.Text;
 
 namespace UnitTest.ParsecSharp;
 
-[TestClass]
 public class TextTest
 {
-    [TestMethod]
-    public void CharTest()
+    [Test]
+    public async Task CharTest()
     {
         // Creates a parser that matches a specified character.
         // Similar to the generic `Token` parser but optimized for char, offering better performance.
@@ -18,47 +16,47 @@ public class TextTest
         var parser = Char('a');
 
         var source = "abcdEFGH";
-        parser.Parse(source).WillSucceed(value => value.Is('a'));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo('a'));
 
         var source2 = "123456";
-        parser.Parse(source2).WillFail();
+        await parser.Parse(source2).WillFail();
     }
 
-    [TestMethod]
-    public void CharIgnoreCaseTest()
+    [Test]
+    public async Task CharIgnoreCaseTest()
     {
         // Creates a parser that matches a specified character, ignoring case.
 
         var parser = CharIgnoreCase('A');
 
         var source = "abcdEFGH";
-        parser.Parse(source).WillSucceed(value => value.Is('a'));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo('a'));
     }
 
-    [TestMethod]
-    public void StringTest()
+    [Test]
+    public async Task StringTest()
     {
         // Creates a parser that matches a specified string.
 
         var parser = String("abc");
 
         var source = "abcdEFGH";
-        parser.Parse(source).WillSucceed(value => value.Is("abc"));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abc"));
     }
 
-    [TestMethod]
-    public void StringIgnoreCaseTest()
+    [Test]
+    public async Task StringIgnoreCaseTest()
     {
         // Creates a parser that matches a specified string, ignoring case.
 
         var parser = StringIgnoreCase("abcde");
 
         var source = "abcdEFGH";
-        parser.Parse(source).WillSucceed(value => value.Is("abcdE"));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcdE"));
     }
 
-    [TestMethod]
-    public void ToIntTest()
+    [Test]
+    public async Task ToIntTest()
     {
         // A combinator that converts the result string to an integer.
 
@@ -67,19 +65,19 @@ public class TextTest
         // Parser that matches [0 - 9] and converts to int.
         var parser = Many1(DecDigit()).ToInt();
 
-        parser.Parse(source).WillSucceed(value => value.Is(1234));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo(1234));
 
         // Fails if the value is non-numeric.
         var parser2 = Many1(Any()).ToInt();
-        parser2.Parse(source).WillFail(failure => failure.Message.Is("Expected digits but was '1234abcd'"));
+        await parser2.Parse(source).WillFail(async failure => await Assert.That(failure.Message).IsEqualTo("Expected digits but was '1234abcd'"));
 
         // Fails if the value exceeds 32-bit range.
         var source2 = "1234567890123456";
-        parser.Parse(source2).WillFail(failure => failure.Message.Is("Expected digits but was '1234567890123456'"));
+        await parser.Parse(source2).WillFail(async failure => await Assert.That(failure.Message).IsEqualTo("Expected digits but was '1234567890123456'"));
     }
 
-    [TestMethod]
-    public void ToLongTest()
+    [Test]
+    public async Task ToLongTest()
     {
         // A combinator that converts the result string to a long integer.
 
@@ -88,19 +86,19 @@ public class TextTest
         // Parser that matches [0 - 9] and converts to long.
         var parser = Many1(DecDigit()).ToLong();
 
-        parser.Parse(source).WillSucceed(value => value.Is(1234L));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo(1234L));
 
         // Fails if the value is non-numeric.
         var parser2 = Many1(Any()).ToLong();
-        parser2.Parse(source).WillFail(failure => failure.Message.Is("Expected digits but was '1234abcd'"));
+        await parser2.Parse(source).WillFail(async failure => await Assert.That(failure.Message).IsEqualTo("Expected digits but was '1234abcd'"));
 
         // Can convert values up to 64-bit range.
         var source2 = "1234567890123456";
-        parser.Parse(source2).WillSucceed(value => value.Is(1234567890123456L));
+        await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEqualTo(1234567890123456L));
     }
 
-    [TestMethod]
-    public void ToDoubleTest()
+    [Test]
+    public async Task ToDoubleTest()
     {
         // A combinator that converts the result string to a double.
 
@@ -109,19 +107,19 @@ public class TextTest
         // Parser that matches [0 - 9] / '.' and converts to double.
         var parser = Many1(DecDigit() | Char('.')).ToDouble();
 
-        parser.Parse(source).WillSucceed(value => value.Is(1234.5678));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo(1234.5678));
 
         // Fails if the value is non-numeric.
         var parser2 = Many1(Any()).ToDouble();
-        parser2.Parse(source).WillFail(failure => failure.Message.Is("Expected number but was '1234.5678abcd'"));
+        await parser2.Parse(source).WillFail(async failure => await Assert.That(failure.Message).IsEqualTo("Expected number but was '1234.5678abcd'"));
 
         // Supports strings that can be converted using `double.Parse`.
         var source2 = "1.234567890123456";
-        parser.Parse(source2).WillSucceed(value => value.Is(1.234567890123456));
+        await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEqualTo(1.234567890123456));
     }
 
-    [TestMethod]
-    public void OneOfIgnoreCaseTest()
+    [Test]
+    public async Task OneOfIgnoreCaseTest()
     {
         // Creates a parser that succeeds if the token is in the specified string, ignoring case.
 
@@ -129,14 +127,14 @@ public class TextTest
         var parser = OneOfIgnoreCase("xyz");
 
         var source = "ZZZ";
-        parser.Parse(source).WillSucceed(value => value.Is('Z'));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo('Z'));
 
         var source2 = "ABC";
-        parser.Parse(source2).WillFail();
+        await parser.Parse(source2).WillFail();
     }
 
-    [TestMethod]
-    public void NoneOfIgnoreCaseTest()
+    [Test]
+    public async Task NoneOfIgnoreCaseTest()
     {
         // Creates a parser that succeeds if the token is not in the specified string, ignoring case.
 
@@ -144,9 +142,9 @@ public class TextTest
         var parser = NoneOfIgnoreCase("xyz");
 
         var source = "ZZZ";
-        parser.Parse(source).WillFail();
+        await parser.Parse(source).WillFail();
 
         var source2 = "ABC";
-        parser.Parse(source2).WillSucceed(value => value.Is('A'));
+        await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEqualTo('A'));
     }
 }

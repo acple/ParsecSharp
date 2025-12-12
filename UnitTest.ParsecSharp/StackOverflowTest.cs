@@ -1,16 +1,14 @@
 using System;
 using System.Linq;
-using ChainingAssertion;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading.Tasks;
 using static ParsecSharp.Parser;
 using static ParsecSharp.Text;
 
 namespace UnitTest.ParsecSharp;
 
-[TestClass]
 public class StackOverflowTest
 {
-    [TestMethod]
+    [Test]
     public void SimpleRecursionStackOverflowTest()
     {
         // Simple recursive loop
@@ -21,36 +19,36 @@ public class StackOverflowTest
         _ = parser.Parse(source);
     }
 
-    [TestMethod]
-    public void ValueTypesStackOverflowTest()
+    [Test]
+    public async Task ValueTypesStackOverflowTest()
     {
         // When tokens are value types
         const int count = 100_000;
         var parser = Many(Any<(int, int, int)>());
         var source = Enumerable.Range(0, count).Select(x => (x, x, x));
 
-        parser.Parse(source).WillSucceed(value => value.Count.Is(count));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value.Count).IsEqualTo(count));
     }
 
-    [TestMethod]
-    public void ReferenceTypesStackOverflowTest()
+    [Test]
+    public async Task ReferenceTypesStackOverflowTest()
     {
         // When tokens are reference types
         const int count = 100_000;
         var parser = Many(Any<Tuple<int, int, int>>());
         var source = Enumerable.Range(0, count).Select(x => Tuple.Create(x, x, x));
 
-        parser.Parse(source).WillSucceed(value => value.Count.Is(count));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value.Count).IsEqualTo(count));
     }
 
-    [TestMethod]
-    public void RecursiveDataStructuresStackOverflowTest()
+    [Test]
+    public async Task RecursiveDataStructuresStackOverflowTest()
     {
         // When traversing extremely deep structures
         const int depth = 10_000;
         var source = Enumerable.Repeat('[', depth).Concat(Enumerable.Repeat(']', depth)).ToArray();
         var parser = Fix<int>(self => self.Or(Pure(1234)).Between(Char('['), Char(']'))).End();
 
-        parser.Parse(source).WillSucceed(value => value.Is(1234));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo(1234));
     }
 }

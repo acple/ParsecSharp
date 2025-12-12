@@ -4,12 +4,10 @@
     <TargetFrameworks>net10.0;net9.0;net8.0</TargetFrameworks>
     <LangVersion>14.0</LangVersion>
     <Nullable>enable</Nullable>
-    <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ChainingAssertion.Core.MSTest" Version="1.1.0" />
-    <PackageReference Include="MSTest" Version="3.11.0" />
+    <PackageReference Include="TUnit" Version="1.5.48" />
   </ItemGroup>
 
   <ItemGroup>
