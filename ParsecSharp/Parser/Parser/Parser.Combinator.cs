@@ -166,7 +166,7 @@ public static partial class Parser
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, T> Atom<TToken, T>(IParser<TToken, T> parser)
-        => parser.WithMessage(failure => $"At {nameof(Atom)} -> {failure.ToString()}");
+        => parser.Alternative(failure => Fail<TToken, T>($"At {nameof(Atom)} -> {failure.ToString()}"));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, T> Delay<TToken, T>(Func<IParser<TToken, T>> parser)

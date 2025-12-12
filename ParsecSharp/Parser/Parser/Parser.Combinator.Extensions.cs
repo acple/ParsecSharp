@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using ParsecSharp.Internal.Parsers;
 
 namespace ParsecSharp;
 
@@ -260,11 +261,11 @@ public static partial class Parser
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, T> WithMessage<TToken, T>(this IParser<TToken, T> parser, string message)
-        => parser.Alternative(Fail<TToken, T>(message));
+        => new OverrideMessage<TToken, T>(parser, message);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, T> WithMessage<TToken, T>(this IParser<TToken, T> parser, Func<IFailure<TToken, T>, string> message)
-        => parser.Alternative(failure => Fail<TToken, T>(message(failure)));
+        => new OverrideMessageDelayed<TToken, T>(parser, message);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, T> AbortWhenFail<TToken, T>(this IParser<TToken, T> parser)

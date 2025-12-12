@@ -8,7 +8,11 @@ public static class SuspendedResult
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ISuspendedResult<TToken, T> Create<TToken, TState, T>(IResult<TToken, T> result, TState state)
         where TState : IParsecState<TToken, TState>
-        => new SuspendedResult<TToken, T>(result, new StateBox<TToken, TState>(state));
+        => Create(result, new StateBox<TToken, TState>(state));
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static ISuspendedResult<TToken, T> Create<TToken, T>(IResult<TToken, T> result, ISuspendedState<TToken> state)
+        => new SuspendedResult<TToken, T>(result, state);
 
     private sealed class StateBox<TToken, TState>(TState state) : ISuspendedState<TToken>
         where TState : IParsecState<TToken, TState>
