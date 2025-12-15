@@ -85,16 +85,16 @@ public static partial class Parser
         => parser1.Bind(a => parser2.Bind(b => parser3.Bind(c => parser4.Bind(d => parser5.Bind(e => parser6.Bind(f => parser7.Bind(g => parser8.Map(h => selector(a, b, c, d, e, f, g, h)))))))));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<TToken, T> Try<TToken, T>(IParser<TToken, T> parser, T resume)
-        => parser.Alternative(Pure<TToken, T>(resume));
+    public static IParser<TToken, T> Try<TToken, T>(IParser<TToken, T> parser, T fallback)
+        => parser.Alternative(Pure<TToken, T>(fallback));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<TToken, T> Try<TToken, T>(IParser<TToken, T> parser, Func<IFailure<TToken, T>, T> resume)
-        => new Try<TToken, T>(parser, resume);
+    public static IParser<TToken, T> Try<TToken, T>(IParser<TToken, T> parser, Func<IFailure<TToken, T>, T> fallback)
+        => new Try<TToken, T>(parser, fallback);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<TToken, T> Optional<TToken, T>(IParser<TToken, T> parser, T defaultValue)
-        => Try(parser, defaultValue);
+    public static IParser<TToken, T> Optional<TToken, T>(IParser<TToken, T> parser, T fallback)
+        => Try(parser, fallback);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, bool> Optional<TToken, TIgnore>(IParser<TToken, TIgnore> parser)

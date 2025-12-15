@@ -49,7 +49,7 @@ public class PegParser
         var digit = DecDigit();
         var underscore = Char('_');
 
-        var identifier = (word | underscore).Append(Many(word | digit | underscore)).AsString().Left(spacing);
+        var identifier = ((word | underscore) + Many(word | digit | underscore)).AsString().Left(spacing);
 
         var unescapedChar = Any().Except(Char('\\'));
         var escapedChar = Char('\\').Right(Choice(
