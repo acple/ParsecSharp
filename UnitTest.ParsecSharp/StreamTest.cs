@@ -74,7 +74,7 @@ public class StreamTest
 
         var source = "The quick brown fox jumps over the lazy dog";
         using var stream = StringStream.Create(source);
-        using var tokenized = ParsecState.Tokenize(stream, token);
+        using var tokenized = stream.Tokenize(token);
 
         // Parser that matches any token and returns its length.
         var parser = Many(Any<string>().Map(x => x.Length));
