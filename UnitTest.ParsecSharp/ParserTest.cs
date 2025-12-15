@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ParsecSharp;
@@ -1070,6 +1071,56 @@ public class ParserTest
             await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcdEFGH"));
             var source2 = "abcd";
             await parser.Parse(source2).WillFail();
+        }
+    }
+
+    [Test]
+    public async Task AppendOperatorTest()
+    {
+        var source = "abcdEFGH";
+
+        var a = Char('a');
+        var b = Char('b');
+        var c = Char('c');
+        var d = Char('d');
+
+        {
+            var appendTwo = a + b;
+            await appendTwo.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("ab"));
+
+            var leftAssociative = a + b + c;
+            await leftAssociative.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abc"));
+
+            var rightAssociative = a + (b + c);
+            await rightAssociative.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abc"));
+
+            var appendCollection = (a + b) + (c + d);
+            await appendCollection.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcd"));
+        }
+
+        {
+            var ab = a + b as IParser<char, IEnumerable<char>>;
+            var bc = b + c as IParser<char, IEnumerable<char>>;
+            var cd = c + d as IParser<char, IEnumerable<char>>;
+
+            {
+                var leftAssociative = ab + c;
+                await leftAssociative.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abc"));
+
+                var rightAssociative = a + bc;
+                await rightAssociative.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abc"));
+
+                var appendCollection = ab + cd;
+                await appendCollection.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcd"));
+            }
+        }
+
+        {
+            var ab = String("ab");
+            var cd = String("cd");
+
+            var appendString = ab + cd;
+            await appendString.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcd"));
         }
     }
 
