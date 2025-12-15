@@ -380,11 +380,11 @@ public class ParserTest
         var source2 = "123456";
 
         // Parser that matches `Digit`, returns boolean value that matches or not, then matches `Any`.
-        var parser = Optional(Digit()).Right(Any());
+        var parser = Sequence(Optional(Digit()), Any(), (match, token) => (match, token));
 
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo('a'));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo((match: false, token: 'a')));
 
-        await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEqualTo('2'));
+        await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEqualTo((match: true, token: '2')));
 
         // Overload that returns a specified default value if it fails.
         var parser2 = Optional(Lower(), '\n');
@@ -416,10 +416,10 @@ public class ParserTest
         // Creates a parser that performs a parse with parser without consuming input.
 
         // Parser that matches `Any` then `Letter` without consuming input, then matches `Any` and concatenates the results.
-        var parser = LookAhead(Any().Right(Letter())).Append(Any());
+        var parser = LookAhead(Any() + Letter()) + Any();
 
         var source = "abcdEFGH";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(['b', 'a']));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(['a', 'b', 'a']));
 
         var source2 = "123456";
         await parser.Parse(source2).WillFail(async failure => await Assert.That(failure.ToString()).IsEqualTo("Parser Failure (Line: 1, Column: 1): At LookAhead -> Parser Failure (Line: 1, Column: 2): Unexpected '2<0x32>'"));
@@ -576,7 +576,7 @@ public class ParserTest
     public async Task QuotedTest()
     {
         // Creates a parser that retrieves the sequence of tokens between the parsers that match before and after.
-        // Can be used to retrieve tokens like strings.
+        // Can be used to retrieve tokens like string literals.
         // Use the `Quote` extension method if you want to add conditions to the match of the token sequence.
 
         // Parser that retrieves the string between '<' and '>'.
@@ -597,7 +597,7 @@ public class ParserTest
     {
         // Treats the specified parser as the smallest unit of the parser.
         // Even if the parsing process fails halfway, it backtracks to the starting point.
-        // Use in combination with `WithConsume` / `AbortIfEntered`.
+        // Designed for use in combination with `WithConsume` / `AbortIfEntered`.
 
         var abCD = Sequence(Char('a'), Char('b'), Char('C'), Char('D'));
         var parser = Atom(abCD);
@@ -923,9 +923,14 @@ public class ParserTest
         var source = "12345";
         await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo(((((10 - 1) - 2) - 3) - 4) - 5));
 
+        var source2 = "abcdEFGH";
+        await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEqualTo(10)); // No match, returns initial value
+
         // Overload that does not use an initial value.
         var parser2 = Digit().AsString().ToInt().FoldLeft((x, y) => x - y);
         await parser2.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo((((1 - 2) - 3) - 4) - 5));
+
+        await parser2.Parse(source2).WillFail();
     }
 
     [Test]
@@ -939,9 +944,14 @@ public class ParserTest
         var source = "12345";
         await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo(1 - (2 - (3 - (4 - (5 - 10))))));
 
+        var source2 = "abcdEFGH";
+        await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEqualTo(10)); // No match, returns initial value
+
         // Overload that does not use an initial value.
         var parser2 = Digit().AsString().ToInt().FoldRight((x, y) => x - y);
         await parser2.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo(1 - (2 - (3 - (4 - 5)))));
+
+        await parser2.Parse(source2).WillFail();
     }
 
     [Test]
@@ -996,12 +1006,12 @@ public class ParserTest
         // ( "[" 1*Letter "]" )
         var parser = Many1(Letter()).Between(Char('['), Char(']'));
 
-        var source = $"[{"abcdEFGH"}]";
+        var source = $"[abcdEFGH]";
         await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcdEFGH"));
 
         // If you pass `Many(Any())` to the parser, it will match any input until the end, so `close` will match the end of input.
         var parser2 = Many(Any()).Between(Char('"'), Char('"')); // It does not match ( dquote *Any dquote )
-        await parser2.Parse(@"""abCD1234""").WillFail(); // `Many(Any())` matches until abCD1234", so `close` does not match " and fails
+        await parser2.Parse("\"abCD1234\"").WillFail(); // `Many(Any())` matches until abCD1234", so `close` does not match " and fails
         // If you want to create a parser that matches this form, consider using `Quoted` or `ManyTill`.
     }
 
@@ -1014,8 +1024,10 @@ public class ParserTest
         var dquoteOrAny = String("\\\"").Map(_ => '\"') | Any();
         var parser = dquoteOrAny.Quote(Char('"')).AsString();
 
-        var source = "\"abcd\\\"EFGH\"";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcd\"EFGH"));
+        var source = """
+            "abcd\"EFGH"
+            """;
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("""abcd"EFGH"""));
     }
 
     [Test]
@@ -1077,6 +1089,8 @@ public class ParserTest
     [Test]
     public async Task AppendOperatorTest()
     {
+        // `Append` can also be described using operators.
+
         var source = "abcdEFGH";
 
         var a = Char('a');
@@ -1233,8 +1247,8 @@ public class ParserTest
 
         await parser2.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(['a', 'b', 'c', 'd', 'E', 'F', 'G', 'H']));
 
-        // In situations where it becomes nested due to using `Many1`, consider using `FoldLeft` instead.
-        var parser3 = token.FoldLeft((x, y) => [.. x, .. y]);
+        // In situations where it becomes nested due to using `Many1`, you can use `FoldLeft` instead.
+        var parser3 = token.AsEnumerable().FoldLeft((x, y) => x.Concat(y));
         await parser3.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(['a', 'b', 'c', 'd', 'E', 'F', 'G', 'H']));
     }
 
@@ -1271,14 +1285,17 @@ public class ParserTest
     {
         // Rewrites the error message when parsing fails.
 
-        var parser = Many1(Digit())
+        var parser = Lower().Repeat(6)
             .WithMessage(failure => $"MessageTest Current: '{failure.State.Current}', original message: {failure.Message}");
 
         var source = "abcdEFGH";
-        await parser.Parse(source).WillFail(async failure => await Assert.That(failure.ToString()).IsEqualTo("Parser Failure (Line: 1, Column: 1): MessageTest Current: 'a', original message: Unexpected 'a<0x61>'"));
+        await parser.Parse(source).WillFail(async failure => await Assert.That(failure.ToString()).IsEqualTo("Parser Failure (Line: 1, Column: 5): MessageTest Current: 'E', original message: Unexpected 'E<0x45>'"));
 
-        var source2 = "123456";
-        await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(['1', '2', '3', '4', '5', '6']));
+        var source2 = "abcdefgh";
+        await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(['a', 'b', 'c', 'd', 'e', 'f']));
+
+        var source3 = "123456";
+        await parser.Parse(source3).WillFail();
     }
 
     [Test]
@@ -1347,16 +1364,16 @@ public class ParserTest
         // Recovery is not performed for failures due to exceptions. There is no means of recovery.
 
         // Parser that attempts to return the result of `ToString` on null, and returns "success" if it fails.
-        var parser = Pure(null as object).Map(x => x!.ToString()!).Or(Pure("success"));
+        var parser = Pure(null as object).Map(x => x!.ToString()).Or(Pure("success"));
 
         var source = "abcdEFGH";
-        await parser.Parse(source).WillFail(async failure => await Assert.That(failure.Exception.InnerException!.GetType().Name).IsEqualTo(nameof(NullReferenceException)));
+        await parser.Parse(source).WillFail(async failure => await Assert.That(failure.Exception.InnerException).IsTypeOf<NullReferenceException>());
     }
 
     [Test]
     public async Task ParsePartiallyTest()
     {
-        // Provides an execution plan that allows you to continue processing without discarding the stream after parsing is complete.
+        // Provides an execution plan that allows you to continue processing without disposing the stream after parsing is complete.
 
         // Parser that consumes 3 characters.
         var parser = Any().Repeat(3).AsString();
