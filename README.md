@@ -17,6 +17,7 @@ This project is inspired by [parsec](https://hackage.haskell.org/package/parsec)
 * Pure/Immutable/Functional framework in C#
 * Replace regular expressions in your code (applicable from smallest to largest)
 * Most readable API source code
+* F12 (Go To Definition) friendly
 
 
 ## Overview
