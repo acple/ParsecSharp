@@ -171,7 +171,7 @@ public static class Parser
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, bool> Optional<TToken, TIgnore>(IParser<TToken, TIgnore> parser)
-        => parser.Next(_ => true, false);
+        => parser.Either(_ => true, false);
 
     #endregion
 
@@ -458,50 +458,50 @@ public static class Parser
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, IReadOnlyList<T>> AppendOptional<TToken, T>(this IParser<TToken, T> parser, IParser<TToken, T> optional)
-        => parser.Bind(x => optional.Next(y => (IReadOnlyList<T>)[x, y], [x]));
+        => parser.Bind(x => optional.Either(y => (IReadOnlyList<T>)[x, y], [x]));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, IReadOnlyCollection<T>> AppendOptional<TToken, T>(this IParser<TToken, T> parser, IParser<TToken, IReadOnlyCollection<T>> optional)
-        => parser.Bind(x => optional.Next(y => y.Prepend(x), [x]));
+        => parser.Bind(x => optional.Either(y => y.Prepend(x), [x]));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, IReadOnlyCollection<T>> AppendOptional<TToken, T>(this IParser<TToken, IReadOnlyCollection<T>> parser, IParser<TToken, T> optional)
-        => parser.Bind(x => optional.Next(x.Append, x));
+        => parser.Bind(x => optional.Either(x.Append, x));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [OverloadResolutionPriority(1)]
     public static IParser<TToken, IReadOnlyCollection<T>> AppendOptional<TToken, T>(this IParser<TToken, IReadOnlyCollection<T>> parser, IParser<TToken, IReadOnlyCollection<T>> optional)
-        => parser.Bind(x => optional.Next(x.Concat, x));
+        => parser.Bind(x => optional.Either(x.Concat, x));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, IEnumerable<T>> AppendOptional<TToken, T>(this IParser<TToken, T> parser, IParser<TToken, IEnumerable<T>> optional)
-        => parser.Bind(x => optional.Next(y => y.Prepend(x), [x]));
+        => parser.Bind(x => optional.Either(y => y.Prepend(x), [x]));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, IEnumerable<T>> AppendOptional<TToken, T>(this IParser<TToken, IEnumerable<T>> parser, IParser<TToken, T> optional)
-        => parser.Bind(x => optional.Next(x.Append, x));
+        => parser.Bind(x => optional.Either(x.Append, x));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [OverloadResolutionPriority(1)]
     public static IParser<TToken, IEnumerable<T>> AppendOptional<TToken, T>(this IParser<TToken, IEnumerable<T>> parser, IParser<TToken, IEnumerable<T>> optional)
-        => parser.Bind(x => optional.Next(x.Concat, x));
+        => parser.Bind(x => optional.Either(x.Concat, x));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, string> AppendOptional<TToken>(this IParser<TToken, char> parser, IParser<TToken, char> optional)
-        => parser.Bind(x => optional.Next(y => x.ToString() + y.ToString(), x.ToString()));
+        => parser.Bind(x => optional.Either(y => x.ToString() + y.ToString(), x.ToString()));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, string> AppendOptional<TToken>(this IParser<TToken, char> parser, IParser<TToken, string> optional)
-        => parser.Bind(x => optional.Next(y => x + y, x.ToString()));
+        => parser.Bind(x => optional.Either(y => x + y, x.ToString()));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, string> AppendOptional<TToken>(this IParser<TToken, string> parser, IParser<TToken, char> optional)
-        => parser.Bind(x => optional.Next(y => x + y, x));
+        => parser.Bind(x => optional.Either(y => x + y, x));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [OverloadResolutionPriority(1)]
     public static IParser<TToken, string> AppendOptional<TToken>(this IParser<TToken, string> parser, IParser<TToken, string> optional)
-        => parser.Bind(x => optional.Next(y => x + y, x));
+        => parser.Bind(x => optional.Either(y => x + y, x));
 
     #endregion
 
@@ -569,7 +569,7 @@ public static class Parser
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, T> FoldRight<TToken, T>(this IParser<TToken, T> parser, Func<T, T, T> function)
-        => Fix<TToken, T>(self => parser.Bind(x => self.Next(accumulator => function(x, accumulator), x)));
+        => Fix<TToken, T>(self => parser.Bind(x => self.Either(accumulator => function(x, accumulator), x)));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, TAccumulator> FoldRight<TToken, T, TAccumulator>(this IParser<TToken, T> parser, TAccumulator seed, Func<T, TAccumulator, TAccumulator> function)
@@ -689,28 +689,28 @@ public static class Parser
         => new MapWithExceptionHandling<TToken, T, TResult>(parser, function);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<TToken, TResult> Next<TToken, T, TResult>(this IParser<TToken, T> parser, Func<T, IParser<TToken, TResult>> next, Func<IFailure<TToken, T>, IParser<TToken, TResult>> resume)
-        => new Next<TToken, T, TResult>(parser, next, resume);
+    public static IParser<TToken, TResult> Either<TToken, T, TResult>(this IParser<TToken, T> parser, Func<T, TResult> function, TResult fallback)
+        => new EitherConst<TToken, T, TResult>(parser, function, fallback);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<TToken, TResult> Next<TToken, T, TResult>(this IParser<TToken, T> parser, Func<T, IParser<TToken, TResult>> next, TResult result)
-        => parser.Next(next, Pure<TToken, TResult>(result).Const);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<TToken, TResult> Next<TToken, T, TResult>(this IParser<TToken, T> parser, Func<T, IParser<TToken, TResult>> next, Func<IFailure<TToken, T>, TResult> result)
-        => parser.Next(next, failure => Pure<TToken, TResult>(result(failure)));
+    public static IParser<TToken, TResult> Either<TToken, T, TResult>(this IParser<TToken, T> parser, Func<T, TResult> function, Func<IFailure<TToken, T>, TResult> fallback)
+        => new Either<TToken, T, TResult>(parser, function, fallback);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, TResult> Next<TToken, T, TResult>(this IParser<TToken, T> parser, Func<T, TResult> function, Func<IFailure<TToken, T>, IParser<TToken, TResult>> resume)
         => parser.Next(x => Pure<TToken, TResult>(function(x)), resume);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<TToken, TResult> Next<TToken, T, TResult>(this IParser<TToken, T> parser, Func<T, TResult> function, TResult result)
-        => new BimapConst<TToken, T, TResult>(parser, function, result);
+    public static IParser<TToken, TResult> Next<TToken, T, TResult>(this IParser<TToken, T> parser, Func<T, IParser<TToken, TResult>> next, TResult fallback)
+        => parser.Next(next, Pure<TToken, TResult>(fallback).Const);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<TToken, TResult> Next<TToken, T, TResult>(this IParser<TToken, T> parser, Func<T, TResult> function, Func<IFailure<TToken, T>, TResult> result)
-        => new Bimap<TToken, T, TResult>(parser, function, result);
+    public static IParser<TToken, TResult> Next<TToken, T, TResult>(this IParser<TToken, T> parser, Func<T, IParser<TToken, TResult>> next, Func<IFailure<TToken, T>, TResult> fallback)
+        => parser.Next(next, failure => Pure<TToken, TResult>(fallback(failure)));
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<TToken, TResult> Next<TToken, T, TResult>(this IParser<TToken, T> parser, Func<T, IParser<TToken, TResult>> next, Func<IFailure<TToken, T>, IParser<TToken, TResult>> resume)
+        => new Next<TToken, T, TResult>(parser, next, resume);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, T> Flatten<TToken, T>(this IParser<TToken, IParser<TToken, T>> parser)
