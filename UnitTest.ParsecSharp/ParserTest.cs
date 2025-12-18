@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ParsecSharp;
@@ -1037,52 +1036,103 @@ public class ParserTest
 
         var source = "abcdEFGH";
 
+        // IReadOnlyList<T>
         {
-            // 1 character + 1 character
-            var parser = Any().Append(Any()).AsString();
-            await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("ab"));
-            var source2 = "a";
-            await parser.Parse(source2).WillFail();
+            // 1 + 1
+            {
+                var parser = Any<int>().Append(Any<int>());
+                await parser.Parse([1, 2]).WillSucceed(async value => await Assert.That(value).IsEquivalentTo([1, 2]));
+                await parser.Parse([1]).WillFail();
+            }
         }
 
+        // IReadOnlyCollection<T>
         {
-            // Lowercase*n + 1 character
-            var parser = Many1(Lower()).Append(Any()).AsString();
-            await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcdE"));
-            var source2 = "abcd";
-            await parser.Parse(source2).WillFail();
+            // n + 1
+            {
+                var parser = Many1(Lower()).Append(Any());
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcdE"));
+                var source2 = "abcd";
+                await parser.Parse(source2).WillFail();
+            }
+
+            // 1 + n
+            {
+                var parser = Any().Append(Many1(Lower()));
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcd"));
+                var source2 = "ABCD";
+                await parser.Parse(source2).WillFail();
+            }
+
+            // n + n
+            {
+                var parser = Many1(Lower()).Append(Many1(Upper()));
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcdEFGH"));
+                var source2 = "abcd";
+                await parser.Parse(source2).WillFail();
+            }
         }
 
+        // IEnumerable<T>
         {
-            // 1 character + Lowercase*n
-            var parser = Any().Append(Many1(Lower())).AsString();
-            await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcd"));
-            var source2 = "ABCD";
-            await parser.Parse(source2).WillFail();
+            // n + 1
+            {
+                var parser = Many1(Lower()).AsEnumerable().Append(Any());
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcdE"));
+                var source2 = "abcd";
+                await parser.Parse(source2).WillFail();
+            }
+
+            // 1 + n
+            {
+                var parser = Any().Append(Many1(Lower()).AsEnumerable());
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcd"));
+                var source2 = "ABCD";
+                await parser.Parse(source2).WillFail();
+            }
+
+            // n + n
+            {
+                var parser = Many1(Lower()).AsEnumerable().Append(Many1(Upper()));
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(['a', 'b', 'c', 'd', 'E', 'F', 'G', 'H']));
+                var source2 = "abcd";
+                await parser.Parse(source2).WillFail();
+            }
         }
 
+        // string
         {
-            // Lowercase*n + Uppercase*n
-            var parser = Many1(Lower()).Append(Many1(Upper())).AsString();
-            await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcdEFGH"));
-            var source2 = "abcd";
-            await parser.Parse(source2).WillFail();
-        }
+            // 1 + 1
+            {
+                var parser = Any().Append(Any());
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("ab"));
+                var source2 = "a";
+                await parser.Parse(source2).WillFail();
+            }
 
-        {
-            // array + array
-            var parser = Many1(Lower()).ToArray().Append(Many1(Upper()).ToArray()).AsString();
-            await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcdEFGH"));
-            var source2 = "abcd";
-            await parser.Parse(source2).WillFail();
-        }
+            // n + 1
+            {
+                var parser = Many1(Lower()).AsString().Append(Any());
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcdE"));
+                var source2 = "abcd";
+                await parser.Parse(source2).WillFail();
+            }
 
-        {
-            // string + string
-            var parser = Many1(Lower()).AsString().Append(Many1(Upper()).AsString());
-            await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcdEFGH"));
-            var source2 = "abcd";
-            await parser.Parse(source2).WillFail();
+            // 1 + n
+            {
+                var parser = Any().Append(Many1(Lower()).AsString());
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcd"));
+                var source2 = "ABCD";
+                await parser.Parse(source2).WillFail();
+            }
+
+            // n + n
+            {
+                var parser = Many1(Lower()).AsString().Append(Many1(Upper()).AsString());
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcdEFGH"));
+                var source2 = "abcd";
+                await parser.Parse(source2).WillFail();
+            }
         }
     }
 
@@ -1091,49 +1141,65 @@ public class ParserTest
     {
         // `Append` can also be described using operators.
 
-        var source = "abcdEFGH";
-
-        var a = Char('a');
-        var b = Char('b');
-        var c = Char('c');
-        var d = Char('d');
-
+        // generic collections
         {
-            var appendTwo = a + b;
-            await appendTwo.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("ab"));
+            var a = Pure(1);
+            var b = Pure(2);
+            var c = Pure(3);
+            var d = Pure(4);
 
-            var leftAssociative = a + b + c;
-            await leftAssociative.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abc"));
+            var source = string.Empty;
 
-            var rightAssociative = a + (b + c);
-            await rightAssociative.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abc"));
-
-            var appendCollection = (a + b) + (c + d);
-            await appendCollection.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcd"));
-        }
-
-        {
-            var ab = a + b as IParser<char, IEnumerable<char>>;
-            var bc = b + c as IParser<char, IEnumerable<char>>;
-            var cd = c + d as IParser<char, IEnumerable<char>>;
-
+            // IReadOnlyList<T>
             {
-                var leftAssociative = ab + c;
-                await leftAssociative.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abc"));
+                var appendTwo = a + b;
+                await appendTwo.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo([1, 2]));
+            }
 
-                var rightAssociative = a + bc;
-                await rightAssociative.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abc"));
+            // IReadOnlyCollection<T>
+            {
+                var leftAssociative = a + b + c;
+                await leftAssociative.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo([1, 2, 3]));
 
-                var appendCollection = ab + cd;
-                await appendCollection.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcd"));
+                var rightAssociative = a + (b + c);
+                await rightAssociative.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo([1, 2, 3]));
+
+                var appendCollection = (a + b) + (c + d);
+                await appendCollection.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo([1, 2, 3, 4]));
+            }
+
+            // IEnumerable<T>
+            {
+                var leftAssociative = (a + b).AsEnumerable() + c;
+                await leftAssociative.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo([1, 2, 3]));
+
+                var rightAssociative = a + (b + c).AsEnumerable();
+                await rightAssociative.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo([1, 2, 3]));
+
+                var appendCollection = (a + b).AsEnumerable() + (c + d).AsEnumerable();
+                await appendCollection.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo([1, 2, 3, 4]));
             }
         }
 
+        // string
         {
-            var ab = String("ab");
-            var cd = String("cd");
+            var a = Char('a');
+            var b = Char('b');
+            var c = Char('c');
+            var d = Char('d');
 
-            var appendString = ab + cd;
+            var source = "abcdEFGH";
+
+            var appendTwo = a + b;
+            await appendTwo.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("ab"));
+
+            var leftAssociative = a + b + c;
+            await leftAssociative.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abc"));
+
+            var rightAssociative = a + (b + c);
+            await rightAssociative.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abc"));
+
+            var appendString = (a + b) + (c + d);
             await appendString.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcd"));
         }
     }
@@ -1141,56 +1207,107 @@ public class ParserTest
     [Test]
     public async Task AppendOptionalTest()
     {
-        // Behaves like Append, but if the right parser fails, it treats the result as an empty sequence and combines them.
+        // Behaves like `Append`, but if the right parser fails, it treats the result as an empty sequence and combines them.
 
         var source = "abcdEFGH";
 
+        // IReadOnlyList<T>
         {
-            // 1 character + 1 character
-            var parser = Any().AppendOptional(Any()).AsString();
-            await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("ab"));
-            var source2 = "a";
-            await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEqualTo("a"));
+            // 1 + 1
+            {
+                var parser = Any<int>().AppendOptional(Any<int>());
+                await parser.Parse([1, 2]).WillSucceed(async value => await Assert.That(value).IsEquivalentTo([1, 2]));
+                await parser.Parse([1]).WillSucceed(async value => await Assert.That(value).IsEquivalentTo([1]));
+            }
         }
 
+        // IReadOnlyCollection<T>
         {
-            // Lowercase*n + 1 character
-            var parser = Many1(Lower()).AppendOptional(Any()).AsString();
-            await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcdE"));
-            var source2 = "abcd";
-            await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcd"));
+            // n + 1
+            {
+                var parser = Many1(Lower()).AppendOptional(Any());
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcdE"));
+                var source2 = "abcd";
+                await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcd"));
+            }
+
+            // 1 + n
+            {
+                var parser = Any().AppendOptional(Many1(Lower()));
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcd"));
+                var source2 = "ABCD";
+                await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("A"));
+            }
+
+            // n + n
+            {
+                var parser = Many1(Lower()).AppendOptional(Many1(Upper()));
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcdEFGH"));
+                var source2 = "abcd";
+                await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcd"));
+            }
         }
 
+        // IEnumerable<T>
         {
-            // 1 character + Lowercase*n
-            var parser = Any().AppendOptional(Many1(Lower())).AsString();
-            await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcd"));
-            var source2 = "ABCD";
-            await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEqualTo("A"));
+            // n + 1
+            {
+                var parser = Many1(Lower()).AsEnumerable().AppendOptional(Any());
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcdE"));
+                var source2 = "abcd";
+                await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcd"));
+            }
+
+            // 1 + n
+            {
+                var parser = Any().AppendOptional(Many1(Lower()).AsEnumerable());
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcd"));
+                var source2 = "ABCD";
+                await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("A"));
+            }
+
+            // n + n
+            {
+                var parser = Many1(Lower()).AsEnumerable().AppendOptional(Many1(Upper()));
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcdEFGH"));
+                var source2 = "abcd";
+                await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcd"));
+            }
         }
 
+        // string
         {
-            // Lowercase*n + Uppercase*n
-            var parser = Many1(Lower()).AppendOptional(Many1(Upper())).AsString();
-            await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcdEFGH"));
-            var source2 = "abcd";
-            await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcd"));
-        }
+            // 1 + 1
+            {
+                var parser = Any().AppendOptional(Any());
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("ab"));
+                var source2 = "a";
+                await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEqualTo("a"));
+            }
 
-        {
-            // array + array
-            var parser = Many1(Lower()).ToArray().AppendOptional(Many1(Upper()).ToArray()).AsString();
-            await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcdEFGH"));
-            var source2 = "abcd";
-            await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcd"));
-        }
+            // n + 1
+            {
+                var parser = Many1(Lower()).AsString().AppendOptional(Any());
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcdE"));
+                var source2 = "abcd";
+                await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcd"));
+            }
 
-        {
-            // string + string
-            var parser = Many1(Lower()).AsString().AppendOptional(Many1(Upper()).AsString());
-            await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcdEFGH"));
-            var source2 = "abcd";
-            await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcd"));
+            // 1 + n
+            {
+                var parser = Any().AppendOptional(Many1(Lower()).AsString());
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcd"));
+                var source2 = "ABCD";
+                await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEqualTo("A"));
+            }
+
+            // n + n
+            {
+                var parser = Many1(Lower()).AsString().AppendOptional(Many1(Upper()).AsString());
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcdEFGH"));
+                var source2 = "abcd";
+                await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcd"));
+            }
         }
     }
 

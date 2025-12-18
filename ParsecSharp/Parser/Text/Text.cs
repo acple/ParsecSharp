@@ -182,7 +182,7 @@ public static class Text
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<char, string> SurrogatePair()
-        => HighSurrogate().Append(LowSurrogate()).AsString();
+        => HighSurrogate().Append(LowSurrogate());
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<char, char> CrLf()
