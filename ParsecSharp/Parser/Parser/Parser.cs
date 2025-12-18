@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using ParsecSharp.Internal.Parsers;
@@ -618,6 +619,56 @@ public static class Parser
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, IReadOnlyList<T>> Singleton<TToken, T>(this IParser<TToken, T> parser)
         => parser.Map(x => (IReadOnlyList<T>)[x]);
+
+    #endregion
+
+    #region Text Transformation Extensions
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<TToken, string> AsString<TToken>(this IParser<TToken, char> parser)
+        => parser.Map(x => x.ToString());
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<TToken, string> AsString<TToken>(this IParser<TToken, IEnumerable<char>> parser)
+        => parser.Map(values => new string([.. values]));
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<TToken, int> ToInt<TToken>(this IParser<TToken, IEnumerable<char>> parser)
+        => parser.AsString().ToInt();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<TToken, int> ToInt<TToken>(this IParser<TToken, string> parser)
+        => parser.Bind(value => int.TryParse(value, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out var result)
+            ? Pure<TToken, int>(result)
+            : Fail<TToken, int>($"Expected digits but was '{value}'"));
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<TToken, long> ToLong<TToken>(this IParser<TToken, IEnumerable<char>> parser)
+        => parser.AsString().ToLong();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<TToken, long> ToLong<TToken>(this IParser<TToken, string> parser)
+        => parser.Bind(value => long.TryParse(value, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out var result)
+            ? Pure<TToken, long>(result)
+            : Fail<TToken, long>($"Expected digits but was '{value}'"));
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<TToken, double> ToDouble<TToken>(this IParser<TToken, IEnumerable<char>> parser)
+        => parser.AsString().ToDouble();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<TToken, double> ToDouble<TToken>(this IParser<TToken, string> parser)
+        => parser.Bind(value => double.TryParse(value, NumberStyles.Float | NumberStyles.AllowThousands, NumberFormatInfo.InvariantInfo, out var result)
+            ? Pure<TToken, double>(result)
+            : Fail<TToken, double>($"Expected number but was '{value}'"));
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<TToken, string> Join<TToken>(this IParser<TToken, IEnumerable<string>> parser)
+        => parser.Map(string.Concat);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<TToken, string> Join<TToken>(this IParser<TToken, IEnumerable<string>> parser, string separator)
+        => parser.Map(values => string.Join(separator, values));
 
     #endregion
 
