@@ -1459,9 +1459,9 @@ public class ParserTest
         var parser = Many(Lower().Do(_ => count++));
 
         _ = parser.Parse(source);
-        await Assert.That(count).IsEqualTo(4);
+        _ = await Assert.That(count).IsEqualTo(4);
         _ = parser.Parse(source);
-        await Assert.That(count).IsEqualTo(8);
+        _ = await Assert.That(count).IsEqualTo(8);
 
         // Increases the value of success by 1 when parsing `Lower` succeeds, and increases the value of failure by 1 when parsing fails.
         // Connects `Any`, so it parses the source to the end.
@@ -1470,8 +1470,8 @@ public class ParserTest
         var parser2 = Many(Lower().Do(_ => success++, _ => failure++).Or(Any()));
 
         _ = parser2.Parse(source);
-        await Assert.That(success).IsEqualTo(4);
-        await Assert.That(failure).IsEqualTo(5);
+        _ = await Assert.That(success).IsEqualTo(4);
+        _ = await Assert.That(failure).IsEqualTo(5);
     }
 
     [Test]

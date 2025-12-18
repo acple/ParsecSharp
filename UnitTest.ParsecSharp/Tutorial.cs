@@ -29,13 +29,13 @@ public class Tutorial
                 var value = result.CaseOf(
                     failure => string.Empty, // failure path
                     success => success.Value); // success path
-                await Assert.That(value).IsEqualTo("aa");
+                _ = await Assert.That(value).IsEqualTo("aa");
             }
 
             {
                 // gets result value directly, throws an exception when parsing is failed
                 var value = result.Value;
-                await Assert.That(value).IsEqualTo("aa");
+                _ = await Assert.That(value).IsEqualTo("aa");
             }
         }
 
@@ -49,11 +49,11 @@ public class Tutorial
                 var value = result.CaseOf(
                     failure => string.Empty,
                     success => success.Value);
-                await Assert.That(value).IsEmpty();
+                _ = await Assert.That(value).IsEmpty();
             }
 
             {
-                await Assert.That(() => result.Value).ThrowsExactly<ParsecSharpException>().WithMessageContaining("Expected 'bb' but was 'aa'");
+                _ = await Assert.That(() => result.Value).ThrowsExactly<ParsecSharpException>().WithMessageContaining("Expected 'bb' but was 'aa'");
             }
         }
     }
@@ -66,7 +66,7 @@ public class Tutorial
         {
             {
                 var regex = new Regex("^a*");
-                await Assert.That(regex.Match(source).Value).IsEqualTo("aa");
+                _ = await Assert.That(regex.Match(source).Value).IsEqualTo("aa");
 
                 var parser = Many(Char('a'));
                 await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(['a', 'a']));
@@ -74,7 +74,7 @@ public class Tutorial
 
             {
                 var regex = new Regex("^b*");
-                await Assert.That(regex.Match(source).Value).IsEmpty();
+                _ = await Assert.That(regex.Match(source).Value).IsEmpty();
 
                 var parser = Many(Char('b'));
                 await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEmpty());
@@ -84,7 +84,7 @@ public class Tutorial
         {
             {
                 var regex = new Regex("^a+");
-                await Assert.That(regex.Match(source).Value).IsEqualTo("aa");
+                _ = await Assert.That(regex.Match(source).Value).IsEqualTo("aa");
 
                 var parser = Many1(Char('a'));
                 await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(['a', 'a']));
@@ -92,7 +92,7 @@ public class Tutorial
 
             {
                 var regex = new Regex("^b+");
-                await Assert.That(regex.IsMatch(source)).IsFalse();
+                _ = await Assert.That(regex.IsMatch(source)).IsFalse();
 
                 var parser = Many1(Char('b'));
                 await parser.Parse(source).WillFail(async failure => await Assert.That(failure.Message).IsEqualTo("Unexpected 'a<0x61>'"));
@@ -101,7 +101,7 @@ public class Tutorial
 
         {
             var regex = new Regex("^a*$");
-            await Assert.That(regex.IsMatch(source)).IsFalse();
+            _ = await Assert.That(regex.IsMatch(source)).IsFalse();
 
             var parser = Many(Char('a')).End();
             await parser.Parse(source).WillFail(async failure => await Assert.That(failure.ToString()).IsEqualTo("Parser Failure (Line: 1, Column: 3): Expected '<EndOfStream>' but was 'b<0x62>'"));
@@ -110,7 +110,7 @@ public class Tutorial
         {
             {
                 var regex = new Regex("^ab");
-                await Assert.That(regex.IsMatch(source)).IsFalse();
+                _ = await Assert.That(regex.IsMatch(source)).IsFalse();
 
                 var parser = Sequence(Char('a'), Char('b'));
                 await parser.Parse(source).WillFail(async failure => await Assert.That(failure.ToString()).IsEqualTo("Parser Failure (Line: 1, Column: 2): Unexpected 'a<0x61>'"));
@@ -121,7 +121,7 @@ public class Tutorial
 
             {
                 var regex = new Regex("ab");
-                await Assert.That(regex.Match(source).Value).IsEqualTo("ab");
+                _ = await Assert.That(regex.Match(source).Value).IsEqualTo("ab");
 
                 var parser = Match(Sequence(Char('a'), Char('b')));
                 await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(['a', 'b']));
@@ -133,7 +133,7 @@ public class Tutorial
 
         {
             var regex = new Regex("^a+b+$");
-            await Assert.That(regex.Match(source).Value).IsEqualTo("aabbb");
+            _ = await Assert.That(regex.Match(source).Value).IsEqualTo("aabbb");
 
             var parser = Many1(Char('a')).Append(Many1(Char('b'))).End();
             await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(['a', 'a', 'b', 'b', 'b']));
@@ -144,7 +144,7 @@ public class Tutorial
 
         {
             var regex = new Regex("^a.b");
-            await Assert.That(regex.Match(source).Value).IsEqualTo("aab");
+            _ = await Assert.That(regex.Match(source).Value).IsEqualTo("aab");
 
             var parser = Sequence(Char('a'), Any(), Char('b'));
             await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(['a', 'a', 'b']));
@@ -170,9 +170,9 @@ public class Tutorial
 
             var result = parser.Parse("A-123T").Value;
 
-            await Assert.That(result.letter).IsEqualTo("A");
-            await Assert.That(result.number).IsEqualTo(123);
-            await Assert.That(result.flag).IsTrue();
+            _ = await Assert.That(result.letter).IsEqualTo("A");
+            _ = await Assert.That(result.number).IsEqualTo(123);
+            _ = await Assert.That(result.flag).IsTrue();
         }
     }
 
@@ -198,19 +198,19 @@ public class Tutorial
             .CaseOf(failure => default, success => success.Value);
 
         var key1 = (double)result?["key1"];
-        await Assert.That(key1).IsEqualTo(123.0);
+        _ = await Assert.That(key1).IsEqualTo(123.0);
 
         var key2 = result?["key2"] as string;
-        await Assert.That(key2).IsEqualTo("abc");
+        _ = await Assert.That(key2).IsEqualTo("abc");
 
         var key3_1 = (bool)result?["key3"]?["key3_1"];
-        await Assert.That(key3_1).IsTrue();
+        _ = await Assert.That(key3_1).IsTrue();
 
         var key3_2 = result?["key3"]?["key3_2"] as IEnumerable<dynamic>;
-        await Assert.That(key3_2).IsEquivalentTo((IEnumerable<dynamic>)[1.0, 2.0, 3.0]);
+        _ = await Assert.That(key3_2).IsEquivalentTo((IEnumerable<dynamic>)[1.0, 2.0, 3.0]);
 
         var key4 = (double)result?["key4"];
-        await Assert.That(key4).IsEqualTo(-123.4);
+        _ = await Assert.That(key4).IsEqualTo(-123.4);
     }
 
     [Test]
@@ -228,16 +228,16 @@ public class Tutorial
 
         var result = parser.Parse(source).Value.ToArray();
 
-        await Assert.That(result).Count().IsEqualTo(3);
+        _ = await Assert.That(result).Count().IsEqualTo(3);
 
-        await Assert.That(result[0][0]).IsEqualTo("123");
-        await Assert.That(result[0][1]).IsEqualTo("abc");
-        await Assert.That(result[0][2]).IsEqualTo("def");
+        _ = await Assert.That(result[0][0]).IsEqualTo("123");
+        _ = await Assert.That(result[0][1]).IsEqualTo("abc");
+        _ = await Assert.That(result[0][2]).IsEqualTo("def");
 
-        await Assert.That(result[1]).Count().IsEqualTo(3);
-        await Assert.That(result[1][1]).IsEqualTo("escaped\"\n");
+        _ = await Assert.That(result[1]).Count().IsEqualTo(3);
+        _ = await Assert.That(result[1][1]).IsEqualTo("escaped\"\n");
 
-        await Assert.That(result[2]).Count().IsEqualTo(2);
+        _ = await Assert.That(result[2]).Count().IsEqualTo(2);
     }
 
     [Test]
