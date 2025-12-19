@@ -630,7 +630,7 @@ public static class Parser
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, string> AsString<TToken>(this IParser<TToken, IEnumerable<char>> parser)
-        => parser.Map(values => new string([.. values]));
+        => parser as IParser<TToken, string> ?? parser.Map(values => new string([.. values]));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, int> ToInt<TToken>(this IParser<TToken, IEnumerable<char>> parser)
