@@ -370,45 +370,45 @@ public static class Parser
         => first.Alternative(second);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<TToken, T> Except<TToken, T, TIgnore>(this IParser<TToken, T> parser, IParser<TToken, TIgnore> exception)
-        => Not(exception).Right(parser);
+    public static IParser<TToken, T> Except<TToken, T, TIgnore>(this IParser<TToken, T> parser, IParser<TToken, TIgnore> exclusion)
+        => Not(exclusion).Right(parser);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<TToken, T> Except<TToken, T, TIgnore>(this IParser<TToken, T> parser, params IEnumerable<IParser<TToken, TIgnore>> exceptions)
-        => parser.Except(Choice(exceptions));
+    public static IParser<TToken, T> Except<TToken, T, TIgnore>(this IParser<TToken, T> parser, params IEnumerable<IParser<TToken, TIgnore>> exclusions)
+        => parser.Except(Choice(exclusions));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [OverloadResolutionPriority(-1)]
-    public static IParser<TToken, T> Except<TToken, T, TIgnore>(this IParser<TToken, T> parser, params IParser<TToken, TIgnore>[] exceptions)
-        => parser.Except(exceptions.AsEnumerable());
+    public static IParser<TToken, T> Except<TToken, T, TIgnore>(this IParser<TToken, T> parser, params IParser<TToken, TIgnore>[] exclusions)
+        => parser.Except(exclusions.AsEnumerable());
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<TToken, T> Except<TToken, T, TIgnore1, TIgnore2>(this IParser<TToken, T> parser, IParser<TToken, TIgnore1> exception1, IParser<TToken, TIgnore2> exception2)
-        => Not(exception1).Right(Not(exception2).Right(parser));
+    public static IParser<TToken, T> Except<TToken, T, TIgnore1, TIgnore2>(this IParser<TToken, T> parser, IParser<TToken, TIgnore1> exclusion1, IParser<TToken, TIgnore2> exclusion2)
+        => Not(exclusion1).Right(Not(exclusion2).Right(parser));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<TToken, T> Except<TToken, T, TIgnore1, TIgnore2, TIgnore3>(this IParser<TToken, T> parser, IParser<TToken, TIgnore1> exception1, IParser<TToken, TIgnore2> exception2, IParser<TToken, TIgnore3> exception3)
-        => Not(exception1).Right(Not(exception2).Right(Not(exception3).Right(parser)));
+    public static IParser<TToken, T> Except<TToken, T, TIgnore1, TIgnore2, TIgnore3>(this IParser<TToken, T> parser, IParser<TToken, TIgnore1> exclusion1, IParser<TToken, TIgnore2> exclusion2, IParser<TToken, TIgnore3> exclusion3)
+        => Not(exclusion1).Right(Not(exclusion2).Right(Not(exclusion3).Right(parser)));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<TToken, T> Except<TToken, T, TIgnore1, TIgnore2, TIgnore3, TIgnore4>(this IParser<TToken, T> parser, IParser<TToken, TIgnore1> exception1, IParser<TToken, TIgnore2> exception2, IParser<TToken, TIgnore3> exception3, IParser<TToken, TIgnore4> exception4)
-        => Not(exception1).Right(Not(exception2).Right(Not(exception3).Right(Not(exception4).Right(parser))));
+    public static IParser<TToken, T> Except<TToken, T, TIgnore1, TIgnore2, TIgnore3, TIgnore4>(this IParser<TToken, T> parser, IParser<TToken, TIgnore1> exclusion1, IParser<TToken, TIgnore2> exclusion2, IParser<TToken, TIgnore3> exclusion3, IParser<TToken, TIgnore4> exclusion4)
+        => Not(exclusion1).Right(Not(exclusion2).Right(Not(exclusion3).Right(Not(exclusion4).Right(parser))));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<TToken, T> Except<TToken, T, TIgnore1, TIgnore2, TIgnore3, TIgnore4, TIgnore5>(this IParser<TToken, T> parser, IParser<TToken, TIgnore1> exception1, IParser<TToken, TIgnore2> exception2, IParser<TToken, TIgnore3> exception3, IParser<TToken, TIgnore4> exception4, IParser<TToken, TIgnore5> exception5)
-        => Not(exception1).Right(Not(exception2).Right(Not(exception3).Right(Not(exception4).Right(Not(exception5).Right(parser)))));
+    public static IParser<TToken, T> Except<TToken, T, TIgnore1, TIgnore2, TIgnore3, TIgnore4, TIgnore5>(this IParser<TToken, T> parser, IParser<TToken, TIgnore1> exclusion1, IParser<TToken, TIgnore2> exclusion2, IParser<TToken, TIgnore3> exclusion3, IParser<TToken, TIgnore4> exclusion4, IParser<TToken, TIgnore5> exclusion5)
+        => Not(exclusion1).Right(Not(exclusion2).Right(Not(exclusion3).Right(Not(exclusion4).Right(Not(exclusion5).Right(parser)))));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<TToken, T> Except<TToken, T, TIgnore1, TIgnore2, TIgnore3, TIgnore4, TIgnore5, TIgnore6>(this IParser<TToken, T> parser, IParser<TToken, TIgnore1> exception1, IParser<TToken, TIgnore2> exception2, IParser<TToken, TIgnore3> exception3, IParser<TToken, TIgnore4> exception4, IParser<TToken, TIgnore5> exception5, IParser<TToken, TIgnore6> exception6)
-        => Not(exception1).Right(Not(exception2).Right(Not(exception3).Right(Not(exception4).Right(Not(exception5).Right(Not(exception6).Right(parser))))));
+    public static IParser<TToken, T> Except<TToken, T, TIgnore1, TIgnore2, TIgnore3, TIgnore4, TIgnore5, TIgnore6>(this IParser<TToken, T> parser, IParser<TToken, TIgnore1> exclusion1, IParser<TToken, TIgnore2> exclusion2, IParser<TToken, TIgnore3> exclusion3, IParser<TToken, TIgnore4> exclusion4, IParser<TToken, TIgnore5> exclusion5, IParser<TToken, TIgnore6> exclusion6)
+        => Not(exclusion1).Right(Not(exclusion2).Right(Not(exclusion3).Right(Not(exclusion4).Right(Not(exclusion5).Right(Not(exclusion6).Right(parser))))));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<TToken, T> Except<TToken, T, TIgnore1, TIgnore2, TIgnore3, TIgnore4, TIgnore5, TIgnore6, TIgnore7>(this IParser<TToken, T> parser, IParser<TToken, TIgnore1> exception1, IParser<TToken, TIgnore2> exception2, IParser<TToken, TIgnore3> exception3, IParser<TToken, TIgnore4> exception4, IParser<TToken, TIgnore5> exception5, IParser<TToken, TIgnore6> exception6, IParser<TToken, TIgnore7> exception7)
-        => Not(exception1).Right(Not(exception2).Right(Not(exception3).Right(Not(exception4).Right(Not(exception5).Right(Not(exception6).Right(Not(exception7).Right(parser)))))));
+    public static IParser<TToken, T> Except<TToken, T, TIgnore1, TIgnore2, TIgnore3, TIgnore4, TIgnore5, TIgnore6, TIgnore7>(this IParser<TToken, T> parser, IParser<TToken, TIgnore1> exclusion1, IParser<TToken, TIgnore2> exclusion2, IParser<TToken, TIgnore3> exclusion3, IParser<TToken, TIgnore4> exclusion4, IParser<TToken, TIgnore5> exclusion5, IParser<TToken, TIgnore6> exclusion6, IParser<TToken, TIgnore7> exclusion7)
+        => Not(exclusion1).Right(Not(exclusion2).Right(Not(exclusion3).Right(Not(exclusion4).Right(Not(exclusion5).Right(Not(exclusion6).Right(Not(exclusion7).Right(parser)))))));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<TToken, T> Except<TToken, T, TIgnore1, TIgnore2, TIgnore3, TIgnore4, TIgnore5, TIgnore6, TIgnore7, TIgnore8>(this IParser<TToken, T> parser, IParser<TToken, TIgnore1> exception1, IParser<TToken, TIgnore2> exception2, IParser<TToken, TIgnore3> exception3, IParser<TToken, TIgnore4> exception4, IParser<TToken, TIgnore5> exception5, IParser<TToken, TIgnore6> exception6, IParser<TToken, TIgnore7> exception7, IParser<TToken, TIgnore8> exception8)
-        => Not(exception1).Right(Not(exception2).Right(Not(exception3).Right(Not(exception4).Right(Not(exception5).Right(Not(exception6).Right(Not(exception7).Right(Not(exception8).Right(parser))))))));
+    public static IParser<TToken, T> Except<TToken, T, TIgnore1, TIgnore2, TIgnore3, TIgnore4, TIgnore5, TIgnore6, TIgnore7, TIgnore8>(this IParser<TToken, T> parser, IParser<TToken, TIgnore1> exclusion1, IParser<TToken, TIgnore2> exclusion2, IParser<TToken, TIgnore3> exclusion3, IParser<TToken, TIgnore4> exclusion4, IParser<TToken, TIgnore5> exclusion5, IParser<TToken, TIgnore6> exclusion6, IParser<TToken, TIgnore7> exclusion7, IParser<TToken, TIgnore8> exclusion8)
+        => Not(exclusion1).Right(Not(exclusion2).Right(Not(exclusion3).Right(Not(exclusion4).Right(Not(exclusion5).Right(Not(exclusion6).Right(Not(exclusion7).Right(Not(exclusion8).Right(parser))))))));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, IReadOnlyList<T>> Append<TToken, T>(this IParser<TToken, T> left, IParser<TToken, T> right)
