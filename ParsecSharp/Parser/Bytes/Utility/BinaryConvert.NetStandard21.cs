@@ -2,7 +2,6 @@
 using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -64,27 +63,27 @@ internal static class BinaryConvert
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static char ToChar(IEnumerable<byte> data)
-        => BitConverter.ToChar([.. BitConverter.IsLittleEndian ? data : data.Reverse()]);
+        => (char)BinaryPrimitives.ReadUInt16LittleEndian([.. data]);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static char ToCharBigEndian(IEnumerable<byte> data)
-        => BitConverter.ToChar([.. BitConverter.IsLittleEndian ? data.Reverse() : data]);
+        => (char)BinaryPrimitives.ReadUInt16BigEndian([.. data]);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double ToDouble(IEnumerable<byte> data)
-        => BitConverter.ToDouble([.. BitConverter.IsLittleEndian ? data : data.Reverse()]);
+        => BitConverter.Int64BitsToDouble(BinaryPrimitives.ReadInt64LittleEndian([.. data]));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double ToDoubleBigEndian(IEnumerable<byte> data)
-        => BitConverter.ToDouble([.. BitConverter.IsLittleEndian ? data.Reverse() : data]);
+        => BitConverter.Int64BitsToDouble(BinaryPrimitives.ReadInt64BigEndian([.. data]));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float ToSingle(IEnumerable<byte> data)
-        => BitConverter.ToSingle([.. BitConverter.IsLittleEndian ? data : data.Reverse()]);
+        => BitConverter.Int32BitsToSingle(BinaryPrimitives.ReadInt32LittleEndian([.. data]));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float ToSingleBigEndian(IEnumerable<byte> data)
-        => BitConverter.ToSingle([.. BitConverter.IsLittleEndian ? data.Reverse() : data]);
+        => BitConverter.Int32BitsToSingle(BinaryPrimitives.ReadInt32BigEndian([.. data]));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string ToUtf8String(IEnumerable<byte> data)
