@@ -87,10 +87,6 @@ internal static class BinaryConvert
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string ToUtf8String(IEnumerable<byte> data)
-        => Encoding.UTF8.GetString([.. BitConverter.IsLittleEndian ? data : data.Reverse()]);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string ToUtf8StringBigEndian(IEnumerable<byte> data)
-        => Encoding.UTF8.GetString([.. BitConverter.IsLittleEndian ? data.Reverse() : data]);
+        => Encoding.UTF8.GetString([.. data]);
 }
 #endif

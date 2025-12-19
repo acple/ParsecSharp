@@ -105,10 +105,6 @@ public static class Bytes
     public static IParser<byte, string> Utf8String(int count)
         => Take(count).MapWithExceptionHandling(BinaryConvert.ToUtf8String);
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<byte, string> Utf8StringBigEndian(int count)
-        => Take(count).MapWithExceptionHandling(BinaryConvert.ToUtf8StringBigEndian);
-
     #endregion
 
     #region Type Specialized Primitive Wrappers
