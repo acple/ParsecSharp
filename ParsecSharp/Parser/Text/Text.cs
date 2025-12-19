@@ -80,26 +80,6 @@ public static class Text
         => Satisfy(char.IsDigit);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<char, char> OctDigit()
-        => Satisfy(x => (uint)x - '0' <= '7' - '0');
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<char, char> DecDigit()
-        => AsciiDigit();
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<char, char> HexDigit()
-        => Satisfy(x => (uint)x - '0' <= '9' - '0' || (uint)(x | 0x20) - 'a' <= 'f' - 'a');
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<char, char> HexUpperDigit()
-        => Satisfy(x => (uint)x - '0' <= '9' - '0' || (uint)x - 'A' <= 'F' - 'A');
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<char, char> HexLowerDigit()
-        => Satisfy(x => (uint)x - '0' <= '9' - '0' || (uint)x - 'a' <= 'f' - 'a');
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<char, char> Symbol()
         => Satisfy(char.IsSymbol);
 
@@ -132,7 +112,7 @@ public static class Text
         => Satisfy(char.IsControl);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<char, char> WhiteSpace()
+    public static IParser<char, char> Whitespace()
         => Satisfy(char.IsWhiteSpace);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -162,6 +142,26 @@ public static class Text
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<char, char> AsciiDigit()
         => Satisfy(x => (uint)x - '0' <= '9' - '0');
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<char, char> OctDigit()
+        => Satisfy(x => (uint)x - '0' <= '7' - '0');
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<char, char> DecDigit()
+        => AsciiDigit();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<char, char> HexDigit()
+        => Satisfy(x => (uint)x - '0' <= '9' - '0' || (uint)(x | 0x20) - 'a' <= 'f' - 'a');
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<char, char> HexUpperDigit()
+        => Satisfy(x => (uint)x - '0' <= '9' - '0' || (uint)x - 'A' <= 'F' - 'A');
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<char, char> HexLowerDigit()
+        => Satisfy(x => (uint)x - '0' <= '9' - '0' || (uint)x - 'a' <= 'f' - 'a');
 
     #endregion
 
@@ -193,11 +193,11 @@ public static class Text
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<char, Unit> Spaces()
-        => SkipMany(WhiteSpace());
+        => SkipMany(Whitespace());
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<char, Unit> Spaces1()
-        => SkipMany1(WhiteSpace());
+        => SkipMany1(Whitespace());
 
     #endregion
 
