@@ -2,10 +2,10 @@ using System;
 using ParsecSharp;
 using ParsecSharp.Internal;
 
-namespace UnitTest.ParsecSharp;
+namespace UnitTest.ParsecSharp.SystemTests;
 
 // checks accessibility settings for user-inheriting
-internal class InheritingTest
+internal class InheritingTests
 {
     private class PrimitiveParserInheritingTest<TToken, T> : PrimitiveParser<TToken, T>
     {

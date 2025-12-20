@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using static ParsecSharp.Parser;
 using static ParsecSharp.Text;
 
-namespace UnitTest.ParsecSharp;
+namespace UnitTest.ParsecSharp.SystemTests;
 
-public class StackOverflowTest
+public class StackOverflowTests
 {
     [Test]
     public void SimpleRecursionStackOverflowTest()

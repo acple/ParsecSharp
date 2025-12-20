@@ -7,9 +7,9 @@ using ParsecSharp;
 using static ParsecSharp.Parser;
 using static ParsecSharp.Text;
 
-namespace UnitTest.ParsecSharp;
+namespace UnitTest.ParsecSharp.SystemTests;
 
-public class StreamTest
+public class StreamTests
 {
     [Test]
     public async Task ArrayStreamTest()

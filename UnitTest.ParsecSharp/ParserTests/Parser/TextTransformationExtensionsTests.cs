@@ -1,57 +1,37 @@
 using System.Threading.Tasks;
+using ParsecSharp;
 using static ParsecSharp.Parser;
 using static ParsecSharp.Text;
 
-namespace UnitTest.ParsecSharp;
+namespace UnitTest.ParsecSharp.ParserTests.Parser;
 
-public class TextTest
+public class TextTransformationExtensionsTests
 {
     [Test]
-    public async Task CharTest()
+    public async Task AsStringTest()
     {
-        // Creates a parser that matches a specified character.
-        // Similar to the generic `Token` parser but optimized for char, offering better performance.
+        // Converts a parser that returns a single char or IEnumerable<char> to a parser that returns a string.
 
-        var parser = Char('a');
+        // Single char to string.
+        var parser = Char('a').AsString();
 
-        var source = "abcdEFGH";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo('a'));
+        var source = "abc";
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("a"));
 
-        var source2 = "123456";
-        await parser.Parse(source2).WillFail();
-    }
+        // Collection of chars to string.
+        var parser2 = Many1(AsciiLetter()).AsString();
 
-    [Test]
-    public async Task CharIgnoreCaseTest()
-    {
-        // Creates a parser that matches a specified character, ignoring case.
+        var source2 = "hello123";
+        await parser2.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEqualTo("hello"));
 
-        var parser = CharIgnoreCase('A');
+        // Converts 3 chars to string.
+        var parser3 = AsciiLetter().Repeat(3).AsString();
 
-        var source = "abcdEFGH";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo('a'));
-    }
+        var source3 = "abcdef";
+        await parser3.Parse(source3).WillSucceed(async value => await Assert.That(value).IsEqualTo("abc"));
 
-    [Test]
-    public async Task StringTest()
-    {
-        // Creates a parser that matches a specified string.
-
-        var parser = String("abc");
-
-        var source = "abcdEFGH";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abc"));
-    }
-
-    [Test]
-    public async Task StringIgnoreCaseTest()
-    {
-        // Creates a parser that matches a specified string, ignoring case.
-
-        var parser = StringIgnoreCase("abcde");
-
-        var source = "abcdEFGH";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcdE"));
+        var source4 = "ab";
+        await parser3.Parse(source4).WillFail();
     }
 
     [Test]
@@ -118,32 +98,30 @@ public class TextTest
     }
 
     [Test]
-    public async Task OneOfIgnoreCaseTest()
+    public async Task JoinTest()
     {
-        // Creates a parser that succeeds if the token is in the specified string, ignoring case.
+        // Concatenates a collection of strings into a single string.
+        // Optionally takes a separator string.
 
-        // Parser that matches [x-z], ignoring case.
-        var parser = OneOfIgnoreCase("xyz");
+        // Join without separator - concatenates strings directly.
+        var parser = Many1(AsciiLetter().Repeat(2).AsString()).Join();
 
-        var source = "ZZZ";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo('Z'));
+        var source = "abcdefgh";
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcdefgh"));
 
-        var source2 = "ABC";
-        await parser.Parse(source2).WillFail();
-    }
+        // Join with separator - inserts separator between strings.
+        var parser2 = AsciiLetter().Repeat(2).AsString().SeparatedBy1(Char(',')).Join("-");
 
-    [Test]
-    public async Task NoneOfIgnoreCaseTest()
-    {
-        // Creates a parser that succeeds if the token is not in the specified string, ignoring case.
+        var source2 = "ab,cd,ef";
+        await parser2.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEqualTo("ab-cd-ef"));
 
-        // Parser that matches anything except [x-z], ignoring case.
-        var parser = NoneOfIgnoreCase("xyz");
+        // Useful for building CSV-like formats.
+        var parser3 = Many(AsciiLetter().Repeat(2).AsString()).Join(",");
 
-        var source = "ZZZ";
-        await parser.Parse(source).WillFail();
+        var source3 = "abcdefg";
+        await parser3.Parse(source3).WillSucceed(async value => await Assert.That(value).IsEqualTo("ab,cd,ef"));
 
-        var source2 = "ABC";
-        await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEqualTo('A'));
+        // Works with empty collections.
+        await parser3.Parse(string.Empty).WillSucceed(async value => await Assert.That(value).IsEqualTo(""));
     }
 }

@@ -7,7 +7,7 @@ using ParsecSharp.Examples;
 using static ParsecSharp.Parser;
 using static ParsecSharp.Text;
 
-namespace UnitTest.ParsecSharp;
+namespace UnitTest.ParsecSharp.ParserTests;
 
 public class Tutorial
 {
@@ -69,7 +69,7 @@ public class Tutorial
                 _ = await Assert.That(regex.Match(source).Value).IsEqualTo("aa");
 
                 var parser = Many(Char('a'));
-                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(['a', 'a']));
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("aa"));
             }
 
             {
@@ -87,7 +87,7 @@ public class Tutorial
                 _ = await Assert.That(regex.Match(source).Value).IsEqualTo("aa");
 
                 var parser = Many1(Char('a'));
-                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(['a', 'a']));
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("aa"));
             }
 
             {
@@ -124,7 +124,7 @@ public class Tutorial
                 _ = await Assert.That(regex.Match(source).Value).IsEqualTo("ab");
 
                 var parser = Match(Sequence(Char('a'), Char('b')));
-                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(['a', 'b']));
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("ab"));
 
                 var parser2 = Match(String("ab"));
                 await parser2.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("ab"));
@@ -136,7 +136,7 @@ public class Tutorial
             _ = await Assert.That(regex.Match(source).Value).IsEqualTo("aabbb");
 
             var parser = Many1(Char('a')).Append(Many1(Char('b'))).End();
-            await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(['a', 'a', 'b', 'b', 'b']));
+            await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("aabbb"));
 
             var parser2 = Many1(Char('a')).Append(Many1(Char('b'))).AsString().End();
             await parser2.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("aabbb"));
@@ -147,7 +147,7 @@ public class Tutorial
             _ = await Assert.That(regex.Match(source).Value).IsEqualTo("aab");
 
             var parser = Sequence(Char('a'), Any(), Char('b'));
-            await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(['a', 'a', 'b']));
+            await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("aab"));
         }
     }
 
