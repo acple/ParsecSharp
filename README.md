@@ -25,7 +25,7 @@ This project is inspired by [parsec](https://hackage.haskell.org/package/parsec)
 * A lot of reasonable built-in parsers/combinators
 * Supports parsing infinitely recursive data structures
 * Supports full backtracking: Parsing Expression Grammar (PEG) style parsing strategy
-* Supports parsing streams with any token type (e.g., string, char stream, byte array, binary stream)
+* Supports parsing streams of any token type (e.g., string, char stream, binary stream, any enumerable)
 * Supports tokenization
 * Supports partial parsing
 * Supports custom derivation for core types
@@ -67,25 +67,29 @@ Download manually:
 
 
 ## Supported platforms
-* netstandard2.1 (compatible with net5.0 or later, netcoreapp, with some performance improvements and additional implementations that depend on new runtime features)
-* netstandard2.0 (compatible with net461 or later, uap, xamarin, and more)
+* net10.0 (provides full functionality, best performance)
+* netstandard2.1 (provides same functionality as net10.0, compatible with net5.0 or later, mono, unity, and more)
+* netstandard2.0 (works on legacy environments, some runtime features are disabled, compatible with net461 or later, uap, xamarin, and more)
 
-Recommends C# 14.0 or later to enable full functionality.
+Recommends C# 14.0 or later to enable all library features.
+If you would like to support legacy environments, recommends creating a netstandard2.0 library project with C# 14.0 and referencing it.
 
-* **Required** C# 7.3 or later: for generic overloading resolution
+* **Requires** C# 7.3 or later: for generic overloading resolution
 * C# 8.0 or later: nullable reference types enabled
 * C# 13.0 or later: overloading resolution improved via OverloadResolutionPriority
 * C# 14.0 or later: extension operators enabled
+
+Note: This library may not work on runtimes with poor optimization capabilities.
 
 
 ## Get started
 1. Add the package reference to your project.
 2. Add the using directives: `using static ParsecSharp.Parser;` and `using static ParsecSharp.Text;` to your code.
-3. Parse your all.
+3. Parse everything.
 
 
 ## How to use
-* [Starter tutorial](UnitTest.ParsecSharp/Tutorial.cs)
+* [Starter tutorial](UnitTest.ParsecSharp/ParserTests/Tutorial.cs)
 
 #### Implementation examples
 * [JSON parser implementation](ParsecSharp.Examples/JsonParser.cs)
@@ -93,9 +97,9 @@ Recommends C# 14.0 or later to enable full functionality.
 * [Arithmetic expression parser implementation](ParsecSharp.Examples/ExpressionParser.cs)
 * [PEG parser generator implementation](ParsecSharp.Examples/PegParser.cs)
 
-Documentation is included in the [UnitTest code](UnitTest.ParsecSharp/ParserTest.cs).
+Documentation is available in the [UnitTest code](UnitTest.ParsecSharp/ParserTests).
 
-If you want more information, read the [API source code](ParsecSharp/Parser), all is there.
+If you want more information, check out the [API source code](ParsecSharp/Parser), it's all there.
 
 
 ## Questions?
