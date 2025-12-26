@@ -29,7 +29,7 @@ public class StreamTests
         using var stream = new MemoryStream(source);
         var parser = Many1(Any<byte>());
 
-        await parser.Parse(stream).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(source));
+        await parser.Parse(stream).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo(source));
     }
 
     [Test]
@@ -49,7 +49,7 @@ public class StreamTests
         var source = "The quick brown fox jumps over the lazy dog";
         var parser = Many(Many1(Letter()).Between(Spaces()).AsString()).ToArray();
 
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(source.Split(' ')));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo(source.Split(' ')));
     }
 
     [Test]
@@ -60,7 +60,7 @@ public class StreamTests
         using var stream = new MemoryStream(new UTF8Encoding(false).GetBytes(source));
         var parser = Many(Many1(Letter()).Between(Spaces()).AsString()).ToArray();
 
-        await parser.Parse(stream).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(source.Split(' ')));
+        await parser.Parse(stream).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo(source.Split(' ')));
     }
 
     [Test]
@@ -79,6 +79,6 @@ public class StreamTests
         // Parser that matches any token and returns its length.
         var parser = Many(Any<string>().Map(x => x.Length));
 
-        await parser.Parse(tokenized).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(source.Split(' ').Select(x => x.Length)));
+        await parser.Parse(tokenized).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo(source.Split(' ').Select(x => x.Length)));
     }
 }

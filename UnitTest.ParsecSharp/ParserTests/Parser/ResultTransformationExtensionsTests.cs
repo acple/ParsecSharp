@@ -49,7 +49,7 @@ public class ResultTransformationExtensionsTests
         var parser = Many1(Letter()).ToArray();
 
         var source = "abcdEFGH";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsTypeOf<char[]>().And.IsEquivalentTo("abcdEFGH"));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsTypeOf<char[]>().And.IsSequentiallyEqualTo("abcdEFGH"));
     }
 
     [Test]
@@ -61,7 +61,7 @@ public class ResultTransformationExtensionsTests
         var parser = Many1(Letter()).AsEnumerable();
 
         var source = "abcdEFGH";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcdEFGH"));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcdEFGH"));
     }
 
     [Test]
@@ -72,7 +72,7 @@ public class ResultTransformationExtensionsTests
         var parser = Many1(Letter()).AsReadOnlyCollection();
 
         var source = "abcdEFGH";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcdEFGH"));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcdEFGH"));
     }
 
     [Test]
@@ -83,7 +83,7 @@ public class ResultTransformationExtensionsTests
         var parser = Many1(Letter()).ToArray().AsReadOnlyList();
 
         var source = "abcdEFGH";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcdEFGH"));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcdEFGH"));
     }
 
     [Test]
@@ -102,11 +102,11 @@ public class ResultTransformationExtensionsTests
 
         await parser.Parse(source).WillSucceed(async value => await Assert.That(value).Count().IsEqualTo(4).And.All(x => x.Count == 2));
 
-        await parser2.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcdEFGH"));
+        await parser2.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcdEFGH"));
 
         // In situations where it becomes nested due to using `Many1`, you can use `FoldLeft` instead.
         var parser3 = token.AsEnumerable().FoldLeft((x, y) => x.Concat(y));
-        await parser3.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcdEFGH"));
+        await parser3.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcdEFGH"));
     }
 
     [Test]

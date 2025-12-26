@@ -185,10 +185,10 @@ public class MonadExtensionsTests
         var parser = nestedParser.Flatten();
 
         var source = "3abcdef";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abc"));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abc"));
 
         var source2 = "5abcdef";
-        await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcde"));
+        await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcde"));
 
         var source3 = "abcdef";
         await parser.Parse(source3).WillFail();

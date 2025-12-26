@@ -21,7 +21,7 @@ public class ParserValidationExtensionsTests
 
         // Parser that matches 1 or more lowercase or uppercase letters and must consume all input at that point.
         var parser2 = Many1(Lower() | Upper()).End();
-        await parser2.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcdEFGH"));
+        await parser2.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcdEFGH"));
     }
 
     [Test]
@@ -34,7 +34,7 @@ public class ParserValidationExtensionsTests
         var parser = Many1(Many(Letter()).WithConsume().AsString());
 
         var source = "abcdEFGH";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(["abcdEFGH"]));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo(["abcdEFGH"]));
 
         var source2 = "123456";
         await parser.Parse(source2).WillFail(async failure => await Assert.That(failure.ToString()).IsEqualTo("Parser Failure (Line: 1, Column: 1): A parser did not consume any input"));
@@ -52,7 +52,7 @@ public class ParserValidationExtensionsTests
         await parser.Parse(source).WillFail(async failure => await Assert.That(failure.ToString()).IsEqualTo("Parser Failure (Line: 1, Column: 5): MessageTest Current: 'E', original message: Unexpected 'E<0x45>'"));
 
         var source2 = "abcdefgh";
-        await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcdef"));
+        await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcdef"));
 
         var source3 = "123456";
         await parser.Parse(source3).WillFail();

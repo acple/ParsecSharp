@@ -433,7 +433,7 @@ public class CharacterMatchingPrimitivesTests
         var parser = HexDigit();
 
         var source = "0123456789abcdefABCDEF";
-        await Many(parser).End().Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(source));
+        await Many(parser).End().Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo(source));
 
         var source2 = "xyz";
         await parser.Parse(source2).WillFail();
@@ -447,7 +447,7 @@ public class CharacterMatchingPrimitivesTests
         var parser = HexUpperDigit();
 
         var source = "0123456789ABCDEF";
-        await Many(parser).End().Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(source));
+        await Many(parser).End().Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo(source));
 
         var source2 = "abcdef";
         await parser.Parse(source2).WillFail();
@@ -461,7 +461,7 @@ public class CharacterMatchingPrimitivesTests
         var parser = HexLowerDigit();
 
         var source = "0123456789abcdef";
-        await Many(parser).End().Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(source));
+        await Many(parser).End().Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo(source));
 
         var source2 = "ABCDEF";
         await parser.Parse(source2).WillFail();

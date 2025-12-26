@@ -16,10 +16,10 @@ public class TokenSequencePrimitivesTests
         var parser = Take(3);
 
         var source = "abcdEFGH";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abc"));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abc"));
 
         var source2 = "123456";
-        await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("123"));
+        await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("123"));
 
         // If the specified number of tokens exceeds the remaining input, the parser fails.
         var parser2 = Take(9);
@@ -43,7 +43,7 @@ public class TokenSequencePrimitivesTests
         var parser = TakeWhile(char.IsLower);
 
         var source = "abcdEFGH";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcd"));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcd"));
 
         var source2 = "123456";
         await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEmpty());
@@ -59,7 +59,7 @@ public class TokenSequencePrimitivesTests
         var parser = TakeWhile1(char.IsLower);
 
         var source = "abcdEFGH";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcd"));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcd"));
 
         var source2 = "123456";
         await parser.Parse(source2).WillFail();

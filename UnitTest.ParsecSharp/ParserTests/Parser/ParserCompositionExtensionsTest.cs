@@ -49,7 +49,7 @@ public class ParserCompositionExtensionsTest
         var parser = Many1(Letter()).Between(Char('['), Char(']'));
 
         var source = $"[abcdEFGH]";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcdEFGH"));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcdEFGH"));
 
         // If you pass `Many(Any())` to the parser, it will match any input until the end, so `close` will match the end of input.
         var parser2 = Many(Any()).Between(Char('"'), Char('"')); // It does not match ( dquote *Any dquote )
@@ -130,7 +130,7 @@ public class ParserCompositionExtensionsTest
             // 1 + 1
             {
                 var parser = Any<int>().Append(Any<int>());
-                await parser.Parse([1, 2]).WillSucceed(async value => await Assert.That(value).IsEquivalentTo([1, 2]));
+                await parser.Parse([1, 2]).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo([1, 2]));
                 await parser.Parse([1]).WillFail();
             }
         }
@@ -140,7 +140,7 @@ public class ParserCompositionExtensionsTest
             // n + 1
             {
                 var parser = Many1(Lower()).Append(Any());
-                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcdE"));
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcdE"));
                 var source2 = "abcd";
                 await parser.Parse(source2).WillFail();
             }
@@ -148,7 +148,7 @@ public class ParserCompositionExtensionsTest
             // 1 + n
             {
                 var parser = Any().Append(Many1(Lower()));
-                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcd"));
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcd"));
                 var source2 = "ABCD";
                 await parser.Parse(source2).WillFail();
             }
@@ -156,7 +156,7 @@ public class ParserCompositionExtensionsTest
             // n + n
             {
                 var parser = Many1(Lower()).Append(Many1(Upper()));
-                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcdEFGH"));
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcdEFGH"));
                 var source2 = "abcd";
                 await parser.Parse(source2).WillFail();
             }
@@ -167,7 +167,7 @@ public class ParserCompositionExtensionsTest
             // n + 1
             {
                 var parser = Many1(Lower()).AsEnumerable().Append(Any());
-                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcdE"));
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcdE"));
                 var source2 = "abcd";
                 await parser.Parse(source2).WillFail();
             }
@@ -175,7 +175,7 @@ public class ParserCompositionExtensionsTest
             // 1 + n
             {
                 var parser = Any().Append(Many1(Lower()).AsEnumerable());
-                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcd"));
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcd"));
                 var source2 = "ABCD";
                 await parser.Parse(source2).WillFail();
             }
@@ -183,7 +183,7 @@ public class ParserCompositionExtensionsTest
             // n + n
             {
                 var parser = Many1(Lower()).AsEnumerable().Append(Many1(Upper()));
-                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcdEFGH"));
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcdEFGH"));
                 var source2 = "abcd";
                 await parser.Parse(source2).WillFail();
             }
@@ -242,31 +242,31 @@ public class ParserCompositionExtensionsTest
             // IReadOnlyList<T>
             {
                 var appendTwo = a + b;
-                await appendTwo.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo([1, 2]));
+                await appendTwo.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo([1, 2]));
             }
 
             // IReadOnlyCollection<T>
             {
                 var leftAssociative = a + b + c;
-                await leftAssociative.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo([1, 2, 3]));
+                await leftAssociative.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo([1, 2, 3]));
 
                 var rightAssociative = a + (b + c);
-                await rightAssociative.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo([1, 2, 3]));
+                await rightAssociative.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo([1, 2, 3]));
 
                 var appendCollection = (a + b) + (c + d);
-                await appendCollection.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo([1, 2, 3, 4]));
+                await appendCollection.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo([1, 2, 3, 4]));
             }
 
             // IEnumerable<T>
             {
                 var leftAssociative = (a + b).AsEnumerable() + c;
-                await leftAssociative.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo([1, 2, 3]));
+                await leftAssociative.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo([1, 2, 3]));
 
                 var rightAssociative = a + (b + c).AsEnumerable();
-                await rightAssociative.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo([1, 2, 3]));
+                await rightAssociative.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo([1, 2, 3]));
 
                 var appendCollection = (a + b).AsEnumerable() + (c + d).AsEnumerable();
-                await appendCollection.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo([1, 2, 3, 4]));
+                await appendCollection.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo([1, 2, 3, 4]));
             }
         }
 
@@ -305,8 +305,8 @@ public class ParserCompositionExtensionsTest
             // 1 + 1
             {
                 var parser = Any<int>().AppendOptional(Any<int>());
-                await parser.Parse([1, 2]).WillSucceed(async value => await Assert.That(value).IsEquivalentTo([1, 2]));
-                await parser.Parse([1]).WillSucceed(async value => await Assert.That(value).IsEquivalentTo([1]));
+                await parser.Parse([1, 2]).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo([1, 2]));
+                await parser.Parse([1]).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo([1]));
             }
         }
 
@@ -315,25 +315,25 @@ public class ParserCompositionExtensionsTest
             // n + 1
             {
                 var parser = Many1(Lower()).AppendOptional(Any());
-                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcdE"));
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcdE"));
                 var source2 = "abcd";
-                await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcd"));
+                await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcd"));
             }
 
             // 1 + n
             {
                 var parser = Any().AppendOptional(Many1(Lower()));
-                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcd"));
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcd"));
                 var source2 = "ABCD";
-                await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("A"));
+                await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("A"));
             }
 
             // n + n
             {
                 var parser = Many1(Lower()).AppendOptional(Many1(Upper()));
-                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcdEFGH"));
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcdEFGH"));
                 var source2 = "abcd";
-                await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcd"));
+                await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcd"));
             }
         }
 
@@ -342,25 +342,25 @@ public class ParserCompositionExtensionsTest
             // n + 1
             {
                 var parser = Many1(Lower()).AsEnumerable().AppendOptional(Any());
-                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcdE"));
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcdE"));
                 var source2 = "abcd";
-                await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcd"));
+                await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcd"));
             }
 
             // 1 + n
             {
                 var parser = Any().AppendOptional(Many1(Lower()).AsEnumerable());
-                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcd"));
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcd"));
                 var source2 = "ABCD";
-                await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("A"));
+                await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("A"));
             }
 
             // n + n
             {
                 var parser = Many1(Lower()).AsEnumerable().AppendOptional(Many1(Upper()));
-                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcdEFGH"));
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcdEFGH"));
                 var source2 = "abcd";
-                await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcd"));
+                await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcd"));
             }
         }
 

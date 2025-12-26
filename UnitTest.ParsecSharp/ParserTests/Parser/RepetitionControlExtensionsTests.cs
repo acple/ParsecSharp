@@ -16,6 +16,6 @@ public class RepetitionControlExtensionsTests
         var parser = Any().Repeat(3).AsString().Repeat(2);
 
         var source = "abcdEFGH";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(["abc", "dEF"]));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo(["abc", "dEF"]));
     }
 }

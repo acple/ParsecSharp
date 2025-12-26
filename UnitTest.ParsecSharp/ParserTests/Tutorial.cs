@@ -69,7 +69,7 @@ public class Tutorial
                 _ = await Assert.That(regex.Match(source).Value).IsEqualTo("aa");
 
                 var parser = Many(Char('a'));
-                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("aa"));
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("aa"));
             }
 
             {
@@ -87,7 +87,7 @@ public class Tutorial
                 _ = await Assert.That(regex.Match(source).Value).IsEqualTo("aa");
 
                 var parser = Many1(Char('a'));
-                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("aa"));
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("aa"));
             }
 
             {
@@ -124,7 +124,7 @@ public class Tutorial
                 _ = await Assert.That(regex.Match(source).Value).IsEqualTo("ab");
 
                 var parser = Match(Sequence(Char('a'), Char('b')));
-                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("ab"));
+                await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("ab"));
 
                 var parser2 = Match(String("ab"));
                 await parser2.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("ab"));
@@ -136,7 +136,7 @@ public class Tutorial
             _ = await Assert.That(regex.Match(source).Value).IsEqualTo("aabbb");
 
             var parser = Many1(Char('a')).Append(Many1(Char('b'))).End();
-            await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("aabbb"));
+            await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("aabbb"));
 
             var parser2 = Many1(Char('a')).Append(Many1(Char('b'))).AsString().End();
             await parser2.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("aabbb"));
@@ -147,7 +147,7 @@ public class Tutorial
             _ = await Assert.That(regex.Match(source).Value).IsEqualTo("aab");
 
             var parser = Sequence(Char('a'), Any(), Char('b'));
-            await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("aab"));
+            await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("aab"));
         }
     }
 
@@ -207,7 +207,7 @@ public class Tutorial
         _ = await Assert.That(key3_1).IsTrue();
 
         var key3_2 = result?["key3"]?["key3_2"] as IEnumerable<dynamic>;
-        _ = await Assert.That(key3_2).IsEquivalentTo((IEnumerable<dynamic>)[1.0, 2.0, 3.0]);
+        _ = await Assert.That(key3_2).IsSequentiallyEqualTo((IEnumerable<dynamic>)[1.0, 2.0, 3.0]);
 
         var key4 = (double)result?["key4"];
         _ = await Assert.That(key4).IsEqualTo(-123.4);
@@ -288,10 +288,10 @@ public class Tutorial
 
             var parsers = parser.Parse(peg).Value;
 
-            await parsers["Parser1"].Parse("abcdefg").WillSucceed(async value => await Assert.That(value.AllMatches).IsEquivalentTo(["abcdefg", "a", "b", "c", "d", "e", "f", "g"]));
-            await parsers["Parser2"].Parse("abcdefg").WillSucceed(async value => await Assert.That(value.AllMatches).IsEquivalentTo(["abcdefg", "abcdefg"]));
-            await parsers["Parser3"].Parse("abcdefg").WillSucceed(async value => await Assert.That(value.AllMatches).IsEquivalentTo(["abcdef", "cd", "ef"]));
-            await parsers["Parser4"].Parse("abcdefg").WillSucceed(async value => await Assert.That(value.AllMatches).IsEquivalentTo(["abcdef", "abc", "a", "c", "def", "d", "f"]));
+            await parsers["Parser1"].Parse("abcdefg").WillSucceed(async value => await Assert.That(value.AllMatches).IsSequentiallyEqualTo(["abcdefg", "a", "b", "c", "d", "e", "f", "g"]));
+            await parsers["Parser2"].Parse("abcdefg").WillSucceed(async value => await Assert.That(value.AllMatches).IsSequentiallyEqualTo(["abcdefg", "abcdefg"]));
+            await parsers["Parser3"].Parse("abcdefg").WillSucceed(async value => await Assert.That(value.AllMatches).IsSequentiallyEqualTo(["abcdef", "cd", "ef"]));
+            await parsers["Parser4"].Parse("abcdefg").WillSucceed(async value => await Assert.That(value.AllMatches).IsSequentiallyEqualTo(["abcdef", "abc", "a", "c", "def", "d", "f"]));
         }
 
         {

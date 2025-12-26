@@ -17,7 +17,7 @@ public class RepetitionControlCombinatorsTests
         var parser = Many(Lower());
 
         var source = "abcdEFGH";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcd"));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcd"));
 
         var source2 = "123456";
         await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEmpty());
@@ -33,7 +33,7 @@ public class RepetitionControlCombinatorsTests
         var parser = Many1(Lower());
 
         var source = "abcdEFGH";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcd"));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcd"));
 
         var source2 = "123456";
         await parser.Parse(source2).WillFail();
@@ -80,7 +80,7 @@ public class RepetitionControlCombinatorsTests
         var parser = ManyTill(Lower(), Char('E'));
 
         var source = "abcdEFGH";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcd"));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcd"));
 
         var source2 = "EFGH";
         await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEmpty());
@@ -100,7 +100,7 @@ public class RepetitionControlCombinatorsTests
         var parser = Many1Till(Lower(), Char('E'));
 
         var source = "abcdEFGH";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcd"));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcd"));
 
         var source2 = "EFGH";
         await parser.Parse(source2).WillFail();
@@ -156,7 +156,7 @@ public class RepetitionControlCombinatorsTests
         var parser = TakeTill(Char('E'));
 
         var source = "abcdEFGH";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcd"));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcd"));
 
         var source2 = "EFGH";
         await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEmpty());
@@ -176,7 +176,7 @@ public class RepetitionControlCombinatorsTests
         var parser = Take1Till(Char('E'));
 
         var source = "abcdEFGH";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo("abcd"));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcd"));
 
         var source2 = "EFGH";
         await parser.Parse(source2).WillFail();

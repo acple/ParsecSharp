@@ -17,10 +17,10 @@ public class RepetitionSeparatorExtensionsTests
         var parser = Many1(Number()).AsString().SeparatedBy(Char(','));
 
         var source = "123,456,789";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(["123", "456", "789"]));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo(["123", "456", "789"]));
 
         var source2 = "123456";
-        await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(["123456"]));
+        await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo(["123456"]));
 
         var source3 = "abcdEFGH";
         await parser.Parse(source3).WillSucceed(async value => await Assert.That(value).IsEmpty());
@@ -35,10 +35,10 @@ public class RepetitionSeparatorExtensionsTests
         var parser = Many1(Number()).AsString().SeparatedBy1(Char(','));
 
         var source = "123,456,789";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(["123", "456", "789"]));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo(["123", "456", "789"]));
 
         var source2 = "123456";
-        await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(["123456"]));
+        await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo(["123456"]));
 
         var source3 = "abcdEFGH";
         await parser.Parse(source3).WillFail();
@@ -53,7 +53,7 @@ public class RepetitionSeparatorExtensionsTests
         var parser = Many1(Number()).AsString().EndBy(Char(','));
 
         var source = "123,456,789";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(["123", "456"]));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo(["123", "456"]));
 
         var source2 = "123456";
         await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEmpty());
@@ -68,7 +68,7 @@ public class RepetitionSeparatorExtensionsTests
         var parser = Many1(Number()).AsString().EndBy1(Char(','));
 
         var source = "123,456,789";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(["123", "456"]));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo(["123", "456"]));
 
         var source2 = "123456";
         await parser.Parse(source2).WillFail();
@@ -83,13 +83,13 @@ public class RepetitionSeparatorExtensionsTests
         var parser = Many1(Number()).AsString().SeparatedOrEndBy(Char(','));
 
         var source = "123,456,789";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(["123", "456", "789"]));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo(["123", "456", "789"]));
 
         var source2 = "123456";
-        await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(["123456"]));
+        await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo(["123456"]));
 
         var source3 = "123,456,789" + ",";
-        await parser.Parse(source3).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(["123", "456", "789"]));
+        await parser.Parse(source3).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo(["123", "456", "789"]));
     }
 
     [Test]
@@ -101,12 +101,12 @@ public class RepetitionSeparatorExtensionsTests
         var parser = Many1(Number()).AsString().SeparatedOrEndBy1(Char(','));
 
         var source = "123,456,789";
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(["123", "456", "789"]));
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo(["123", "456", "789"]));
 
         var source2 = "123456";
-        await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(["123456"]));
+        await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo(["123456"]));
 
         var source3 = "123,456,789" + ",";
-        await parser.Parse(source3).WillSucceed(async value => await Assert.That(value).IsEquivalentTo(["123", "456", "789"]));
+        await parser.Parse(source3).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo(["123", "456", "789"]));
     }
 }
