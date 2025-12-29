@@ -82,20 +82,20 @@ public static class Bytes
         => Take(sizeof(char)).Map(BinaryConvert.ToCharBigEndian);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<byte, double> Double()
-        => Take(sizeof(double)).Map(BinaryConvert.ToDouble);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<byte, double> DoubleBigEndian()
-        => Take(sizeof(double)).Map(BinaryConvert.ToDoubleBigEndian);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<byte, float> Single()
         => Take(sizeof(float)).Map(BinaryConvert.ToSingle);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<byte, float> SingleBigEndian()
         => Take(sizeof(float)).Map(BinaryConvert.ToSingleBigEndian);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<byte, double> Double()
+        => Take(sizeof(double)).Map(BinaryConvert.ToDouble);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<byte, double> DoubleBigEndian()
+        => Take(sizeof(double)).Map(BinaryConvert.ToDoubleBigEndian);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<byte, sbyte> SByte()

@@ -15,12 +15,12 @@ public static class Parser
     extension<TToken, T>(IParser<TToken, T> parser)
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IResult<TToken, T> Parse(IEnumerable<TToken> source)
-            => parser.Parse(EnumerableStream.Create(source));
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IResult<TToken, T> Parse(IReadOnlyList<TToken> source)
             => parser.Parse(ArrayStream.Create(source));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IResult<TToken, T> Parse(IEnumerable<TToken> source)
+            => parser.Parse(EnumerableStream.Create(source));
     }
 
     #endregion
@@ -167,12 +167,12 @@ public static class Parser
         => new Try<TToken, T>(parser, fallback);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<TToken, T> Optional<TToken, T>(IParser<TToken, T> parser, T fallback)
-        => Try(parser, fallback);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, bool> Optional<TToken, TIgnore>(IParser<TToken, TIgnore> parser)
         => parser.Either(_ => true, false);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<TToken, T> Optional<TToken, T>(IParser<TToken, T> parser, T fallback)
+        => Try(parser, fallback);
 
     #endregion
 
@@ -306,12 +306,12 @@ public static class Parser
     #region Parser LookAhead Combinators
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<TToken, T> Not<TToken, TIgnore, T>(IParser<TToken, TIgnore> parser, T result)
-        => new Not<TToken, TIgnore, T>(parser, result);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, Unit> Not<TToken, TIgnore>(IParser<TToken, TIgnore> parser)
         => Not(parser, Unit.Instance);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<TToken, T> Not<TToken, TIgnore, T>(IParser<TToken, TIgnore> parser, T result)
+        => new Not<TToken, TIgnore, T>(parser, result);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, T> LookAhead<TToken, T>(IParser<TToken, T> parser)
@@ -597,7 +597,7 @@ public static class Parser
         => parser.Map(values => values.ToArray());
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<TToken, IEnumerable<T>> AsEnumerable<TToken, T>(this IParser<TToken, IEnumerable<T>> parser)
+    public static IParser<TToken, IReadOnlyList<T>> AsReadOnlyList<TToken, T>(this IParser<TToken, IReadOnlyList<T>> parser)
         => parser;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -605,16 +605,16 @@ public static class Parser
         => parser;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<TToken, IReadOnlyList<T>> AsReadOnlyList<TToken, T>(this IParser<TToken, IReadOnlyList<T>> parser)
+    public static IParser<TToken, IEnumerable<T>> AsEnumerable<TToken, T>(this IParser<TToken, IEnumerable<T>> parser)
         => parser;
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<TToken, IEnumerable<T>> Flatten<TToken, T>(this IParser<TToken, IEnumerable<IEnumerable<T>>> parser)
-        => parser.Map(values => values.SelectMany(x => x));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, IReadOnlyCollection<T>> Flatten<TToken, T>(this IParser<TToken, IEnumerable<IReadOnlyCollection<T>>> parser)
         => parser.Map(values => values.Aggregate((IReadOnlyCollection<T>)[], (accumulator, x) => accumulator.Concat(x)));
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<TToken, IEnumerable<T>> Flatten<TToken, T>(this IParser<TToken, IEnumerable<IEnumerable<T>>> parser)
+        => parser.Map(values => values.SelectMany(x => x));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, IReadOnlyList<T>> Singleton<TToken, T>(this IParser<TToken, T> parser)

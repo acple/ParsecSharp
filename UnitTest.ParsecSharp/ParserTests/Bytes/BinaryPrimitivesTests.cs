@@ -133,22 +133,6 @@ public class BinaryPrimitivesTests
     }
 
     [Test]
-    public async Task DoubleTest()
-    {
-        var source = _source.ToArray();
-        var parser = Double();
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo(BitConverter.ToDouble(source)));
-    }
-
-    [Test]
-    public async Task DoubleBigEndianTest()
-    {
-        var source = _source;
-        var parser = DoubleBigEndian();
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo(BitConverter.ToDouble(source.Take(8).Reverse().ToArray())));
-    }
-
-    [Test]
     public async Task SingleTest()
     {
         var source = _source.ToArray();
@@ -162,6 +146,22 @@ public class BinaryPrimitivesTests
         var source = _source;
         var parser = SingleBigEndian();
         await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo(BitConverter.ToSingle(source.Take(4).Reverse().ToArray())));
+    }
+
+    [Test]
+    public async Task DoubleTest()
+    {
+        var source = _source.ToArray();
+        var parser = Double();
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo(BitConverter.ToDouble(source)));
+    }
+
+    [Test]
+    public async Task DoubleBigEndianTest()
+    {
+        var source = _source;
+        var parser = DoubleBigEndian();
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo(BitConverter.ToDouble(source.Take(8).Reverse().ToArray())));
     }
 
     [Test]
