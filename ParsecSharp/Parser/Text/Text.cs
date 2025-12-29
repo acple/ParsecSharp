@@ -169,15 +169,11 @@ public static class Text
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<char, string> String(string text)
-        => String(text, StringComparison.Ordinal);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<char, string> String(string text, StringComparison comparison)
-        => new StringParser(text, comparison);
+        => new StringParser(text, StringComparison.Ordinal);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<char, string> StringIgnoreCase(string text)
-        => String(text, StringComparison.OrdinalIgnoreCase);
+        => new StringParser(text, StringComparison.OrdinalIgnoreCase);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<char, string> SurrogatePair()
