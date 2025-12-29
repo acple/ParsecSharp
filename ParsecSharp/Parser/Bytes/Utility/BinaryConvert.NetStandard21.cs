@@ -70,20 +70,20 @@ internal static class BinaryConvert
         => (char)BinaryPrimitives.ReadUInt16BigEndian([.. data]);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static double ToDouble(IEnumerable<byte> data)
-        => BitConverter.Int64BitsToDouble(BinaryPrimitives.ReadInt64LittleEndian([.. data]));
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static double ToDoubleBigEndian(IEnumerable<byte> data)
-        => BitConverter.Int64BitsToDouble(BinaryPrimitives.ReadInt64BigEndian([.. data]));
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float ToSingle(IEnumerable<byte> data)
         => BitConverter.Int32BitsToSingle(BinaryPrimitives.ReadInt32LittleEndian([.. data]));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float ToSingleBigEndian(IEnumerable<byte> data)
         => BitConverter.Int32BitsToSingle(BinaryPrimitives.ReadInt32BigEndian([.. data]));
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static double ToDouble(IEnumerable<byte> data)
+        => BitConverter.Int64BitsToDouble(BinaryPrimitives.ReadInt64LittleEndian([.. data]));
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static double ToDoubleBigEndian(IEnumerable<byte> data)
+        => BitConverter.Int64BitsToDouble(BinaryPrimitives.ReadInt64BigEndian([.. data]));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string ToUtf8String(IEnumerable<byte> data)

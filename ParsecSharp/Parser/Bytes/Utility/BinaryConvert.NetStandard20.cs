@@ -70,20 +70,20 @@ internal static class BinaryConvert
         => BitConverter.ToChar([.. BitConverter.IsLittleEndian ? data.Reverse() : data], 0);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static double ToDouble(IEnumerable<byte> data)
-        => BitConverter.ToDouble([.. BitConverter.IsLittleEndian ? data : data.Reverse()], 0);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static double ToDoubleBigEndian(IEnumerable<byte> data)
-        => BitConverter.ToDouble([.. BitConverter.IsLittleEndian ? data.Reverse() : data], 0);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float ToSingle(IEnumerable<byte> data)
         => BitConverter.ToSingle([.. BitConverter.IsLittleEndian ? data : data.Reverse()], 0);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float ToSingleBigEndian(IEnumerable<byte> data)
         => BitConverter.ToSingle([.. BitConverter.IsLittleEndian ? data.Reverse() : data], 0);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static double ToDouble(IEnumerable<byte> data)
+        => BitConverter.ToDouble([.. BitConverter.IsLittleEndian ? data : data.Reverse()], 0);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static double ToDoubleBigEndian(IEnumerable<byte> data)
+        => BitConverter.ToDouble([.. BitConverter.IsLittleEndian ? data.Reverse() : data], 0);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string ToUtf8String(IEnumerable<byte> data)
