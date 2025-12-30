@@ -36,7 +36,7 @@ internal class InheritingTests
 
         public override string Message => throw new NotImplementedException();
 
-        public override IFailure<TToken, TNext> Convert<TNext>()
+        protected override IFailure<TToken, TResult> Convert<TResult>()
             => throw new NotImplementedException();
 
         public override ISuspendedResult<TToken, T> Suspend()

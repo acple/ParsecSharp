@@ -7,7 +7,7 @@ internal sealed class FailureWithMessage<TToken, TState, T>(string message, TSta
 
     public sealed override string Message => message;
 
-    public sealed override IFailure<TToken, TResult> Convert<TResult>()
+    protected sealed override IFailure<TToken, TResult> Convert<TResult>()
         => new FailureWithMessage<TToken, TState, TResult>(message, state);
 
     public sealed override ISuspendedResult<TToken, T> Suspend()

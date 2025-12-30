@@ -26,7 +26,7 @@ public interface IFailure<TToken, out T> : IResult<TToken, T>
 
     public string Message { get; }
 
-    public IFailure<TToken, TResult> Convert<TResult>();
+    public IFailure<TToken, TResult> Coerce<TResult>();
 }
 
 public interface ISuccess<TToken, out T> : IResult<TToken, T>
