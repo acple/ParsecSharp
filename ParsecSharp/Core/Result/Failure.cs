@@ -14,7 +14,7 @@ public abstract class Failure<TToken, T> : IFailure<TToken, T>
     public abstract string Message { get; }
 
     public IFailure<TToken, TResult> Coerce<TResult>()
-        => this as IFailure<TToken, TResult> ?? this.Convert<TResult>();
+        => this as Failure<TToken, TResult> ?? this.Convert<TResult>();
 
     protected abstract IFailure<TToken, TResult> Convert<TResult>();
 
