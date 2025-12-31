@@ -12,17 +12,5 @@ public partial interface IPosition
 
     bool IEquatable<IPosition>.Equals(IPosition? other)
         => other is not null && this.Line == other.Line && this.Column == other.Column && this.GetType() == other.GetType();
-
-    public static bool operator <(IPosition left, IPosition right)
-        => left is null ? right is not null : left.CompareTo(right) < 0;
-
-    public static bool operator >(IPosition left, IPosition right)
-        => left is not null && left.CompareTo(right) > 0;
-
-    public static bool operator <=(IPosition left, IPosition right)
-        => left is null || left.CompareTo(right) <= 0;
-
-    public static bool operator >=(IPosition left, IPosition right)
-        => left is null ? right is null : left.CompareTo(right) >= 0;
 }
 #endif

@@ -17,13 +17,16 @@ public interface IResult<TToken, out T>
 
 public interface IFailure<TToken, out T> : IResult<TToken, T>
 {
+    [Obsolete("Failure result never has value.", error: true)]
+    public new T Value { get; }
+
     public IParsecState<TToken> State { get; }
 
     public ParsecSharpException Exception { get; }
 
     public string Message { get; }
 
-    public IFailure<TToken, TResult> Convert<TResult>();
+    public IFailure<TToken, TResult> Coerce<TResult>();
 }
 
 public interface ISuccess<TToken, out T> : IResult<TToken, T>

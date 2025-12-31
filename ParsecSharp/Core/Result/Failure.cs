@@ -4,6 +4,7 @@ namespace ParsecSharp.Internal;
 
 public abstract class Failure<TToken, T> : IFailure<TToken, T>
 {
+    [Obsolete("Failure result never has value.", error: true)]
     public T Value => throw this.Exception;
 
     public abstract IParsecState<TToken> State { get; }
@@ -12,7 +13,10 @@ public abstract class Failure<TToken, T> : IFailure<TToken, T>
 
     public abstract string Message { get; }
 
-    public abstract IFailure<TToken, TResult> Convert<TResult>();
+    public IFailure<TToken, TResult> Coerce<TResult>()
+        => this as Failure<TToken, TResult> ?? this.Convert<TResult>();
+
+    protected abstract IFailure<TToken, TResult> Convert<TResult>();
 
     public abstract ISuspendedResult<TToken, T> Suspend();
 
@@ -20,7 +24,7 @@ public abstract class Failure<TToken, T> : IFailure<TToken, T>
         => failure(this);
 
     public IResult<TToken, TResult> Map<TResult>(Func<T, TResult> function)
-        => this.Convert<TResult>();
+        => this.Coerce<TResult>();
 
     public sealed override string ToString()
         => $"Parser Failure ({this.State.Position.ToString()}): {this.Message}";

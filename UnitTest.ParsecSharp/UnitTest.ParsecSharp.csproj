@@ -1,15 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net10.0;net9.0;net8.0;net6.0</TargetFrameworks>
-    <LangVersion>preview</LangVersion>
+    <TargetFrameworks>net10.0;net9.0;net8.0</TargetFrameworks>
+    <LangVersion>14.0</LangVersion>
     <Nullable>enable</Nullable>
-    <GenerateProgramFile>false</GenerateProgramFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <UseAppHost>false</UseAppHost>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ChainingAssertion.Core.MSTest" Version="1.1.0" />
-    <PackageReference Include="MSTest" Version="3.9.3" />
+    <PackageReference Include="TUnit" Version="1.7.7" />
   </ItemGroup>
 
   <ItemGroup>

@@ -98,7 +98,7 @@ public class JsonParser
         // Matches a JSON Boolean.
         // true = %x74.72.75.65
         // false = %x66.61.6c.73.65
-        var jsonBool = String("false").Map(_ => false).Or(String("true").Map(_ => true));
+        var jsonBool = String("false").Map(_ => false) | String("true").Map(_ => true);
 
         // Matches JSON Null.
         // null = %x6e.75.6c.6c
@@ -155,7 +155,10 @@ public class JsonParser
 
 file static class Extensions
 {
-    // Extension method to wrap the parse result as dynamic.
-    public static IParser<TToken, dynamic?> AsDynamic<TToken, T>(this IParser<TToken, T> parser)
-        => parser.Map(x => x as dynamic);
+    extension<TToken, T>(IParser<TToken, T> parser)
+    {
+        // Extension method to wrap the parse result as dynamic.
+        public IParser<TToken, dynamic?> AsDynamic()
+            => parser.Map(x => x as dynamic);
+    }
 }

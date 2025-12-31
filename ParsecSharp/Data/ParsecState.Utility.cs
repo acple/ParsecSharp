@@ -14,12 +14,12 @@ public static class ParsecState
         => new ParsecStateEnumerable<TToken, TState>(stream);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ParsecStateStream<TToken, LinearPosition<TToken>> Tokenize<TInput, TState, TToken>(TState source, IParser<TInput, TToken> parser)
+    public static ParsecStateStream<TToken, LinearPosition<TToken>> Tokenize<TInput, TState, TToken>(this TState source, IParser<TInput, TToken> parser)
         where TState : IParsecState<TInput, TState>
-        => Tokenize(source, parser, LinearPosition<TToken>.Initial);
+        => source.Tokenize(parser, LinearPosition<TToken>.Initial);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ParsecStateStream<TToken, TPosition> Tokenize<TInput, TState, TToken, TPosition>(TState source, IParser<TInput, TToken> parser, TPosition position)
+    public static ParsecStateStream<TToken, TPosition> Tokenize<TInput, TState, TToken, TPosition>(this TState source, IParser<TInput, TToken> parser, TPosition position)
         where TState : IParsecState<TInput, TState>
         where TPosition : IPosition<TToken, TPosition>
         => Tokenize(source.InnerResource, parser.ParsePartially(source), parser, position);

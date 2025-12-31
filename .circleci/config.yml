@@ -3,12 +3,12 @@ version: 2.1
 executors:
   dotnet:
     parameters:
-      sdk_version: { type: string, default: "10.0-preview" }
+      sdk_version: { type: string, default: "10.0" }
     docker:
-      - image: mcr.microsoft.com/dotnet/nightly/sdk:<< parameters.sdk_version >>-alpine
+      - image: mcr.microsoft.com/dotnet/sdk:<< parameters.sdk_version >>-alpine
     working_directory: /_
     environment:
-      NUGET_PACKAGES: /_/packages
+      NUGET_PACKAGES: /_/.nuget
 
 jobs:
   build:
@@ -16,11 +16,11 @@ jobs:
     steps:
       - checkout
       - run:
-          name: print dotnet information
+          name: Print dotnet information
           command: dotnet --info
       - run:
-          name: build
-          command: dotnet build -c Release --no-incremental -v normal
+          name: Build
+          command: dotnet build -c Release --no-incremental --verbosity detailed
       - persist_to_workspace:
           root: .
           paths:
@@ -37,18 +37,14 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: run test
+          name: Run test
           command: >-
-            dotnet test UnitTest.ParsecSharp
-            -c Release --no-build -v normal
-            --framework << parameters.target_framework >>
-            --results-directory ./TestResults
-            --logger "console;verbosity=detailed"
-            --logger "trx;LogFileName=TestResult.xml"
-            < /dev/null
+            dotnet run --project UnitTest.ParsecSharp
+            -c Release --no-build --framework << parameters.target_framework >>
+            -- --output Detailed --results-directory TestResults --report-trx --report-trx-filename TestResult.trx
       - store_artifacts:
-          path: ./TestResults/TestResult.xml
-          destination: TestResult_<< parameters.target_framework >>.xml
+          path: ./TestResults/TestResult.trx
+          destination: TestResult_<< parameters.target_framework >>.trx
 
   pack:
     executor: dotnet
@@ -56,15 +52,15 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: create package
+          name: Create package
           command: >-
-            dotnet pack -c Release --no-build -v normal ParsecSharp
-            --output ./nuget
+            dotnet pack ParsecSharp
+            -c Release --no-build --verbosity detailed --output ./pack
             -p:RepositoryBranch=${CIRCLE_BRANCH},RepositoryCommit=${CIRCLE_SHA1}
       - store_artifacts:
-          path: ./nuget
+          path: ./pack
       - persist_to_workspace:
-          root: ./nuget
+          root: ./pack
           paths:
             - ./ParsecSharp.*.nupkg
 
@@ -74,7 +70,7 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: push to NuGet gallery
+          name: Push to NuGet gallery
           command: >-
             dotnet nuget push ./ParsecSharp.*.nupkg
             --source https://www.nuget.org --api-key ${NUGET_APIKEY}
@@ -89,7 +85,7 @@ workflows:
 
       - unittest:
           name: unittest10.0
-          sdk_version: "10.0-preview"
+          sdk_version: "10.0"
           target_framework: net10.0
           requires:
             - build
@@ -111,14 +107,6 @@ workflows:
             - build
           filters: *default_filter
 
-      - unittest:
-          name: unittest6.0
-          sdk_version: "6.0"
-          target_framework: net6.0
-          requires:
-            - build
-          filters: *default_filter
-
       - pack:
           requires:
             - build
@@ -131,7 +119,6 @@ workflows:
             - unittest10.0
             - unittest9.0
             - unittest8.0
-            - unittest6.0
           filters:
             <<: *default_filter
             branches:

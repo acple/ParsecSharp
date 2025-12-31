@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using ParsecSharp;
 using static ParsecSharp.Parser;
 using static ParsecSharp.Text;
 
@@ -50,7 +49,7 @@ public class PegParser
         var digit = DecDigit();
         var underscore = Char('_');
 
-        var identifier = (word | underscore).Append(Many(word | digit | underscore)).AsString().Left(spacing);
+        var identifier = ((word | underscore) + Many(word | digit | underscore)).AsString().Left(spacing);
 
         var unescapedChar = Any().Except(Char('\\'));
         var escapedChar = Char('\\').Right(Choice(
@@ -69,11 +68,11 @@ public class PegParser
             from end in character
             select Satisfy(x => start <= x && x <= end);
 
-        var literal = (character.Quote(Char('\'')) | character.Quote(Char('"'))).AsString().Left(spacing);
-
         var charsetElement = range | character.Map(Char);
         var charsetExcept = charsetElement.Quote(String("[^"), Char(']')).Map(Any().Except).Left(spacing);
         var charset = charsetElement.Quote(Char('['), Char(']')).Map(Choice).Left(spacing);
+
+        var literal = (character.Quote(Char('\'')) | character.Quote(Char('"'))).AsString().Left(spacing);
 
         var expression = Fix<Rule>(expression =>
         {
