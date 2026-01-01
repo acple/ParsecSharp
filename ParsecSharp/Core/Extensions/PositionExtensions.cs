@@ -4,7 +4,7 @@ namespace ParsecSharp;
 
 public static class PositionExtensions
 {
-    extension<TPosition>(TPosition position)
+    extension<TPosition>(TPosition)
         where TPosition : IPosition
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
