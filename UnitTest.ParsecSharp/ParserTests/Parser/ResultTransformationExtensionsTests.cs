@@ -38,7 +38,7 @@ public class ResultTransformationExtensionsTests
 
         // Handles null values by returning empty string.
         var parser2 = Pure<char, object?>(null as object).MapToString();
-        await parser2.Parse(string.Empty).WillSucceed(async value => await Assert.That(value).IsEqualTo(string.Empty));
+        await parser2.Parse(string.Empty).WillSucceed(async value => await Assert.That(value).IsEmpty());
     }
 
     [Test]

@@ -8,6 +8,7 @@ using static ParsecSharp.Text;
 namespace ParsecSharp.Examples;
 
 // PEG parser implementation with capturing extension
+// https://bford.info/pub/lang/peg.pdf
 public class PegParser
 {
     public interface IMatchResult
@@ -69,10 +70,10 @@ public class PegParser
             select Satisfy(x => start <= x && x <= end);
 
         var charsetElement = range | character.Map(Char);
-        var charsetExcept = charsetElement.Quote(String("[^"), Char(']')).Map(Any().Except).Left(spacing);
-        var charset = charsetElement.Quote(Char('['), Char(']')).Map(Choice).Left(spacing);
+        var charsetExcept = charsetElement.QuotedBy1(String("[^"), Char(']')).Map(Any().Except).Left(spacing);
+        var charset = charsetElement.QuotedBy1(Char('['), Char(']')).Map(Choice).Left(spacing);
 
-        var literal = (character.Quote(Char('\'')) | character.Quote(Char('"'))).AsString().Left(spacing);
+        var literal = (character.QuotedBy(Char('\'')) | character.QuotedBy(Char('"'))).AsString().Left(spacing);
 
         var expression = Fix<Rule>(expression =>
         {

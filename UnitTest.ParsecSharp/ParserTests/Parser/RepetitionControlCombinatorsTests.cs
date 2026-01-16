@@ -206,22 +206,58 @@ public class RepetitionControlCombinatorsTests
     }
 
     [Test]
-    public async Task QuotedTest()
+    public async Task QuoteTest()
     {
         // Creates a parser that retrieves the sequence of tokens between the parsers that match before and after.
         // Can be used to retrieve tokens like string literals.
-        // Use the `Quote` extension method if you want to add conditions to the match of the token sequence.
+        // Use the `QuotedBy` extension method if you want to add conditions to the match of the token sequence.
 
         // Parser that retrieves the string between '<' and '>'.
-        var parser = Quoted(Char('<'), Char('>')).AsString();
+        var parser = Quote(Char('<'), Char('>')).AsString();
 
         var source = "<abcd>";
         await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcd"));
 
-        // Parser that retrieves the string between '<' and '>', and then retrieves the string between them.
-        var parser2 = Quoted(parser).AsString();
+        // Succeeds with empty content because `Quote` allows 0 or more tokens between the quotes.
+        var source2 = "<>";
+        await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEmpty());
 
-        var source2 = "<span>test</span>";
-        await parser2.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEqualTo("test"));
+        // Parser that retrieves the string between '<' and '>', and then retrieves the string between them.
+        var parser2 = Quote(parser).AsString();
+
+        var source3 = "<span>test</span>";
+        await parser2.Parse(source3).WillSucceed(async value => await Assert.That(value).IsEqualTo("test"));
+
+        // Succeeds with empty content because `Quote` allows 0 or more tokens between the quotes.
+        var source4 = "<span></span>";
+        await parser2.Parse(source4).WillSucceed(async value => await Assert.That(value).IsEmpty());
+    }
+
+    [Test]
+    public async Task Quote1Test()
+    {
+        // Creates a parser that retrieves the sequence of tokens between the parsers that match before and after.
+        // Similar to `Quote`, but requires at least 1 token between the quotes.
+        // Use the `QuotedBy1` extension method if you want to add conditions to the match of the token sequence.
+
+        // Parser that retrieves the string between '<' and '>'.
+        var parser = Quote1(Char('<'), Char('>')).AsString();
+
+        var source = "<abcd>";
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcd"));
+
+        // Fails because there is no content between '<' and '>'.
+        var source2 = "<>";
+        await parser.Parse(source2).WillFail();
+
+        // Parser that retrieves the string between '<' and '>', and then retrieves the string between them.
+        var parser2 = Quote1(parser).AsString();
+
+        var source3 = "<span>test</span>";
+        await parser2.Parse(source3).WillSucceed(async value => await Assert.That(value).IsEqualTo("test"));
+
+        // Fails because there is no content between the quotes.
+        var source4 = "<span></span>";
+        await parser2.Parse(source4).WillFail();
     }
 }

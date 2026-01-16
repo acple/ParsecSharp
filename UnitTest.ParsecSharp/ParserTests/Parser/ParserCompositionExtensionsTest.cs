@@ -54,22 +54,7 @@ public class ParserCompositionExtensionsTest
         // If you pass `Many(Any())` to the parser, it will match any input until the end, so `close` will match the end of input.
         var parser2 = Many(Any()).Between(Char('"'), Char('"')); // It does not match ( dquote *Any dquote )
         await parser2.Parse("\"abCD1234\"").WillFail(); // `Many(Any())` matches until abCD1234", so `close` does not match " and fails
-        // If you want to create a parser that matches this form, consider using `Quoted` or `ManyTill`.
-    }
-
-    [Test]
-    public async Task QuoteTest()
-    {
-        // Creates a parser that matches parser repeatedly until it matches the parsers before and after.
-
-        // Parser that matches a string representation that can escape '"' characters.
-        var dquoteOrAny = String("\\\"").Map(_ => '\"') | Any();
-        var parser = dquoteOrAny.Quote(Char('"')).AsString();
-
-        var source = """
-            "abcd\"EFGH"
-            """;
-        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("""abcd"EFGH"""));
+        // If you want to create a parser that matches this form, consider using `Quote` or `ManyTill`.
     }
 
     [Test]
