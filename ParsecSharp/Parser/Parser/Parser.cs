@@ -294,12 +294,20 @@ public static class Parser
         => SkipTill(Any<TToken>(), parser);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<TToken, IReadOnlyCollection<TToken>> Quoted<TToken, TIgnore>(IParser<TToken, TIgnore> quote)
-        => Quoted(quote, quote);
+    public static IParser<TToken, IReadOnlyCollection<TToken>> Quote<TToken, TIgnore>(IParser<TToken, TIgnore> quote)
+        => Quote(quote, quote);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<TToken, IReadOnlyCollection<TToken>> Quoted<TToken, TOpen, TClose>(IParser<TToken, TOpen> open, IParser<TToken, TClose> close)
-        => Any<TToken>().Quote(open, close);
+    public static IParser<TToken, IReadOnlyCollection<TToken>> Quote<TToken, TOpen, TClose>(IParser<TToken, TOpen> open, IParser<TToken, TClose> close)
+        => Any<TToken>().QuotedBy(open, close);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<TToken, IReadOnlyCollection<TToken>> Quote1<TToken, TIgnore>(IParser<TToken, TIgnore> quote)
+        => Quote1(quote, quote);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<TToken, IReadOnlyCollection<TToken>> Quote1<TToken, TOpen, TClose>(IParser<TToken, TOpen> open, IParser<TToken, TClose> close)
+        => Any<TToken>().QuotedBy1(open, close);
 
     #endregion
 
@@ -358,12 +366,20 @@ public static class Parser
         => open.Right(parser.Left(close));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<TToken, IReadOnlyCollection<T>> Quote<TToken, T, TIgnore>(this IParser<TToken, T> parser, IParser<TToken, TIgnore> quote)
-        => parser.Quote(quote, quote);
+    public static IParser<TToken, IReadOnlyCollection<T>> QuotedBy<TToken, T, TIgnore>(this IParser<TToken, T> parser, IParser<TToken, TIgnore> quotation)
+        => parser.QuotedBy(quotation, quotation);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IParser<TToken, IReadOnlyCollection<T>> Quote<TToken, T, TOpen, TClose>(this IParser<TToken, T> parser, IParser<TToken, TOpen> open, IParser<TToken, TClose> close)
+    public static IParser<TToken, IReadOnlyCollection<T>> QuotedBy<TToken, T, TOpen, TClose>(this IParser<TToken, T> parser, IParser<TToken, TOpen> open, IParser<TToken, TClose> close)
         => open.Right(ManyTill(parser, close));
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<TToken, IReadOnlyCollection<T>> QuotedBy1<TToken, T, TIgnore>(this IParser<TToken, T> parser, IParser<TToken, TIgnore> quotation)
+        => parser.QuotedBy1(quotation, quotation);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<TToken, IReadOnlyCollection<T>> QuotedBy1<TToken, T, TOpen, TClose>(this IParser<TToken, T> parser, IParser<TToken, TOpen> open, IParser<TToken, TClose> close)
+        => open.Right(Many1Till(parser, close));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, T> Or<TToken, T>(this IParser<TToken, T> first, IParser<TToken, T> second)

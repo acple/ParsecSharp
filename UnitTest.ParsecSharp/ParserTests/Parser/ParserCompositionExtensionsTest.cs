@@ -54,22 +54,66 @@ public class ParserCompositionExtensionsTest
         // If you pass `Many(Any())` to the parser, it will match any input until the end, so `close` will match the end of input.
         var parser2 = Many(Any()).Between(Char('"'), Char('"')); // It does not match ( dquote *Any dquote )
         await parser2.Parse("\"abCD1234\"").WillFail(); // `Many(Any())` matches until abCD1234", so `close` does not match " and fails
-        // If you want to create a parser that matches this form, consider using `Quoted` or `ManyTill`.
+        // If you want to create a parser that matches this form, consider using `Quote` or `ManyTill`.
     }
 
     [Test]
-    public async Task QuoteTest()
+    public async Task QuotedByTest()
     {
         // Creates a parser that matches parser repeatedly until it matches the parsers before and after.
 
         // Parser that matches a string representation that can escape '"' characters.
         var dquoteOrAny = String("\\\"").Map(_ => '\"') | Any();
-        var parser = dquoteOrAny.Quote(Char('"')).AsString();
+        var parser = dquoteOrAny.QuotedBy(Char('"')).AsString();
 
         var source = """
             "abcd\"EFGH"
             """;
         await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("""abcd"EFGH"""));
+
+        // Succeeds with empty content between '"' and '"'.
+        var source2 = "\"\"";
+        await parser.Parse(source2).WillSucceed(async value => await Assert.That(value).IsEmpty());
+
+        // Parser that matches letters between '[' and ']'.
+        var parser2 = Letter().QuotedBy(Char('['), Char(']')).AsString();
+
+        var source3 = "[abcd]";
+        await parser2.Parse(source3).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcd"));
+
+        // Succeeds with empty content between '[' and ']'.
+        var source4 = "[]";
+        await parser2.Parse(source4).WillSucceed(async value => await Assert.That(value).IsEmpty());
+    }
+
+    [Test]
+    public async Task QuotedBy1Test()
+    {
+        // Creates a parser that matches parser repeatedly until it matches the parsers before and after.
+        // Similar to `QuotedBy`, but requires at least 1 match of the parser.
+
+        // Parser that matches a string representation that can escape '"' characters.
+        var dquoteOrAny = String("\\\"").Map(_ => '\"') | Any();
+        var parser = dquoteOrAny.QuotedBy1(Char('"')).AsString();
+
+        var source = """
+            "abcd\"EFGH"
+            """;
+        await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsEqualTo("""abcd"EFGH"""));
+
+        // Fails because there is no content between '"' and '"'.
+        var source2 = "\"\"";
+        await parser.Parse(source2).WillFail();
+
+        // Parser that matches letters between '[' and ']'.
+        var parser2 = Letter().QuotedBy1(Char('['), Char(']')).AsString();
+
+        var source3 = "[abcd]";
+        await parser2.Parse(source3).WillSucceed(async value => await Assert.That(value).IsEqualTo("abcd"));
+
+        // Fails because there is no letter between '[' and ']'.
+        var source4 = "[]";
+        await parser2.Parse(source4).WillFail();
     }
 
     [Test]
