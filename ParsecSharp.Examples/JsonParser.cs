@@ -76,15 +76,15 @@ public class JsonParser
 
         // Matches the integer part of a JSON Number.
         // int = zero / ( digit1-9 *DIGIT )
-        var integer = Char('0').Map(_ => 0) | OneOf("123456789").Append(Many(DecDigit())).ToInt();
+        var integer = Char('0').Map(_ => 0) | OneOf("123456789").Append(Many(AsciiDigit())).ToInt();
 
         // Matches the fractional part of a JSON Number.
         // frac = decimal-point 1*DIGIT
-        var frac = Char('.').Append(Many1(DecDigit())).ToDouble();
+        var frac = Char('.').Append(Many1(AsciiDigit())).ToDouble();
 
         // Matches the exponent part of a JSON Number.
         // exp = e [ minus / plus ] 1*DIGIT
-        var exp = CharIgnoreCase('e').Right(Optional(OneOf("-+"), '+').Append(Many1(DecDigit())).ToInt());
+        var exp = CharIgnoreCase('e').Right(Optional(OneOf("-+"), '+').Append(Many1(AsciiDigit())).ToInt());
 
         // Matches a JSON Number and returns a double.
         // number = [ minus ] int [ frac ] [ exp ]

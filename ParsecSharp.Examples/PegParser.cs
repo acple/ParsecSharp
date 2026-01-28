@@ -47,7 +47,7 @@ public class PegParser
         var captureClose = Char('}').Right(spacing);
 
         var word = AsciiLetter();
-        var digit = DecDigit();
+        var digit = AsciiDigit();
         var underscore = Char('_');
 
         var identifier = ((word | underscore) + Many(word | digit | underscore)).AsString().Left(spacing);

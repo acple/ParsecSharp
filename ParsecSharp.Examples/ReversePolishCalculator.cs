@@ -10,8 +10,8 @@ public class ReversePolishCalculator
     // Matches integers or decimals and returns them as double
     private static readonly IParser<char, double> number =
         Optional(OneOf("-+"), '+')
-            .Append(Many1(DecDigit()))
-            .AppendOptional(Char('.').Append(Many1(DecDigit())))
+            .Append(Many1(AsciiDigit()))
+            .AppendOptional(Char('.').Append(Many1(AsciiDigit())))
             .ToDouble();
 
     // Matches arithmetic operators and maps them to binary functions
