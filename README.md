@@ -31,6 +31,7 @@ This project is inspired by [parsec](https://hackage.haskell.org/package/parsec)
 * Supports custom derivation for core types
 * Supports nullable reference types (with C# 8.0 or later)
 * Supports Source Link (that allows to refer to every parser implementation source code)
+* AOT compatible (with .NET 8.0 or later)
 * No additional dependencies
 * Faster running
 * Just enough error messages
