@@ -42,5 +42,20 @@ public class ParserSystemTests
 
         // Note that the state at the point of failure is returned.
         await EndOfInput().Parse(rest3).WillSucceed(async value => await Assert.That(value).IsEqualTo(Unit.Instance));
+
+        // You can also switch to a different parser mid-stream using `Parse(ISuspendedState)`.
+        // This enables multi-phase parsing where different sections of the input are handled by different parsers.
+        using var source2 = StringStream.Create("abcdEFGH");
+
+        var lower = Many1(Lower()).AsString();
+        var upper = Many1(Upper()).AsString();
+
+        // Start parsing with the `lower` parser.
+        var (result4, rest4) = lower.ParsePartially(source2);
+        await result4.WillSucceed(async value => await Assert.That(value).IsEqualTo("abcd"));
+
+        // Switch to the `upper` parser for the remaining input.
+        var result5 = upper.Parse(rest4);
+        await result5.WillSucceed(async value => await Assert.That(value).IsEqualTo("EFGH"));
     }
 }

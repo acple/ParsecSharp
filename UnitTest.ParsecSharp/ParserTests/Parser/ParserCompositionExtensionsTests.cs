@@ -6,7 +6,7 @@ using static ParsecSharp.Text;
 
 namespace UnitTest.ParsecSharp.ParserTests.Parser;
 
-public class ParserCompositionExtensionsTest
+public class ParserCompositionExtensionsTests
 {
     [Test]
     public async Task LeftTest()
@@ -51,10 +51,11 @@ public class ParserCompositionExtensionsTest
         var source = $"[abcdEFGH]";
         await parser.Parse(source).WillSucceed(async value => await Assert.That(value).IsSequentiallyEqualTo("abcdEFGH"));
 
-        // If you pass `Many(Any())` to the parser, it will match any input until the end, so `close` will match the end of input.
-        var parser2 = Many(Any()).Between(Char('"'), Char('"')); // It does not match ( dquote *Any dquote )
-        await parser2.Parse("\"abCD1234\"").WillFail(); // `Many(Any())` matches until abCD1234", so `close` does not match " and fails
-        // If you want to create a parser that matches this form, consider using `Quote` or `ManyTill`.
+        // `Any()` matches any character including `"`, so `Many(Any())` consumes the closing `"` as well.
+        // As a result, `close` has nothing left to match and fails.
+        var parser2 = Many(Any()).Between(Char('"'), Char('"'));
+        await parser2.Parse("\"abCD1234\"").WillFail();
+        // To match this form correctly, use `Quote` or `ManyTill` instead.
     }
 
     [Test]
