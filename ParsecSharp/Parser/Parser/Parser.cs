@@ -147,7 +147,7 @@ public static class Parser
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, T> Choice<TToken, T>(params IEnumerable<IParser<TToken, T>> parsers)
-        => parsers.Reverse().Aggregate((next, parser) => parser.Alternative(next));
+        => parsers.Reverse().DefaultIfEmpty(Fail<TToken, T>($"{nameof(Choice)} was given no parsers")).Aggregate((next, parser) => parser.Alternative(next));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [OverloadResolutionPriority(-1)]
