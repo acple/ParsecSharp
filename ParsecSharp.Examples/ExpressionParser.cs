@@ -50,7 +50,7 @@ public class ExpressionParser<TNumber>
 public class Integer : INumber<Integer>
 {
     private static readonly IParser<char, Integer> number =
-        Many1(DecDigit()).ToInt().Map(x => new Integer(x));
+        Many1(AsciiDigit()).ToInt().Map(x => new Integer(x));
 
     public static ExpressionParser<Integer> Parser { get; } = new(number);
 
@@ -77,7 +77,7 @@ public class Integer : INumber<Integer>
 public class Double : INumber<Double>
 {
     private static readonly IParser<char, Double> number =
-        Many1(DecDigit()).AppendOptional(Char('.').Append(Many1(DecDigit())))
+        Many1(AsciiDigit()).AppendOptional(Char('.').Append(Many1(AsciiDigit())))
             .ToDouble().Map(x => new Double(x));
 
     public static ExpressionParser<Double> Parser { get; } = new(number);
@@ -105,7 +105,7 @@ public class Double : INumber<Double>
 public class IntegerExpression : INumber<IntegerExpression>
 {
     private static readonly IParser<char, IntegerExpression> number =
-        Many1(DecDigit()).ToInt().Map(x => new IntegerExpression(Expression.Constant(x)));
+        Many1(AsciiDigit()).ToInt().Map(x => new IntegerExpression(Expression.Constant(x)));
 
     public static ExpressionParser<IntegerExpression> Parser { get; } = new(number);
 

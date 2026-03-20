@@ -147,7 +147,7 @@ public static class Parser
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, T> Choice<TToken, T>(params IEnumerable<IParser<TToken, T>> parsers)
-        => parsers.Reverse().Aggregate((next, parser) => parser.Alternative(next));
+        => parsers.Reverse().DefaultIfEmpty(Fail<TToken, T>($"{nameof(Choice)} was given no parsers")).Aggregate((next, parser) => parser.Alternative(next));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [OverloadResolutionPriority(-1)]
@@ -541,6 +541,10 @@ public static class Parser
         => Sequence(Enumerable.Repeat(parser, count));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IParser<TToken, IReadOnlyCollection<T>> Repeat<TToken, T>(this IParser<TToken, T> parser, int min, int max)
+        => parser.Repeat(min).Bind(x => RepeatRec(parser, max - min, x));
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, IReadOnlyCollection<T>> QuotedBy<TToken, T, TIgnore>(this IParser<TToken, T> parser, IParser<TToken, TIgnore> quotation)
         => parser.QuotedBy(quotation, quotation);
 
@@ -810,6 +814,10 @@ public static class Parser
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static IParser<TToken, IReadOnlyCollection<T>> ManyRec<TToken, T>(IParser<TToken, T> parser, IReadOnlyCollection<T> result)
         => parser.Next(x => ManyRec(parser, result.Append(x)), result);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static IParser<TToken, IReadOnlyCollection<T>> RepeatRec<TToken, T>(IParser<TToken, T> parser, int max, IReadOnlyCollection<T> result)
+        => 0 < max ? parser.Next(x => RepeatRec(parser, max - 1, result.Append(x)), result) : Pure<TToken, IReadOnlyCollection<T>>(result);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static IParser<TToken, IReadOnlyCollection<T>> ManyTillRec<TToken, T, TIgnore>(IParser<TToken, T> parser, IParser<TToken, TIgnore> terminator, IReadOnlyCollection<T> result)

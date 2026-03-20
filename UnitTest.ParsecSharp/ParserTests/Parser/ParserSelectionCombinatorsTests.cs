@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using ParsecSharp;
 using static ParsecSharp.Parser;
@@ -21,5 +22,9 @@ public class ParserSelectionCombinatorsTests
 
         var source2 = "123456";
         await parser.Parse(source2).WillFail();
+
+        // empty Choice always fails
+        var parser2 = Choice(Enumerable.Empty<IParser<char, char>>()); // Choice([])
+        await parser2.Parse(source).WillFail(async fail => await Assert.That(fail.Message).IsEqualTo("Choice was given no parsers"));
     }
 }
