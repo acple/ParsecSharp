@@ -23,6 +23,7 @@ This project is inspired by [parsec](https://hackage.haskell.org/package/parsec)
 ## Overview
 * Strictly typed parsers/combinators that support natural type inference
 * A lot of reasonable built-in parsers/combinators
+* Gentle use of extension operator overloading (with C# 14.0 or later)
 * Supports parsing infinitely recursive data structures
 * Supports full backtracking: Parsing Expression Grammar (PEG) style parsing strategy
 * Supports parsing streams of any token type (e.g., string, char stream, binary stream, any enumerable)
@@ -68,7 +69,7 @@ Download manually:
 
 
 ## Supported platforms
-* net10.0 (provides full functionality, best performance)
+* net10.0, net8.0 (provides full functionality, best performance, AOT support)
 * netstandard2.1 (provides same functionality as net10.0, compatible with net5.0 or later, mono, unity, and more)
 * netstandard2.0 (works on legacy environments, some runtime features are disabled, compatible with net461 or later, uap, xamarin, and more)
 
