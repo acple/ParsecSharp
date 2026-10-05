@@ -88,4 +88,32 @@ public class ParserValidationExtensionsTests
         var source3 = "123,456,789";
         await parser.Parse(source3).WillFail(async failure => await Assert.That(failure.Message).IsEqualTo("abort1234"));
     }
+
+    [Test]
+    public async Task AbortReportsFailurePositionTest()
+    {
+        // The aborted result reports where the parser failed, not where it started.
+
+        var sequence = Sequence(Char('1'), Char('2'), Char('3'), Char('4')).AsString();
+
+        var source = "123,456,789";
+        await sequence.AbortIfEntered(_ => "abort1234").Parse(source)
+            .WillFail(async failure => await Assert.That(failure.ToString()).IsEqualTo("Parser Failure (Line: 1, Column: 4): abort1234"));
+        await sequence.AbortWhenFail(_ => "abort1234").Parse(source)
+            .WillFail(async failure => await Assert.That(failure.ToString()).IsEqualTo("Parser Failure (Line: 1, Column: 4): abort1234"));
+
+        // Also when the aborting parser is not the first thing parsed, and on a later line.
+        var lines = Many(sequence.AbortIfEntered(_ => "abort1234").Left(Char('\n')));
+        var source2 = "1234\n1234\n12x4\n";
+        await lines.Parse(source2)
+            .WillFail(async failure => await Assert.That(failure.ToString()).IsEqualTo("Parser Failure (Line: 3, Column: 3): abort1234"));
+
+        // The state of the failure is the one the parser failed at.
+        await sequence.AbortIfEntered(failure => $"unexpected '{failure.State.Current}'").Parse(source)
+            .WillFail(async failure =>
+            {
+                await Assert.That(failure.State.Current).IsEqualTo(',');
+                await Assert.That(failure.Message).IsEqualTo("unexpected ','");
+            });
+    }
 }
