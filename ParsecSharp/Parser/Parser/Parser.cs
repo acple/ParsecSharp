@@ -720,7 +720,7 @@ public static class Parser
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, T> AbortWhenFail<TToken, T>(this IParser<TToken, T> parser, Func<IFailure<TToken, T>, string> message)
-        => parser.Alternative(failure => Abort<TToken, T>(message(failure).Const));
+        => new AbortOnFailure<TToken, T>(parser, message, onlyIfEntered: false);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, T> AbortIfEntered<TToken, T>(this IParser<TToken, T> parser)
@@ -728,8 +728,7 @@ public static class Parser
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IParser<TToken, T> AbortIfEntered<TToken, T>(this IParser<TToken, T> parser, Func<IFailure<TToken, T>, string> message)
-        => parser.Alternative(failure => GetPosition<TToken>()
-            .Bind(position => position.Equals(failure.State.Position) ? Fail<TToken, T>(failure.Message) : Abort<TToken, T>(message(failure).Const)));
+        => new AbortOnFailure<TToken, T>(parser, message, onlyIfEntered: true);
 
     #endregion
 
